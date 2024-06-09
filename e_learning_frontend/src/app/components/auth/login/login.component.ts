@@ -1,74 +1,52 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  loginObj: LoginModel = new LoginModel();
+  isSignDivVisiable: boolean  = false;
 
-
-  isSignDivVisiable: boolean  = true;
-
-  signUpObj: SignUpModel  = new SignUpModel();
-  loginObj: LoginModel  = new LoginModel();
-
-  constructor(private router: Router){}
-
-
-  onRegister() {
-    debugger;
-    const localUser = localStorage.getItem('angular17users');
-    if(localUser != null) {
-      const users =  JSON.parse(localUser);
-      users.push(this.signUpObj);
-      localStorage.setItem('angular17users', JSON.stringify(users))
-    } else {
-      const users = [];
-      users.push(this.signUpObj);
-      localStorage.setItem('angular17users', JSON.stringify(users))
-    }
-    alert('Registration Success')
-  }
+  constructor(private authService: AuthService, private router: Router) { }
 
   onLogin() {
-    debugger;
-    const localUsers =  localStorage.getItem('angular17users');
-    if(localUsers != null) {
-      const users =  JSON.parse(localUsers);
-
-      const isUserPresent =  users.find( (user:SignUpModel)=> user.email == this.loginObj.email && user.password == this.loginObj.password);
-      if(isUserPresent != undefined) {
-        alert("User Found...");
-        localStorage.setItem('loggedUser', JSON.stringify(isUserPresent));
-        this.router.navigateByUrl('/dashboard');
-      } else {
-        alert("No User Found")
+    this.authService.login(this.loginObj).subscribe(
+      response => {
+        console.log('Response:', response);
+        alert('Login Success');
+        localStorage.setItem('loggedUser', JSON.stringify(response));
+        this.router.navigateByUrl('/home');
+      },
+      error => {
+        console.error('Error:', error);
+        alert('Login Failed');
       }
-    }
+    );
   }
+}
 
+export class LoginModel {
+  staffId: string;
+  password: string;
+
+  constructor() {
+    this.staffId = "";
+    this.password = ""
+  }
 }
 
 export class SignUpModel  {
   name: string;
-  email: string;
+  staffId: string;
   password: string;
 
   constructor() {
-    this.email = "";
+    this.staffId = "";
     this.name = "";
-    this.password= ""
-  }
-}
-
-export class LoginModel  { 
-  email: string;
-  password: string;
-
-  constructor() {
-    this.email = ""; 
     this.password= ""
   }
 }
