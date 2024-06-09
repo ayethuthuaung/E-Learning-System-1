@@ -6,17 +6,21 @@ import { AppComponent } from './app.component';
 
 import { LoginComponent } from './components/auth/login/login.component';
 import { FormsModule } from '@angular/forms';
+import { HomeComponent } from './components/home/home.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
   
-    LoginComponent
+    LoginComponent,
+        HomeComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [
     provideClientHydration()
