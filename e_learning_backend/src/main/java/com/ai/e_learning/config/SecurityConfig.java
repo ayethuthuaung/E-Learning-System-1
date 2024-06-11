@@ -55,6 +55,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/user/register").permitAll()
                         .requestMatchers("/assets/**", "/homeassets/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("admin")
+                        //to test
+                        .requestMatchers("/addUser/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling

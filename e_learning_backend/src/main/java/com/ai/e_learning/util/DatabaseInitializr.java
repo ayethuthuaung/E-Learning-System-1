@@ -1,3 +1,4 @@
+
 package com.ai.e_learning.util;
 
 import com.ai.e_learning.model.Role;
@@ -44,7 +45,7 @@ public class DatabaseInitializr {
                 "11-11111",
                 "Admin",
                 "admin@gmail.com",
-                "11111",
+                11111L,
                 "Admin",
                 "HR",
                 "Admin/HR",
@@ -52,8 +53,8 @@ public class DatabaseInitializr {
                 "default_user.png",
                 passwordEncoder.encode("11111"),
                 System.currentTimeMillis(),
-                new HashSet<>(Collections.singletonList(adminRole)),
-                true
+                new HashSet<>(Collections.singletonList(adminRole))
+
         );
 
         userRepository.save(user);

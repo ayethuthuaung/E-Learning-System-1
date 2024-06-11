@@ -26,7 +26,7 @@ public class User {
     private String email;
 
     @Column(nullable = false, length = 10)
-    private String doorLogNo;
+    private Long doorLogNo;
 
     @Column(nullable = false, length = 70)
     private String team;
@@ -40,7 +40,7 @@ public class User {
     @Column(nullable = false, length = 10)
     private String status;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String photo;
 
     @Column(nullable = false)
@@ -55,7 +55,7 @@ public class User {
     @JsonIgnore
     private Set<Role> roles;
 
-    private boolean enabled;
+
 
  @PrePersist
  protected void onCreate() {
