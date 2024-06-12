@@ -1,0 +1,36 @@
+<ng-template [ngIf]="check" [ngIfElse]="noData">
+    <div class="row">
+        <h2>Course List</h2>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Category ID</th>
+                <th>Category Name</th>
+                
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let category of categories">
+                <td>{{ category.id }}</td>
+                <td>{{ category.name }}</td>
+               
+                <td>
+                    <ul>
+                        <li *ngFor="let course of category.courses">{{ course.name }}</li>
+                    </ul>
+                </td>
+                <td>
+                    <button *ngIf="category.id !== undefined" (click)="updateCategory(category.id!)" class="btn btn-primary">Update</button>
+                    <button *ngIf="category.id !== undefined" (click)="deleteCategory(category.id!)" class="btn btn-danger" style="margin-left: 10px">Delete</button>
+                    <button *ngIf="category.id !== undefined" (click)="categoryDetails(category.id!)" class="btn btn-primary" style="margin-left: 10px">View</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</ng-template>
+<ng-template #noData>
+    <h4>No Course Found!</h4>
+</ng-template>
+
