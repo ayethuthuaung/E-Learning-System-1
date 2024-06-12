@@ -1,0 +1,58 @@
+package com.ai.e_learning.controllers;
+
+import com.ai.e_learning.dto.CategoryDto;
+import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+
+@RestController
+
+@RequestMapping("/api/categories")
+public class CategoryController {
+  @Autowired
+  private CategoryService categoryService;
+
+  @ModelAttribute("categoryDto")
+  public CategoryDto getCategoryDto() {
+    return new CategoryDto();
+  }
+
+
+  @PostMapping(value = "/addcategory", produces = "application/json")
+  public CategoryDto addcategory(@RequestBody CategoryDto category) {
+
+    CategoryDto dto = new CategoryDto();
+    dto.setId(category.getId());
+    dto.setName(category.getName());
+    dto.setCourses(category.getCourses());
+
+    return categoryService.saveCategory(dto);
+  }
+
+  @PutMapping(value = "/update/{id}", produces = "application/json")
+  public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto category) {
+    CategoryDto updatedCategory = categoryService.updateCategory(id, category);
+    if (updatedCategory != null) {
+      return ResponseEntity.ok(updatedCategory);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<Void> softDeleteCourse(@PathVariable Long id) {
+      categoryService.softDeleteCategory(id);
+      return ResponseEntity.noContent().build();
+    }
+  }
+
+
+
+
+
+
