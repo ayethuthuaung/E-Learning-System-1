@@ -7,6 +7,7 @@ export class Course {
     duration: string;
     description: string;
     categories: Category[];
+    categorylist:number[];
     certificate?: string;
     badge?: string;
     deleted?: boolean;
@@ -20,6 +21,7 @@ export class Course {
       this.certificate = '';
       this.badge = '';
       this.deleted = false;
+      this.categorylist=[]
     }
     
     

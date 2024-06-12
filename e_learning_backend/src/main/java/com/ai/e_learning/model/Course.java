@@ -40,8 +40,7 @@ public class Course  {
     inverseJoinColumns = @JoinColumn(name = "category_id"))
 
  private Set<Category> categories = new HashSet<>();
-  /*@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<Material> materials = new HashSet<>();*/
+
 
 
 }

@@ -41,8 +41,10 @@ export class CategoryComponent implements OnInit {
   
   createCategory(): void {
     this.categoryService.createCategory(this.category).subscribe(
+      //console.log(this.category)
       () => {
-        this.getCategories();
+        console.log(this.category)
+        //this.getCategories();
         this.category = new Category(); 
       },
       (error) => {

@@ -1,3 +1,4 @@
+
 package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.dto.CategoryDto;
@@ -18,11 +19,10 @@ public class CategoryController {
   @Autowired
   private CategoryService categoryService;
 
-  @ModelAttribute("categoryDto")
-  public CategoryDto getCategoryDto() {
-    return new CategoryDto();
+  @GetMapping(value = "/categorylist", produces = "application/json")
+  public List<CategoryDto> getAllCategories() {
+    return categoryService.getAllCategories();
   }
-
 
   @PostMapping(value = "/addcategory", produces = "application/json")
   public CategoryDto addcategory(@RequestBody CategoryDto category) {
@@ -50,6 +50,7 @@ public class CategoryController {
       return ResponseEntity.noContent().build();
     }
   }
+
 
 
 

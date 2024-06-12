@@ -20,6 +20,14 @@ public class CategoryService {
   @Autowired
   private ModelMapper modelMapper;
 
+  public List<CategoryDto> getAllCategories() {
+    List<Category> categories = categoryRepository.findAll();
+    for(Category category:categories){
+      System.out.println(category.getName());
+    }
+    return categories.stream().map(this::convertToDto).collect(Collectors.toList());
+  }
+
   public CategoryDto saveCategory(CategoryDto categoryDto) {
     Category category = convertToEntity(categoryDto);
     Category savedCategory = categoryRepository.save(category);

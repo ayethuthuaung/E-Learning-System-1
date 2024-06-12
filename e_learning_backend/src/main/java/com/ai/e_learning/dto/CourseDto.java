@@ -1,6 +1,7 @@
 package com.ai.e_learning.dto;
 
 
+import com.ai.e_learning.model.Category;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,7 +22,7 @@ public class CourseDto {
   private String createdAt;
   private String certificate;
   private String badge;
-  //private Set<Category> categories = new HashSet<>();
+  private Set<Category> categories = new HashSet<>();
   private List<Long> categorylist;
   private boolean isDeleted;
 }

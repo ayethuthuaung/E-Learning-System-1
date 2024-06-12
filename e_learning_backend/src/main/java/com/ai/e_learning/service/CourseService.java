@@ -40,12 +40,14 @@ public class CourseService {
   }
 
   public CourseDto saveCourse(CourseDto courseDto) {
+    System.out.println(courseDto.toString());
     Course course = convertToEntity(courseDto);
-    Set<Category> categories = new HashSet<>();
-    for(Long categoryId:courseDto.getCategorylist()){
-      Category category=categoryRepository.findById(categoryId).orElseThrow(()->
+
+   Set<Category> categories = new HashSet<>();
+    for(Category category:courseDto.getCategories()){
+      Category category1=categoryRepository.findById(category.getId()).orElseThrow(()->
      new EntityNotFoundException("category not found"));
-      categories.add(category);
+      categories.add(category1);
     }
     course.setCategories(categories);
     System.out.println(courseDto.toString());
