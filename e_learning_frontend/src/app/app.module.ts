@@ -10,24 +10,30 @@ import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
-
+import { ChatComponent } from './components/chat/chat.component';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { WebSocketService } from './components/services/websocket.service';
+const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 @NgModule({
   declarations: [
     AppComponent,
   CourseComponent,
   CategoryComponent,
     LoginComponent,
-        HomeComponent
+        HomeComponent,
+        ChatComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    WebSocketService
   ],
   bootstrap: [AppComponent]
 })

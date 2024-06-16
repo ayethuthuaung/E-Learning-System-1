@@ -5,6 +5,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthGuard } from './components/auth/auth.guard';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/login',pathMatch:'full'},
@@ -12,7 +13,7 @@ const routes: Routes = [
    {path:'course', component: CourseComponent},
    {path:'category', component: CategoryComponent},
    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-
+   {path:'chat', component: ChatComponent},
 ];
 
 
