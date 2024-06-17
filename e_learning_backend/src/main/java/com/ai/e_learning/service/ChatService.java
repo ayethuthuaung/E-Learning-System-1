@@ -25,6 +25,7 @@ public class ChatService {
     }
 
     public Message sendMessage(Long chatRoomId, Long senderId, String content) {
+        System.out.println("chatRoomId: " + chatRoomId + " senderId: " + senderId + " content: " + content);
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
         User sender = userRepository.findById(senderId)

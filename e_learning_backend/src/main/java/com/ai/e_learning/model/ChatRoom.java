@@ -21,7 +21,7 @@ public class ChatRoom {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "chat_room_user",
             joinColumns = @JoinColumn(name = "chat_room_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))

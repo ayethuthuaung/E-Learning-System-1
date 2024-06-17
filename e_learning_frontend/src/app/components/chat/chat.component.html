@@ -1,7 +1,7 @@
 <div class="chat-container">
   <div class="chat-window">
-    <div *ngFor="let message of messages" class="chat-message">
-      {{ message }}
+    <div *ngFor="let message of messages" [ngClass]="{'sent': message.senderId === 1, 'received': message.senderId !== 1}"  class="chat-message">
+      {{ message.content }}
     </div>
   </div>
   <div class="chat-input">

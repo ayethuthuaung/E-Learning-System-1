@@ -1,10 +1,4 @@
-/*
- * @Author 		 : Valhalla TKT (DAT OJT Batch II - Team III)
- * @Date 		 : 2024-04-24
- * @Time  		 : 21:00
- * @Project_Name : Work From Home System
- * @Contact      : tktvalhalla@gmail.com
- */
+
 package com.ai.e_learning.config;
 // need to implement more
 import java.util.List;
@@ -38,18 +32,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
     }
 
-//    @Override
-//    public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
-//    	DefaultContentTypeResolver resolver = new  DefaultContentTypeResolver();
-//    	resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
-//    	MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-//    	converter.setObjectMapper(new ObjectMapper());
-//    	converter.setContentTypeResolver(resolver);
-//    	messageConverters.add(new StringMessageConverter());
-//    	messageConverters.add(new ByteArrayMessageConverter());
-//    	messageConverters.add(converter);
-//    	return false;
-//    }
+    @Override
+    public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+        DefaultContentTypeResolver resolver = new  DefaultContentTypeResolver();
+        resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        converter.setObjectMapper(new ObjectMapper());
+        converter.setContentTypeResolver(resolver);
+        messageConverters.add(new StringMessageConverter());
+        messageConverters.add(new ByteArrayMessageConverter());
+        messageConverters.add(converter);
+        return false;
+    }
 
 
 
