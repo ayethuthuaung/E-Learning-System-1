@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 
-@RequestMapping("/addUser")
+@RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
 

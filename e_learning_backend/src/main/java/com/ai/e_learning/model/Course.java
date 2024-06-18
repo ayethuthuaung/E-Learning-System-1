@@ -24,7 +24,7 @@ public class Course  {
   private  String level;
   @Column(nullable = false, length = 10)
   private String duration;
-  @Column(nullable = false, length = 10)
+  @Column(nullable = false, length = 100)
   private String description;
   private String createdAt;
   @Column(nullable = false, length = 10)

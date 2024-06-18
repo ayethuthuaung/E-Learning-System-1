@@ -10,6 +10,34 @@ import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
+import { HeroComponent } from './components/home/hero/hero.component';
+import { CoursesComponent } from './components/home/courses/courses.component';
+import { JointUsComponent } from './components/home/joint-us/joint-us.component';
+import { HowItWorkComponent } from './components/home/how-it-work/how-it-work.component';
+import { AppStoreComponent } from './components/home/app-store/app-store.component';
+import { FeedbacksComponent } from './components/home/feedbacks/feedbacks.component';
+import { ClientsComponent } from './components/home/clients/clients.component';
+import { BlogsComponent } from './components/home/blogs/blogs.component';
+import { AuthLinksComponent } from './components/shared/auth-links/auth-links.component';
+import { ButtonComponent } from './components/shared/button/button.component';
+import { CardComponent } from './components/shared/card/card.component';
+import { EmailComponent } from './components/shared/email/email.component';
+import { FeedbackCardComponent } from './components/shared/feedback-card/feedback-card.component';
+import { FooterComponent } from './components/shared/footer/footer.component';
+import { HeadingComponent } from './components/shared/heading/heading.component';
+import { MenuComponent } from './components/shared/menu/menu.component';
+import { PhoneComponent } from './components/shared/phone/phone.component';
+import { RatingComponent } from './components/shared/rating/rating.component';
+import { SliderComponent } from './components/shared/slider/slider.component';
+import { SocialLinksComponent } from './components/shared/social-links/social-links.component';
+import { SubscribeFormComponent } from './components/shared/subscribe-form/subscribe-form.component';
+import { SubscribeFormReactiveComponent } from './components/shared/subscribe-form-reactive/subscribe-form-reactive.component';
+import { VideoPopupComponent } from './components/shared/video-popup/video-popup.component';
+import { CourseFooterComponent } from './components/shared/card/course-footer/course-footer.component';
+import { BlogFooterComponent } from './components/shared/card/blog-footer/blog-footer.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { FormComponent } from './components/form/form.component';
+
 
 @NgModule({
   declarations: [
@@ -17,7 +45,35 @@ import { CategoryComponent } from './components/category/category.component';
   CourseComponent,
   CategoryComponent,
     LoginComponent,
-        HomeComponent
+    HomeComponent,
+    HeroComponent,
+    CoursesComponent,
+    JointUsComponent,
+    HowItWorkComponent,
+    AppStoreComponent,
+    FeedbacksComponent,
+    ClientsComponent,
+    BlogsComponent,
+    AuthLinksComponent,
+    ButtonComponent,
+    CardComponent,
+    BlogFooterComponent,
+    CourseFooterComponent,
+    EmailComponent,
+    FeedbackCardComponent,
+    FooterComponent,
+    HeadingComponent,
+    MenuComponent,
+    PhoneComponent,
+    RatingComponent,
+    SliderComponent,
+    SocialLinksComponent,
+    SubscribeFormComponent,
+    SubscribeFormReactiveComponent,
+    VideoPopupComponent,
+    NavbarComponent,
+    FormComponent,
+  
   ],
   imports: [
     BrowserModule,
