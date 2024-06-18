@@ -36,8 +36,12 @@ import { VideoPopupComponent } from './components/shared/video-popup/video-popup
 import { CourseFooterComponent } from './components/shared/card/course-footer/course-footer.component';
 import { BlogFooterComponent } from './components/shared/card/blog-footer/blog-footer.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { FormComponent } from './components/form/form.component';
 
+
+import { ChatComponent } from './components/chat/chat.component';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { WebSocketService } from './components/services/websocket.service';
+const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 @NgModule({
   declarations: [
@@ -45,8 +49,9 @@ import { FormComponent } from './components/form/form.component';
   CourseComponent,
   CategoryComponent,
     LoginComponent,
-    HomeComponent,
-    HeroComponent,
+        HomeComponent,
+        ChatComponent,
+        HeroComponent,
     CoursesComponent,
     JointUsComponent,
     HowItWorkComponent,
@@ -72,18 +77,19 @@ import { FormComponent } from './components/form/form.component';
     SubscribeFormReactiveComponent,
     VideoPopupComponent,
     NavbarComponent,
-    FormComponent,
-  
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    WebSocketService
   ],
   bootstrap: [AppComponent]
 })
