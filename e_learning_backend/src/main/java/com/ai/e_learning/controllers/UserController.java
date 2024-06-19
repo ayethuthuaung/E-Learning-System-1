@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RestController
 
-@RequestMapping("/addUser")
+@RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
 
@@ -26,6 +26,7 @@ public class UserController {
     if (file.isEmpty()) {
       return ResponseEntity.badRequest().body("File is empty");
     }
+    System.out.println("hi");
     this.userService.updateExcel(file);
     return ResponseEntity.ok(Map.of("Message", "User data upload and saved To Database successfully."));
   }
