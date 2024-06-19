@@ -10,6 +10,13 @@ import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
+import { CreateExamComponent } from './components/create-exam/create-exam.component';
+import { CreateQuestionTypeComponent } from './components/create-question-type/create-question-type.component';
+import { CreateAnswerOptionComponent } from './components/create-answer-option/create-answer-option.component';
+import { QuestionService } from './components/services/question.service';
+import { AnswerOptionService } from './components/services/answerOption.service';
+import { AnswerFormComponent } from './components/answer-form/answer-form.component';
+import { CreateQuestionFormComponent } from './components/create-question-form/create-question-form.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +24,14 @@ import { CategoryComponent } from './components/category/category.component';
   CourseComponent,
   CategoryComponent,
     LoginComponent,
-        HomeComponent
+        HomeComponent,
+        CreateExamComponent,
+        CreateQuestionTypeComponent,
+        CreateAnswerOptionComponent,
+        CreateQuestionFormComponent,
+        AnswerFormComponent,
+        CreateQuestionFormComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -27,7 +41,8 @@ import { CategoryComponent } from './components/category/category.component';
     HttpClientModule
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    QuestionService,AnswerOptionService
   ],
   bootstrap: [AppComponent]
 })
