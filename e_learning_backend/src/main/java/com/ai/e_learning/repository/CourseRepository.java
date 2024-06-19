@@ -16,4 +16,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
   @Query("SELECT c FROM Course c JOIN c.categories cat WHERE cat.id = :categoryId")
   List<Course> findByCategoryId(Long categoryId);
+
+  @Query("SELECT COUNT(c) > 0 FROM Course c WHERE c.name = :name")
+  boolean existsByName(String name);
+
+
 }

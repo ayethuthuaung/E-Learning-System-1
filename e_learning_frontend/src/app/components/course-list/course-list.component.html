@@ -11,6 +11,7 @@
                 <th>Course Duration</th>
                 <th>Course Description</th>
                 <th>Categories</th>
+                <th>Photo</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -27,9 +28,12 @@
                     </ul>
                 </td>
                 <td>
-                    <button *ngIf="course.id !== undefined" (click)="updateCourse(course.id!)" class="btn btn-primary">Update</button>
-                    <button *ngIf="course.id !== undefined" (click)="deleteCourse(course.id!)" class="btn btn-danger" style="margin-left: 10px">Delete</button>
-                    <button *ngIf="course.id !== undefined" (click)="courseDetails(course.id!)" class="btn btn-primary" style="margin-left: 10px">View</button>
+                    <img *ngIf="course.photoUrl" [src]="course.photoUrl" alt="{{ course.name }}" width="100">
+                </td>
+                <td>
+                    <button (click)="updateCourse(course.id)" class="btn btn-primary">Update</button>
+                    <button (click)="softDeleteCourse(course.id)" class="btn btn-danger">Delete</button>
+                    <button (click)="courseDetails(course.id)" class="btn btn-primary" style="margin-left: 10px">View</button>
                 </td>
             </tr>
         </tbody>

@@ -7,7 +7,7 @@
             <tr>
                 <th>Category ID</th>
                 <th>Category Name</th>
-                
+               
                 <th>Actions</th>
             </tr>
         </thead>
@@ -15,16 +15,11 @@
             <tr *ngFor="let category of categories">
                 <td>{{ category.id }}</td>
                 <td>{{ category.name }}</td>
-               
+                
                 <td>
-                    <ul>
-                        <li *ngFor="let course of category.courses">{{ course.name }}</li>
-                    </ul>
-                </td>
-                <td>
-                    <button *ngIf="category.id !== undefined" (click)="updateCategory(category.id!)" class="btn btn-primary">Update</button>
-                    <button *ngIf="category.id !== undefined" (click)="deleteCategory(category.id!)" class="btn btn-danger" style="margin-left: 10px">Delete</button>
-                    <button *ngIf="category.id !== undefined" (click)="categoryDetails(category.id!)" class="btn btn-primary" style="margin-left: 10px">View</button>
+                    <button  (click)="updateCategory(category.id)" class="btn btn-primary">Update</button>
+                    <button (click)="softDeleteCategory(category.id)" class="btn btn-danger">Delete</button>
+                    <button  (click)="categoryDetails(category.id)" class="btn btn-primary ml-2">View</button>
                 </td>
             </tr>
         </tbody>
@@ -33,4 +28,3 @@
 <ng-template #noData>
     <h4>No Course Found!</h4>
 </ng-template>
-

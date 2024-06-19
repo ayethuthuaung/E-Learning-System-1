@@ -6,11 +6,22 @@
       <form #categoryForm="ngForm" (ngSubmit)="onSubmit(categoryForm)" method="post">
         <div class="form-group">
           <label for="name">Name:</label>
-          <input type="text" class="form-control" id="name" name="name" [(ngModel)]="category.name" required>
-          <!-- Add required attribute to mark the field as required -->
+          <input type="text"
+                 class="form-control"
+                 id="name"
+                 name="name"
+                 [(ngModel)]="category.name"
+                 #name="ngModel"
+                 required  
+                 (input)="validateCategoryName(category.name)"/>
+          <div *ngIf="name.errors?.['required ']&& (name.dirty || name.touched)" class="text-danger">
+            Name is required.
+          </div>
+          <div *ngIf="nameDuplicateError" class="text-danger">
+            This category name already exists.
+          </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" [disabled]="nameDuplicateError">Submit</button>
       </form>
     </div>
   </div>
