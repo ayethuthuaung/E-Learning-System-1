@@ -1,23 +1,24 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
-
+import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-
-import { LoginComponent } from './components/auth/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
+
+import { AppComponent } from './app.component';
+import { HomeComponent } from './components/home/home.component';
+import { LoginComponent } from './components/auth/login/login.component';
+import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-  CourseComponent,
-  CategoryComponent,
+    HomeComponent,
     LoginComponent,
-        HomeComponent
+    ForgetPasswordComponent,
+    CourseComponent,
+    CategoryComponent
   ],
   imports: [
     BrowserModule,
@@ -26,9 +27,7 @@ import { CategoryComponent } from './components/category/category.component';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [
-    provideClientHydration()
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

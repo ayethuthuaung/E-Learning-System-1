@@ -97,4 +97,39 @@ public class UserService {
         return DtoUtil.mapList(userList, UserDto.class, modelMapper);
     }
 
+    public UserDto getUserByStaffId(String staff_id){
+      User user = userRepository.findUserByStaffId(staff_id);
+      if (user == null)
+        return null;
+      return DtoUtil.map(user,UserDto.class,modelMapper);
+    }
+
+  public UserDto getUserByEmail(String email) {
+    User user = userRepository.findUserByEmail(email);
+    return user != null ? new UserDto(user) : null;
+  }
+
+  public int updatePassword(String email, String newPassword) {
+    User user = userRepository.findUserByEmail(email);
+    if (user == null) {
+      return 0; // User not found
+    }
+    if (passwordEncoder.matches(newPassword, user.getPassword())) {
+      return 2; // New password is the same as the old password
+    }
+    user.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+    return 1; // Password updated successfully
+  }
+
+  public boolean checkPassword(String oldPassword, String inputPassword) {
+      if (oldPassword != inputPassword) {
+        return false;
+      } else
+      return true;
+  }
+
+
+
+
 }

@@ -11,7 +11,7 @@
              
                 <input type="text" name="staffId" [(ngModel)]="loginObj.staffId" placeholder="Staff ID">
                 <input type="password" name="password"   [(ngModel)]="loginObj.password" placeholder="Password">
-                <a href="#">→ Forget Your Password? ←</a>
+                <a [routerLink]="['/forget-password']">→ Forget Your Password? ←</a>
                 <button (click)="onLogin()">Sign In</button>
             </form>
         </div>
