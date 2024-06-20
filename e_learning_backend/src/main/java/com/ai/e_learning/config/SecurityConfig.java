@@ -61,8 +61,11 @@ public class SecurityConfig {
                         .requestMatchers("/assets/**", "/homeassets/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("admin")
                         //to test
-                        .requestMatchers("/user/**","/courses/**","/api/categories/**","/fileUpload/**","/ws/**").permitAll()
+
+                        .requestMatchers("/user/**","/courses/**","/categories/**","/fileUpload/**","/ws/**").permitAll()
                         .anyRequest().authenticated()
+
+
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedPage("/accessDenied")
