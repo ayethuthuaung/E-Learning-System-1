@@ -5,10 +5,9 @@ import { HomeComponent } from './components/home/home.component';
 import { AuthGuard } from './components/auth/auth.guard';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
-
+import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 import { BlogsComponent } from './components/home/blogs/blogs.component';
 import { ChatComponent } from './components/chat/chat.component';
-
 import { UpdateCourseComponent } from './components/update-course/update-course.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseListComponent } from './components/course-list/course-list.component';
@@ -18,6 +17,7 @@ import { CategoryListComponent } from './components/category-list/category-list.
 const routes: Routes = [
   {path:'', redirectTo:'/login',pathMatch:'full'},
    {path:'login', component: LoginComponent},
+   {path: 'forget-password', component: ForgetPasswordComponent },
    {path:'course', component: CourseComponent},
    {path:'category', component: CategoryComponent},
    { path: 'course/:courseId/update', component: UpdateCourseComponent},

@@ -1,9 +1,9 @@
 package com.ai.e_learning.dto;
 
 import com.ai.e_learning.model.Role;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+
+import com.ai.e_learning.model.User;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,6 +11,8 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class UserDto {
     private Long id;
@@ -29,4 +31,6 @@ public class UserDto {
     private Set<Role> roles;
     private List<Long> roleIdList;
 
+  public UserDto(User user) {
+  }
 }

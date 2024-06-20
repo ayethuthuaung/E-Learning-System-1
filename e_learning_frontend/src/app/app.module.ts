@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 
 import { LoginComponent } from './components/auth/login/login.component';
 import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { HomeComponent } from './components/home/home.component';
 import { HttpClientModule } from '@angular/common/http';
+import { HomeComponent } from './components/home/home.component';
+
+import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
@@ -42,7 +44,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
-const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
+
 
 import { UpdateCourseComponent } from './components/update-course/update-course.component';
 import { CourseListComponent } from './components/course-list/course-list.component';
@@ -50,17 +52,17 @@ import { CategoryListComponent } from './components/category-list/category-list.
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
 
-
+const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 
 @NgModule({
   declarations: [
     AppComponent,
-  CourseComponent,
-  CategoryComponent,
+    HomeComponent,
     LoginComponent,
-
-        HomeComponent,
+    ForgetPasswordComponent,
+    CourseComponent,
+    CategoryComponent,
         ChatComponent,
         HeroComponent,
     CoursesComponent,
@@ -96,26 +98,24 @@ import { CourseDetailsComponent } from './components/course-details/course-detai
     UpdateCategoryComponent,
         HomeComponent,
         CourseDetailsComponent,
-       
-        
-        
 
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    
-
-    
     ReactiveFormsModule,
     HttpClientModule,
     SocketIoModule.forRoot(config)
   ],
+
+
+
   providers: [
     provideClientHydration(),
     WebSocketService
   ],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }
