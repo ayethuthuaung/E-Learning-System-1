@@ -12,11 +12,11 @@ export class CourseService {
   constructor(private http: HttpClient) {}
 
   getAllCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseUrl}/courselist`);
+    return this.http.get<Course[]>(`${this.baseUrl}`);
   }
 
   getCourseList(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseUrl}/courselist`);
+    return this.http.get<Course[]>(`${this.baseUrl}`);
   }
 
   getCourseById(id: number): Observable<Course> {
@@ -24,15 +24,15 @@ export class CourseService {
   }
 
   addCourseWithFormData(formData: FormData): Observable<Course> {
-    return this.http.post<Course>(`${this.baseUrl}/addcourse`, formData);
+    return this.http.post<Course>(`${this.baseUrl}`, formData);
   }
 
-  updateCourse(id: number, formData: FormData): Observable<Course> {
-    return this.http.put<Course>(`${this.baseUrl}/updatecourse/${id}`, formData);
+  updateCourse(id: number, course: Course): Observable<Object> {
+    return this.http.put(`${this.baseUrl}/${id}`, course);
   }
 
   softDeleteCourse(id: number): Observable<Object> {
-    return this.http.delete(`${this.baseUrl}/delete/${id}`);
+    return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
   getCoursesByCategory(categoryId: number): Observable<Course[]> {

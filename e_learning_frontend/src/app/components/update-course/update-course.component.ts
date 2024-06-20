@@ -16,6 +16,7 @@ export class UpdateCourseComponent implements OnInit {
   course: Course = new Course();
   selectedCategories: Category[] = [];
   allCategories: Category[] = [];
+  selectedCategoryIds: number[] = [];
   nameDuplicateError: boolean = false;
   photoFile: File | null = null;
 
@@ -98,26 +99,22 @@ export class UpdateCourseComponent implements OnInit {
 
   onSubmit(form: NgForm): void {
     if (form.valid && !this.nameDuplicateError) {
-      const courseId = this.course.id ?? 0; 
-      this.course.categories = this.selectedCategories;
+      this.course.categories = this.allCategories.filter(category => this.selectedCategoryIds.includes(category.id));
 
-      const formData = new FormData();
-      formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
-      if (this.photoFile) {
-        formData.append('photo', this.photoFile);
-      }
-
-      this.courseService.updateCourse(courseId, formData).subscribe({
+      this.courseService.updateCourse(this.course.id, this.course).subscribe({
         next: (data) => {
-          console.log('Course updated successfully:', data);
-          this.router.navigate(['/courses']); 
+          console.log('Category updated successfully:', data);
+         
+          this.router.navigate(['/courses']);
         },
         error: (error) => {
           console.error('Error updating course:', error);
+          
         }
       });
     } else {
       console.log('Form is invalid or course name is duplicate');
+      
     }
   }
 }

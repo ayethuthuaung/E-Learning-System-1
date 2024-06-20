@@ -15,6 +15,10 @@ import { CourseListComponent } from './components/course-list/course-list.compon
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { UserComponent } from './components/user/user.component';
+import { StudentComponent } from './components/student/student.component';
+import { AdminComponent } from './components/admin/admin.component';
+
 
 
 
@@ -30,6 +34,10 @@ import { CourseDetailsComponent } from './components/course-details/course-detai
     UpdateCategoryComponent,
         HomeComponent,
         CourseDetailsComponent,
+        UserComponent,
+        StudentComponent,
+        AdminComponent,
+       
        
         
         

@@ -24,13 +24,13 @@ public class CourseController {
   @Autowired
   private CourseService courseService;
 
-  @GetMapping(value = "/courselist", produces = "application/json")
+  @GetMapping(value = "", produces = "application/json")
   public List<CourseDto> displayCourse(ModelMap model) {
     return courseService.getAllCourses()                                                                  ;
 
   }
 
-  @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
+  @PostMapping(value = "", produces = "application/json", consumes = "multipart/form-data")
   public ResponseEntity<CourseDto> addCourse(
     @RequestPart("course") CourseDto courseDto,
     @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException {
@@ -60,7 +60,7 @@ public class CourseController {
     }
   }
 
-  @PutMapping(value = "/updatecourse/{id}", produces = "application/json")
+  @PutMapping(value = "/{id}", produces = "application/json")
   public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
     handlePhotoConversion(courseDto);
     CourseDto updatedCourse = courseService.updateCourse(id, courseDto);
@@ -72,7 +72,7 @@ public class CourseController {
     return ResponseEntity.ok(updatedCourse);
   }
 
-  @DeleteMapping(value = "/delete/{id}")
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> softDeleteCourse(@PathVariable Long id) {
     courseService.softDeleteCourse(id);
     return ResponseEntity.noContent().build();
