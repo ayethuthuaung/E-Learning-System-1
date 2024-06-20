@@ -61,9 +61,9 @@ public class UserController {
 
     UserDto updatedUser = userService.updateUser(id, userDto);
 
-    if (updatedUser == null) {git
+    if (updatedUser == null) {
 
-            
+
       return ResponseEntity.notFound().build();
     }
 
