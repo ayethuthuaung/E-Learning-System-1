@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 public class CategoryController {
   @Autowired
   private CategoryService categoryService;
@@ -34,6 +34,15 @@ public class CategoryController {
 
     return categoryService.saveCategory(dto);
   }
+  @GetMapping(value = "/{id}", produces = "application/json")
+  public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
+    CategoryDto categoryDto = categoryService.getCategoryById(id);
+    if (categoryDto!=null){
+      return ResponseEntity.ok(categoryDto);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
 
   @PutMapping(value = "/update/{id}", produces = "application/json")
   public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto category) {
@@ -49,6 +58,10 @@ public class CategoryController {
       categoryService.softDeleteCategory(id);
       return ResponseEntity.noContent().build();
     }
+  @GetMapping("/existsByName")
+  public boolean isCategoryNameAlreadyExists(@RequestParam String name) {
+    return categoryService.isCategoryNameAlreadyExists(name);
+  }
   }
 
 
