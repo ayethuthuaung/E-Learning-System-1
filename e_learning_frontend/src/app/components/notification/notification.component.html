@@ -1,0 +1,10 @@
+<!-- src/app/components/notification/notification.component.html -->
+<div>
+    <h2>Notifications</h2>
+    <ul>
+      <li *ngFor="let notification of notifications">{{ notification }}</li>
+    </ul>
+    <input #notificationInput type="text" placeholder="Enter notification message">
+    <button (click)="sendNotification(notificationInput.value)">Send Notification</button>
+  </div>
+  

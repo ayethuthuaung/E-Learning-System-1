@@ -6,6 +6,7 @@ import { AuthGuard } from './components/auth/auth.guard';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/login',pathMatch:'full'},
@@ -13,7 +14,8 @@ const routes: Routes = [
    {path:'course', component: CourseComponent},
    {path:'category', component: CategoryComponent},
    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-   {path:'chat', component: ChatComponent},
+   { path: 'chat/:senderId', component: ChatComponent },
+   { path: 'noti', component: NotificationComponent }
 ];
 
 

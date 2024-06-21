@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -12,4 +14,8 @@ export class UserService {
   uploadUserData(uploadData: FormData) {
     return this.httpClient.post(`${this.baseURL}/upload-user-data`, uploadData);
   }
+  getUserConversations(userId: number): Observable<User[]> {
+    return this.httpClient.get<User[]>(`${this.baseURL}/showData`);
+}
+ 
 }

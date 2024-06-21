@@ -1,10 +1,13 @@
 package com.ai.e_learning.dto;
 
 import com.ai.e_learning.model.Role;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Set;
-
+@Getter
+@Setter
 public class UserDto {
     private Long id;
     private String staffId;

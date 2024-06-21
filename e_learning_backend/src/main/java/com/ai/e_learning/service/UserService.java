@@ -97,4 +97,9 @@ public class UserService {
         return DtoUtil.mapList(userList, UserDto.class, modelMapper);
     }
 
+    public UserDto getCurrentUser(String staffId) {
+        User user=userRepository.findUserByStaffId(staffId);
+        return DtoUtil.map(user,UserDto.class,modelMapper);
+
+    }
 }

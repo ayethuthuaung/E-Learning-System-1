@@ -1,6 +1,8 @@
 <div class="chat-container">
   <div class="chat-window">
-    <div *ngFor="let message of messages" [ngClass]="{'sent': message.senderId === 1, 'received': message.senderId !== 1}"  class="chat-message">
+    <div *ngFor="let message of messages" class="chat-message"
+    [ngClass]="{'left': message.message_side === 'receiver', 'right': message.message_side === 'sender'}"
+    >
       {{ message.content }}
     </div>
   </div>

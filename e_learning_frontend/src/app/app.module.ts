@@ -13,6 +13,7 @@ import { CategoryComponent } from './components/category/category.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
+import { NotificationComponent } from './components/notification/notification.component';
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
   CategoryComponent,
     LoginComponent,
         HomeComponent,
-        ChatComponent
+        ChatComponent,
+        NotificationComponent
   ],
   imports: [
     BrowserModule,

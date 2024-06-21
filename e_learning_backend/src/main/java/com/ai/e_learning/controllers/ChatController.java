@@ -1,5 +1,6 @@
 package com.ai.e_learning.controllers;
 
+import com.ai.e_learning.model.ChatRoom;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -20,15 +21,17 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @PostMapping("/create-room")
-    public ResponseEntity<?> createChatRoom(@RequestBody String name) {
-        // Logic to create a chat room
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/create-rooms")
+//    public ResponseEntity<List<ChatRoom>> createChatRooms() {
+//        List<ChatRoom> createdChatRooms = chatService.createChatRooms();
+//        return ResponseEntity.ok(createdChatRooms);
+//    }
 
     @GetMapping("/history/{chatRoomId}")
     public ResponseEntity<List<Message>> getChatHistory(@PathVariable Long chatRoomId) {
-        // Logic to retrieve chat history
+        if (chatRoomId == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
         List<Message> history = chatService.getChatHistory(chatRoomId);
         return ResponseEntity.ok(history);
     }

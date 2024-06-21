@@ -1,34 +1,18 @@
 package com.ai.e_learning.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
 public class ChatMessage {
     private Long chatRoomId;
     private Long senderId;
-
-    public Long getChatRoomId() {
-        return chatRoomId;
-    }
-
-    public void setChatRoomId(Long chatRoomId) {
-        this.chatRoomId = chatRoomId;
-    }
-
-    public Long getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(Long senderId) {
-        this.senderId = senderId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     private String content;
+    private  String message_side;
+    private String sessionId;
 
     // Getters and setters
 }
