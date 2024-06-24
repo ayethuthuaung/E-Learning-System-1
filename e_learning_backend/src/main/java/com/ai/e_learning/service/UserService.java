@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public interface UserService {
     void updateExcel(MultipartFile file);
     List<UserDto> getUsers();
@@ -26,4 +25,8 @@ public interface UserService {
     UserDto getUserById(Long id);
     UserDto updateUser(Long id, UserDto userDto);
     void softDeleteUser(Long id);
+    UserDto getUserByStaffId(String staff_id);
+  UserDto getUserByEmail(String email);
+  int updatePassword(String email, String newPassword);
+  boolean checkPassword(String oldPassword, String inputPassword);
 }

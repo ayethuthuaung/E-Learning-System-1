@@ -47,15 +47,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filter(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+
                 .cors(Customizer.withDefaults())
-//                .cors(cors -> cors.configurationSource(request -> {
-//                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-//                    corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));
-//                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//                    corsConfig.setAllowedHeaders(List.of("*"));
-//                    corsConfig.setAllowCredentials(true);
-//                    return corsConfig;
-//                }))
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));
+                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
+                    return corsConfig;
+                }))
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/user/register").permitAll()
                         .requestMatchers("/assets/**", "/homeassets/**").permitAll()
