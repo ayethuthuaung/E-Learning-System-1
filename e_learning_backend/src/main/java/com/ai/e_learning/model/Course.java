@@ -24,14 +24,15 @@ public class Course  {
   private  String level;
   @Column(nullable = false, length = 50)
   private String duration;
-  @Column(nullable = false, length = 30)
+
+  @Column(nullable = false, length = 100)
   private String description;
   private String createdAt;
   @Column(nullable = false, length = 30)
   private String certificate;
   @Column(nullable = false, length = 30)
   private String badge;
-  private byte[] photo;
+  private String photo;
   private boolean isDeleted;
 
  @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)

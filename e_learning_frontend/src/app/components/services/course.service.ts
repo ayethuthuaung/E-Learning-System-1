@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Course } from '../models/course.model';
 
@@ -21,6 +21,10 @@ export class CourseService {
 
   getCourseById(id: number): Observable<Course> {
     return this.http.get<Course>(`${this.baseUrl}/${id}`);
+  }
+
+  addCourse(course: Course): Observable<Course> {
+    return this.http.post<Course>(`${this.baseUrl}`, course);
   }
 
   addCourseWithFormData(formData: FormData): Observable<Course> {
@@ -47,14 +51,5 @@ export class CourseService {
     return this.http.get<boolean>(`${this.baseUrl}/existsByName`, {
       params: { name }
     });
-  }
-
-  private createFormData(course: Course): FormData {
-    const formData = new FormData();
-    formData.append('course', new Blob([JSON.stringify(course)], { type: 'application/json' }));
-    if (course.photoFile) {
-      formData.append('photo', course.photoFile, course.photoFile.name);
-    }
-    return formData;
   }
 }

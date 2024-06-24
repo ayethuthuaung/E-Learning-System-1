@@ -1,0 +1,82 @@
+/* student-profile.component.css */
+.bg-gradient-to-r {
+    background: linear-gradient(to right, #ebf8ff, #ebf4ff);
+  }
+  
+  .bg-indigo-100 {
+    background-color: #e0e7ff;
+  }
+  
+  .text-indigo-700 {
+    color: #4c51bf;
+  }
+  
+  .text-indigo-600 {
+    color: #5a67d8;
+  }
+  
+  .bg-indigo-500 {
+    background-color: #667eea;
+  }
+  
+  .bg-indigo-600 {
+    background-color: #5a67d8;
+  }
+  
+  .rounded-full {
+    border-radius: 9999px;
+  }
+  
+  .transition {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .shadow-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .hover\:shadow-lg:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+  
+  .relative.pt-1 {
+    position: relative;
+    padding-top: 0.25rem;
+  }
+  
+  .text-base {
+    font-size: 1rem;
+  }
+  
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .p-4 {
+    padding: 1rem;
+  }
+  
+  .p-6 {
+    padding: 1.5rem;
+  }
+  
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 1rem;
+  }
+  
+  .space-x-4 > * + * {
+    margin-left: 1rem;
+  }
+  

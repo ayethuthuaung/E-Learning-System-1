@@ -51,28 +51,22 @@ export class CourseComponent implements OnInit {
   }
 
   saveCourse(): void {
-    const formData = new FormData();
-    formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
-    if (this.course.photoFile) {
-      formData.append('photo', this.course.photoFile, this.course.photoFile.name);
-    }
-
-    this.courseService.addCourseWithFormData(formData).subscribe(
-      (data) => {
+    this.course.categorylist = this.categoryList; 
+    this.courseService.addCourse(this.course).subscribe({
+      next: (data) => {
         console.log('Course created successfully:', data);
-        this.router.navigate(['/courses']);
+        this.goToCourseList();
       },
-      (error) => {
+      error: (error) => {
         console.error('Error creating course:', error);
+        if (error.error instanceof ErrorEvent) {
+          console.error('Client-side error occurred:', error.error.message);
+        } else {
+          console.error(`Server-side error occurred. Status: ${error.status}, Message: ${error.error}`);
+        }
+        
       }
-    );
-  }
-
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.course.photoFile = file;
-    }
+    });
   }
 
   goToCourseList(): void {
@@ -80,12 +74,12 @@ export class CourseComponent implements OnInit {
   }
 
   onSubmit(form: NgForm): void {
-    if (form.valid) {
-      this.submitted = false;
-      this.saveCourse();
-    } else {
+    if (form.valid && !this.nameDuplicateError) { 
       this.submitted = true;
-      console.log('invalid form');
+      this.saveCourse(); 
+    } else {
+      this.submitted = false;
+      console.log('Invalid form or duplicate name error.');
     }
   }
 
@@ -108,22 +102,5 @@ export class CourseComponent implements OnInit {
   console.log(this.course);
 
   }
-    // saveCourse(): void {
-  //   this.course.categorylist = this.categoryList; 
-  //   this.courseService.addCourse(this.course).subscribe({
-  //     next: (data) => {
-  //       console.log('Course created successfully:', data);
-  //       this.goToCourseList();
-  //     },
-  //     error: (error) => {
-  //       console.error('Error creating course:', error);
-  //       if (error.error instanceof ErrorEvent) {
-  //         console.error('Client-side error occurred:', error.error.message);
-  //       } else {
-  //         console.error(`Server-side error occurred. Status: ${error.status}, Message: ${error.error}`);
-  //       }
-  //       // Optionally, handle the error more gracefully (e.g., show error message to user)
-  //     }
-  //   });
-  // }
+    
 }

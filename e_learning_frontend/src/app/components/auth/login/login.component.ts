@@ -17,9 +17,13 @@ export class LoginComponent {
     this.authService.login(this.loginObj).subscribe(
       response => {
         console.log('Response:', response);
-        alert('Login Success');
-        localStorage.setItem('loggedUser', JSON.stringify(response));
-        this.router.navigateByUrl('/home');
+        if (response && response.currentUser) {
+          alert('Login Success');
+          localStorage.setItem('loggedUser', JSON.stringify(response.currentUser));
+          this.router.navigateByUrl('/home');
+        } else {
+          alert('Login Failed: Invalid response structure');
+        }
       },
       error => {
         console.error('Error:', error);
@@ -27,6 +31,7 @@ export class LoginComponent {
       }
     );
   }
+
 }
 
 export class LoginModel {
@@ -36,17 +41,5 @@ export class LoginModel {
   constructor() {
     this.staffId = "";
     this.password = ""
-  }
-}
-
-export class SignUpModel  {
-  name: string;
-  staffId: string;
-  password: string;
-
-  constructor() {
-    this.staffId = "";
-    this.name = "";
-    this.password= ""
   }
 }

@@ -1,0 +1,30 @@
+/* course-details.component.css */
+
+.course-details-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: lightblue; /* Light gray background */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  }
+  
+  .category-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .category-list li {
+    display: inline-block;
+    background-color: #4caf50; /* Green background */
+    color: #fff; /* White text */
+    padding: 8px 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  

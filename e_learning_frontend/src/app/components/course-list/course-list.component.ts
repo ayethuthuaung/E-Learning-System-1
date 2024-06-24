@@ -30,7 +30,7 @@ export class CourseListComponent implements OnInit {
   }
 
   courseDetails(id: number): void {
-    this.router.navigate(['course-details', id]);
+    this.router.navigate(['course', id]);
   }
 
   updateCourse(id: number): void {
@@ -46,7 +46,5 @@ export class CourseListComponent implements OnInit {
     });
   }
 
-  getPhotoUrl(photoUrl: string): string {
-    return photoUrl ? photoUrl : 'assets/default-photo.jpg'; // Default photo if none provided
-  }
+ 
 }

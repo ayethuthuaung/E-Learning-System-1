@@ -1,30 +1,31 @@
 <ng-template [ngIf]="check" [ngIfElse]="noData">
-    <div class="row">
-        <h2>Course List</h2>
-    </div>
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Category ID</th>
-                <th>Category Name</th>
-               
-                <th>Actions</th>
-            </tr>
+    <div class="container mx-auto mt-8">
+      <h2 class="text-2xl mb-4">Category List</h2>
+      <table class="min-w-full bg-white border-gray-200 shadow-md rounded-lg overflow-hidden">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="px-6 py-3 border-b border-gray-300 text-left text-sm font-semibold text-gray-700">Category ID</th>
+            <th class="px-6 py-3 border-b border-gray-300 text-left text-sm font-semibold text-gray-700">Category Name</th>
+            <th class="px-6 py-3 border-b border-gray-300 text-left text-sm font-semibold text-gray-700">Actions</th>
+          </tr>
         </thead>
-        <tbody>
-            <tr *ngFor="let category of categories">
-                <td>{{ category.id }}</td>
-                <td>{{ category.name }}</td>
-                
-                <td>
-                    <button  (click)="updateCategory(category.id)" class="btn btn-primary">Update</button>
-                    <button (click)="softDeleteCategory(category.id)" class="btn btn-danger">Delete</button>
-                    <button  (click)="categoryDetails(category.id)" class="btn btn-primary ml-2">View</button>
-                </td>
-            </tr>
+        <tbody class="divide-y divide-gray-200">
+          <tr *ngFor="let category of categories">
+            <td class="px-6 py-4 whitespace-nowrap">{{ category.id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ category.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <button (click)="updateCategory(category.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update</button>
+              <button (click)="softDeleteCategory(category.id)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2 focus:outline-none focus:shadow-outline">Delete</button>
+             
+            </td>
+          </tr>
         </tbody>
-    </table>
-</ng-template>
-<ng-template #noData>
-    <h4>No Course Found!</h4>
-</ng-template>
+      </table>
+    </div>
+  </ng-template>
+  <ng-template #noData>
+    <div class="container mx-auto mt-8">
+      <h4 class="text-xl">No Category Found!</h4>
+    </div>
+  </ng-template>
+  

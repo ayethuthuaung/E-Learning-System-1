@@ -14,9 +14,8 @@ import { NgForm } from '@angular/forms';
 export class UpdateCourseComponent implements OnInit {
 
   course: Course = new Course();
-  selectedCategories: Category[] = [];
-  allCategories: Category[] = [];
   selectedCategoryIds: number[] = [];
+  allCategories: Category[] = [];
   nameDuplicateError: boolean = false;
   photoFile: File | null = null;
 
@@ -38,7 +37,7 @@ export class UpdateCourseComponent implements OnInit {
       this.courseService.getCourseById(courseId).subscribe({
         next: (course) => {
           this.course = course;
-          this.selectedCategories = course.categories;
+          this.selectedCategoryIds = course.categories.map(category => category.id);
         },
         error: (error) => {
           console.error('Error fetching course details:', error);
@@ -62,19 +61,19 @@ export class UpdateCourseComponent implements OnInit {
     });
   }
 
-  onCategoryChange(event: any, category: Category): void {
+  onCategoryChange(event: any, categoryId: number): void {
     if (event.target.checked) {
-      this.selectedCategories.push(category);
+      this.selectedCategoryIds.push(categoryId);
     } else {
-      const index = this.selectedCategories.findIndex(c => c.id === category.id);
+      const index = this.selectedCategoryIds.indexOf(categoryId);
       if (index !== -1) {
-        this.selectedCategories.splice(index, 1);
+        this.selectedCategoryIds.splice(index, 1);
       }
     }
   }
 
-  isCategorySelected(category: Category): boolean {
-    return this.selectedCategories.some(c => c.id === category.id);
+  isChecked(categoryId: number): boolean {
+    return this.selectedCategoryIds.includes(categoryId);
   }
 
   checkDuplicateCourseName(): void {
@@ -90,12 +89,7 @@ export class UpdateCourseComponent implements OnInit {
     }
   }
 
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.photoFile = file;
-    }
-  }
+ 
 
   onSubmit(form: NgForm): void {
     if (form.valid && !this.nameDuplicateError) {
@@ -103,18 +97,16 @@ export class UpdateCourseComponent implements OnInit {
 
       this.courseService.updateCourse(this.course.id, this.course).subscribe({
         next: (data) => {
-          console.log('Category updated successfully:', data);
-         
+          console.log('Course updated successfully:', data);
           this.router.navigate(['/courses']);
         },
         error: (error) => {
           console.error('Error updating course:', error);
-          
         }
       });
     } else {
       console.log('Form is invalid or course name is duplicate');
-      
     }
   }
+
 }

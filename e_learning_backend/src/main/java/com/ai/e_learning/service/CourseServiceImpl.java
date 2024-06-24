@@ -51,12 +51,6 @@ public class CourseServiceImpl implements CourseService {
 
     Course savedCourse = courseRepository.save(course);
 
-    // Handle photo conversion
-    if (courseDto.getPhoto() != null) {
-      byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-      savedCourse.setPhoto(photoBytes);
-    }
-
     return convertToDto(savedCourse);
   }
 
@@ -73,13 +67,6 @@ public class CourseServiceImpl implements CourseService {
       .map(existingCourse -> {
         courseDto.setId(existingCourse.getId());
         modelMapper.map(courseDto, existingCourse);
-
-        // Handle photo conversion
-        if (courseDto.getPhoto() != null) {
-          byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-          existingCourse.setPhoto(photoBytes);
-        }
-
         Course updatedCourse = courseRepository.save(existingCourse);
         return convertToDto(updatedCourse);
       })
@@ -124,23 +111,11 @@ public class CourseServiceImpl implements CourseService {
   private Course convertToEntity(CourseDto dto) {
     Course course = modelMapper.map(dto, Course.class);
 
-    // Handle photo conversion
-    if (dto.getPhoto() != null) {
-      byte[] photoBytes = ProfileImageService.convertStringToByteArray(dto.getPhoto());
-      course.setPhoto(photoBytes);
-    }
-
     return course;
   }
 
   private CourseDto convertToDto(Course course) {
     CourseDto courseDto = modelMapper.map(course, CourseDto.class);
-
-    // Handle photo conversion
-    if (course.getPhoto() != null) {
-      String base64Photo = ProfileImageService.generateStringOfImage(course.getPhoto());
-      courseDto.setPhoto(base64Photo);
-    }
 
     return courseDto;
   }

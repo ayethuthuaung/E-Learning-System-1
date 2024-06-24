@@ -1,92 +1,81 @@
-<div class="row">
-  <div class="card col-md-6 offset-md-3">
-    <div class="card-body">
-      <h3 class="text-center">Create Course</h3>
-      <hr>
-      <form #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="name"
-            name="name"
-            [(ngModel)]="course.name"
-            required
-            (input)="validateCourseName(course.name)"
-          />
-          <div *ngIf="nameDuplicateError" class="text-danger">
-            Course name already exists.
-          </div>
-        </div>
 
-        <div class="form-group">
-          <label for="level">Level:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="level"
-            name="level"
-            [(ngModel)]="course.level"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="duration">Duration:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="duration"
-            name="duration"
-            [(ngModel)]="course.duration"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="description">Description:</label>
-          <textarea
-            class="form-control"
-            id="description"
-            name="description"
-            [(ngModel)]="course.description"
-            required
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>Categories:</label><br />
-          <div class="row">
-            <div *ngFor="let category of categories" class="col-md-4">
-              <label class="checkbox-inline">
-                <input
-                  type="checkbox"
-                  [id]="category.id"
-                  [name]="'categories' + category.id"
-                  (change)="toggleCategories($event, category)"
-                  [checked]="categoryList.includes(category.id)"
-                  [value]="category"
-                />
-                {{ category.name }}
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="photo">Photo:</label>
-          <input
-            type="file"
-            class="form-control-file"
-            id="photo"
-            name="photo"
-            (change)="onFileChange($event)"
-          />
-        </div>
-
-        <button type="submit" class="btn btn-primary" [disabled]="nameDuplicateError">Submit</button>
-      </form>
+<div class="flex justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-lg">
+    <div class="mb-6 text-center">
+      <h3 class="text-2xl font-semibold">Create Course</h3>
     </div>
+    <hr class="mb-6">
+    <form #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
+      <div class="mb-4">
+        <label for="name" class="block text-gray-700">Name:</label>
+        <input
+          type="text"
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+          id="name"
+          name="name"
+          [(ngModel)]="course.name"
+          required
+          (input)="validateCourseName(course.name)"
+        />
+        <div *ngIf="nameDuplicateError" class="text-red-500 mt-1">
+          Course name already exists.
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="level" class="block text-gray-700">Level:</label>
+        <input
+          type="text"
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+          id="level"
+          name="level"
+          [(ngModel)]="course.level"
+          required
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="duration" class="block text-gray-700">Duration:</label>
+        <input
+          type="text"
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+          id="duration"
+          name="duration"
+          [(ngModel)]="course.duration"
+          required
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="description" class="block text-gray-700">Description:</label>
+        <textarea
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+          id="description"
+          name="description"
+          [(ngModel)]="course.description"
+          required
+        ></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700">Categories:</label>
+        <div class="flex flex-wrap -m-2 mt-2">
+          <div *ngFor="let category of categories" class="flex items-center m-2">
+            <input
+              type="checkbox"
+              [id]="category.id"
+              [name]="'categories' + category.id"
+              (change)="toggleCategories($event, category)"
+              [checked]="categoryList.includes(category.id)"
+              [value]="category"
+              class="mr-2"
+            />
+            <label [for]="category.id" class="text-gray-700">{{ category.name }}</label>
+          </div>
+        </div>
+      </div>
+      
+      <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600" [disabled]="nameDuplicateError || courseForm.invalid">Submit</button>
+    </form>
   </div>
 </div>

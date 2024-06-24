@@ -1,38 +1,37 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="text-center">Update Category</h3>
-          <hr>
-          <form #categoryForm="ngForm" (ngSubmit)="onSubmit(categoryForm)">
-            <!-- ID Field (hidden) -->
-            <input type="hidden" id="id" name="id" [(ngModel)]="category.id">
-            
-            <!-- Name Field -->
-            <div class="form-group">
-              <label for="categoryName">Category Name</label>
-              <input type="text"
-                     class="form-control"
-                     id="categoryName"
-                     [(ngModel)]="category.name"
-                     name="categoryName"
-                     required
-                     (input)="checkDuplicateCategoryName()">
-              <div *ngIf="categoryForm.controls['categoryName']?.errors?.['required'] && (categoryForm.controls['categoryName'].dirty || categoryForm.controls['categoryName'].touched)" class="text-danger">
-                Category Name is required.
-              </div>
-              <div *ngIf="nameDuplicateError" class="text-danger">
-                This category name already exists.
-              </div>
-            </div>
-
-           
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary" [disabled]="categoryForm.invalid || nameDuplicateError">Update Category</button>
-          </form>
-        </div>
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-md">
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <div class="mb-4 text-center">
+        <h3 class="text-2xl font-semibold">Update Category</h3>
+        <hr class="my-4">
       </div>
+      <form #categoryForm="ngForm" (ngSubmit)="onSubmit(categoryForm)">
+        <!-- ID Field (hidden) -->
+        <input type="hidden" id="id" name="id" [(ngModel)]="category.id">
+        
+        <!-- Name Field -->
+        <div class="mb-4">
+          <label for="categoryName" class="block text-gray-700">Category Name</label>
+          <input type="text"
+                 class="form-control mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                 id="categoryName"
+                 [(ngModel)]="category.name"
+                 name="categoryName"
+                 required
+                 (input)="checkDuplicateCategoryName()">
+          <div *ngIf="categoryForm.controls['categoryName']?.errors?.['required'] && (categoryForm.controls['categoryName'].dirty || categoryForm.controls['categoryName'].touched)" class="text-red-600 mt-2">
+            Category Name is required.
+          </div>
+          <div *ngIf="nameDuplicateError" class="text-red-600 mt-2">
+            This category name already exists.
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary bg-indigo-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-600" [disabled]="categoryForm.invalid || nameDuplicateError">Update Category</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

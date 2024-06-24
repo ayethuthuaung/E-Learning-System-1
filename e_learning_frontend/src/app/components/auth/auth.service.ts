@@ -11,9 +11,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(loginModel: LoginModel): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${this.apiUrl}/login`, loginModel, { headers, responseType: 'text' as 'json' });
+  login(loginObj: LoginModel): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, loginObj);
   }
 
   logout(): void {
