@@ -51,6 +51,13 @@ import { CourseListComponent } from './components/course-list/course-list.compon
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { InstructorComponent } from './components/instructor/instructor.component';
+import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';
+import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
+import { InstructorCourseComponent } from './components/instructor/instructor-course/instructor-course.component';
+import { InstructorNavbarComponent } from './components/instructor/instructor-navbar/instructor-navbar.component';
+import { InstructorSidebarComponent } from './components/instructor/instructor-sidebar/instructor-sidebar.component';
+import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -91,13 +98,23 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     VideoPopupComponent,
     NavbarComponent,
     HomeComponent,
-
     UpdateCourseComponent,
     CourseListComponent,
     CategoryListComponent,
     UpdateCategoryComponent,
-        HomeComponent,
-        CourseDetailsComponent,
+    HomeComponent,
+    CourseDetailsComponent,
+    InstructorComponent,
+    NavProfileComponent,
+    // instructor
+   
+    InstructorDashboardComponent,
+    InstructorCourseComponent,
+    InstructorNavbarComponent,
+    InstructorSidebarComponent,
+    InstructorCategoryComponent,
+  
+    // instructor
 
   ],
   imports: [
@@ -106,6 +123,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    
     SocketIoModule.forRoot(config)
   ],
 

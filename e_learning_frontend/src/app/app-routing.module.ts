@@ -12,6 +12,10 @@ import { UpdateCourseComponent } from './components/update-course/update-course.
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseListComponent } from './components/course-list/course-list.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
+import { InstructorProfileComponent } from './components/instructor/instructor-profile/instructor-profile.component';
+import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
+import { InstructorCourseComponent } from './components/instructor/instructor-course/instructor-course.component';
+import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
 
 
 const routes: Routes = [
@@ -29,6 +33,12 @@ const routes: Routes = [
    {path:'blog', component: BlogsComponent},
 
    {path:'chat', component: ChatComponent},
+
+   {path:'instructor/profile', component: InstructorProfileComponent},
+   {path:'instructor/dashboard', component: InstructorDashboardComponent},
+   {path:'instructor/course', component: InstructorCourseComponent},
+   {path:'instructor/category', component: InstructorCategoryComponent},
+
 ];
 
 

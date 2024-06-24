@@ -1,0 +1,68 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
+  <div class="flex flex-1">
+    <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
+
+    <main class="flex-1 p-6">
+      <section>
+        <h2 class="text-2xl font-semibold mb-4">My task</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-purple-200 p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold">Landing page product</h3>
+            <p>7 members</p>
+            <p>88 tasks</p>
+            <p>+9.5%</p>
+          </div>
+          <div class="bg-red-200 p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold">Apartment app</h3>
+            <p>7 members</p>
+            <p>38 tasks</p>
+            <p>+4.5%</p>
+          </div>
+          <div class="bg-green-200 p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold">Learning app</h3>
+            <p>7 members</p>
+            <p>56 tasks</p>
+            <p>+1.5%</p>
+          </div>
+        </div>
+      </section>
+      <section class="mt-6">
+        <h2 class="text-2xl font-semibold mb-4">My progress</h2>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold">Statistic</h3>
+            <div>
+              <button class="bg-purple-600 text-white px-4 py-2 rounded-lg">Day</button>
+              <button class="ml-2 bg-gray-200 px-4 py-2 rounded-lg">Week</button>
+              <button class="ml-2 bg-gray-200 px-4 py-2 rounded-lg">Month</button>
+            </div>
+          </div>
+          <div>
+            <!-- Add Chart.js or any other chart library for the graph -->
+          </div>
+        </div>
+      </section>
+      <section class="mt-6">
+        <h2 class="text-2xl font-semibold mb-4">Best teacher</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold">Mrs. Roses</h3>
+            <p>Prototyping</p>
+            <p>Rating: 4.9</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold">Mrs. Angel</h3>
+            <p>UI Interaction</p>
+            <p>Rating: 4.7</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="text-lg font-semibold">Mr. Richard</h3>
+            <p>Website design</p>
+            <p>Rating: 4.5</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
