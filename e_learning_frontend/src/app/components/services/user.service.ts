@@ -1,16 +1,24 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private baseURL = "http://localhost:8080/user";
+  private baseURL = 'http://localhost:8080/user';
 
   constructor(private httpClient: HttpClient) { }
 
-  uploadUserData(uploadData: FormData) {
-    return this.httpClient.post(`${this.baseURL}/upload-user-data`, uploadData);
+  uploadUserData(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file, file.name);
+
+    return this.httpClient.post(`${this.baseURL}/upload-user-data`, formData, {
+      headers: new HttpHeaders({
+        'enctype': 'multipart/form-data'
+      })
+    });
   }
 
   updateProfile(file: File, userId: number) {

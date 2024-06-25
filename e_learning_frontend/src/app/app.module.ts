@@ -59,6 +59,8 @@ import { InstructorNavbarComponent } from './components/instructor/instructor-na
 import { InstructorSidebarComponent } from './components/instructor/instructor-sidebar/instructor-sidebar.component';
 import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
 
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 
@@ -115,6 +117,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     InstructorCategoryComponent,
   
     // instructor
+
+        HomeComponent,
+        CourseDetailsComponent,
+        UserUploadComponent,
 
   ],
   imports: [

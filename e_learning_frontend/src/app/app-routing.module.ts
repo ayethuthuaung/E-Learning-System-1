@@ -12,10 +12,13 @@ import { UpdateCourseComponent } from './components/update-course/update-course.
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseListComponent } from './components/course-list/course-list.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
+ 
 import { InstructorProfileComponent } from './components/instructor/instructor-profile/instructor-profile.component';
 import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
 import { InstructorCourseComponent } from './components/instructor/instructor-course/instructor-course.component';
 import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
 
 
 const routes: Routes = [
@@ -39,6 +42,8 @@ const routes: Routes = [
    {path:'instructor/course', component: InstructorCourseComponent},
    {path:'instructor/category', component: InstructorCategoryComponent},
 
+
+   { path: 'user/upload-user-data', component: UserUploadComponent },
 ];
 
 

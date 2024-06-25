@@ -55,7 +55,7 @@ export class ForgetPasswordComponent {
           console.log('OTP matched successfully', response);
           this.otpMatched = true;
           this.errorMessage = '';
-          this.successMessage = 'OTP matched successfully. You can now reset your password.';
+          this.successMessage = '';
         }
       },
       error => {

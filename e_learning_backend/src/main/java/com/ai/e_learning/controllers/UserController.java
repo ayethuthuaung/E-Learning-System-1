@@ -3,13 +3,11 @@ package com.ai.e_learning.controllers;
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ImageResponse;
 import com.ai.e_learning.dto.UserDto;
-import com.ai.e_learning.model.User;
 import com.ai.e_learning.service.MailSenderService;
 import com.ai.e_learning.service.OtpStoreService;
 import com.ai.e_learning.service.UserService;
 import com.ai.e_learning.util.Helper;
 import lombok.AllArgsConstructor;
-import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -136,6 +134,7 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
+
   @PostMapping("/updateProfile")
   public ResponseEntity<ImageResponse> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("userId")String userId) throws IOException, GeneralSecurityException {
     System.out.println(file.getContentType());
@@ -154,6 +153,7 @@ public class UserController {
 
     return ResponseEntity.status(imageResponse.getStatus()).body(imageResponse);
   }
+
 
 }
 
