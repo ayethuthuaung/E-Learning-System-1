@@ -6,22 +6,38 @@ import { AuthGuard } from './components/auth/auth.guard';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
-import { CreateExamComponent } from './components/create-exam/create-exam.component';
-import { CreateQuestionTypeComponent } from './components/create-question-type/create-question-type.component';
-import { CreateAnswerOptionComponent } from './components/create-answer-option/create-answer-option.component';
-import { AnswerFormComponent } from './components/answer-form/answer-form.component';
-import { CreateQuestionFormComponent } from './components/create-question-form/create-question-form.component';
+
+
+
+
+import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 
 import { BlogsComponent } from './components/home/blogs/blogs.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { UpdateCourseComponent } from './components/update-course/update-course.component';
+import { UpdateCategoryComponent } from './components/update-category/update-category.component';
+import { CourseListComponent } from './components/course-list/course-list.component';
+import { CategoryListComponent } from './components/category-list/category-list.component';
+import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
+import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
+import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
+import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
+import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
+import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
 
 
 
 const routes: Routes = [
   {path:'', redirectTo:'/login',pathMatch:'full'},
    {path:'login', component: LoginComponent},
+   {path: 'forget-password', component: ForgetPasswordComponent },
    {path:'course', component: CourseComponent},
    {path:'category', component: CategoryComponent},
+   { path: 'course/:courseId/update', component: UpdateCourseComponent},
+   {path:'category/:categoryId/update', component: UpdateCategoryComponent},
+   {path:'courses', component: CourseListComponent},
+   {path:'categories', component: CategoryListComponent},
+   
    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
 
    {path:'exam', component: CreateExamComponent},
@@ -29,6 +45,9 @@ const routes: Routes = [
    {path:'answerOption', component: CreateAnswerOptionComponent},
    {path:'createquestionform' , component: CreateQuestionFormComponent},
    {path:'answerform' , component: AnswerFormComponent},
+   {path:'submitform' , component: SubmitFormComponent},
+
+
 
    {path:'blog', component: BlogsComponent},
 

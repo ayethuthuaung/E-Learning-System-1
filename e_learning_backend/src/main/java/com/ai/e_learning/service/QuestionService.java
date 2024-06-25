@@ -1,9 +1,9 @@
 package com.ai.e_learning.service;
 
+import com.ai.e_learning.dto.AnswerFeedback;
 import com.ai.e_learning.dto.QuestionCreationDTO;
 import com.ai.e_learning.dto.QuestionDTO;
-import com.ai.e_learning.model.Question;
-
+import com.ai.e_learning.model.StudentAnswer;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +18,14 @@ public interface QuestionService {
 
     public void deleteQuestion(Long questionId);
 
-    boolean createQuestion(List<QuestionCreationDTO> questionCreationDTOList);
+    public boolean createQuestion(List<QuestionCreationDTO> questionCreationDTOList);
 
-    public List<QuestionDTO> getQuestionsForExam(Long examId);
+    public List<AnswerFeedback> submitStudentAnswers(List<StudentAnswer> studentAnswers);
+
+    public AnswerFeedback generateFeedback(StudentAnswer studentAnswer);
+
+    List<QuestionDTO> getQuestionsByQuestionType(Long questionTypeId);
+
+
+//    List<QuestionDTO> getQuestionsWithAnswers(Long examId);
 }

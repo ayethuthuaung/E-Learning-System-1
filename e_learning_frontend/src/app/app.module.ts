@@ -1,23 +1,22 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 
 import { LoginComponent } from './components/auth/login/login.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HomeComponent } from './components/home/home.component';
+import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { HomeComponent } from './components/home/home.component';
+
+import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
-import { CreateExamComponent } from './components/create-exam/create-exam.component';
-import { CreateQuestionTypeComponent } from './components/create-question-type/create-question-type.component';
-import { CreateAnswerOptionComponent } from './components/create-answer-option/create-answer-option.component';
+
 import { QuestionService } from './components/services/question.service';
 import { AnswerOptionService } from './components/services/answerOption.service';
-import { AnswerFormComponent } from './components/answer-form/answer-form.component';
-import { CreateQuestionFormComponent } from './components/create-question-form/create-question-form.component';
+
 
 import { HeroComponent } from './components/home/hero/hero.component';
 import { CoursesComponent } from './components/home/courses/courses.component';
@@ -50,24 +49,43 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
+
+
+import { UpdateCourseComponent } from './components/update-course/update-course.component';
+import { CourseListComponent } from './components/course-list/course-list.component';
+import { CategoryListComponent } from './components/category-list/category-list.component';
+import { UpdateCategoryComponent } from './components/update-category/update-category.component';
+import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
+import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
+import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
+import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
+import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
+import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 
 @NgModule({
   declarations: [
     AppComponent,
-  CourseComponent,
-  CategoryComponent,
+    HomeComponent,
     LoginComponent,
+
         HomeComponent,
 
         CreateExamComponent,
         CreateQuestionTypeComponent,
         CreateAnswerOptionComponent,
         CreateQuestionFormComponent,
-        AnswerFormComponent,
         CreateQuestionFormComponent,
+        AnswerFormComponent,
 
+
+
+    ForgetPasswordComponent,
+    CourseComponent,
+    CategoryComponent,
 
         ChatComponent,
         HeroComponent,
@@ -98,6 +116,15 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     NavbarComponent,
     HomeComponent,
 
+
+    UpdateCourseComponent,
+    CourseListComponent,
+    CategoryListComponent,
+    UpdateCategoryComponent,
+        HomeComponent,
+        CourseDetailsComponent,
+         SubmitFormComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -107,6 +134,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HttpClientModule,
     SocketIoModule.forRoot(config)
   ],
+
+
+
   providers: [
     provideClientHydration(),
 
@@ -116,6 +146,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     WebSocketService
 
   ],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }

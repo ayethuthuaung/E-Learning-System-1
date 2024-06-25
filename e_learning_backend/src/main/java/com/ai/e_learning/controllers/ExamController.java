@@ -2,6 +2,7 @@ package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ExamDTO;
+import com.ai.e_learning.dto.QuestionDTO;
 import com.ai.e_learning.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/exam")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class ExamController {
 
     @Autowired
@@ -59,15 +60,11 @@ public class ExamController {
         examService.softDeleteExam(examId);
         return ResponseEntity.noContent().build();
     }
-//    @GetMapping(value = "/byQuestionType/{questionTypeId}", produces = "application/json")
-//    public ResponseEntity<List<CourseDto>> getCoursesByCategory(@PathVariable Long categoryId) {
-//        List<CourseDto> courses = courseService.getCoursesByCategory(categoryId);
-//        return ResponseEntity.ok(courses);
-//    }
-//
-//    @PostMapping(value = "/{courseId}/categories/{categoryId}", produces = "application/json")
-//    public ResponseEntity<Void> addCategoryToCourse(@PathVariable Long courseId, @PathVariable Long categoryId) {
-//        courseService.addCategoryToCourse(courseId, categoryId);
-//        return ResponseEntity.ok().build();
-//    }
+    //for answer-form
+    @GetMapping("/{examId}")
+    public ResponseEntity<?> getExamById(@PathVariable("examId") Long examId) {
+        ExamDTO exam = this.examService.getExamById(examId);
+        return ResponseEntity.ok(exam);
+    }
+
 }

@@ -11,9 +11,7 @@ import java.util.List;
 @Setter
 @ToString
 public class QuestionDTO {
-    private Long id,questionTypeId;
+    private Long id, questionTypeId;
     private String content;
     private List<AnswerOptionDTO> answerList;
-//    private ExamDTO exam;
-//    private QuestionTypeDTO questionType;
 }

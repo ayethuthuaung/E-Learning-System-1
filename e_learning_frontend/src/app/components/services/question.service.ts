@@ -3,14 +3,20 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { QuestionCreationDTO } from '../models/QuestionCreationDTO.model';
 import { QuestionDTO } from '../models/question.model';
+import { StudentAnswer } from '../models/student-answer.model';
+import { Exam } from '../models/exam.model';
+import { ExamDTO } from '../models/examdto.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuestionService {
+  
 
   private baseURL = "http://localhost:8080/question";
   constructor(private httpClient: HttpClient) { }
+
+ 
 
   getViewList(): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.baseURL}/viewList`);
@@ -19,6 +25,15 @@ export class QuestionService {
   getQuestionsForExam(examId: number): Observable<QuestionDTO[]> {
     return this.httpClient.get<QuestionDTO[]>(`${this.baseURL}/exam/${examId}`);
   }
+ 
+  submitAnswers(answers: any): Observable<any> {
+    return this.httpClient.post(`${this.baseURL}/question/submitAnswers`, answers);
+  }
+  
+  getQuestionForExam(examId: number): Observable<ExamDTO[]> {
+    return this.httpClient.get<ExamDTO[]>(`${this.baseURL}/exam/${examId}`);
+  }
+
   createQuestion(questionCreationDTO: QuestionCreationDTO[]): Observable<Object> {
     return this.httpClient.post(`${this.baseURL}/add`, questionCreationDTO);
   }
@@ -33,5 +48,8 @@ export class QuestionService {
 
   deleteQuestion(id: number): Observable<Object> {
     return this.httpClient.delete(`${this.baseURL}/delete/${id}`);
+  }
+  submitStudentAnswers(studentAnswers: StudentAnswer[]): Observable<any> {
+    return this.httpClient.post<any>(`${this.baseURL}/submitAnswers`, studentAnswers);
   }
 }

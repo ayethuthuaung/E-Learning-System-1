@@ -13,70 +13,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
-public class CategoryService {
-  @Autowired
-  private CategoryRepository categoryRepository;
-  @Autowired
-  private ModelMapper modelMapper;
 
-  public List<CategoryDto> getAllCategories() {
-    List<Category> categories = categoryRepository.findAll();
-    for(Category category:categories){
-      System.out.println(category.getName());
-    }
-    return categories.stream().map(this::convertToDto).collect(Collectors.toList());
-  }
-
-  public CategoryDto saveCategory(CategoryDto categoryDto) {
-    Category category = convertToEntity(categoryDto);
-    Category savedCategory = categoryRepository.save(category);
-    return convertToDto(savedCategory);
-  }
-  private Category convertToEntity(CategoryDto dto) {
-    return modelMapper.map(dto, Category.class);
-  }
-
-  private CategoryDto convertToDto(Category category) {
-    return modelMapper.map(category, CategoryDto.class);
-  }
-
-  public List<Category> findAll() {
-    return categoryRepository.findAll();
-  }
-
-  public Optional<Category> findById(Long id) {
-    return categoryRepository.findById(id);
-  }
-
-
-  public CategoryDto getCategoryById(Long id) {
-    return categoryRepository.findById(id)
-      .map(this::convertToDto)
-      .orElse(null);
-  }
-
-
-  public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
-    return categoryRepository.findById(id)
-      .map(existingCategory -> {
-        // Ensure the ID of the existing entity is retained
-        categoryDto.setId(existingCategory.getId());
-        modelMapper.map(categoryDto, existingCategory);
-        Category updateCategory = categoryRepository.save(existingCategory);
-        return convertToDto(updateCategory);
-      })
-      .orElse(null);
-  }
-  public void softDeleteCategory(Long id) {
-    categoryRepository.findById(id)
-      .ifPresent(category -> {
-        category.setDeleted(true);
-        categoryRepository.save(category);
-      });
-  }
-
-
-
+public interface CategoryService {
+  List<CategoryDto> getAllCategories();
+  CategoryDto saveCategory(CategoryDto categoryDto);
+  List<Category> findAll();
+  Optional<Category> findById(Long id);
+  CategoryDto getCategoryById(Long id);
+  CategoryDto updateCategory(Long id, CategoryDto categoryDto);
+  void softDeleteCategory(Long id);
+  boolean isCategoryNameAlreadyExists(String name);
 }
+
 
