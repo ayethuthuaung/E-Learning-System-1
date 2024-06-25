@@ -1,0 +1,59 @@
+.container {
+    width: 50%;
+    margin: 100px auto;
+    text-align: center;
+    background-color: #eee;
+    color: #2c5175;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    color: #2c5175;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  input[type="file"] {
+    display: block;
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #2c5175;
+    background-color: #fff;
+    color: #2c5175;
+    border-radius: 4px;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  button {
+    background-color: #103c68;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #1f16cd;
+  }
+  
+  p {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+
+  .error-message {
+    color: #ff0000; /* Red color for error messages */
+  }
+  
+  .success-message {
+    color: #008000; /* Green color for success messages */
+  }
+  
+  

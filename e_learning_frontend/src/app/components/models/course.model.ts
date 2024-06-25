@@ -13,6 +13,8 @@ export class Course {
   deleted?: boolean;
   photoFile?: File;
   photoUrl?: string;
+  userId: number;
+  
 
   constructor() {
     this.id = 1;
@@ -26,5 +28,6 @@ export class Course {
     this.deleted = false;
     this.categorylist = [];
     this.photoFile = undefined;
+    this.userId = 1;
   }
 }

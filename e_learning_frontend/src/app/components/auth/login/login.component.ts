@@ -9,7 +9,8 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent {
   loginObj: LoginModel = new LoginModel();
-  isSignDivVisiable: boolean  = false;
+  isSignDivVisiable: boolean = false;
+  showPassword: boolean = false; // Added property
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -32,6 +33,12 @@ export class LoginComponent {
     );
   }
 
+
+
+  // Added method
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 }
 
 export class LoginModel {
@@ -40,6 +47,22 @@ export class LoginModel {
 
   constructor() {
     this.staffId = "";
-    this.password = ""
+    this.password = "";
+  }
+}
+
+
+
+
+
+export class SignUpModel {
+  name: string;
+  staffId: string;
+  password: string;
+
+  constructor() {
+    this.staffId = "";
+    this.name = "";
+    this.password = "";
   }
 }

@@ -1,6 +1,7 @@
 package com.ai.e_learning.service;
 
 import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.ImageResponse;
 import com.ai.e_learning.dto.UserDto;
 import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.Role;
@@ -9,6 +10,8 @@ import com.ai.e_learning.repository.RoleRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
+import com.ai.e_learning.util.GoogleDriveJSONConnector;
+import com.ai.e_learning.util.Helper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.security.GeneralSecurityException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,72 +39,96 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     private final RoleRepository roleRepository;
+    private final Helper helper;
 
     public void updateExcel(MultipartFile file) {
-        if (ExcelUploadService.isValidExcelFile(file)) {
-            try {
-                List<User> insert_user = new ArrayList<>();
-                List<User> users = ExcelUploadService.getUserDataFromExcel(file.getInputStream());
-                for (User user : users) {
-                    User update_user = userRepository.findUserByStaffId(user.getStaffId());
-                    if (update_user != null) {
-                        if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
-                            update_user.setDivision(user.getDivision());
-                        } else {
-                            update_user.setDivision(update_user.getDivision());
-                        }
+      if (ExcelUploadService.isValidExcelFile(file)) {
+        try {
+          List<User> insert_user = new ArrayList<>();
+          List<User> users = ExcelUploadService.getUserDataFromExcel(file.getInputStream());
 
-                        if (!update_user.getName().equalsIgnoreCase(user.getName())) {
-                            update_user.setName(user.getName());
-                        } else {
-                            update_user.setName(update_user.getName());
-                        }
+          // Fetch all users from the database
+          List<User> allUsers = userRepository.findAll();
 
-                        if (update_user.getDoorLogNo() != user.getDoorLogNo()) {
-                            update_user.setDoorLogNo(user.getDoorLogNo());
-                        } else {
-                            update_user.setDoorLogNo(update_user.getDoorLogNo());
-                        }
+          // Convert the list of users from the Excel file to a set of staff IDs
+          Set<String> uploadedStaffIds = users.stream()
+            .map(User::getStaffId)
+            .collect(Collectors.toSet());
 
-                        if (!update_user.getDepartment().equalsIgnoreCase(user.getDepartment())) {
-                            update_user.setDepartment(user.getDepartment());
-                        } else {
-                            update_user.setDepartment(update_user.getDepartment());
-                        }
+          for (User user : users) {
+            User update_user = userRepository.findUserByStaffId(user.getStaffId());
+            if (update_user != null) {
+              if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
+                update_user.setDivision(user.getDivision());
+              } else {
+                update_user.setDivision(update_user.getDivision());
+              }
 
-                        if (!update_user.getTeam().equalsIgnoreCase(user.getTeam())) {
-                            update_user.setTeam(user.getTeam());
-                        } else {
-                            update_user.setTeam(update_user.getTeam());
-                        }
+              if (!update_user.getName().equalsIgnoreCase(user.getName())) {
+                update_user.setName(user.getName());
+              } else {
+                update_user.setName(update_user.getName());
+              }
 
-                        if (!update_user.getStatus().equalsIgnoreCase(user.getStatus())) {
-                            update_user.setStatus(user.getStatus());
-                        } else {
-                            update_user.setStatus(update_user.getStatus());
-                        }
+              if (update_user.getDoorLogNo() != user.getDoorLogNo()) {
+                update_user.setDoorLogNo(user.getDoorLogNo());
+              } else {
+                update_user.setDoorLogNo(update_user.getDoorLogNo());
+              }
 
-                        if(update_user.getPassword().equalsIgnoreCase("")) {
-                            update_user.setPassword(passwordEncoder.encode("123@dirace"));
-                        }
-                        // add for custom photo
+              if (!update_user.getDepartment().equalsIgnoreCase(user.getDepartment())) {
+                update_user.setDepartment(user.getDepartment());
+              } else {
+                update_user.setDepartment(update_user.getDepartment());
+              }
+
+              if (!update_user.getTeam().equalsIgnoreCase(user.getTeam())) {
+                update_user.setTeam(user.getTeam());
+              } else {
+                update_user.setTeam(update_user.getTeam());
+              }
+
+              if (!update_user.getStatus().equalsIgnoreCase(user.getStatus())) {
+                update_user.setStatus(user.getStatus());
+              } else {
+                update_user.setStatus(update_user.getStatus());
+              }
+
+              if(update_user.getPassword().equalsIgnoreCase("")) {
+                update_user.setPassword(passwordEncoder.encode("123@dirace"));
+              }
+              // add for custom photo
 //                        if(update_user.getPhoto().equals("")) {
 //                            update_user.setPhoto(ImageUtil.convertImageToBase64("public/custom_image.png"));
 //                        }
 
+
                         insert_user.add(update_user);
                     } else {
                         user.setPassword(passwordEncoder.encode("123@dirace"));
+                        user.setPhoto("userPhoto.png");
 // add photo in this place
                         insert_user.add(user);
                     }
 
                 }
-                this.userRepository.saveAll(insert_user);
-            } catch (IOException e) {
-                throw new IllegalArgumentException("This file is not a valid excel file");
+
+
+
+
+          // Set the status of users not present in the uploaded file to "Inactive"
+          for (User dbUser : allUsers) {
+            if (!uploadedStaffIds.contains(dbUser.getStaffId()) && dbUser.getStatus().equalsIgnoreCase("Active")) {
+              dbUser.setStatus("Inactive");
+              insert_user.add(dbUser);
             }
+          }
+
+          this.userRepository.saveAll(insert_user);
+        } catch (IOException e) {
+          throw new IllegalArgumentException("This file is not a valid excel file");
         }
+      }
     }
 
     @Override
@@ -116,6 +142,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getCurrentUser(String staffId) {
         User user=userRepository.findUserByStaffId(staffId);
+        try {
+            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+            String fileId = driveConnector.getFileIdByName(user.getPhoto());
+            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+            user.setPhoto(thumbnailLink);
+        } catch (IOException | GeneralSecurityException e) {
+
+        }
         return DtoUtil.map(user,UserDto.class,modelMapper);
 
     }
@@ -169,8 +203,18 @@ public class UserServiceImpl implements UserService {
       User user = userRepository.findUserByStaffId(staff_id);
       if (user == null)
         return null;
+        try {
+            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+            String fileId = driveConnector.getFileIdByName(user.getPhoto());
+            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+            user.setPhoto(thumbnailLink);
+        } catch (IOException | GeneralSecurityException e) {
+
+        }
       return DtoUtil.map(user,UserDto.class,modelMapper);
     }
+
+
 
     @Override
     public UserDto getUserByEmail(String email) {
@@ -201,11 +245,65 @@ public class UserServiceImpl implements UserService {
   }
 
 
-
-
   private UserDto convertToDto(User user) {
         UserDto userDto = modelMapper.map(user, UserDto.class);
         return userDto;
+    }
+
+    @Override
+    public void addAdmin() {
+        Optional<Role> adminRoleOpt = roleRepository.findByName("ADMIN");
+        Role adminRole;
+
+        if (adminRoleOpt.isEmpty()) {
+            adminRole = new Role();
+            adminRole.setName("ADMIN");
+            roleRepository.save(adminRole);
+        } else {
+            adminRole = adminRoleOpt.get();
+        }
+
+        User user = new User(
+                1L,
+                "11-11111",
+                "Admin",
+                "admin@gmail.com",
+                11111L,
+                "Admin",
+                "HR",
+                "Admin/HR",
+                "Active",
+                "userPhoto.png",
+                passwordEncoder.encode("11111"),
+                System.currentTimeMillis(),
+                new HashSet<>(Collections.singletonList(adminRole)),
+                null
+
+        );
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public ImageResponse uploadProfile(MultipartFile file,Long userId) throws IOException, GeneralSecurityException {
+        User user = EntityUtil.getEntityById(userRepository, userId,"user");
+        File tempFile = File.createTempFile(user.getName() + "_" + Helper.getCurrentTimestamp(), null);
+        file.transferTo(tempFile);
+        String imageUrl = helper.uploadImageToDrive(tempFile, "user");
+        //boolean isUploaded = helper.uploadImageToDrive(tempFile);
+       // return new GoogleDriveJSONConnector().uploadFileToDrive(file, contentType);
+        user.setPhoto(tempFile.getName());
+        userRepository.save(user);
+        ImageResponse imageResponse = new ImageResponse();
+        imageResponse.setStatus(200);
+        imageResponse.setMessage("File Successfully Uploaded To Drive");
+        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+        String fileId = driveConnector.getFileIdByName(user.getPhoto());
+        System.out.println("fileId"+fileId);
+        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+        imageResponse.setUrl(thumbnailLink);
+        System.out.println("thumnailLink"+thumbnailLink);
+        return imageResponse;
     }
 
 }

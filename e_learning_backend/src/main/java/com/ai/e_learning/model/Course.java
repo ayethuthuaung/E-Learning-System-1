@@ -27,7 +27,7 @@ public class Course  {
 
   @Column(nullable = false, length = 100)
   private String description;
-  private String createdAt;
+  private Long createdAt;
   @Column(nullable = false, length = 30)
   private String certificate;
   @Column(nullable = false, length = 30)
@@ -39,8 +39,18 @@ public class Course  {
   @JoinTable(name = "course_has_category",
     joinColumns = @JoinColumn(name = "course_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id"))
-
  private Set<Category> categories = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = System.currentTimeMillis();
+  }
 
 
 
