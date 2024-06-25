@@ -13,6 +13,11 @@ import { ForgetPasswordComponent } from './components/auth/forget-password/forge
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
+
+import { QuestionService } from './components/services/question.service';
+import { AnswerOptionService } from './components/services/answerOption.service';
+
+
 import { HeroComponent } from './components/home/hero/hero.component';
 import { CoursesComponent } from './components/home/courses/courses.component';
 import { JointUsComponent } from './components/home/joint-us/joint-us.component';
@@ -61,6 +66,13 @@ import { InstructorCategoryComponent } from './components/instructor/instructor-
 
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
+import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
+import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
+import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
+import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
+import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
+import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 
@@ -69,9 +81,22 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AppComponent,
     HomeComponent,
     LoginComponent,
+
+        HomeComponent,
+
+        CreateExamComponent,
+        CreateQuestionTypeComponent,
+        CreateAnswerOptionComponent,
+        CreateQuestionFormComponent,
+        CreateQuestionFormComponent,
+        AnswerFormComponent,
+
+
+
     ForgetPasswordComponent,
     CourseComponent,
     CategoryComponent,
+
         ChatComponent,
         HeroComponent,
     CoursesComponent,
@@ -100,6 +125,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     VideoPopupComponent,
     NavbarComponent,
     HomeComponent,
+
+
+
     UpdateCourseComponent,
     CourseListComponent,
     CategoryListComponent,
@@ -122,6 +150,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
         CourseDetailsComponent,
         UserUploadComponent,
 
+         SubmitFormComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -137,7 +167,12 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
   providers: [
     provideClientHydration(),
+
+    QuestionService,
+    AnswerOptionService,
+
     WebSocketService
+
   ],
 
   bootstrap: [AppComponent]

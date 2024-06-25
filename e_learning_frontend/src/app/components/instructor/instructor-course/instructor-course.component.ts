@@ -166,22 +166,15 @@ export class InstructorCourseComponent implements OnInit {
     }
   }
 
-  // toggleCategories(event:any,category:any){
-   
-  //   this.course.categories[category]=event.target.checked
-  //   if(event.target.checked){
-  //     this.course.categories.push(this.categories[category.id-1])
-  //   }
-  //   else{
-  //     console.log("else");
-      
-  //     const i=this.course.categories.indexOf(this.categories[category.id])
-  //     if(i!==-1){
-  //       this.course.categories.splice(i,1)
+  // toggleCategories(event: any, category: Category) {
+  //   if (event.target.checked) {
+  //     this.course.categories.push(category);
+  //   } else {
+  //     const index = this.course.categories.findIndex(cat => cat.id === category.id);
+  //     if (index !== -1) {
+  //       this.course.categories.splice(index, 1);
   //     }
   //   }
-  // console.log(this.course);
-
   // }
 
 
