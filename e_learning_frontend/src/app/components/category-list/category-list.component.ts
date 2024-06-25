@@ -41,19 +41,19 @@ export class CategoryListComponent implements OnInit {
   }
 
   updateCategory(id: number){
-    this.router.navigate(['update-category', id]);
+    this.router.navigate(['category', id, 'update']);
   }
 
-  deleteCategory(id: number){
-    this.categoryService.deleteCategory(id)
-    .subscribe({ 
-     next: (data) => {
-      console.log(data);
-      this.getCategories();
-    },    
-    error: (e) => console.log(e)
-  });
+  softDeleteCategory(id: number): void {
+    this.categoryService.softDeleteCategory(id).subscribe({
+      next: () => {
+        // Remove the course from the local array
+        this.categories = this.categories.filter(category => category.id !== id);
+      },
+      error: (e) => console.log(e)
+    });
   }
 }
+
 
 

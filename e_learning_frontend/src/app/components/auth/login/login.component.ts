@@ -9,7 +9,8 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent {
   loginObj: LoginModel = new LoginModel();
-  isSignDivVisiable: boolean  = false;
+  isSignDivVisiable: boolean = false;
+  showPassword: boolean = false; // Added property
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -17,15 +18,25 @@ export class LoginComponent {
     this.authService.login(this.loginObj).subscribe(
       response => {
         console.log('Response:', response);
-        alert('Login Success');
-        localStorage.setItem('loggedUser', JSON.stringify(response));
-        this.router.navigateByUrl('/home');
+        if (response && response.currentUser) {
+          alert('Login Success');
+          localStorage.setItem('loggedUser', JSON.stringify(response.currentUser));
+          this.router.navigateByUrl('/home');
+        } else {
+          alert('Login Failed: Invalid response structure');
+        }
       },
       error => {
         console.error('Error:', error);
         alert('Login Failed');
       }
     );
+  }
+
+
+  // Added method
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 }
 
@@ -35,11 +46,13 @@ export class LoginModel {
 
   constructor() {
     this.staffId = "";
-    this.password = ""
+    this.password = "";
   }
 }
 
-export class SignUpModel  {
+
+
+export class SignUpModel {
   name: string;
   staffId: string;
   password: string;
@@ -47,6 +60,6 @@ export class SignUpModel  {
   constructor() {
     this.staffId = "";
     this.name = "";
-    this.password= ""
+    this.password = "";
   }
 }

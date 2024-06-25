@@ -10,7 +10,7 @@ import { Category } from '../models/category.model';
 })
 export class CategoryService {
 
-  private baseURL = "http://localhost:8080/api/categories";
+  private baseURL = "http://localhost:8080/categories";
 
   constructor(private httpClient: HttpClient) { }
 
@@ -36,14 +36,17 @@ export class CategoryService {
   
 
   getCategoryById(id: number): Observable<Category>{
-    return this.httpClient.get<Category>(`${this.baseURL}/getbyid/${id}`);
+    return this.httpClient.get<Category>(`${this.baseURL}/${id}`);
   }
 
-  updateCategory(id: number, category: Category): Observable<Object>{
-    return this.httpClient.put(`${this.baseURL}/updatecategory/${id}`, category);
+  updateCategory(id: number, category: Category): Observable<Object> {
+    return this.httpClient.put(`${this.baseURL}/update/${id}`, category);
   }
 
-  deleteCategory(id: number): Observable<Object>{
-    return this.httpClient.delete(`${this.baseURL}/deletecategory/${id}`);
+  softDeleteCategory(id: number): Observable<Object>{
+    return this.httpClient.delete(`${this.baseURL}/delete/${id}`);
+  }
+  isCategoryNameAlreadyExists(name: string): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.baseURL}/existsByName`, { params: { name } });
   }
 }
