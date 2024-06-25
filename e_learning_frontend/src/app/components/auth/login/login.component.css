@@ -215,3 +215,11 @@
 .container.active .toggle-right{
     transform: translateX(200%);
 }
+.login-header{
+    font-size: 24px;
+}
+.sign-in-header{
+    font-size: 30px;
+    color: #366593; 
+    font-weight: 1000;
+}

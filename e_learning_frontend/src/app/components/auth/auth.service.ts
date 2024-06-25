@@ -11,16 +11,20 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(loginModel: LoginModel): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(`${this.apiUrl}/login`, loginModel, { headers, responseType: 'text' as 'json' });
+  login(loginObj: LoginModel): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, loginObj);
   }
 
   logout(): void {
-    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('loggedUser'); 
   }
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('loggedUser');
+  }
+  // get user id for chat
+  getLoggedInUserId(): number {
+    const loggedUser = JSON.parse(localStorage.getItem('loggedUser')!);
+    return loggedUser ? loggedUser.id : null;
   }
 }

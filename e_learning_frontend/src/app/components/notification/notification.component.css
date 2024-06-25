@@ -1,0 +1,27 @@
+/* src/app/components/notification/notification.component.css */
+.notification {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.5s;
+  }
+  
+  .notification.ng-enter {
+    opacity: 0;
+  }
+  
+  .notification.ng-enter-active {
+    opacity: 1;
+  }
+  
+  .notification.ng-leave {
+    opacity: 1;
+  }
+  
+  .notification.ng-leave-active {
+    opacity: 0;
+  }
+  

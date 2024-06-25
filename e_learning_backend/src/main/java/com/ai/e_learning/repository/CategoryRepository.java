@@ -26,4 +26,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   @Query("SELECT c FROM Category c WHERE c.courses IS EMPTY")
   List<Category> findAllWithoutCourses();
+
+  @Query("SELECT COUNT(c) > 0 FROM Category c WHERE c.name = :name")
+  boolean existsByName(String name);
 }

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CourseService } from '../services/course.service';
+
 import { Category } from '../models/category.model';
 import { NgForm } from '@angular/forms';
 import { Course } from '../models/course.model';
 import { Router } from '@angular/router';
 import { CategoryService } from '../services/category.service';
+import { CourseService } from '../services/course.service';
+import { WebSocketService } from '../services/websocket.service';
 
 @Component({
   selector: 'app-course',
@@ -12,16 +14,19 @@ import { CategoryService } from '../services/category.service';
   styleUrls: ['./course.component.css']
 })
 export class CourseComponent implements OnInit {
-  
+
   course: Course = new Course();
   categories: Category[] = [];
-  categoryList: number[] = []; // Updated: Initialize categoryList as an array of numbers
-  message = '';
+  categoryList: number[] = [];
+  nameDuplicateError = false;
   submitted = false;
 
-  constructor(private courseService: CourseService,
+  constructor(
+    private courseService: CourseService,
     private categoryService: CategoryService,
-    private router: Router) { }
+    private router: Router,
+    private webSocketService:WebSocketService
+  ) { }
 
   ngOnInit(): void {
     this.loadCategories();
@@ -30,35 +35,59 @@ export class CourseComponent implements OnInit {
   loadCategories(): void {
     this.categoryService.getCategories().subscribe({
       next: (data) => {
-        console.table(data);
         this.categories = data;
       },
       error: (e) => console.error(e)
     });
   }
 
+  validateCourseName(name: string): void {
+    this.courseService.isCourseNameAlreadyExists(name).subscribe(
+      (exists: boolean) => {
+        this.nameDuplicateError = exists;
+      },
+      (error) => {
+        console.error('Error checking course name:', error);
+      }
+    );
+  }
+
   saveCourse(): void {
-    
-    this.course.categorylist = this.categoryList; // Updated: Assign categoryList to course.categorylist
-    this.courseService.createCourse(this.course)
-      .subscribe({
-        next: (data) => {
-          console.log(data);
-          this.goToCourseList();
-          //this.message = 'Book was inserted successfully!';
-        },
-        error: (e) => console.log(e)
-      });
+    const formData = new FormData();
+    formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
+    if (this.course.photoFile) {
+      formData.append('photo', this.course.photoFile, this.course.photoFile.name);
+    }
+
+    this.courseService.addCourseWithFormData(formData).subscribe(
+      (data) => {
+        console.log('Course created successfully:', data);
+        
+        // notification when add course
+        this.webSocketService.sendNotification('New course added: ' + data.name);
+
+        this.router.navigate(['/courses']);
+      },
+      (error) => {
+        console.error('Error creating course:', error);
+      }
+    );
+  }
+
+  onFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.course.photoFile = file;
+    }
   }
 
   goToCourseList(): void {
     this.router.navigate(['/courses']);
   }
-  
+
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.submitted = false;
-      console.log(form.value);
       this.saveCourse();
     } else {
       this.submitted = true;
@@ -66,14 +95,41 @@ export class CourseComponent implements OnInit {
     }
   }
 
-  // Function to handle selection/deselection of categories
-  toggleCategory(categoryId: number): void {
-    if (this.categoryList.includes(categoryId)) {
-      // Remove categoryId from categoryList if already selected
-      this.categoryList = this.categoryList.filter(id => id !== categoryId);
-    } else {
-      // Add categoryId to categoryList if not selected
-      this.categoryList.push(categoryId);
+  
+  
+  toggleCategories(event:any,category:any){
+   
+    this.course.categories[category]=event.target.checked
+    if(event.target.checked){
+      this.course.categories.push(this.categories[category.id-1])
     }
+    else{
+      console.log("else");
+      
+      const i=this.course.categories.indexOf(this.categories[category.id])
+      if(i!==-1){
+        this.course.categories.splice(i,1)
+      }
+    }
+  console.log(this.course);
+
   }
+    // saveCourse(): void {
+  //   this.course.categorylist = this.categoryList; 
+  //   this.courseService.addCourse(this.course).subscribe({
+  //     next: (data) => {
+  //       console.log('Course created successfully:', data);
+  //       this.goToCourseList();
+  //     },
+  //     error: (error) => {
+  //       console.error('Error creating course:', error);
+  //       if (error.error instanceof ErrorEvent) {
+  //         console.error('Client-side error occurred:', error.error.message);
+  //       } else {
+  //         console.error(`Server-side error occurred. Status: ${error.status}, Message: ${error.error}`);
+  //       }
+  //       // Optionally, handle the error more gracefully (e.g., show error message to user)
+  //     }
+  //   });
+  // }
 }

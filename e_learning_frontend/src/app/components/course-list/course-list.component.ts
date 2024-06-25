@@ -6,54 +6,47 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-course-list',
   templateUrl: './course-list.component.html',
-  styleUrl: './course-list.component.css'
+  styleUrls: ['./course-list.component.css']
 })
 export class CourseListComponent implements OnInit {
 
-  courses: Course[];
-  check =false;
+  courses: Course[] = [];
+  check = false;
 
-  constructor(private courseService: CourseService,
-    private router: Router) { 
-      this.courses=[];
-    }
+  constructor(private courseService: CourseService, private router: Router) {}
 
   ngOnInit(): void {
     this.getCourses();
   }
 
-  private getCourses(){
-    this.courseService.getCourseList()
-    .subscribe({
+  private getCourses(): void {
+    this.courseService.getCourseList().subscribe({
       next: (data) => {
-      this.courses = data;
-      if(this.courses.length!=0){
-        this.check=true;
-      }
-    },    
-    error: (e) => console.log(e)
-  });
-  
+        this.courses = data;
+        this.check = this.courses.length !== 0;
+      },
+      error: (e) => console.log(e)
+    });
   }
 
-  courseDetails(id: number){
+  courseDetails(id: number): void {
     this.router.navigate(['course-details', id]);
   }
 
-  updateCourse(id: number){
-    this.router.navigate(['update-course', id]);
+  updateCourse(id: number): void {
+    this.router.navigate(['course', id, 'update']);
   }
 
-  deleteCourse(id: number){
-    this.courseService.deleteCourse(id)
-    .subscribe({ 
-     next: (data) => {
-      console.log(data);
-      this.getCourses();
-    },    
-    error: (e) => console.log(e)
-  });
+  softDeleteCourse(id: number): void {
+    this.courseService.softDeleteCourse(id).subscribe({
+      next: () => {
+        this.courses = this.courses.filter(course => course.id !== id);
+      },
+      error: (e) => console.log(e)
+    });
+  }
+
+  getPhotoUrl(photoUrl: string): string {
+    return photoUrl ? photoUrl : 'assets/default-photo.jpg'; // Default photo if none provided
   }
 }
-
-

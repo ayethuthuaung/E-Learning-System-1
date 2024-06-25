@@ -1,6 +1,7 @@
 // src/app/components/notification/notification.component.ts
 import { Component, OnInit } from '@angular/core';
 import { WebSocketService } from '../services/websocket.service';
+import { Notification } from '../models/notification';
 
 @Component({
   selector: 'app-notification',
@@ -8,17 +9,23 @@ import { WebSocketService } from '../services/websocket.service';
   styleUrls: ['./notification.component.css']
 })
 export class NotificationComponent implements OnInit {
-  notifications: string[] = [];
+  notifications: Notification[] = [];
 
   constructor(private webSocketService: WebSocketService) {}
 
   ngOnInit(): void {
-    this.webSocketService.getNotifications().subscribe((message) => {
-      this.notifications.push(message);
+    this.webSocketService.fetchNotifications().subscribe(
+      (notifications) => {
+        this.notifications = notifications;
+      },
+      (error) => {
+        console.error('Failed to fetch notifications:', error);
+      }
+    );
+
+    this.webSocketService.getNotifications().subscribe((notification) => {
+      this.notifications.push(notification);
     });
   }
 
-  sendNotification(message: string): void {
-    this.webSocketService.sendNotification(message);
-  }
 }

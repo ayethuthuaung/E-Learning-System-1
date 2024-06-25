@@ -1,10 +1,9 @@
-<!-- src/app/components/notification/notification.component.html -->
-<div>
-    <h2>Notifications</h2>
-    <ul>
-      <li *ngFor="let notification of notifications">{{ notification }}</li>
-    </ul>
-    <input #notificationInput type="text" placeholder="Enter notification message">
-    <button (click)="sendNotification(notificationInput.value)">Send Notification</button>
-  </div>
-  
+<div *ngIf="notifications.length > 0">
+  <h3>Notifications</h3>
+  <ul>
+    <li *ngFor="let notification of notifications">{{ notification.message }}</li>
+  </ul>
+</div>
+<div *ngIf="notifications.length === 0">
+  <p>No notifications yet.</p>
+</div>

@@ -25,4 +25,5 @@ public class CourseDto {
   private Set<Category> categories = new HashSet<>();
   private List<Long> categorylist;
   private boolean isDeleted;
+  private String photo;
 }

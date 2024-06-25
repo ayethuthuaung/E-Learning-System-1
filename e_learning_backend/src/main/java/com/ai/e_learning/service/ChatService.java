@@ -67,8 +67,14 @@ public class ChatService {
         }
         return messageRepository.findByChatRoomId(chatRoomId);
     }
+    public List<ChatRoom> getUserConversationList(Long userId) {
+        return chatRoomRepository.findByUserId(userId);
+    }
 
     public Message saveMessage(Message message) {
         return messageRepository.save(message);
+    }
+    public List<Message> getChatHistoryForUser(Long chatRoomId, Long userId) {
+        return messageRepository.findByChatRoomIdAndSenderId(chatRoomId, userId);
     }
 }

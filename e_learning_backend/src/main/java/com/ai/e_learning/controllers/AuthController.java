@@ -38,7 +38,9 @@ public class AuthController {
 
             Map<String, UserDto> response = new HashMap<>();
             response.put("currentUser",userService.getCurrentUser(authDto.getStaffId()));
-       //     response.put("message", "Login successful");
+
+            //response.put("message", "Login successful");
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             System.out.println("login failed: " + e.getMessage());

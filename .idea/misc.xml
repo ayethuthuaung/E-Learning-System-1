@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+<<<<<<< HEAD
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/e_learning_backend/pom.xml" />
+      </list>
+    </option>
+  </component>
+=======
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+>>>>>>> c9de92d24f360de9b6e9a3e2e5eebf93106aed59
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

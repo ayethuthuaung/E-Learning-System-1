@@ -2,8 +2,10 @@
 import { Injectable } from '@angular/core';
 import { Client, Message, Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, throwError } from 'rxjs';
 import { ChatMessage } from '../models/message';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Notification } from '../models/notification';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +13,9 @@ import { ChatMessage } from '../models/message';
 export class WebSocketService {
   private client: Client;
   private messageSubject: BehaviorSubject<ChatMessage | null> = new BehaviorSubject<ChatMessage | null>(null);
-  private notificationSubject: Subject<string> = new Subject<string>();
+  private notificationSubject: Subject<Notification> = new Subject<Notification>();
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.client = new Client();
     this.initializeWebSocketConnection();
   }
@@ -58,7 +60,7 @@ export class WebSocketService {
   private handleNotification(message: Message): void {
     try {
       const jsonMessage = JSON.parse(message.body);
-      this.notificationSubject.next(jsonMessage.message);
+      this.notificationSubject.next(jsonMessage);
     } catch (e) {
       console.error('Error parsing JSON notification:', e);
       console.log('Non-JSON notification received:', message.body);
@@ -86,7 +88,33 @@ export class WebSocketService {
     return this.messageSubject.asObservable();
   }
 
-  public getNotifications(): Observable<string> {
+  public getNotifications(): Observable<Notification> {
     return this.notificationSubject.asObservable();
+  }
+  public fetchNotifications(): Observable<Notification[]> {
+    return this.http.get<Notification[]>('http://localhost:8080/notifications')
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Unknown error!';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side errors
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side errors
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    console.error(errorMessage);
+    return throwError(errorMessage);
+  }
+  loadChatHistory(chatRoomId: number): Observable<ChatMessage[]> {
+    return this.http.get<ChatMessage[]>(`http://localhost:8080/chat/history/${chatRoomId}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error loading chat history:', error);
+        return throwError(error);
+      })
+    );
   }
 }

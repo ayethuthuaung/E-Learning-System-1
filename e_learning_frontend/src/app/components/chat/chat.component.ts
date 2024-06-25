@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { WebSocketService } from '../services/websocket.service';
 import { ChatMessage } from '../models/message';
+import { AuthService } from '../auth/auth.service';
+import { ChatRoom } from '../models/chat-room';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-chat',
@@ -14,10 +17,9 @@ export class ChatComponent implements OnInit {
   newMessage!: string;
   messageSent: boolean = false;
   sessionId!: string;
+  chatRoomId!: number;
 
-  constructor(private route: ActivatedRoute, private webSocketService: WebSocketService) {
-    
-      
+  constructor(private route: ActivatedRoute, private webSocketService: WebSocketService,private authService: AuthService) {    
     
   }
 
@@ -25,10 +27,13 @@ export class ChatComponent implements OnInit {
     this.sessionId = `session-${Math.random().toString(36).substr(2, 9)}`;
     console.log(this.sessionId);
     
+    // Set senderId from AuthService
+    this.senderId = this.authService.getLoggedInUserId();
+    console.log('Logged in user ID:', this.senderId);
 
-    this.route.params.subscribe(params => {
-      this.senderId = +params['senderId']; // Convert to number if needed
-    });
+    this.chatRoomId = +this.route.snapshot.paramMap.get('chatRoomId')!;
+
+    this.loadChatHistory();
 
     this.webSocketService.getMessages().subscribe((message: ChatMessage | null) => {
       if (message) {
@@ -46,8 +51,15 @@ export class ChatComponent implements OnInit {
       }
     });
   }
+  loadChatHistory(): void {
+    this.webSocketService.loadChatHistory(this.chatRoomId).subscribe({
+      next: (history) => this.messages = history,
+      error: (error) => console.error('Error loading chat history:', error)
+    });
+  }
 
   sendMessage(): void {
+
     console.log(this.sessionId);
     
     if (this.newMessage.trim() !== '') {
@@ -68,6 +80,7 @@ export class ChatComponent implements OnInit {
       this.messageSent = true;
       // Send the message through WebSocket service
       this.webSocketService.sendMessage(message);
-    }
+    
+  }
   }
 }
