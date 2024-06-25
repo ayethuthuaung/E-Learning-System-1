@@ -15,7 +15,18 @@ export class UserService {
     return this.httpClient.post(`${this.baseURL}/upload-user-data`, uploadData);
   }
 
+
   getUserById(id: number): Observable<Student> {
     return this.httpClient.get<Student>(`${this.baseURL}/${id}`);
+  }
+
+  updateProfile(file: File, userId: number) {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    formData.append('userId', userId.toString());
+    console.log(file, userId.toString());
+    
+    return this.httpClient.post(`${this.baseURL}/updateProfile`, formData);
+
   }
 }

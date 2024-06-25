@@ -27,7 +27,7 @@ public class Course  {
 
   @Column(nullable = false, length = 100)
   private String description;
-  private String createdAt;
+  private Long createdAt;
   @Column(nullable = false, length = 30)
   private String certificate;
   @Column(nullable = false, length = 30)
@@ -41,6 +41,11 @@ public class Course  {
     inverseJoinColumns = @JoinColumn(name = "category_id"))
 
  private Set<Category> categories = new HashSet<>();
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = System.currentTimeMillis();
+  }
 
 
 

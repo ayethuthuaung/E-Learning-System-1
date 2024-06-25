@@ -10,8 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './components/home/home.component';
 
 import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
-import { CourseComponent } from './components/course/course.component';
-import { CategoryComponent } from './components/category/category.component';
+
 
 import { HeroComponent } from './components/home/hero/hero.component';
 import { CoursesComponent } from './components/home/courses/courses.component';
@@ -46,11 +45,14 @@ import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
 
 
-import { UpdateCourseComponent } from './components/update-course/update-course.component';
-import { CourseListComponent } from './components/course-list/course-list.component';
-import { CategoryListComponent } from './components/category-list/category-list.component';
-import { UpdateCategoryComponent } from './components/update-category/update-category.component';
-import { CourseDetailsComponent } from './components/course-details/course-details.component';
+
+import { InstructorComponent } from './components/instructor/instructor.component';
+import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';
+import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
+import { InstructorCourseComponent } from './components/instructor/instructor-course/instructor-course.component';
+import { InstructorNavbarComponent } from './components/instructor/instructor-navbar/instructor-navbar.component';
+import { InstructorSidebarComponent } from './components/instructor/instructor-sidebar/instructor-sidebar.component';
+import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
 
 
 
@@ -67,8 +69,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HomeComponent,
     LoginComponent,
     ForgetPasswordComponent,
-    CourseComponent,
-    CategoryComponent,
+   
     ChatComponent,
     HeroComponent,
     CoursesComponent,
@@ -97,14 +98,26 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     VideoPopupComponent,
     NavbarComponent,
     HomeComponent,
-    UpdateCourseComponent,
-    CourseListComponent,
-    CategoryListComponent,
-    UpdateCategoryComponent,
+  
     HomeComponent,
-    CourseDetailsComponent,
+   
+
     StudentProfileComponent,
        
+
+    InstructorComponent,
+    NavProfileComponent,
+    // instructor
+   
+    InstructorDashboardComponent,
+    InstructorCourseComponent,
+    InstructorNavbarComponent,
+    InstructorSidebarComponent,
+    InstructorCategoryComponent,
+  
+    // instructor
+
+
   ],
   imports: [
     BrowserModule,
@@ -112,6 +125,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    
     SocketIoModule.forRoot(config)
   ],
 

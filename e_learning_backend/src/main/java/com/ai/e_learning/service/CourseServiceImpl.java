@@ -6,10 +6,15 @@ import com.ai.e_learning.model.Category;
 import com.ai.e_learning.model.Course;
 import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
+import com.ai.e_learning.util.Helper;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
   @Autowired
@@ -27,6 +33,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Autowired
   private ModelMapper modelMapper;
+  private final Helper helper;
 
   @Override
   public List<CourseDto> getAllCourses() {
@@ -37,7 +44,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public CourseDto saveCourse(CourseDto courseDto) {
+  public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {
     courseDto.setId(null);
     Course course = convertToEntity(courseDto);
 
@@ -48,7 +55,10 @@ public class CourseServiceImpl implements CourseService {
       categories.add(category1);
     }
     course.setCategories(categories);
-
+    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
+    courseDto.getPhotoInput().transferTo(tempFile);
+    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
+    course.setPhoto(tempFile.getName());
     Course savedCourse = courseRepository.save(course);
 
     return convertToDto(savedCourse);

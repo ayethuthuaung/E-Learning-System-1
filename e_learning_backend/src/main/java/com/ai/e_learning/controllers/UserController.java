@@ -1,6 +1,7 @@
 package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.ImageResponse;
 import com.ai.e_learning.dto.UserDto;
 import com.ai.e_learning.model.User;
 import com.ai.e_learning.service.MailSenderService;
@@ -17,6 +18,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +134,26 @@ public class UserController {
   public ResponseEntity<Void> softDeleteUser(@PathVariable Long id) {
     userService.softDeleteUser(id);
     return ResponseEntity.noContent().build();
-  } 
+  }
+
+  @PostMapping("/updateProfile")
+  public ResponseEntity<ImageResponse> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("userId")String userId) throws IOException, GeneralSecurityException {
+    System.out.println(file.getContentType());
+    if (file.isEmpty()) {
+      return ResponseEntity.badRequest().body(new ImageResponse(400, "File is empty", null));
+    }
+
+//    File tempFile = File.createTempFile("temp", null);
+//    file.transferTo(tempFile);
+//
+//    // Get the original content type of the file
+//    String contentType = file.getContentType();
+    Long id = Long.parseLong(userId);
+    ImageResponse imageResponse = this.userService.uploadProfile(file, id);
+//    tempFile.delete(); // Delete the temporary file after processing
+
+    return ResponseEntity.status(imageResponse.getStatus()).body(imageResponse);
+  }
 
 }
 
