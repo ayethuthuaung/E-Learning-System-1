@@ -1,0 +1,9 @@
+<div class="container">
+    <h2>Upload User Data</h2>
+    <p class="error-message" *ngIf="errormessage">{{ errormessage }}</p>
+    <p class="success-message" *ngIf="successmessage">{{ successmessage }}</p>
+    <input type="file" (change)="onFileSelected($event)" accept=".xlsx"/>
+    <button (click)="onUpload()">Upload</button>
+    
+  </div>
+  

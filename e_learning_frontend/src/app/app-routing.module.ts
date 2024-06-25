@@ -12,6 +12,8 @@ import { UpdateCourseComponent } from './components/update-course/update-course.
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseListComponent } from './components/course-list/course-list.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
 
 
 const routes: Routes = [
@@ -29,6 +31,7 @@ const routes: Routes = [
    {path:'blog', component: BlogsComponent},
 
    {path:'chat', component: ChatComponent},
+   { path: 'user/upload-user-data', component: UserUploadComponent },
 ];
 
 

@@ -51,6 +51,7 @@ import { CourseListComponent } from './components/course-list/course-list.compon
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -98,6 +99,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     UpdateCategoryComponent,
         HomeComponent,
         CourseDetailsComponent,
+        UserUploadComponent,
 
   ],
   imports: [
