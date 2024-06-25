@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @ToString
 public class CourseDto {
-  private Long id;
+  private Long id, userId;
   private String name;
   private  String level;
   private String duration;
@@ -28,4 +28,5 @@ public class CourseDto {
   private boolean isDeleted;
   private String photo;
   private MultipartFile photoInput;
+
 }

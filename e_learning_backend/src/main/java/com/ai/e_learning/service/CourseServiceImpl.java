@@ -4,8 +4,11 @@ import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.exception.EntityNotFoundException;
 import com.ai.e_learning.model.Category;
 import com.ai.e_learning.model.Course;
+import com.ai.e_learning.model.User;
 import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
+import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.util.EntityUtil;
 import com.ai.e_learning.util.Helper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,6 +35,9 @@ public class CourseServiceImpl implements CourseService {
   private CategoryRepository categoryRepository;
 
   @Autowired
+  private UserRepository userRepository;
+
+  @Autowired
   private ModelMapper modelMapper;
   private final Helper helper;
 
@@ -48,24 +54,18 @@ public class CourseServiceImpl implements CourseService {
     courseDto.setId(null);
     Course course = convertToEntity(courseDto);
 
-    Set<Category> categories = new HashSet<>();
-    for (Category category : courseDto.getCategories()) {
-      Category category1 = categoryRepository.findById(category.getId()).orElseThrow(() ->
-        new EntityNotFoundException("Category not found"));
-      categories.add(category1);
-    }
+    User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
+    course.setUser(user);
+
+      Set<Category> categories = new HashSet<>(courseDto.getCategories());
     course.setCategories(categories);
     File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
     courseDto.getPhotoInput().transferTo(tempFile);
     String imageUrl = helper.uploadImageToDrive(tempFile, "course");
     course.setPhoto(tempFile.getName());
-    Course savedCourse = courseRepository.save(course);
+    Course savedCourse = EntityUtil.saveEntity(courseRepository, course, "Course");
 
-    // Handle photo conversion
-//    if (courseDto.getPhoto() != null) {
-//      byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-//     savedCourse.setPhoto(photoBytes);
-//    }
+
 
     return convertToDto(savedCourse);
   }

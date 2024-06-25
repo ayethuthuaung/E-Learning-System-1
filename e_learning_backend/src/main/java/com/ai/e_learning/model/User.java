@@ -55,7 +55,9 @@ public class User {
  @JsonIgnore
  private Set<Role> roles;
 
-
+ @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+ @JsonIgnore
+ private Set<Course> courses;
 
 
  @PrePersist

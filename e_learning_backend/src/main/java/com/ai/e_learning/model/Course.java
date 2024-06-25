@@ -39,8 +39,13 @@ public class Course  {
   @JoinTable(name = "course_has_category",
     joinColumns = @JoinColumn(name = "course_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id"))
-
  private Set<Category> categories = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
 
   @PrePersist
   protected void onCreate() {

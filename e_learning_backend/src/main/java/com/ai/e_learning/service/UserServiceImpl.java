@@ -251,10 +251,11 @@ public class UserServiceImpl implements UserService {
                 "HR",
                 "Admin/HR",
                 "Active",
-                "default_user.png",
+                "userPhoto.png",
                 passwordEncoder.encode("11111"),
                 System.currentTimeMillis(),
-                new HashSet<>(Collections.singletonList(adminRole))
+                new HashSet<>(Collections.singletonList(adminRole)),
+                null
 
         );
 
