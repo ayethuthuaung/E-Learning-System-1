@@ -34,7 +34,8 @@ export class CoursesComponent implements OnInit {
   }
 
   private getAllCourses() {
-    this.courseService.getAllCourses()
+
+    this.courseService.getAllCourses("Accept")
     .subscribe({
       next: (data) => {
         this.course = data;

@@ -44,15 +44,11 @@ public class CourseServiceImpl implements CourseService {
 
 
   @Override
-  public List<CourseDto> getAllCourses() {
-    System.out.println("Hi");
+  public List<CourseDto> getAllCourses(String status) {
 
 
-    List<Course> allCourses = courseRepository.findByStatus("Accept");
-    System.out.println("Hi");
-    for (Course course: allCourses){
-      System.out.println(course.toString());
-    }
+    List<Course> allCourses = courseRepository.findByStatus(status);
+
     GoogleDriveJSONConnector driveConnector;
 
       driveConnector = new GoogleDriveJSONConnector();
@@ -63,7 +59,6 @@ public class CourseServiceImpl implements CourseService {
         String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
         course.setPhoto(thumbnailLink);
       } catch (IOException | GeneralSecurityException e) {
-        // Log the error and continue with the next course
         e.printStackTrace();
       }
     }
@@ -77,14 +72,9 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {
     courseDto.setId(null);
-    System.out.println(courseDto.toString());
     Course course = convertToEntity(courseDto);
-
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-
-//      Set<Category> categories = new HashSet<>(courseDto.getCategories());
-//    course.setCategories(categories);
 
     File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
     courseDto.getPhotoInput().transferTo(tempFile);
@@ -95,7 +85,6 @@ public class CourseServiceImpl implements CourseService {
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
               .map(existingCategory -> {
-                // Update existing category details if necessary
                 existingCategory.setName(category.getName());
                 return existingCategory;
               })
@@ -108,6 +97,14 @@ public class CourseServiceImpl implements CourseService {
     Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
 
     return convertToDto(savedCourse);
+  }
+
+  @Override
+  public void changeStatus(Long id,String status){
+
+      Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
+      course.setStatus(status);
+      EntityUtil.saveEntity(courseRepository,course,"Course");
   }
 
   @Override
@@ -172,26 +169,10 @@ public class CourseServiceImpl implements CourseService {
   }
 
   private Course convertToEntity(CourseDto dto) {
-    Course course = modelMapper.map(dto, Course.class);
-
-    // Handle photo conversion
-//    if (dto.getPhoto() != null) {
-//      byte[] photoBytes = ProfileImageService.convertStringToByteArray(dto.getPhoto());
-//      course.setPhoto(photoBytes);
-//    }
-
-    return course;
+      return modelMapper.map(dto, Course.class);
   }
 
   private CourseDto convertToDto(Course course) {
-    CourseDto courseDto = modelMapper.map(course, CourseDto.class);
-
-    // Handle photo conversion
-//    if (course.getPhoto() != null) {
-//      String base64Photo = ProfileImageService.generateStringOfImage(course.getPhoto());
-//      courseDto.setPhoto(base64Photo);
-//    }
-
-    return courseDto;
+      return modelMapper.map(course, CourseDto.class);
   }
 }
