@@ -72,8 +72,7 @@ export class CourseComponent implements OnInit {
         console.error('Error creating course:', error);
       }
     );
-  }
-
+}
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {

@@ -1,9 +1,6 @@
 package com.ai.e_learning.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -19,4 +16,11 @@ public class Notification {
     private Long id;
 
     private String message;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    @Column(name = "is_read")
+    private boolean isRead;
 }

@@ -6,10 +6,6 @@ import { AuthGuard } from './components/auth/auth.guard';
 import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
-
-
-
-
 import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 
 import { BlogsComponent } from './components/home/blogs/blogs.component';
@@ -58,7 +54,7 @@ const routes: Routes = [
 
    {path:'blog', component: BlogsComponent},
 
-   { path: 'chat/:chatRoomId', component: ChatComponent },
+   { path: 'chat/:chatRoomId/:userName', component: ChatComponent },
 
 
    {path:'exam', component: CreateExamComponent},

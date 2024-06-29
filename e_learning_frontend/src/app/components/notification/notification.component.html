@@ -1,9 +1,22 @@
-<div *ngIf="notifications.length > 0">
+
+<!-- notification.component.html -->
+<audio #audio src="../../../assets/notification/notification.wav"></audio>
+
+<div class="notification-container" *ngIf="notifications.length > 0">
   <h3>Notifications</h3>
-  <ul>
-    <li *ngFor="let notification of notifications">{{ notification.message }}</li>
+  <ul class="notification-list">
+    <li *ngFor="let notification of notifications" 
+        [class.unread]="!notification.isRead" 
+        class="notification-item">
+      <div class="notification-content" (click)="markAsRead(notification)">
+        
+        {{ notification.message }}
+        <span *ngIf="!notification.isRead" class="red-dot"></span>
+      </div>
+    </li>
   </ul>
 </div>
-<div *ngIf="notifications.length === 0">
+
+<div class="no-notifications" *ngIf="notifications.length === 0">
   <p>No notifications yet.</p>
 </div>

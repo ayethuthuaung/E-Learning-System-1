@@ -27,4 +27,9 @@ export class AuthService {
     const loggedUser = JSON.parse(localStorage.getItem('loggedUser')!);
     return loggedUser ? loggedUser.id : null;
   }
+  //get user role for noti
+  getLoggedInUserRole(): string {
+    const loggedUser = JSON.parse(localStorage.getItem('loggedUser')!);
+    return loggedUser ? loggedUser.roles[0].name : null; // Adjust based on how roles are stored
+  }
 }

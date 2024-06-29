@@ -1,6 +1,7 @@
 package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.model.ChatRoom;
+import com.ai.e_learning.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -36,13 +37,25 @@ public class ChatController {
 //        return ResponseEntity.ok(history);
 //    }
 @GetMapping("/conversation-list/{userId}")
-public ResponseEntity<List<ChatRoom>> getUserConversationList(@PathVariable Long userId) {
-    List<ChatRoom> conversationList = chatService.getUserConversationList(userId);
+public ResponseEntity<List<User>> getUserConversationList(@PathVariable Long userId) {
+    List<User> conversationList = chatService.getUserConversationList(userId);
     return ResponseEntity.ok(conversationList);
 }
 
+    @GetMapping("/history/{chatRoomId}")
+    public ResponseEntity<List<Message>> getChatHistory(@PathVariable Long chatRoomId) {
+        if (chatRoomId == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        List<Message> history = chatService.getChatHistory(chatRoomId);
+        return ResponseEntity.ok(history);
+    }
+
     @GetMapping("/history/{chatRoomId}/{userId}")
     public ResponseEntity<List<Message>> getChatHistoryForUser(@PathVariable Long chatRoomId, @PathVariable Long userId) {
+        if (chatRoomId == null || userId == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
         List<Message> history = chatService.getChatHistoryForUser(chatRoomId, userId);
         return ResponseEntity.ok(history);
     }

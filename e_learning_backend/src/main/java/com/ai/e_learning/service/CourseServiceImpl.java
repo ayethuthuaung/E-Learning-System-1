@@ -3,10 +3,7 @@ package com.ai.e_learning.service;
 import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.exception.EntityNotFoundException;
-import com.ai.e_learning.model.Category;
-import com.ai.e_learning.model.Course;
-import com.ai.e_learning.model.Notification;
-import com.ai.e_learning.model.User;
+import com.ai.e_learning.model.*;
 import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
@@ -45,7 +42,7 @@ public class CourseServiceImpl implements CourseService {
   private final Helper helper;
 
   @Autowired
-  private NotificationService notificationService;
+  private RoleService roleService;
 
   @Autowired
   private NotificationController notificationController;
@@ -76,13 +73,23 @@ public class CourseServiceImpl implements CourseService {
 
     Course requestCourse = courseRepository.save(course);
     // Send notification via WebSocket
-    Notification notification = new Notification();
-    notification.setMessage("New course added: " + requestCourse.getName());
-    System.out.println(notification);
-    notificationController.sendNotificationToPage(notification);
+    sendRoleSpecificNotifications(requestCourse);
 
 
     return convertToDto(savedCourse);
+  }
+  private void sendRoleSpecificNotifications(Course course) {
+    Optional<Role> adminRoleOptional = roleService.getRoleByName("ADMIN");
+    if (adminRoleOptional.isPresent()) {
+      Role adminRole = adminRoleOptional.get();
+      Notification adminNotification = new Notification();
+      adminNotification.setMessage("New course added: " + course.getName());
+      adminNotification.setRole(adminRole);
+      notificationController.sendNotificationToPage(adminNotification);
+    } else {
+      // Handle the case where the admin role is not found
+      System.out.println("Admin role not found");
+    }
   }
 
   @Override

@@ -67,14 +67,18 @@ public class ChatService {
         }
         return messageRepository.findByChatRoomId(chatRoomId);
     }
-    public List<ChatRoom> getUserConversationList(Long userId) {
-        return chatRoomRepository.findByUserId(userId);
+    public List<User> getUserConversationList(Long userId) {
+        return chatRoomRepository.findUsersByUserId(userId);
     }
 
     public Message saveMessage(Message message) {
         return messageRepository.save(message);
     }
+    // Fetch chat history for a specific chat room and user
     public List<Message> getChatHistoryForUser(Long chatRoomId, Long userId) {
+        if (chatRoomId == null || userId == null) {
+            throw new IllegalArgumentException("Chat room ID and User ID must not be null");
+        }
         return messageRepository.findByChatRoomIdAndSenderId(chatRoomId, userId);
     }
 }

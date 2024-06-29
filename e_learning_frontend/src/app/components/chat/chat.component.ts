@@ -18,8 +18,9 @@ export class ChatComponent implements OnInit {
   messageSent: boolean = false;
   sessionId!: string;
   chatRoomId!: number;
+  userName!: string;
 
-  constructor(private route: ActivatedRoute, private webSocketService: WebSocketService,private authService: AuthService) {    
+  constructor(private route: ActivatedRoute, private webSocketService: WebSocketService,private authService: AuthService, private http: HttpClient) {    
     
   }
 
@@ -32,6 +33,7 @@ export class ChatComponent implements OnInit {
     console.log('Logged in user ID:', this.senderId);
 
     this.chatRoomId = +this.route.snapshot.paramMap.get('chatRoomId')!;
+    this.userName = this.route.snapshot.paramMap.get('userName')!;
 
     this.loadChatHistory();
 
@@ -52,12 +54,11 @@ export class ChatComponent implements OnInit {
     });
   }
   loadChatHistory(): void {
-    this.webSocketService.loadChatHistory(this.chatRoomId).subscribe({
+    this.http.get<ChatMessage[]>(`/chat/history/${this.chatRoomId}`).subscribe({
       next: (history) => this.messages = history,
       error: (error) => console.error('Error loading chat history:', error)
     });
   }
-
   sendMessage(): void {
 
     console.log(this.sessionId);
@@ -67,7 +68,7 @@ export class ChatComponent implements OnInit {
         senderId: this.senderId,
         content: this.newMessage.trim(),
         message_side: 'sender',
-        chatRoomId: 1 ,// Add other necessary properties
+        chatRoomId: this.chatRoomId,// Add other necessary properties
         sessionId: this.sessionId
       };
 
