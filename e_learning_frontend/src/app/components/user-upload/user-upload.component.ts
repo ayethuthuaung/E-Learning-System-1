@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { UserService } from '../services/user.service';
+import { Router } from '@angular/router';
+
+declare var Swal: any; 
 
 @Component({
   selector: 'app-user-upload',
@@ -11,7 +14,7 @@ export class UserUploadComponent {
   successmessage: string = '';
   errormessage: string = '';
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private router: Router) { }
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -33,8 +36,7 @@ export class UserUploadComponent {
     if (this.selectedFile) {
       this.userService.uploadUserData(this.selectedFile).subscribe(
         response => {
-          this.successmessage = 'File uploaded successfully';
-          this.errormessage = ''; // Clear error message
+          this.showSuccessAlert(); // Call the success alert and navigate to login
         },
         error => {
           this.errormessage = 'File upload failed';
@@ -46,4 +48,18 @@ export class UserUploadComponent {
       this.successmessage = ''; // Clear success message
     }
   }
+
+  showSuccessAlert(): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: 'File uploaded successfully.',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/login']); // Navigate to the login page
+      }
+    });
+  }
+  
 }

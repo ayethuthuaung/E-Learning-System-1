@@ -1,0 +1,46 @@
+
+    <!-- Sidebar -->
+    <aside [ngClass]="{'w-64': isSidebarOpen, 'w-20': !isSidebarOpen}" class="h-full bg-white shadow-md py-6 px-4 lg:block transition-all duration-300">
+        <ul class="space-y-5">
+          <li>
+            <a href="admin/dashboard" class="flex items-center block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-blue" [ngClass]="{'bg-logo-blue text-white': isSidebarOpen, 'justify-center': !isSidebarOpen}">
+              <i class="fas fa-tachometer-alt"></i>
+              <span *ngIf="isSidebarOpen" class="ml-2">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-blue" [ngClass]="{'justify-center': !isSidebarOpen}">
+              <i class="fas fa-book"></i>
+              <span *ngIf="isSidebarOpen" class="ml-2">Course</span>
+            </a>
+          </li>
+          <li>
+              <a href="#" class="flex items-center block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-blue" [ngClass]="{'justify-center': !isSidebarOpen}">
+                <i class="fas fa-folder"></i>
+                <span *ngIf="isSidebarOpen" class="ml-2">Instructor</span>
+              </a>
+            </li>
+          <li>
+            <a href="#" class="flex items-center block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-blue" [ngClass]="{'justify-center': !isSidebarOpen}">
+              <i class="fas fa-user-graduate"></i>
+              <span *ngIf="isSidebarOpen" class="ml-2">Students</span>
+            </a>
+          </li>
+          
+          <li>
+            <a href="#" class="flex items-center block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-blue" [ngClass]="{'justify-center': !isSidebarOpen}">
+              <i class="fas fa-file-alt"></i>
+              <span *ngIf="isSidebarOpen" class="ml-2">Report</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-blue" [ngClass]="{'justify-center': !isSidebarOpen}">
+              <i class="fas fa-sign-out-alt"></i>
+              <span *ngIf="isSidebarOpen" class="ml-2">Log out</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+      
+  
+    

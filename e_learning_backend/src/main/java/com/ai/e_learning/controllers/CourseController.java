@@ -2,6 +2,7 @@ package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.dto.CategoryDto;
 import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.ImageResponse;
 import com.ai.e_learning.model.Category;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.ProfileImageService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,14 +35,18 @@ public class CourseController {
   @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
   public ResponseEntity<CourseDto> addCourse(
     @RequestPart("course") CourseDto courseDto,
-    @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException {
+    @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
 
 
-    if (photo != null && !photo.isEmpty()) {
-      byte[] photoBytes = photo.getBytes();
-      courseDto.setPhoto(Arrays.toString(photoBytes));
+//    if (photo != null && !photo.isEmpty()) {
+//      byte[] photoBytes = photo.getBytes();
+//      courseDto.setPhoto(Arrays.toString(photoBytes));
+//    }
+
+    if (photo.isEmpty()) {
+      return ResponseEntity.badRequest().body(courseDto);
     }
-
+courseDto.setPhotoInput(photo);
     CourseDto savedCourse = courseService.saveCourse(courseDto);
     if (savedCourse != null) {
       return ResponseEntity.ok(savedCourse);
