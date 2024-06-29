@@ -1,1 +1,29 @@
-<p>course-details works!</p>
+<div *ngIf="course">
+  <h2>{{ course.name }}</h2>
+  <p>{{ course.description }}</p>
+  <p>{{ course.duration }}</p>
+</div>
+
+<h2>Course Name</h2>
+<div class="flex flex-col items-start p-6">
+  <div class="w-full text-center">
+    <h1 class="text-2xl font-bold mb-4 text-logo-blue">Java</h1>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="p-6 bg-blue-100 rounded-lg shadow-lg text-center">
+      <div class="flex justify-center mb-4">Lesson 1</div>
+      <p class="mb-4">Short Description</p>
+      <button class="px-4 py-2 bg-white border border-logo-blue text-logo-blue rounded-lg hover:bg-logo-blue hover:text-white">
+        View</button>
+      </div>
+
+    <div class="p-6 bg-blue-100 rounded-lg shadow-lg text-center">
+      <div class="flex justify-center mb-4">Lesson 2</div>
+      <p class="mb-4">Short Description</p>
+      <button class="px-4 py-2 bg-white border border-logo-blue text-logo-blue rounded-lg hover:bg-logo-blue hover:text-white">
+        View</button>    
+    </div>
+
+    <!-- Add more lessons here as needed -->
+  </div>
+</div>

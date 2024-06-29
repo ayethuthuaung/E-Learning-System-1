@@ -19,6 +19,8 @@ export class CoursesComponent implements OnInit {
   course: Course[] = [];
   filteredCourses: Course[] = [];
 
+  selectedCourse: Course | null = null;
+
   categories: Category[]  = [];
   selectedCategory: string = '';
 
@@ -28,7 +30,6 @@ export class CoursesComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit(): void {
-    this.getCategories();
     this.getAllCourses();
   }
 
@@ -38,9 +39,12 @@ export class CoursesComponent implements OnInit {
       next: (data) => {
         this.course = data;
         this.filteredCourses = data;
+        console.log(data);
       },
       error: (e) => console.log(e)
     })
+    this.getCategories();
+
   }
 
   private getCategories(){
@@ -48,6 +52,7 @@ export class CoursesComponent implements OnInit {
     .subscribe({
       next: (data) => {
       this.categories = data;
+      
       
     },    
     error: (e) => console.log(e)
@@ -64,4 +69,6 @@ export class CoursesComponent implements OnInit {
     }
     this.selectedCategory = category;
   }
+  
+  
 }
