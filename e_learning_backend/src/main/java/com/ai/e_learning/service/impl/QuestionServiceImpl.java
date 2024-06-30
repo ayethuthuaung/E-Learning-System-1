@@ -1,9 +1,6 @@
 package com.ai.e_learning.service.impl;
 
-import com.ai.e_learning.dto.AnswerFeedback;
-import com.ai.e_learning.dto.AnswerOptionDTO;
-import com.ai.e_learning.dto.QuestionCreationDTO;
-import com.ai.e_learning.dto.QuestionDTO;
+import com.ai.e_learning.dto.*;
 import com.ai.e_learning.model.AnswerOption;
 import com.ai.e_learning.model.Exam;
 import com.ai.e_learning.model.Question;
@@ -18,9 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,22 +30,6 @@ public class QuestionServiceImpl implements QuestionService {
     private final ExamRepository examRepository;
     private final ModelMapper modelMapper;
 
-//    @Override
-//    public List<QuestionDTO> getQuestionsWithAnswers(Long examId) {
-//        List<Question> questions = questionRepository.findByExamId(examId);
-//
-//        return (List<QuestionDTO>) questions.stream()
-//                .map(question -> {
-//                    QuestionDTO questionDTO = DtoUtil.map(question, QuestionDTO.class, modelMapper);
-//                    List<AnswerOption> answerOptions = answerOptionRepository.findByQuestionId(question.getId());
-//                    List<AnswerOptionDTO> answerOptionDTOs = answerOptions.stream()
-//                            .map(answerOption -> DtoUtil.map(answerOption, AnswerOptionDTO.class, modelMapper))
-//                            .collect(Collectors.toList());
-//                    questionDTO.setAnswerList(answerOptionDTOs);
-//                    return questionDTO;
-//                })
-//                .collect(Collectors.toSet());
-//    }
 
     @Override
     public QuestionDTO addQuestion(QuestionDTO questionDTO) {
@@ -79,13 +58,6 @@ public class QuestionServiceImpl implements QuestionService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public List<QuestionDTO> getQuestionsForExam(Long examId) {
-//        List<Question> questions = questionRepository.findByExamId(examId);
-//        return questions.stream()
-//                .map(question -> DtoUtil.map(question, QuestionDTO.class, modelMapper))
-//                .collect(Collectors.toList());
-//    }
 
     @Override
     public Set<QuestionDTO> getQuestions() {
@@ -136,37 +108,125 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
-    @Override
-    public List<AnswerFeedback> submitStudentAnswers(List<StudentAnswer> studentAnswers) {
-        List<StudentAnswer> savedStudentAnswers = studentAnswerRepository.saveAll(studentAnswers);
-        return savedStudentAnswers.stream()
-                .map(this::generateFeedback)
-                .collect(Collectors.toList());
+//    @Override
+//    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDTO> studentAnswerRequestDTOList) {
+//        for (StudentAnswerRequestDTO requestDTO : studentAnswerRequestDTOList) {
+//            // Retrieve question and answer option entities
+//            Question question = questionRepository.findById(requestDTO.getQuestionId())
+//                    .orElseThrow(() -> new IllegalArgumentException("Question not found"));
+//            AnswerOption answerOption = answerOptionRepository.findById(requestDTO.getAnswerOptionId())
+//                    .orElseThrow(() -> new IllegalArgumentException("Answer option not found"));
+//
+//            // Create a new StudentAnswer entity and set selectedOptionId
+//            StudentAnswer studentAnswer = new StudentAnswer();
+//            studentAnswer.setQuestion(question);
+//            studentAnswer.setAnswerOption(answerOption);
+//            studentAnswer.setSelectedOptionId(answerOption.getId()); // Set selected option ID
+//
+//            // Save the student answer
+//            studentAnswerRepository.save(studentAnswer);
+//        }
+//
+//    }
+@Override
+public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDTO> studentAnswerRequestDTOList) {
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (StudentAnswerRequestDTO requestDTO : studentAnswerRequestDTOList) {
+        Map<String, Object> answerResult = new HashMap<>();
+        answerResult.put("questionId", requestDTO.getQuestionId());
+
+        // Retrieve question and answer option entities
+        Question question = questionRepository.findById(requestDTO.getQuestionId())
+                .orElseThrow(() -> new IllegalArgumentException("Question not found for ID: " + requestDTO.getQuestionId()));
+        AnswerOption selectedAnswerOption = answerOptionRepository.findById(requestDTO.getAnswerOptionId())
+                .orElseThrow(() -> new IllegalArgumentException("Answer option not found for ID: " + requestDTO.getAnswerOptionId()));
+
+        // Retrieve the correct answer option for the given question
+        AnswerOption correctAnswerOption = answerOptionRepository.findByQuestionIdAndIsAnsweredTrue(question.getId());
+
+        // Simplify the question object to include only necessary attributes
+        Map<String, Object> questionMap = new HashMap<>();
+        questionMap.put("id", question.getId());
+        questionMap.put("content", question.getContent());
+        List<Map<String, Object>> optionsList = new ArrayList<>();
+        for (AnswerOption option : question.getAnswerOptions()) {
+            Map<String, Object> optionMap = new HashMap<>();
+            optionMap.put("id", option.getId());
+            optionMap.put("answer", option.getAnswer());
+            optionMap.put("isAnswered", option.getIsAnswered());
+            optionsList.add(optionMap);
+        }
+        questionMap.put("options", optionsList);
+
+        // Add to the result list
+        answerResult.put("selectedOptionId", selectedAnswerOption.getId());
+        answerResult.put("correctAnswerId", correctAnswerOption.getId());
+        answerResult.put("question", questionMap);
+
+        // Save the student answer
+        studentAnswerRepository.save(new StudentAnswer(question, selectedAnswerOption));
+
+        result.add(answerResult);
     }
 
-    @Override
-    public AnswerFeedback generateFeedback(StudentAnswer studentAnswer) {
-        // Fetch the selected answer option
-        AnswerOption selectedOption = answerOptionRepository.findById(studentAnswer.getAnswerOptionId())
-                .orElseThrow(() -> new RuntimeException("Selected answer option not found"));
-
-        // Fetch the corresponding question
-        Question question = questionRepository.findById(studentAnswer.getQuestionId())
-                .orElseThrow(() -> new RuntimeException("Question not found"));
-
-        // Fetch the correct answer option (assuming one is marked as correct)
-        AnswerOption correctOption = question.getAnswerOptions().stream()
-                .filter(AnswerOption::getIsAnswered)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Correct answer option not found"));
-
-        // Prepare feedback object
-        AnswerFeedback feedback = new AnswerFeedback();
-        feedback.setQuestionId(studentAnswer.getQuestionId());
-        feedback.setSelectedOptionId(selectedOption.getId());
-        feedback.setCorrectOptionId(correctOption.getId());
-        feedback.setCorrect(selectedOption.getId().equals(correctOption.getId()));
-
-        return feedback;
-    }
+    return result;
 }
+
+}
+
+
+
+//@Override
+//public void saveStudentAnswers(List<StudentAnswerRequestDTO> studentAnswerRequestDTOList) {
+//    for (StudentAnswerRequestDTO requestDTO : studentAnswerRequestDTOList) {
+//        // Log the request DTO
+//        System.out.println("Processing: " + requestDTO);
+//
+//        // Retrieve question entity
+//        Question question = questionRepository.findById(requestDTO.getQuestionId())
+//                .orElseThrow(() -> new IllegalArgumentException("Question not found for ID: " + requestDTO.getQuestionId()));
+//
+//        // Retrieve answer option entity for the selected answer
+//        AnswerOption selectedAnswerOption = answerOptionRepository.findById(requestDTO.getAnswerOptionId())
+//                .orElseThrow(() -> new IllegalArgumentException("Answer option not found for ID: " + requestDTO.getAnswerOptionId()));
+//
+//        // Log the selected answer option
+//        System.out.println("Selected Answer Option: " + selectedAnswerOption);
+//
+//        // Retrieve all answer options for the given question
+//        List<AnswerOption> answerOptions = answerOptionRepository.findByQuestionId(requestDTO.getQuestionId());
+//        if (answerOptions.isEmpty()) {
+//            throw new IllegalArgumentException("No answer options found for question ID: " + requestDTO.getQuestionId());
+//        }
+//
+//        // Log all answer options for the question
+//        System.out.println("Answer Options for Question ID " + requestDTO.getQuestionId() + ": " + answerOptions);
+//
+//        // Retrieve the correct answer option for the given question
+//        AnswerOption correctAnswerOption = answerOptions.stream()
+//                .filter(AnswerOption::getIsAnswered)
+//                .findFirst()
+//                .orElseThrow(() -> new IllegalArgumentException("Correct answer option not found for question ID: " + requestDTO.getQuestionId()));
+//
+//        // Log the correct answer option
+//        System.out.println("Correct Answer Option: " + correctAnswerOption);
+//
+//        // Create a new StudentAnswer entity and set selectedOptionId and correctAnswerId
+//        StudentAnswer studentAnswer = new StudentAnswer();
+//        studentAnswer.setQuestion(question);
+//        studentAnswer.setAnswerOption(selectedAnswerOption);
+//        studentAnswer.setSelectedOptionId(selectedAnswerOption.getId()); // Set selected option ID
+//        studentAnswer.setCorrectAnswerId(correctAnswerOption.getId()); // Set correct answer ID
+//
+//        // Save the student answer
+//        studentAnswerRepository.save(studentAnswer);
+//    }
+//}
+
+
+
+
+
+
+

@@ -25,16 +25,18 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     private QuestionRepository questionRepository;
 
     @Override
-    public StudentAnswer saveStudentAnswer(Long questionId, Long studentOptionId) {
+    public StudentAnswer saveStudentAnswer(Long questionId, Long answerOptionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
-        AnswerOption answerOption = answerOptionRepository.findById(studentOptionId)
+        AnswerOption answerOption = answerOptionRepository.findById(answerOptionId)
                 .orElseThrow(() -> new RuntimeException("AnswerOption not found"));
 
         StudentAnswer studentAnswer = new StudentAnswer();
         studentAnswer.setQuestion(question);
         studentAnswer.setAnswerOption(answerOption);
+        studentAnswer.setSelectedOptionId(answerOption.getId()); // Set selected option ID
+        //studentAnswer.setCorrectAnswerId(correctAnswerId); // Set correct answer ID
 
         return studentAnswerRepository.save(studentAnswer);
     }

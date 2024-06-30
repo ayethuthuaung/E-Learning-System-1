@@ -5,6 +5,7 @@ import com.ai.e_learning.model.StudentAnswer;
 import java.util.List;
 
 public interface StudentAnswerService {
+//    StudentAnswer saveStudentAnswer(Long questionId, Long answerOptionId, Long correctAnswerId);
     public StudentAnswer saveStudentAnswer(Long questionId, Long studentOptionId);
     public List<StudentAnswer> getAllStudentAnswers();
     public StudentAnswer getStudentAnswerById(Long id);

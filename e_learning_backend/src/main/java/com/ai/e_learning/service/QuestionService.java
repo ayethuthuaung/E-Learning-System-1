@@ -1,10 +1,12 @@
 package com.ai.e_learning.service;
 
-import com.ai.e_learning.dto.AnswerFeedback;
 import com.ai.e_learning.dto.QuestionCreationDTO;
 import com.ai.e_learning.dto.QuestionDTO;
-import com.ai.e_learning.model.StudentAnswer;
+import com.ai.e_learning.dto.StudentAnswerRequestDTO;
+import org.springframework.http.ResponseEntity;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface QuestionService {
@@ -20,12 +22,7 @@ public interface QuestionService {
 
     public boolean createQuestion(List<QuestionCreationDTO> questionCreationDTOList);
 
-    public List<AnswerFeedback> submitStudentAnswers(List<StudentAnswer> studentAnswers);
-
-    public AnswerFeedback generateFeedback(StudentAnswer studentAnswer);
-
     List<QuestionDTO> getQuestionsByQuestionType(Long questionTypeId);
 
-
-//    List<QuestionDTO> getQuestionsWithAnswers(Long examId);
+   public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDTO> studentAnswerRequestDTOList);
 }

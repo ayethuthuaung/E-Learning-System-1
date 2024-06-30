@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/exam")
-//@CrossOrigin("*")
+@CrossOrigin("*")
 public class ExamController {
 
     @Autowired

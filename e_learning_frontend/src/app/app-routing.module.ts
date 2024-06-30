@@ -25,6 +25,8 @@ import { CreateQuestionFormComponent } from './components/quiz-Ans/create-questi
 import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
 
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
 
 
 const routes: Routes = [
@@ -53,6 +55,7 @@ const routes: Routes = [
 
 
    {path:'chat', component: ChatComponent},
+   { path: 'user/upload-user-data', component: UserUploadComponent },
 ];
 
 

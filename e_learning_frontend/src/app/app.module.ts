@@ -56,12 +56,15 @@ import { CourseListComponent } from './components/course-list/course-list.compon
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+ 
 import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
 import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
 import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -123,7 +126,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     UpdateCategoryComponent,
         HomeComponent,
         CourseDetailsComponent,
+ 
          SubmitFormComponent,
+
+        UserUploadComponent,
 
   ],
   imports: [

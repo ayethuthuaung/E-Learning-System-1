@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/student-answers")
+@RequestMapping("/student-answers")
 @CrossOrigin("*")
 public class StudentAnswerController {
 
@@ -19,9 +19,17 @@ public class StudentAnswerController {
 
     @PostMapping
     public ResponseEntity<StudentAnswer> addStudentAnswer(@RequestBody StudentAnswerRequestDTO request) {
-        StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(request.getQuestionId(), request.getStudentOptionId());
+        StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(request.getQuestionId(), request.getAnswerOptionId());
         return ResponseEntity.ok(studentAnswer);
     }
+//@PostMapping
+//public ResponseEntity<StudentAnswer> addStudentAnswer(@RequestBody StudentAnswerRequestDTO request) {
+//    StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(
+//            request.getQuestionId(),
+//            request.getAnswerOptionId(),
+//            request.getCorrectAnswerId()); // Include correctAnswerId
+//    return ResponseEntity.ok(studentAnswer);
+//}
 
     @GetMapping
     public ResponseEntity<List<StudentAnswer>> getAllStudentAnswers() {

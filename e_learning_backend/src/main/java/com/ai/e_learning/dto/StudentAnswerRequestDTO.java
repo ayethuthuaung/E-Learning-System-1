@@ -7,5 +7,7 @@ import lombok.Setter;
 @Setter
 public class StudentAnswerRequestDTO {
     private Long questionId;
-    private Long studentOptionId;
+    private Long answerOptionId;
+    private Long correctAnswerId; // Include correct answer ID
+    private boolean selectedOption;
 }

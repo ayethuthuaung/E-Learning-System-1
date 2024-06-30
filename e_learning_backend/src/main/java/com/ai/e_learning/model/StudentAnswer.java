@@ -2,26 +2,24 @@ package com.ai.e_learning.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@RequiredArgsConstructor
 @Table(name = "student_answer")
 public class StudentAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Keep questionId for direct reference if necessary
-    @Column(name = "question_id", insertable = false, updatable = false)
-    private Long questionId;
+//    @Column(name = "correct_answer_id")
+//    private Long correctAnswerId; // Field to store correct answer ID
 
-    // Keep answerOptionId for direct reference if necessary
-    @Column(name = "answer_option_id", insertable = false, updatable = false)
-    private Long answerOptionId;
-
-    private boolean isAnswered;
+    @Column(name = "selected_option_id")
+    private Long selectedOptionId;  // Use Long to store ID of selected answer option
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
@@ -30,4 +28,10 @@ public class StudentAnswer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_option_id")
     private AnswerOption answerOption;
+
+
+    public StudentAnswer(Question question, AnswerOption selectedAnswerOption) {
+        this.question=question;
+        this.answerOption=selectedAnswerOption;
+    }
 }
