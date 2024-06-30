@@ -1,0 +1,92 @@
+<div class="min-h-screen bg-gray-100 text-gray-900">
+  <div class="container mx-auto p-4">
+    <div class="flex flex-col md:flex-row">
+      <!-- Right Panel -->
+      <div class="md:w-1/3 p-4">
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+          <div class="flex flex-col items-center">
+            <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden profile-picture">
+              <img src="{{photo}}" alt="Profile Picture" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <label for="file-input" class="cursor-pointer">
+                  <i class="fas fa-camera text-white text-xl"></i>
+                </label>
+                <input type="file" id="file-input" class="hidden" (change)="onFileSelected($event)">
+              </div>
+            </div><br>
+            <h1 class="text-2xl font-bold">{{name}}</h1><br>
+            <p>Team: {{team}}</p>
+            <p>Department: {{department}}</p>
+            <p>Division: {{division}}</p>
+            <button class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-2 px-4 rounded mt-4" (click)="updateProfile()">Update Profile</button>
+            <h3 class="text-lg font-semibold mt-6 mb-2">Active in these Squads</h3>
+            <div class="flex space-x-4">
+              <div class="bg-gray-200 p-4 rounded-lg w-20 h-20 flex items-center justify-center">+</div>
+              <div class="bg-gray-200 p-4 rounded-lg w-20 h-20 flex items-center justify-center"></div>
+              <div class="bg-gray-200 p-4 rounded-lg w-20 h-20 flex items-center justify-center"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left Panel -->
+      <div class="md:w-2/3 p-4">
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold mb-2">Readme</h2>
+          <p class="mb-4">Do you love breaking production? Share with the world what has brought you so far</p>
+          <button class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-2 px-4 rounded">Add readme</button>
+          <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-2">Reading streaks</h3>
+            <div class="flex space-x-4">
+              <div class="bg-gray-200 p-4 rounded-lg">
+                <p class="text-pink-500 text-2xl">1</p>
+                <p>Longest streak</p>
+              </div>
+              <div class="bg-gray-200 p-4 rounded-lg">
+                <p class="text-pink-500 text-2xl">4</p>
+                <p>Total reading days</p>
+              </div>
+            </div>
+            <h3 class="text-xl font-semibold mt-6 mb-2">Top tags by reading days</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p>#webdev</p>
+                <div class="w-full bg-gray-300 rounded-full h-2.5 mb-2">
+                  <div class="bg-logo-blue h-2.5 rounded-full" style="width: 60%"></div>
+                </div>
+              </div>
+              <div>
+                <p>#career</p>
+                <div class="w-full bg-gray-300 rounded-full h-2.5 mb-2">
+                  <div class="bg-logo-blue h-2.5 rounded-full" style="width: 40%"></div>
+                </div>
+              </div>
+              <div>
+                <p>#machine-learning</p>
+                <div class="w-full bg-gray-300 rounded-full h-2.5 mb-2">
+                  <div class="bg-logo-blue h-2.5 rounded-full" style="width: 40%"></div>
+                </div>
+              </div>
+              <div>
+                <p>#productivity</p>
+                <div class="w-full bg-gray-300 rounded-full h-2.5 mb-2">
+                  <div class="bg-logo-blue h-2.5 rounded-full" style="width: 40%"></div>
+                </div>
+              </div>
+              <div>
+                <p>#security</p>
+                <div class="w-full bg-gray-300 rounded-full h-2.5 mb-2">
+                  <div class="bg-logo-blue h-2.5 rounded-full" style="width: 20%"></div>
+                </div>
+              </div>
+              <div>
+                <p>#tech-news</p>
+              <!-- PDF View  -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

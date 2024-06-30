@@ -13,6 +13,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -22,13 +24,14 @@ import java.util.stream.Collectors;
 
 
 public interface CourseService {
-  List<CourseDto> getAllCourses();
-  CourseDto saveCourse(CourseDto courseDto);
+  List<CourseDto> getAllCourses(String status);
+  CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException;
   CourseDto getCourseById(Long id);
   CourseDto updateCourse(Long id, CourseDto courseDto);
   void softDeleteCourse(Long id);
   List<CourseDto> getCoursesByCategory(Long categoryId);
   void addCategoryToCourse(Long courseId, Long categoryId);
   boolean isCourseNameAlreadyExists(String name);
+  void changeStatus(Long id,String status);
 
 }
