@@ -1,9 +1,9 @@
 package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.dto.AnswerFeedback;
-import com.ai.e_learning.dto.AnswerOptionDTO;
-import com.ai.e_learning.dto.QuestionCreationDTO;
-import com.ai.e_learning.dto.QuestionDTO;
+import com.ai.e_learning.dto.AnswerOptionDto;
+import com.ai.e_learning.dto.QuestionCreationDto;
+import com.ai.e_learning.dto.QuestionDto;
 import com.ai.e_learning.model.AnswerOption;
 import com.ai.e_learning.model.Exam;
 import com.ai.e_learning.model.Question;
@@ -53,29 +53,29 @@ public class QuestionServiceImpl implements QuestionService {
 //    }
 
     @Override
-    public QuestionDTO addQuestion(QuestionDTO questionDTO) {
+    public QuestionDto addQuestion(QuestionDto questionDTO) {
         QuestionType questionType = EntityUtil.getEntityById(questionTypeRepository, questionDTO.getQuestionTypeId(), "QuestionType");
         Question question = DtoUtil.map(questionDTO, Question.class, modelMapper);
         question.setQuestionType(questionType);
         Question savedQuestion = questionRepository.save(question);
-        return DtoUtil.map(savedQuestion, QuestionDTO.class, modelMapper);
+        return DtoUtil.map(savedQuestion, QuestionDto.class, modelMapper);
     }
 
     @Override
-    public QuestionDTO updateQuestion(QuestionDTO questionDTO) {
+    public QuestionDto updateQuestion(QuestionDto questionDTO) {
         Question existingQuestion = EntityUtil.getEntityById(questionRepository, questionDTO.getId(), "Question");
         QuestionType questionType = EntityUtil.getEntityById(questionTypeRepository, questionDTO.getQuestionTypeId(), "QuestionType");
         existingQuestion.setContent(questionDTO.getContent());
         existingQuestion.setQuestionType(questionType);
         Question updatedQuestion = questionRepository.save(existingQuestion);
-        return DtoUtil.map(updatedQuestion, QuestionDTO.class, modelMapper);
+        return DtoUtil.map(updatedQuestion, QuestionDto.class, modelMapper);
     }
 
     @Override
-    public List<QuestionDTO> getQuestionsByQuestionType(Long questionTypeId) {
+    public List<QuestionDto> getQuestionsByQuestionType(Long questionTypeId) {
         List<Question> questions = questionRepository.findByQuestionTypeId(questionTypeId);
         return questions.stream()
-                .map(question -> DtoUtil.map(question, QuestionDTO.class, modelMapper))
+                .map(question -> DtoUtil.map(question, QuestionDto.class, modelMapper))
                 .collect(Collectors.toList());
     }
 
@@ -88,17 +88,17 @@ public class QuestionServiceImpl implements QuestionService {
 //    }
 
     @Override
-    public Set<QuestionDTO> getQuestions() {
+    public Set<QuestionDto> getQuestions() {
         List<Question> questionList = EntityUtil.getAllEntities(questionRepository);
         return questionList.stream()
-                .map(question -> DtoUtil.map(question, QuestionDTO.class, modelMapper))
+                .map(question -> DtoUtil.map(question, QuestionDto.class, modelMapper))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public QuestionDTO getQuestion(Long questionId) {
+    public QuestionDto getQuestion(Long questionId) {
         Question question = EntityUtil.getEntityById(questionRepository, questionId, "Question");
-        return DtoUtil.map(question, QuestionDTO.class, modelMapper);
+        return DtoUtil.map(question, QuestionDto.class, modelMapper);
     }
 
     @Override
@@ -107,11 +107,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean createQuestion(List<QuestionCreationDTO> questionCreationDTOList) {
+    public boolean createQuestion(List<QuestionCreationDto> questionCreationDtoList) {
         try {
-            for (QuestionCreationDTO questionCreationDTO : questionCreationDTOList) {
+            for (QuestionCreationDto questionCreationDTO : questionCreationDtoList) {
                 Exam exam = EntityUtil.getEntityById(examRepository, questionCreationDTO.getExamId(), "Exam");
-                for (QuestionDTO questionDTO : questionCreationDTO.getQuestionList()) {
+                for (QuestionDto questionDTO : questionCreationDTO.getQuestionList()) {
                     Question question = new Question();
                     question.setContent(questionDTO.getContent());
                     question.setExam(exam);
@@ -119,7 +119,7 @@ public class QuestionServiceImpl implements QuestionService {
                     question.setQuestionType(questionType);
                     Question savedQuestion = questionRepository.save(question);
                     List<AnswerOption> answerOptions = new ArrayList<>();
-                    for (AnswerOptionDTO answerOptionDTO : questionDTO.getAnswerList()) {
+                    for (AnswerOptionDto answerOptionDTO : questionDTO.getAnswerList()) {
                         AnswerOption answerOption = new AnswerOption();
                         answerOption.setAnswer(answerOptionDTO.getAnswer());
                         answerOption.setIsAnswered(answerOptionDTO.getIsAnswered());

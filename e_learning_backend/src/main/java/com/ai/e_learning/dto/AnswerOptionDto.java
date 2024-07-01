@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AnswerOptionDTO {
+public class AnswerOptionDto {
     private Long id,questionId;
 
     private String answer;

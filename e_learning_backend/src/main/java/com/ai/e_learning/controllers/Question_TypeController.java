@@ -1,6 +1,6 @@
 package com.ai.e_learning.controllers;
 
-import com.ai.e_learning.dto.QuestionTypeDTO;
+import com.ai.e_learning.dto.QuestionTypeDto;
 import com.ai.e_learning.service.Question_TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/questionType")
+@RequestMapping("/api/questionType")
 @CrossOrigin("*")
 public class Question_TypeController {
 
@@ -18,15 +18,15 @@ public class Question_TypeController {
 
     // Add question type
     @PostMapping("/add")
-    public ResponseEntity<QuestionTypeDTO> addQuestionType(@RequestBody QuestionTypeDTO questionTypeDTO) {
-        QuestionTypeDTO savedQuestionType = questionTypeService.addQuestionType(questionTypeDTO);
+    public ResponseEntity<QuestionTypeDto> addQuestionType(@RequestBody QuestionTypeDto questionTypeDTO) {
+        QuestionTypeDto savedQuestionType = questionTypeService.addQuestionType(questionTypeDTO);
         return ResponseEntity.ok(savedQuestionType);
     }
 
     // Get question type by ID
     @GetMapping("/viewOne/{questionTypeId}")
-    public ResponseEntity<QuestionTypeDTO> getQuestionType(@PathVariable("questionTypeId") Long questionTypeId) {
-        QuestionTypeDTO questionTypeDTO = questionTypeService.getQuestionType(questionTypeId);
+    public ResponseEntity<QuestionTypeDto> getQuestionType(@PathVariable("questionTypeId") Long questionTypeId) {
+        QuestionTypeDto questionTypeDTO = questionTypeService.getQuestionType(questionTypeId);
         if (questionTypeDTO != null) {
             return ResponseEntity.ok(questionTypeDTO);
         } else {
@@ -36,15 +36,15 @@ public class Question_TypeController {
 
     // Get all question types
     @GetMapping("/viewList")
-    public ResponseEntity<List<QuestionTypeDTO>> getQuestionTypes() {
-        List<QuestionTypeDTO> questionTypes = questionTypeService.getQuestionTypes();
+    public ResponseEntity<List<QuestionTypeDto>> getQuestionTypes() {
+        List<QuestionTypeDto> questionTypes = questionTypeService.getQuestionTypes();
         return ResponseEntity.ok(questionTypes);
     }
 
     // Update question type
     @PutMapping("/update")
-    public ResponseEntity<QuestionTypeDTO> updateQuestionType(@RequestBody QuestionTypeDTO questionTypeDTO) {
-        QuestionTypeDTO updatedQuestionType = questionTypeService.updateQuestionType(questionTypeDTO);
+    public ResponseEntity<QuestionTypeDto> updateQuestionType(@RequestBody QuestionTypeDto questionTypeDTO) {
+        QuestionTypeDto updatedQuestionType = questionTypeService.updateQuestionType(questionTypeDTO);
         if (updatedQuestionType != null) {
             return ResponseEntity.ok(updatedQuestionType);
         } else {

@@ -16,7 +16,7 @@ import java.security.GeneralSecurityException;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/fileUpload")
+@RequestMapping("/api/fileUpload")
 @AllArgsConstructor
 public class FileUploadController {
     private final UploadService uploadService;

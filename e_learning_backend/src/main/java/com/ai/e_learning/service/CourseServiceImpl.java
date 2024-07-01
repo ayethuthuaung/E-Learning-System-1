@@ -23,6 +23,8 @@ import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ai.e_learning.util.Helper.convertLongToLocalDate;
+
 
 @Service
 @Transactional
@@ -45,14 +47,12 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public List<CourseDto> getAllCourses(String status) {
-
-
-    List<Course> allCourses = courseRepository.findByStatus(status);
+    //Change List
+    List<String> statusList = Arrays.asList(status.split(","));
+    List<Course> allCourses = courseRepository.findByStatusIn(statusList);
 
     GoogleDriveJSONConnector driveConnector;
-
-      driveConnector = new GoogleDriveJSONConnector();
-
+    driveConnector = new GoogleDriveJSONConnector();
       for (Course course : allCourses) {
       try {
         String fileId = driveConnector.getFileIdByName(course.getPhoto());
@@ -61,13 +61,13 @@ public class CourseServiceImpl implements CourseService {
       } catch (IOException | GeneralSecurityException e) {
         e.printStackTrace();
       }
+        // Convert createdAt to createdDate in CourseDto
+        course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()).toString());
     }
-
     return allCourses.stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
   }
-
 
   @Override
   public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {
@@ -75,12 +75,10 @@ public class CourseServiceImpl implements CourseService {
     Course course = convertToEntity(courseDto);
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-
     File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
     courseDto.getPhotoInput().transferTo(tempFile);
     String imageUrl = helper.uploadImageToDrive(tempFile, "course");
     course.setPhoto(tempFile.getName());
-
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
@@ -91,17 +89,13 @@ public class CourseServiceImpl implements CourseService {
               .orElse(category);
       mergedCategories.add(managedCategory);
     }
-
     course.setCategories(mergedCategories);
-
     Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
-
     return convertToDto(savedCourse);
   }
 
   @Override
   public void changeStatus(Long id,String status){
-
       Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
       course.setStatus(status);
       EntityUtil.saveEntity(courseRepository,course,"Course");
@@ -120,13 +114,6 @@ public class CourseServiceImpl implements CourseService {
       .map(existingCourse -> {
         courseDto.setId(existingCourse.getId());
         modelMapper.map(courseDto, existingCourse);
-
-        // Handle photo conversion
-//        if (courseDto.getPhoto() != null) {
-//          byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-//          existingCourse.setPhoto(photoBytes);
-//        }
-
         Course updatedCourse = courseRepository.save(existingCourse);
         return convertToDto(updatedCourse);
       })

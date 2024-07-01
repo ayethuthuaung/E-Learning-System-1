@@ -17,7 +17,7 @@ export class Course {
   userId: number;
   status: string;
   user: User | undefined;
-  
+  createdDate: string;
   
 
   constructor() {
@@ -34,5 +34,6 @@ export class Course {
     this.photoFile = undefined;
     this.userId = 1;
     this.status ='';
+    this.createdDate = '';
   }
 }

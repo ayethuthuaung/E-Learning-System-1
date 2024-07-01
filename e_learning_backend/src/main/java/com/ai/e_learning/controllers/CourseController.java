@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/courses")
+@RequestMapping("/api/courses")
 public class CourseController {
 
     @Autowired
@@ -29,7 +29,6 @@ public class CourseController {
     @GetMapping(value = "/courselist", produces = "application/json")
     public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
         return courseService.getAllCourses(status);
-
     }
 
     @PostMapping(value = "/changeStatus", produces = "application/json")

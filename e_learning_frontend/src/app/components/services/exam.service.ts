@@ -9,7 +9,7 @@ import { StudentAnswer } from '../models/student-answer.model';
     providedIn: 'root'
 })
 export class ExamService {
-    private baseURL = "http://localhost:8080/exam";
+    private baseURL = "http://localhost:8080/api/exam";
 
     constructor(private httpClient: HttpClient) { }
 

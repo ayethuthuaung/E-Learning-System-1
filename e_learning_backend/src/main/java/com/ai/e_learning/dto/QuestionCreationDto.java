@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class QuestionCreationDTO {
+public class QuestionCreationDto {
     private Long examId;
-    private List<QuestionDTO> questionList;
+    private List<QuestionDto> questionList;
 }

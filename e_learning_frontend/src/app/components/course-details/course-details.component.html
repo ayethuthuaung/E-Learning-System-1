@@ -1,29 +1,47 @@
-<div *ngIf="course">
+<!-- <div *ngIf="course">
   <h2>{{ course.name }}</h2>
   <p>{{ course.description }}</p>
   <p>{{ course.duration }}</p>
-</div>
+</div> -->
 
-<h2>Course Name</h2>
-<div class="flex flex-col items-start p-6">
-  <div class="w-full text-center">
-    <h1 class="text-2xl font-bold mb-4 text-logo-blue">Java</h1>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="p-6 bg-blue-100 rounded-lg shadow-lg text-center">
-      <div class="flex justify-center mb-4">Lesson 1</div>
-      <p class="mb-4">Short Description</p>
-      <button class="px-4 py-2 bg-white border border-logo-blue text-logo-blue rounded-lg hover:bg-logo-blue hover:text-white">
-        View</button>
-      </div>
-
-    <div class="p-6 bg-blue-100 rounded-lg shadow-lg text-center">
-      <div class="flex justify-center mb-4">Lesson 2</div>
-      <p class="mb-4">Short Description</p>
-      <button class="px-4 py-2 bg-white border border-logo-blue text-logo-blue rounded-lg hover:bg-logo-blue hover:text-white">
-        View</button>    
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <div class="w-64 bg-gray-400 text-white flex flex-col">
+    <div class="px-4 py-6">
+      <h1 class="text-lg font-bold">Java</h1>
     </div>
+    <nav class="flex-1 px-4 space-y-2">
+      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">General</a>
+      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Data Structure and Algorithm</a>
+      <!-- Add more links as needed -->
+    </nav>
+  </div>
 
-    <!-- Add more lessons here as needed -->
+  <!-- Main content -->
+  <div class="flex-1 p-6 bg-gray-100">
+  
+    <div class="mt-4">
+      <div class="flex items-center cursor-pointer" (click)="toggleDropdown()">
+        <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+        <h1 class="text-xl font-medium">Module-1 (Java Basic)</h1>
+        
+      </div>
+      <div *ngIf="isDropdownOpen" class="mt-2 space-y-2 p-4">
+        <div class="p-4 bg-white rounded-lg shadow flex items-center justify-between">
+          <p>2301 1-1 Concept of Information Security 1-1-1 Assets</p>
+          <button class="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Mark as done</button>
+        </div>
+        <div class="p-4 bg-white rounded-lg shadow flex items-center justify-between">
+          <p>2302 1-1 Concept of Information Security 1-1-2 Threats (or Perils)</p>
+          <span class="ml-4 px-4 py-2 bg-green-500 text-white rounded">Done</span>
+        </div>
+        <!-- Add more items as needed -->
+      </div>
+    </div>
   </div>
 </div>
+  
+ 
+

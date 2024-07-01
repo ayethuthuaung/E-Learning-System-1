@@ -19,13 +19,16 @@ export class InstructorCourseComponent implements OnInit {
   errorMessage: string = '';
   categories: Category[] = [];
   nameDuplicateError = false;
-  
+
   course: Course = new Course();
   categoryList: number[] = [];
   submitted = false;
 
   loggedUser: any = '';
   userId: any;
+
+  courses: Course[] = [];
+  status: string = 'Accept,Pending';
 
   constructor(
     private categoryService: CategoryService,
@@ -46,6 +49,7 @@ export class InstructorCourseComponent implements OnInit {
         
       }
     }
+    this.getAllCourses();
   }
 
   getCategories(): void {
@@ -185,8 +189,14 @@ export class InstructorCourseComponent implements OnInit {
     
   }
 
-
-
-  
-
+  getAllCourses(): void {
+    this.courseService.getAllCourses(this.status).subscribe(
+      (data: Course[]) => {
+        this.courses = data;
+      },
+      error => {
+        console.error('Error fetching courses', error);
+      }
+    );
+  }
 }

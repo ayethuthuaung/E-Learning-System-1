@@ -10,10 +10,17 @@ import { Course } from '../models/course.model';
 })
 export class CourseDetailsComponent implements OnInit {
   course: Course | undefined;
+  isDropdownOpen = false;
 
+  
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.course = history.state.course;
   }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
 }
