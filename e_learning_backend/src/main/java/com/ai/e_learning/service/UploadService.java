@@ -12,7 +12,7 @@ import java.security.GeneralSecurityException;
 @Service
 public class UploadService {
 
-    public String getPathToGoodleCredentials() {
+    public String getPathToGoogleCredentials() {
         return GoogleDriveJSONConnector.getPathToGoodleCredentials();
     }
 

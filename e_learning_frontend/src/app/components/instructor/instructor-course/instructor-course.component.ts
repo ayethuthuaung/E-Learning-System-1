@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Category } from '../../models/category.model';
-
 import { CategoryService } from '../../services/category.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
@@ -10,24 +9,23 @@ import { CourseService } from '../../services/course.service';
 @Component({
   selector: 'app-instructor-course',
   templateUrl: './instructor-course.component.html',
-  styleUrl: './instructor-course.component.css'
+  styleUrls: ['./instructor-course.component.css']
 })
 export class InstructorCourseComponent implements OnInit {
   isSidebarOpen = true;
   activeTab: string = 'createCourse';
-  category: Category = new Category();
-  errorMessage: string = '';
   categories: Category[] = [];
   nameDuplicateError = false;
-  
   course: Course = new Course();
-  categoryList: number[] = [];
   submitted = false;
+  errorMessage: string = '';
+  loading = false;
 
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
-    private router:Router) { }
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.getCategories();
@@ -44,64 +42,6 @@ export class InstructorCourseComponent implements OnInit {
     );
   }
 
-  validateCategoryName(name: string): void {
-    this.categoryService.isCategoryNameAlreadyExists(name).subscribe(
-      (exists: boolean) => {
-        this.nameDuplicateError = exists;
-      },
-      (error) => {
-        console.error('Error checking category name:', error);
-      }
-    );
-  }
-
-  onSubmit(form: NgForm): void {
-    if (form.valid) {
-      this.submitted = false;
-      this.saveCourse();
-    } else {
-      this.submitted = true;
-      console.log('invalid form');
-    }
-    
-  }
-
-  createCategory(): void {
-    this.categoryService.createCategory(this.category).subscribe(
-      () => {
-        console.log('Category created successfully');
-        this.goToCategoryList();
-
-        this.getCategories(); // Refresh the list after creation
-        this.category = new Category(); // Clear the form
-      },
-      (error) => {
-        this.errorMessage = `Error creating category: ${error}`;
-      }
-    );
-  }
-  goToCategoryList(): void {
-    this.router.navigate(['/categories']);
-  }
-
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
-
-
-  setActiveTab(tab: string) {
-    this.activeTab = tab;
-  }
-
-  loadCategories(): void {
-    this.categoryService.getCategories().subscribe({
-      next: (data) => {
-        this.categories = data;
-      },
-      error: (e) => console.error(e)
-    });
-  }
-
   validateCourseName(name: string): void {
     this.courseService.isCourseNameAlreadyExists(name).subscribe(
       (exists: boolean) => {
@@ -111,6 +51,17 @@ export class InstructorCourseComponent implements OnInit {
         console.error('Error checking course name:', error);
       }
     );
+  }
+
+  onSubmit(form: NgForm): void {
+    if (form.valid) {
+      this.submitted = false;
+      this.loading = true;
+      this.saveCourse();
+    } else {
+      this.submitted = true;
+      console.log('Invalid form');
+    }
   }
 
   saveCourse(): void {
@@ -123,10 +74,12 @@ export class InstructorCourseComponent implements OnInit {
     this.courseService.addCourseWithFormData(formData).subscribe(
       (data) => {
         console.log('Course created successfully:', data);
+        this.loading = false;
         this.router.navigate(['/courses']);
       },
       (error) => {
         console.error('Error creating course:', error);
+        this.loading = false;
       }
     );
   }
@@ -138,18 +91,22 @@ export class InstructorCourseComponent implements OnInit {
     }
   }
 
-  goToCourseList(): void {
-    this.router.navigate(['/courses']);
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  toggleCategory(event: any, categoryId: number): void {
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  toggleCategories(event: any, category: Category) {
     if (event.target.checked) {
-      this.categoryList.push(categoryId); // Add category ID to the list
+      this.course.categories.push(category);
     } else {
-      this.categoryList = this.categoryList.filter(id => id !== categoryId); // Remove category ID from the list
+      const index = this.course.categories.findIndex(cat => cat.id === category.id);
+      if (index !== -1) {
+        this.course.categories.splice(index, 1);
+      }
     }
   }
-
-  
-
 }

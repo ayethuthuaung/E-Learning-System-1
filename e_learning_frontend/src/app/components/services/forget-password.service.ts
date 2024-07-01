@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ForgetPasswordService {
-  private baseUrl = 'http://localhost:8080/user'; // Replace with your backend base URL
+  private baseUrl = 'http://localhost:8080/api/user'; // Replace with your backend base URL
 
   constructor(private http: HttpClient) { }
 

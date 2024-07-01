@@ -13,6 +13,8 @@ export class Course {
   deleted?: boolean;
   photoFile?: File;
   photoUrl?: string;
+  completion: any;
+photo: any;
 
   constructor() {
     this.id = 1;

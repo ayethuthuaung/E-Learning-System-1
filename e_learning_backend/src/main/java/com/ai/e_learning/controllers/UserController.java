@@ -2,14 +2,13 @@ package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ImageResponse;
+
 import com.ai.e_learning.dto.UserDto;
-import com.ai.e_learning.model.User;
 import com.ai.e_learning.service.MailSenderService;
 import com.ai.e_learning.service.OtpStoreService;
 import com.ai.e_learning.service.UserService;
 import com.ai.e_learning.util.Helper;
 import lombok.AllArgsConstructor;
-import org.apache.xmlbeans.impl.xb.xsdschema.Attribute;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @AllArgsConstructor
 public class UserController {
 
@@ -135,6 +134,7 @@ public class UserController {
     userService.softDeleteUser(id);
     return ResponseEntity.noContent().build();
   }
+
 
   @PostMapping("/updateProfile")
   public ResponseEntity<ImageResponse> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("userId")String userId) throws IOException, GeneralSecurityException {

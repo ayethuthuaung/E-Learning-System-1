@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 
@@ -60,6 +60,13 @@ import { InstructorCategoryComponent } from './components/instructor/instructor-
 import { StudentProfileComponent } from './components/student/student-profile/student-profile.component';
 
 
+import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
+import { CourseListComponent } from './components/course-list/course-list.component';
+
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 
@@ -114,9 +121,18 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     InstructorNavbarComponent,
     InstructorSidebarComponent,
     InstructorCategoryComponent,
+    CourseDetailsComponent,
   
     // instructor
 
+
+   
+        HomeComponent,
+        CourseDetailsComponent,
+        UserUploadComponent,
+        CourseListComponent,
+      
+        
 
   ],
   imports: [
@@ -125,7 +141,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    
+   
     SocketIoModule.forRoot(config)
   ],
 
@@ -135,7 +151,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     provideClientHydration(),
     WebSocketService
   ],
-
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

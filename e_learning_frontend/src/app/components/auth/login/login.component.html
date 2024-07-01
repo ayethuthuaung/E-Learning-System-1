@@ -10,8 +10,15 @@
                 </div>
              
                 <input type="text" name="staffId" [(ngModel)]="loginObj.staffId" placeholder="Staff ID">
-                <input type="password" name="password"   [(ngModel)]="loginObj.password" placeholder="Password">
-                <a [routerLink]="['/forget-password']">→ Forget Your Password? ←</a>
+                <div class="password-container">
+                    <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="loginObj.password" placeholder="Password">
+                    <div class="show">
+                        <button type="button" class="toggle-button" (click)="togglePasswordVisibility()">
+                            {{ showPassword ? 'Hide' : 'Show' }}
+                        </button>
+                    </div>
+                </div>  
+                            <a [routerLink]="['/forget-password']">→ Forget Your Password? ←</a>
                 <button (click)="onLogin()">Sign In</button>
             </form>
         </div>

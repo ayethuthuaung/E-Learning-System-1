@@ -7,7 +7,7 @@ import { Course } from '../models/course.model';
   providedIn: 'root'
 })
 export class CourseService {
-  private baseUrl = 'http://localhost:8080/courses';
+  private baseUrl = 'http://localhost:8080/api/courses';
 
   constructor(private http: HttpClient) {}
 
@@ -49,12 +49,5 @@ export class CourseService {
     });
   }
 
-  private createFormData(course: Course): FormData {
-    const formData = new FormData();
-    formData.append('course', new Blob([JSON.stringify(course)], { type: 'application/json' }));
-    if (course.photoFile) {
-      formData.append('photo', course.photoFile, course.photoFile.name);
-    }
-    return formData;
-  }
+ 
 }
