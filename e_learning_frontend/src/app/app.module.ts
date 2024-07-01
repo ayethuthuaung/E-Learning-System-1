@@ -72,6 +72,8 @@ import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-ex
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-details.component';
+import { QuizExamListComponent } from './components/quiz-Ans/exam-list/exam-list.component';
 
 
 
@@ -92,6 +94,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
         CreateQuestionFormComponent,
         CreateQuestionFormComponent,
         AnswerFormComponent,
+        ExamDetailComponent,
 
 
 
@@ -156,6 +159,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
         UserUploadComponent,
 
          SubmitFormComponent,
+         QuizExamListComponent,
 
   ],
   imports: [

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StudentAnswerRequestDTO {
+public class StudentAnswerRequestDto {
     private Long questionId;
     private Long answerOptionId;
     private Long correctAnswerId; // Include correct answer ID

@@ -10,7 +10,7 @@ import { Question_Type } from '../models/question-type.model';
 })
 export class QuestionTypeService {
 
-  private baseURL = "http://localhost:8080/questionType";
+  private baseURL = "http://localhost:8080/api/questionType";
 
   constructor(private httpClient: HttpClient) { }
 

@@ -10,7 +10,7 @@ import { Category } from '../models/category.model';
 })
 export class CategoryService {
 
-  private baseURL = "http://localhost:8080/categories";
+  private baseURL = "http://localhost:8080/api/categories";
 
   constructor(private httpClient: HttpClient) { }
 

@@ -1,16 +1,16 @@
 package com.ai.e_learning.service;
 
-import com.ai.e_learning.dto.AnswerOptionDTO;
+import com.ai.e_learning.dto.AnswerOptionDto;
 import java.util.Set;
 
 public interface AnswerOptionService {
-    AnswerOptionDTO addAnswerOption(AnswerOptionDTO answerOptionDTO);
+    AnswerOptionDto addAnswerOption(AnswerOptionDto answerOptionDTO);
 
-    AnswerOptionDTO updateAnswerOption(AnswerOptionDTO answerOptionDTO);
+    AnswerOptionDto updateAnswerOption(AnswerOptionDto answerOptionDTO);
 
-    Set<AnswerOptionDTO> getAnswerOptions();
+    Set<AnswerOptionDto> getAnswerOptions();
 
-    AnswerOptionDTO getAnswerOption(Long answerOptionId);
+    AnswerOptionDto getAnswerOption(Long answerOptionId);
 
     void deleteAnswerOption(Long answerOptionId);
 }

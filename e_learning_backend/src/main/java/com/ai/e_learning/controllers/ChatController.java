@@ -11,7 +11,7 @@ import com.ai.e_learning.service.ChatService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 public class ChatController {
 
     private final ChatService chatService;

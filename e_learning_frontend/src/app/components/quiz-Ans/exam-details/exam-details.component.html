@@ -1,0 +1,17 @@
+<!-- exam-detail.component.html -->
+<div class="exam-container" *ngIf="exam">
+  <h2 class="exam-title">Exam: {{ exam.title }}</h2>
+  <p class="exam-description">Description: {{ exam.description }}</p>
+  
+  <div class="question-container" *ngFor="let question of exam.questions">
+    <div class="question-title">Question:</div>
+    <div class="question-content">{{ question.content }}</div>
+    <ul class="answer-list">
+      <li class="answer-item" *ngFor="let option of question.answerList">
+        {{ option.answer }}
+      </li>
+    </ul>
+  </div>
+  
+  <button class="exam-details-button" routerLink="/exam-list">Back to Exams</button>
+</div>

@@ -32,45 +32,45 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
-    public QuestionDTO addQuestion(QuestionDTO questionDTO) {
+    public QuestionDto addQuestion(QuestionDto questionDTO) {
         QuestionType questionType = EntityUtil.getEntityById(questionTypeRepository, questionDTO.getQuestionTypeId(), "QuestionType");
         Question question = DtoUtil.map(questionDTO, Question.class, modelMapper);
         question.setQuestionType(questionType);
         Question savedQuestion = questionRepository.save(question);
-        return DtoUtil.map(savedQuestion, QuestionDTO.class, modelMapper);
+        return DtoUtil.map(savedQuestion, QuestionDto.class, modelMapper);
     }
 
     @Override
-    public QuestionDTO updateQuestion(QuestionDTO questionDTO) {
+    public QuestionDto updateQuestion(QuestionDto questionDTO) {
         Question existingQuestion = EntityUtil.getEntityById(questionRepository, questionDTO.getId(), "Question");
         QuestionType questionType = EntityUtil.getEntityById(questionTypeRepository, questionDTO.getQuestionTypeId(), "QuestionType");
         existingQuestion.setContent(questionDTO.getContent());
         existingQuestion.setQuestionType(questionType);
         Question updatedQuestion = questionRepository.save(existingQuestion);
-        return DtoUtil.map(updatedQuestion, QuestionDTO.class, modelMapper);
+        return DtoUtil.map(updatedQuestion, QuestionDto.class, modelMapper);
     }
 
     @Override
-    public List<QuestionDTO> getQuestionsByQuestionType(Long questionTypeId) {
+    public List<QuestionDto> getQuestionsByQuestionType(Long questionTypeId) {
         List<Question> questions = questionRepository.findByQuestionTypeId(questionTypeId);
         return questions.stream()
-                .map(question -> DtoUtil.map(question, QuestionDTO.class, modelMapper))
+                .map(question -> DtoUtil.map(question, QuestionDto.class, modelMapper))
                 .collect(Collectors.toList());
     }
 
 
     @Override
-    public Set<QuestionDTO> getQuestions() {
+    public Set<QuestionDto> getQuestions() {
         List<Question> questionList = EntityUtil.getAllEntities(questionRepository);
         return questionList.stream()
-                .map(question -> DtoUtil.map(question, QuestionDTO.class, modelMapper))
+                .map(question -> DtoUtil.map(question, QuestionDto.class, modelMapper))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public QuestionDTO getQuestion(Long questionId) {
+    public QuestionDto getQuestion(Long questionId) {
         Question question = EntityUtil.getEntityById(questionRepository, questionId, "Question");
-        return DtoUtil.map(question, QuestionDTO.class, modelMapper);
+        return DtoUtil.map(question, QuestionDto.class, modelMapper);
     }
 
     @Override
@@ -79,11 +79,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean createQuestion(List<QuestionCreationDTO> questionCreationDTOList) {
+    public boolean createQuestion(List<QuestionCreationDto> questionCreationDtoList) {
         try {
-            for (QuestionCreationDTO questionCreationDTO : questionCreationDTOList) {
+            for (QuestionCreationDto questionCreationDTO : questionCreationDtoList) {
                 Exam exam = EntityUtil.getEntityById(examRepository, questionCreationDTO.getExamId(), "Exam");
-                for (QuestionDTO questionDTO : questionCreationDTO.getQuestionList()) {
+                for (QuestionDto questionDTO : questionCreationDTO.getQuestionList()) {
                     Question question = new Question();
                     question.setContent(questionDTO.getContent());
                     question.setExam(exam);
@@ -91,7 +91,7 @@ public class QuestionServiceImpl implements QuestionService {
                     question.setQuestionType(questionType);
                     Question savedQuestion = questionRepository.save(question);
                     List<AnswerOption> answerOptions = new ArrayList<>();
-                    for (AnswerOptionDTO answerOptionDTO : questionDTO.getAnswerList()) {
+                    for (AnswerOptionDto answerOptionDTO : questionDTO.getAnswerList()) {
                         AnswerOption answerOption = new AnswerOption();
                         answerOption.setAnswer(answerOptionDTO.getAnswer());
                         answerOption.setIsAnswered(answerOptionDTO.getIsAnswered());
@@ -108,31 +108,12 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
-//    @Override
-//    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDTO> studentAnswerRequestDTOList) {
-//        for (StudentAnswerRequestDTO requestDTO : studentAnswerRequestDTOList) {
-//            // Retrieve question and answer option entities
-//            Question question = questionRepository.findById(requestDTO.getQuestionId())
-//                    .orElseThrow(() -> new IllegalArgumentException("Question not found"));
-//            AnswerOption answerOption = answerOptionRepository.findById(requestDTO.getAnswerOptionId())
-//                    .orElseThrow(() -> new IllegalArgumentException("Answer option not found"));
-//
-//            // Create a new StudentAnswer entity and set selectedOptionId
-//            StudentAnswer studentAnswer = new StudentAnswer();
-//            studentAnswer.setQuestion(question);
-//            studentAnswer.setAnswerOption(answerOption);
-//            studentAnswer.setSelectedOptionId(answerOption.getId()); // Set selected option ID
-//
-//            // Save the student answer
-//            studentAnswerRepository.save(studentAnswer);
-//        }
-//
-//    }
+
 @Override
-public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDTO> studentAnswerRequestDTOList) {
+public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDto> studentAnswerRequestDtoList) {
     List<Map<String, Object>> result = new ArrayList<>();
 
-    for (StudentAnswerRequestDTO requestDTO : studentAnswerRequestDTOList) {
+    for (StudentAnswerRequestDto requestDTO : studentAnswerRequestDtoList) {
         Map<String, Object> answerResult = new HashMap<>();
         answerResult.put("questionId", requestDTO.getQuestionId());
 

@@ -1,0 +1,39 @@
+/* exam-list.component.css */
+
+/* Container styles */
+.exam-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    position: relative; /* Ensure relative positioning for absolute button */
+  }
+  
+  /* Title styles */
+  .exam-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Description styles */
+  .exam-description {
+    margin-bottom: 15px;
+  }
+  
+  /* Button styles */
+  .exam-details-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 20px; /* Adjust button position as needed */
+    right: 20px; /* Align button to the right */
+  }
+  
+  .exam-details-button:hover {
+    background-color: #0056b3;
+  }
+  
