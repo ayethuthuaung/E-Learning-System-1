@@ -17,7 +17,7 @@ public class Course  {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private  Long id;
-  @Column(nullable = false, length = 10)
+  @Column(nullable = false, length = 50)
   private String name;
   @Column(nullable = false, length = 25)
   private  String level;
@@ -27,6 +27,7 @@ public class Course  {
   @Column(nullable = false, length = 100)
   private String description;
   private Long createdAt;
+  private String createdDate;
   @Column(nullable = false, length = 30)
   private String certificate;
   @Column(nullable = false, length = 30)

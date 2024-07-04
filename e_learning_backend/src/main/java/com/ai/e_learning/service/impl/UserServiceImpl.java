@@ -1,14 +1,14 @@
-package com.ai.e_learning.service;
+package com.ai.e_learning.service.impl;
 
-import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ExcelUploadDto;
 import com.ai.e_learning.dto.ImageResponse;
 import com.ai.e_learning.dto.UserDto;
-import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.Role;
 import com.ai.e_learning.model.User;
 import com.ai.e_learning.repository.RoleRepository;
 import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.service.ExcelUploadService;
+import com.ai.e_learning.service.UserService;
 import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
 import com.ai.e_learning.util.GoogleDriveJSONConnector;
@@ -18,7 +18,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;

@@ -10,4 +10,5 @@ public class StudentAnswerRequestDto {
     private Long answerOptionId;
     private Long correctAnswerId; // Include correct answer ID
     private boolean selectedOption;
+    private Long studentOptionId;
 }

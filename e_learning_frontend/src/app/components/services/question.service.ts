@@ -6,6 +6,7 @@ import { QuestionDTO } from '../models/question.model';
 import { StudentAnswer } from '../models/student-answer.model';
 import { Exam } from '../models/exam.model';
 import { ExamDTO } from '../models/examdto.model';
+import { MarksDTO } from '../models/marks.model';
 
 @Injectable({
   providedIn: 'root'
@@ -51,5 +52,23 @@ export class QuestionService {
   }
   submitStudentAnswers(studentAnswers: StudentAnswer[]): Observable<any> {
     return this.httpClient.post(`${this.baseURL}/submitAnswers`, studentAnswers, { responseType: 'json' });
+  }
+
+  //for marks
+
+  getMarks(): Observable<MarksDTO[]> {
+    return this.httpClient.get<MarksDTO[]>(`http://localhost:8080/api/marks/viewList`);
+  }
+
+  addMark(mark: MarksDTO): Observable<MarksDTO> {
+    return this.httpClient.post<MarksDTO>(`http://localhost:8080/api/marks/add`, mark);
+  }
+
+  updateMark(id: number, mark: MarksDTO): Observable<MarksDTO> {
+    return this.httpClient.put<MarksDTO>(`http://localhost:8080/api/marks/update/${id}`, mark);
+  }
+
+  deleteMark(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`http://localhost:8080/api/marks/delete/${id}`);
   }
 }

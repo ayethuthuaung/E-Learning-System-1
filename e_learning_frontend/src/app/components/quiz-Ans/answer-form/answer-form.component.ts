@@ -1,6 +1,4 @@
 
-
-
 import { Component, OnInit } from '@angular/core';
 import { ExamService } from '../../services/exam.service';
 import { QuestionService } from '../../services/question.service';
@@ -102,15 +100,6 @@ export class AnswerFormComponent implements OnInit {
   
   
 }
-
-
-
-
-
-
-
-
-
 
 
 

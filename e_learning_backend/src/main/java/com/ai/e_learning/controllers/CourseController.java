@@ -29,7 +29,6 @@ public class CourseController {
     @GetMapping(value = "/courselist", produces = "application/json")
     public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
         return courseService.getAllCourses(status);
-
     }
 
     @PostMapping(value = "/changeStatus", produces = "application/json")

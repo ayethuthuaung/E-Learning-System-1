@@ -31,12 +31,11 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
 
         AnswerOption answerOption = answerOptionRepository.findById(answerOptionId)
                 .orElseThrow(() -> new RuntimeException("AnswerOption not found"));
-
+        System.out.println("AnswerOption"+answerOption.getId());
         StudentAnswer studentAnswer = new StudentAnswer();
         studentAnswer.setQuestion(question);
         studentAnswer.setAnswerOption(answerOption);
         studentAnswer.setSelectedOptionId(answerOption.getId()); // Set selected option ID
-        //studentAnswer.setCorrectAnswerId(correctAnswerId); // Set correct answer ID
 
         return studentAnswerRepository.save(studentAnswer);
     }
@@ -55,5 +54,11 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     @Override
     public void deleteStudentAnswer(Long id) {
         studentAnswerRepository.deleteById(id);
+    }
+    @Override
+    public Long getSelectedOptionId(Long studentAnswerId) {
+        StudentAnswer studentAnswer = studentAnswerRepository.findById(studentAnswerId)
+                .orElseThrow(() -> new RuntimeException("StudentAnswer not found"));
+        return studentAnswer.getSelectedOptionId();
     }
 }

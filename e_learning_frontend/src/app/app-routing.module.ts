@@ -32,7 +32,6 @@ import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
 import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
-import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
 
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
 import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-details.component';
@@ -58,7 +57,6 @@ const routes: Routes = [
    {path:'answerOption', component: CreateAnswerOptionComponent},
    {path:'createquestionform' , component: CreateQuestionFormComponent},
    {path:'answerform' , component: AnswerFormComponent},
-   {path:'submitform' , component: SubmitFormComponent},
 
 
 

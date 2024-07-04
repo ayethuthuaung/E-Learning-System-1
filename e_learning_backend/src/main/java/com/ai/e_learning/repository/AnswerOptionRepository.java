@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AnswerOptionRepository extends JpaRepository<AnswerOption,Long> {
 
-    List<AnswerOption> findByQuestionId(Long id);
+    List<AnswerOption> findByQuestionId(Long questionId);
 
-    AnswerOption findByQuestionIdAndIsAnsweredTrue(Long id);
+    AnswerOption findByQuestionIdAndIsAnsweredTrue(Long questionId);
 }
