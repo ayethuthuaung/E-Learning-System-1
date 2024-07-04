@@ -16,10 +16,20 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('loggedUser'); 
   }
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('loggedUser');
+  }
+  // get user id for chat
+  getLoggedInUserId(): number {
+    const loggedUser = JSON.parse(localStorage.getItem('loggedUser')!);
+    return loggedUser ? loggedUser.id : null;
+  }
+  //get user role for noti
+  getLoggedInUserRole(): string {
+    const loggedUser = JSON.parse(localStorage.getItem('loggedUser')!);
+    return loggedUser ? loggedUser.roles[0].name : null; // Adjust based on how roles are stored
   }
 }

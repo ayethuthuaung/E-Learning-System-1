@@ -29,9 +29,10 @@ public interface UserService {
     UserDto updateUser(Long id, UserDto userDto);
     void softDeleteUser(Long id);
     UserDto getUserByStaffId(String staff_id);
-  UserDto getUserByEmail(String email);
-  int updatePassword(String email, String newPassword);
-  boolean checkPassword(String oldPassword, String inputPassword);
+    UserDto getUserByEmail(String email);
+    int updatePassword(String email, String newPassword);
+    boolean checkPassword(String oldPassword, String inputPassword);
+
     void addAdmin();
 
     ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException;

@@ -67,7 +67,7 @@ public class SecurityConfig {
 
 
 
- //                       .requestMatchers("/user/**","/courses/**","/categories/**","/fileUpload/**","/ws/**","/exam/**","/questionType/**","/question/**","/answerOption/**","/question/exam/**","/studentAnswer/**").permitAll()
+//                        .requestMatchers("/user/**","/courses/**","/categories/**","/fileUpload/**","/ws/**","/notifications/**","/chat/**","/exam/**","/questionType/**","/question/**","/answerOption/**","/question/exam/**","/studentAnswer/**").permitAll()
 
                         .anyRequest().authenticated()
 

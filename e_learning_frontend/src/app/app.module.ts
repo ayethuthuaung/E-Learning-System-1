@@ -49,12 +49,15 @@ import { ChatComponent } from './components/chat/chat.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
 
+import { NotificationComponent } from './components/notification/notification.component';
+
 
 import { UpdateCourseComponent } from './components/update-course/update-course.component';
 import { CourseListComponent } from './components/course-list/course-list.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
 
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';
@@ -75,6 +78,7 @@ import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-det
 import { QuizExamListComponent } from './components/quiz-Ans/exam-list/exam-list.component';
 
 
+import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -98,7 +102,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
 
     ForgetPasswordComponent,
- 
     CategoryComponent,
 
         ChatComponent,
@@ -151,12 +154,23 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     // instructor
 
         HomeComponent,
+
+        ChatComponent,
+        NotificationComponent,
+
         CourseDetailsComponent,
  
 
         UserUploadComponent,
 
          QuizExamListComponent,
+          ConservationListComponent,
+
+
+        UserUploadComponent,
+
+         
+           InstructorLessonComponent,
 
   ],
   imports: [

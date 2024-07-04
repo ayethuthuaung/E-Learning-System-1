@@ -1,11 +1,25 @@
-<div class="chat-container">
-  <div class="chat-window">
-    <div *ngFor="let message of messages" [ngClass]="{'sent': message.senderId === 1, 'received': message.senderId !== 1}"  class="chat-message">
-      {{ message.content }}
+<div class="fixed bottom-20 right-4 w-full max-w-md bg-white rounded-lg shadow-lg">
+  <div class="flex justify-between items-center p-4 bg-logo-blue rounded-t-lg text-white">
+    <h2 class="text-lg">{{ userName }}</h2>
+    <button (click)="closeChat()" class="text-2xl">&times;</button>
+  </div>
+  <div class="p-4 overflow-y-auto h-96">
+    <div *ngIf="messages.length === 0" class="text-center text-gray-500">
+      No Conversation
+    </div>
+    <div *ngFor="let message of messages" [ngClass]="{'text-right': message.message_side === 'sender'}">
+      <div class="inline-block p-2 m-1 rounded-lg" [ngClass]="{
+        'bg-gray-200 text-black': message.message_side === 'receiver',
+        'bg-logo-blue text-white': message.message_side === 'sender'
+      }">
+        <div>{{ message.content }}</div>
+      </div>
     </div>
   </div>
-  <div class="chat-input">
-    <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type your message..."/>
-    <button (click)="sendMessage()">Send</button>
+  <div class="p-4 border-t flex gap-2">
+    <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" type="text" class="flex-1 p-2 border rounded-lg" placeholder="Type a message...">
+    <button (click)="sendMessage()" class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+      <i class="fas fa-paper-plane"></i>
+    </button>
   </div>
 </div>

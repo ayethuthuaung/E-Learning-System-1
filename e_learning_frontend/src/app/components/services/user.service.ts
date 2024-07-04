@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User } from '../models/user';
+
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root'
@@ -29,4 +32,8 @@ export class UserService {
     
     return this.httpClient.post(`${this.baseURL}/updateProfile`, formData);
   }
+  getUserConversations(userId: number): Observable<User[]> {
+    return this.httpClient.get<User[]>(`${this.baseURL}/showData`);
+}
+ 
 }
