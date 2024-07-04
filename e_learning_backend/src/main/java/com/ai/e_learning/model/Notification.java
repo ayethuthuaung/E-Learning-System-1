@@ -23,4 +23,7 @@ public class Notification {
 
     @Column(name = "is_read")
     private boolean isRead;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 }

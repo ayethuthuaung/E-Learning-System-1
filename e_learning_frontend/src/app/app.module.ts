@@ -10,7 +10,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './components/home/home.component';
 
 import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
-import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
 
@@ -98,7 +97,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
 
     ForgetPasswordComponent,
-    CourseComponent,
     CategoryComponent,
 
         ChatComponent,

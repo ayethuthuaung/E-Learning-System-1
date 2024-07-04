@@ -14,6 +14,9 @@ import java.util.Optional;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     Optional<ChatRoom> findByName(String name);
 
-    @Query("SELECT p FROM ChatRoom c JOIN c.participants p WHERE c.id IN (SELECT c.id FROM ChatRoom c JOIN c.participants p WHERE p.id = :userId)")
+    @Query("SELECT DISTINCT p FROM ChatRoom c JOIN c.participants p WHERE c IN (SELECT c FROM ChatRoom c JOIN c.participants p WHERE p.id = :userId)")
     List<User> findUsersByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c FROM ChatRoom c WHERE :instructor MEMBER OF c.participants AND :student MEMBER OF c.participants")
+    Optional<ChatRoom> findByParticipants(@Param("instructor") User instructor, @Param("student") User student);
 }

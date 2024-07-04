@@ -1,15 +1,16 @@
 <!-- Navbar -->
 <nav class="bg-white shadow-md py-4">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-      <div class="flex items-center">
-        <button class="text-gray-500 focus:outline-none" (click)="toggleSidebar()">
-          <i class="fas fa-bars text-lg"></i>
-        </button>
-      </div>
-      <div class="flex items-center">
-        <app-nav-profile></app-nav-profile>
-      </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <div class="flex items-center">
+      <a href="">
+        <img src="../../assets/DAT.png" alt="" class="w-28 h-auto">
+      </a>
+      <button class="ml-4 text-gray-500 focus:outline-none" (click)="toggleSidebar()">
+        <i class="fas fa-bars text-lg"></i>
+      </button>
     </div>
-  </nav>
-
-  
+    <div class="flex items-center ml-auto relative">
+      <app-nav-profile></app-nav-profile>
+    </div>
+  </div>
+</nav>

@@ -20,7 +20,7 @@ export class CourseListComponent implements OnInit {
   }
 
   private getCourses(): void {
-    this.courseService.getCourseList().subscribe({
+    this.courseService.getAllCourses().subscribe({
       next: (data) => {
         this.courses = data;
         this.check = this.courses.length !== 0;

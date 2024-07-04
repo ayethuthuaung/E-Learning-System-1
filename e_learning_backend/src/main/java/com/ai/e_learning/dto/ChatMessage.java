@@ -13,6 +13,7 @@ public class ChatMessage {
     private String content;
     private  String message_side;
     private String sessionId;
+    private Long timestamp;
 
     // Getters and setters
 }

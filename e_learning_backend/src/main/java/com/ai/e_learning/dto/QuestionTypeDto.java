@@ -1,6 +1,5 @@
 package com.ai.e_learning.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,10 +7,10 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class QuestionTypeDTO {
+public class QuestionTypeDto {
     private Long id;
     private String type;
-    private Set<QuestionDTO> questions;
-    private Set<ExamDTO> exams;
+    private Set<QuestionDto> questions;
+    private Set<ExamDto> exams;
     private boolean isDeleted;
 }

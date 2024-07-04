@@ -1,22 +1,23 @@
-
 <!-- notification.component.html -->
 <audio #audio src="../../../assets/notification/notification.wav"></audio>
 
-<div class="notification-container" *ngIf="notifications.length > 0">
-  <h3>Notifications</h3>
-  <ul class="notification-list">
-    <li *ngFor="let notification of notifications" 
-        [class.unread]="!notification.isRead" 
-        class="notification-item">
-      <div class="notification-content" (click)="markAsRead(notification)">
-        
-        {{ notification.message }}
-        <span *ngIf="!notification.isRead" class="red-dot"></span>
+<div *ngIf="notifications.length > 0" class="max-w-md mx-auto">
+  <h3 class="text-lg font-semibold mb-4">Notifications</h3>
+  <ul class="list-none p-0">
+    <li *ngFor="let notification of notifications"
+        [class.bg-gray-100]="!notification.isRead"
+        class="border-b border-gray-300 p-3 cursor-pointer">
+      <div class="flex justify-between items-center" (click)="markAsRead(notification)">
+        <span [class.font-bold]="!notification.isRead">
+          {{ notification.message }}
+        </span>
+        <span *ngIf="!notification.isRead"></span>
+        <button (click)="softDeleteNotification(notification)">Delete</button>
       </div>
     </li>
   </ul>
 </div>
 
-<div class="no-notifications" *ngIf="notifications.length === 0">
-  <p>No notifications yet.</p>
+<div *ngIf="notifications.length === 0" class="max-w-md mx-auto text-center">
+  <p class="text-gray-500">No notifications yet.</p>
 </div>

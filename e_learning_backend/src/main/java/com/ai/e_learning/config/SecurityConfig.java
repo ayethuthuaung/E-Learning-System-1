@@ -64,9 +64,10 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority("admin")
                         //to test
 
+                        .requestMatchers("/api/**","/ws/**").permitAll()
 
 
-                        .requestMatchers("/user/**","/courses/**","/categories/**","/fileUpload/**","/ws/**","/notifications/**","/chat/**","/exam/**","/questionType/**","/question/**","/answerOption/**","/question/exam/**","/studentAnswer/**").permitAll()
+//                        .requestMatchers("/user/**","/courses/**","/categories/**","/fileUpload/**","/ws/**","/notifications/**","/chat/**","/exam/**","/questionType/**","/question/**","/answerOption/**","/question/exam/**","/studentAnswer/**").permitAll()
                         .anyRequest().authenticated()
 
 

@@ -1,46 +1,25 @@
-<!-- <div class="chat-container">
-  <div class="chat-window">
-    <div *ngFor="let message of messages" class="chat-message"
-    [ngClass]="{'left': message.message_side === 'receiver', 'right': message.message_side === 'sender'}"
-    >
-      {{ message.content }}
+<div class="fixed bottom-20 right-4 w-full max-w-md bg-white rounded-lg shadow-lg">
+  <div class="flex justify-between items-center p-4 bg-logo-blue rounded-t-lg text-white">
+    <h2 class="text-lg">{{ userName }}</h2>
+    <button (click)="closeChat()" class="text-2xl">&times;</button>
+  </div>
+  <div class="p-4 overflow-y-auto h-96">
+    <div *ngIf="messages.length === 0" class="text-center text-gray-500">
+      No Conversation
+    </div>
+    <div *ngFor="let message of messages" [ngClass]="{'text-right': message.message_side === 'sender'}">
+      <div class="inline-block p-2 m-1 rounded-lg" [ngClass]="{
+        'bg-gray-200 text-black': message.message_side === 'receiver',
+        'bg-logo-blue text-white': message.message_side === 'sender'
+      }">
+        <div>{{ message.content }}</div>
+      </div>
     </div>
   </div>
-  <div class="chat-input">
-    <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type your message..."/>
-    <button (click)="sendMessage()">Send</button>
-  </div>
-</div> -->
-<!-- chat.component.html -->
-<div class="max-w-md mx-auto bg-white dark:bg-zinc-800 shadow-md rounded-lg overflow-hidden">
-  <div class="flex flex-col h-[400px]">
-    <div class="px-4 py-3 border-b dark:border-zinc-700">
-      <div class="flex justify-between items-center">
-        <h2 class="text-lg font-semibold text-zinc-800 dark:text-white">{{ userName }}</h2>
-        <div class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Online</div>
-      </div>
-    </div>
-    <div class="flex-1 p-3 overflow-y-auto flex flex-col space-y-2" id="chatDisplay">
-      <div *ngFor="let message of messages"
-           [ngClass]="{
-             'self-end bg-blue-500 text-white': message.message_side === 'sender',
-             'self-start bg-zinc-500 text-white': message.message_side === 'receiver'
-           }"
-           class="chat-message max-w-xs rounded-lg px-3 py-1.5 text-sm">
-        {{ message.content }}
-      </div>
-    </div>
-    <div class="px-3 py-2 border-t dark:border-zinc-700">
-      <div class="flex gap-2">
-        <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type your message..."
-               class="flex-1 p-2 border rounded-lg dark:bg-zinc-700 dark:text-white dark:border-zinc-600 text-sm"
-               id="chatInput" type="text"/>
-        <button (click)="sendMessage()"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm"
-                id="sendButton">Send
-        </button>
-      </div>
-    </div>
+  <div class="p-4 border-t flex gap-2">
+    <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" type="text" class="flex-1 p-2 border rounded-lg" placeholder="Type a message...">
+    <button (click)="sendMessage()" class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+      <i class="fas fa-paper-plane"></i>
+    </button>
   </div>
 </div>
-

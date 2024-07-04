@@ -18,7 +18,7 @@ export class NotificationComponent implements OnInit {
   ngOnInit(): void {
     this.userRole = this.authService.getLoggedInUserRole();
 
-    if (this.userRole === 'ADMIN') {
+    if (this.userRole === 'Admin') {
       this.webSocketService.fetchNotifications().subscribe(
         (notifications) => {
           this.notifications = notifications;
@@ -53,5 +53,15 @@ export class NotificationComponent implements OnInit {
         }
       );
     }
+  }
+  softDeleteNotification(notification: Notification): void {
+    this.webSocketService.softDeleteNotification(notification.id).subscribe(
+      () => {
+        this.notifications = this.notifications.filter(n => n.id !== notification.id);
+      },
+      (error) => {
+        console.error('Failed to delete notification:', error);
+      }
+    );
   }
 }

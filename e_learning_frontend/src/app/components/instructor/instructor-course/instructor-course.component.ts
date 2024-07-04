@@ -130,7 +130,9 @@ export class InstructorCourseComponent implements OnInit {
 
   saveCourse(): void {
     this.course.userId = this.userId;
+    this.course.status = 'Pending';
     const formData = new FormData();
+    
     formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
     if (this.course.photoFile) {
       formData.append('photo', this.course.photoFile, this.course.photoFile.name);
@@ -166,16 +168,22 @@ export class InstructorCourseComponent implements OnInit {
     }
   }
 
-  // toggleCategories(event: any, category: Category) {
-  //   if (event.target.checked) {
-  //     this.course.categories.push(category);
-  //   } else {
-  //     const index = this.course.categories.findIndex(cat => cat.id === category.id);
-  //     if (index !== -1) {
-  //       this.course.categories.splice(index, 1);
-  //     }
-  //   }
-  // }
+  toggleCategories(event: any, category: Category) {
+
+    if (event.target.checked) {
+
+      this.course.categories.push(category);
+    } else {
+      const index = this.course.categories.findIndex(cat => cat.id === category.id);
+      if (index !== -1) {
+        this.course.categories.splice(index, 1);
+      }
+    }
+    console.log(this.course.categories);
+    console.log(this.course);
+    
+    
+  }
 
 
 

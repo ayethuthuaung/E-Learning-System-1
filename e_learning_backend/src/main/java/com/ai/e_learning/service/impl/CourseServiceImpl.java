@@ -1,30 +1,31 @@
-package com.ai.e_learning.service;
+package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
-import com.ai.e_learning.exception.EntityNotFoundException;
 import com.ai.e_learning.model.*;
 import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.service.CourseService;
+import com.ai.e_learning.service.RoleService;
 import com.ai.e_learning.util.EntityUtil;
+import com.ai.e_learning.util.GoogleDriveJSONConnector;
 import com.ai.e_learning.util.Helper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
@@ -41,45 +42,84 @@ public class CourseServiceImpl implements CourseService {
   private ModelMapper modelMapper;
   private final Helper helper;
 
+
   @Autowired
   private RoleService roleService;
 
   @Autowired
   private NotificationController notificationController;
 
+
   @Override
   public List<CourseDto> getAllCourses() {
-    List<Course> allCourses = courseRepository.findAll();
+    System.out.println("Hi");
+
+
+    List<Course> allCourses = courseRepository.findByStatus("Accept");
+    System.out.println("Hi");
+    for (Course course: allCourses){
+      System.out.println(course.toString());
+    }
+    GoogleDriveJSONConnector driveConnector;
+
+      driveConnector = new GoogleDriveJSONConnector();
+
+      for (Course course : allCourses) {
+      try {
+        String fileId = driveConnector.getFileIdByName(course.getPhoto());
+        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+        course.setPhoto(thumbnailLink);
+      } catch (IOException | GeneralSecurityException e) {
+        // Log the error and continue with the next course
+        e.printStackTrace();
+      }
+    }
+
     return allCourses.stream()
-      .map(this::convertToDto)
-      .collect(Collectors.toList());
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
   }
+
 
   @Override
   public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {
     courseDto.setId(null);
+    System.out.println(courseDto.toString());
     Course course = convertToEntity(courseDto);
 
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
 
-      Set<Category> categories = new HashSet<>(courseDto.getCategories());
-    course.setCategories(categories);
+//      Set<Category> categories = new HashSet<>(courseDto.getCategories());
+//    course.setCategories(categories);
+
     File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
     courseDto.getPhotoInput().transferTo(tempFile);
     String imageUrl = helper.uploadImageToDrive(tempFile, "course");
     course.setPhoto(tempFile.getName());
-    Course savedCourse = EntityUtil.saveEntity(courseRepository, course, "Course");
 
-    Course requestCourse = courseRepository.save(course);
-    // Send notification via WebSocket
-    sendRoleSpecificNotifications(requestCourse);
+    Set<Category> mergedCategories = new HashSet<>();
+    for (Category category : courseDto.getCategories()) {
+      Category managedCategory = categoryRepository.findById(category.getId())
+              .map(existingCategory -> {
+                // Update existing category details if necessary
+                existingCategory.setName(category.getName());
+                return existingCategory;
+              })
+              .orElse(category);
+      mergedCategories.add(managedCategory);
+    }
 
 
+    course.setCategories(mergedCategories);
+
+    Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
+    // Send notifications
+    sendRoleSpecificNotifications(savedCourse);
     return convertToDto(savedCourse);
   }
   private void sendRoleSpecificNotifications(Course course) {
-    Optional<Role> adminRoleOptional = roleService.getRoleByName("ADMIN");
+    Optional<Role> adminRoleOptional = roleService.getRoleByName("Admin");
     if (adminRoleOptional.isPresent()) {
       Role adminRole = adminRoleOptional.get();
       Notification adminNotification = new Notification();

@@ -1,9 +1,8 @@
 <div class="conversation-list">
-  <div *ngFor="let user of conversationList"  (click)="openChat(user)"
+  <div *ngFor="let conversation of conversationList" (click)="openChat(conversation)"
        class="conversation-item p-3 border-b cursor-pointer hover:bg-gray-100 flex items-center">
-    
     <div class="ml-3">
-      <h3 class="font-semibold">{{ user.name }}</h3>
+      <h3 class="font-semibold">{{ conversation.name }}</h3>
     </div>
     <div class="status ml-auto">
     </div>

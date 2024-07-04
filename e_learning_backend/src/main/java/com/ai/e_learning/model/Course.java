@@ -11,9 +11,8 @@ import java.util.Set;
 
 @Getter
 @Setter
-
 @Entity
-
+@ToString
 public class Course  {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +33,13 @@ public class Course  {
   private String badge;
   private String photo;
   private boolean isDeleted;
+  private String status;
 
  @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
   @JoinTable(name = "course_has_category",
     joinColumns = @JoinColumn(name = "course_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id"))
+ @JsonIgnore
  private Set<Category> categories = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

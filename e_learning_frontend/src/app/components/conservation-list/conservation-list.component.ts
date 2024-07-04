@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../models/user';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
+
+interface Conversation {
+  id: number;
+  name: string;
+  chatRoomId: number;
+}
 
 @Component({
   selector: 'app-conversation-list',
@@ -10,7 +15,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./conservation-list.component.css']
 })
 export class ConservationListComponent implements OnInit {
-  conversationList: User[] = [];
+  conversationList: Conversation[] = [];
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
@@ -21,14 +26,16 @@ export class ConservationListComponent implements OnInit {
   fetchConversationList(): void {
     const userId = this.authService.getLoggedInUserId();
     if (userId !== null) {
-      this.http.get<User[]>(`http://localhost:8080/chat/conversation-list/${userId}`).subscribe({
+      this.http.get<Conversation[]>(`http://localhost:8080/api/chat/conversation-list/${userId}`).subscribe({
         next: (conversations) => this.conversationList = conversations,
         error: (error) => console.error('Error fetching conversation list:', error)
       });
     }
   }
 
-  openChat(user: User): void {
-    this.router.navigate(['/chat', user.id, user.name]);
+  openChat(conversation: Conversation): void {
+    this.router.navigate(['/chat', conversation.chatRoomId], {
+      state: { userName: conversation.name }
+    });
   }
 }

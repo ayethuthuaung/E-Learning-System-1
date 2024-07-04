@@ -1,6 +1,6 @@
 package com.ai.e_learning.service.impl;
 
-import com.ai.e_learning.dto.AnswerOptionDTO;
+import com.ai.e_learning.dto.AnswerOptionDto;
 import com.ai.e_learning.model.AnswerOption;
 import com.ai.e_learning.model.Question;
 import com.ai.e_learning.repository.AnswerOptionRepository;
@@ -31,16 +31,16 @@ public class AnswerOptionServiceImpl implements AnswerOptionService {
     private  ModelMapper modelMapper;
 
     @Override
-    public AnswerOptionDTO addAnswerOption(AnswerOptionDTO answerOptionDTO) {
+    public AnswerOptionDto addAnswerOption(AnswerOptionDto answerOptionDTO) {
         Question question = EntityUtil.getEntityById(questionRepository, answerOptionDTO.getQuestionId(), "Question");
         AnswerOption answerOption = DtoUtil.map(answerOptionDTO, AnswerOption.class, modelMapper);
         answerOption.setQuestion(question);
         AnswerOption savedAnswerOption = EntityUtil.saveEntity(answerOptionRepository, answerOption, "AnswerOption");
-        return DtoUtil.map(savedAnswerOption, AnswerOptionDTO.class, modelMapper);
+        return DtoUtil.map(savedAnswerOption, AnswerOptionDto.class, modelMapper);
     }
 
     @Override
-    public AnswerOptionDTO updateAnswerOption(AnswerOptionDTO answerOptionDTO) {
+    public AnswerOptionDto updateAnswerOption(AnswerOptionDto answerOptionDTO) {
         AnswerOption existingAnswerOption = EntityUtil.getEntityById(answerOptionRepository, answerOptionDTO.getId(), "AnswerOption");
         Question question = EntityUtil.getEntityById(questionRepository, answerOptionDTO.getQuestionId(), "Question");
 
@@ -49,19 +49,19 @@ public class AnswerOptionServiceImpl implements AnswerOptionService {
         existingAnswerOption.setQuestion(question);
 
         AnswerOption updatedAnswerOption = EntityUtil.saveEntity(answerOptionRepository, existingAnswerOption, "AnswerOption");
-        return DtoUtil.map(updatedAnswerOption, AnswerOptionDTO.class, modelMapper);
+        return DtoUtil.map(updatedAnswerOption, AnswerOptionDto.class, modelMapper);
     }
 
     @Override
-    public Set<AnswerOptionDTO> getAnswerOptions() {
+    public Set<AnswerOptionDto> getAnswerOptions() {
         List<AnswerOption> answerOptionList = EntityUtil.getAllEntities(answerOptionRepository);
-        return answerOptionList == null ? new HashSet<>() : new HashSet<>(DtoUtil.mapList(answerOptionList, AnswerOptionDTO.class, modelMapper));
+        return answerOptionList == null ? new HashSet<>() : new HashSet<>(DtoUtil.mapList(answerOptionList, AnswerOptionDto.class, modelMapper));
     }
 
     @Override
-    public AnswerOptionDTO getAnswerOption(Long answerOptionId) {
+    public AnswerOptionDto getAnswerOption(Long answerOptionId) {
         AnswerOption answerOption = EntityUtil.getEntityById(answerOptionRepository, answerOptionId, "AnswerOption");
-        return DtoUtil.map(answerOption, AnswerOptionDTO.class, modelMapper);
+        return DtoUtil.map(answerOption, AnswerOptionDto.class, modelMapper);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
     public List<Notification> getAllNotifications() {
-        return notificationRepository.findAll();
+        return notificationRepository.findByIsDeletedFalse();
     }
     public List<Notification> getNotificationsByRole(Optional<Role> role) {
         return notificationRepository.findByRole(role);
@@ -41,5 +41,13 @@ public class NotificationService {
         }
         throw new RuntimeException("Notification not found");
     }
-
+    public Notification softDeleteNotification(Long id) {
+        Optional<Notification> notificationOptional = notificationRepository.findById(id);
+        if (notificationOptional.isPresent()) {
+            Notification notification = notificationOptional.get();
+            notification.setDeleted(true);
+            return notificationRepository.save(notification);
+        }
+        throw new RuntimeException("Notification not found");
+    }
 }

@@ -11,7 +11,7 @@ import { Notification } from '../models/notification';
   providedIn: 'root'
 })
 export class WebSocketService {
-  private baseUrl = 'http://localhost:8080/notifications';
+  private baseUrl = 'http://localhost:8080/api/notifications';
   private client: Client;
   private messageSubject: BehaviorSubject<ChatMessage | null> = new BehaviorSubject<ChatMessage | null>(null);
   private notificationSubject: Subject<Notification> = new Subject<Notification>();
@@ -93,7 +93,7 @@ export class WebSocketService {
     return this.notificationSubject.asObservable();
   }
   public fetchNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>('http://localhost:8080/notifications')
+    return this.http.get<Notification[]>('http://localhost:8080/api/notifications')
       .pipe(
         catchError(this.handleError)
       );
@@ -101,6 +101,17 @@ export class WebSocketService {
   markAsRead(id: number): Observable<Notification> {
     return this.http.post<Notification>(`${this.baseUrl}/${id}/read`, {});
   }
+  getChatHistory(chatRoomId: number): Observable<ChatMessage[]> {
+    return this.http.get<ChatMessage[]>(`http://localhost:8080/api/chat/history/${chatRoomId}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+  public softDeleteNotification(id: number): Observable<Notification> {
+    return this.http.delete<Notification>(`${this.baseUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error!';
     if (error.error instanceof ErrorEvent) {
@@ -112,9 +123,6 @@ export class WebSocketService {
     }
     console.error(errorMessage);
     return throwError(errorMessage);
-  }
-  loadChatHistory(chatRoomId: number, userId: number): Observable<ChatMessage[]> {
-    return this.http.get<ChatMessage[]>(`/chat/history/${chatRoomId}/${userId}`);
   }
 }
 

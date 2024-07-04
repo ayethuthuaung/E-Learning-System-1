@@ -3,6 +3,7 @@ package com.ai.e_learning.controllers;
 import com.ai.e_learning.model.Notification;
 import com.ai.e_learning.model.Role;
 import com.ai.e_learning.service.NotificationService;
+import com.ai.e_learning.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/notifications")
 public class NotificationController {
 
     @Autowired
@@ -38,5 +39,9 @@ public class NotificationController {
     @PostMapping("/{id}/read")
     public Notification markAsRead(@PathVariable Long id) {
         return notificationService.markAsRead(id);
+    }
+    @DeleteMapping("/{id}")
+    public Notification softDeleteNotification(@PathVariable Long id) {
+        return notificationService.softDeleteNotification(id);
     }
 }

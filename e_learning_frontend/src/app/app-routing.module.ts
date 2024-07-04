@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/auth/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthGuard } from './components/auth/auth.guard';
-import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
 
 import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
@@ -33,6 +32,7 @@ import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-questi
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
 import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+import { CourseDetailsComponent } from './components/course-details/course-details.component';
 
 
 
@@ -40,7 +40,6 @@ const routes: Routes = [
   {path:'', redirectTo:'/login',pathMatch:'full'},
    {path:'login', component: LoginComponent},
    {path: 'forget-password', component: ForgetPasswordComponent },
-   {path:'course', component: CourseComponent},
    {path:'category', component: CategoryComponent},
    { path: 'course/:courseId/update', component: UpdateCourseComponent},
    {path:'category/:categoryId/update', component: UpdateCategoryComponent},
@@ -54,7 +53,7 @@ const routes: Routes = [
 
    {path:'blog', component: BlogsComponent},
 
-   { path: 'chat/:chatRoomId/:userName', component: ChatComponent },
+   //{ path: 'chat/:chatRoomId/:userName', component: ChatComponent },
 
 
    {path:'exam', component: CreateExamComponent},
@@ -69,7 +68,7 @@ const routes: Routes = [
    {path:'blog', component: BlogsComponent},
 
 
-   {path:'chat', component: ChatComponent},
+   { path: 'chat/:chatRoomId', component: ChatComponent },
 
    {path:'instructor/profile', component: InstructorProfileComponent},
    {path:'instructor/dashboard', component: InstructorDashboardComponent},
@@ -78,6 +77,8 @@ const routes: Routes = [
 
 
    { path: 'user/upload-user-data', component: UserUploadComponent },
+
+   {path:'course-detail/:id', component: CourseDetailsComponent},
 ];
 
 

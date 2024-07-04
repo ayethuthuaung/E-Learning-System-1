@@ -2,6 +2,7 @@ package com.ai.e_learning.dto;
 
 
 import com.ai.e_learning.model.Category;
+import com.ai.e_learning.model.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,5 +29,7 @@ public class CourseDto {
   private boolean isDeleted;
   private String photo;
   private MultipartFile photoInput;
+  private User user;
+  private String status;
 
 }

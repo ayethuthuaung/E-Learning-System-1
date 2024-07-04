@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { WebSocketService } from '../services/websocket.service';
-import { ChatMessage } from '../models/message';
 import { AuthService } from '../auth/auth.service';
-import { ChatRoom } from '../models/chat-room';
-import { HttpClient } from '@angular/common/http';
+import { ChatMessage } from '../models/message';
 
 @Component({
   selector: 'app-chat',
@@ -12,28 +10,30 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
+  @Input() chatRoomId!: number;
+  @Input() userName: string = '';
+  @Output() close = new EventEmitter<void>();
+
   senderId!: number;
   messages: ChatMessage[] = [];
   newMessage!: string;
   messageSent: boolean = false;
   sessionId!: string;
-  chatRoomId!: number;
-  userName!: string;
 
-  constructor(private route: ActivatedRoute, private webSocketService: WebSocketService,private authService: AuthService, private http: HttpClient) {    
-    
-  }
+  groupedMessages: { date: string, messages: ChatMessage[] }[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private webSocketService: WebSocketService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.sessionId = `session-${Math.random().toString(36).substr(2, 9)}`;
     console.log(this.sessionId);
-    
-    // Set senderId from AuthService
+
     this.senderId = this.authService.getLoggedInUserId();
     console.log('Logged in user ID:', this.senderId);
-
-    this.chatRoomId = +this.route.snapshot.paramMap.get('chatRoomId')!;
-    this.userName = this.route.snapshot.paramMap.get('userName')!;
 
     this.loadChatHistory();
 
@@ -41,47 +41,50 @@ export class ChatComponent implements OnInit {
       if (message) {
         console.log("Received message:", message);
         message.message_side = message.senderId === this.senderId ? 'sender' : 'receiver';
-
-        // Only add received messages to messages array if not sent by current user
-        if (this.sessionId!==message.sessionId) {
-          console.log(this.sessionId);
-          console.log(message.sessionId);
-          
-    this.messages.push(message);
-    this.messageSent = false; // Reset the flag after displaying the confirmed message
-  }
+        
+        if (this.sessionId !== message.sessionId) {
+          this.messages.push(message);
+          this.messageSent = false;
+        }
       }
     });
   }
-  loadChatHistory(): void {
-    this.http.get<ChatMessage[]>(`/chat/history/${this.chatRoomId}`).subscribe({
-      next: (history) => this.messages = history,
-      error: (error) => console.error('Error loading chat history:', error)
-    });
-  }
-  sendMessage(): void {
 
-    console.log(this.sessionId);
-    
+  loadChatHistory(): void {
+    this.webSocketService.getChatHistory(this.chatRoomId).subscribe(
+      (history) => {
+        this.messages = history.map(message => {
+          message.message_side = message.senderId === this.senderId ? 'sender' : 'receiver';
+          return message;
+        });
+      },
+      (error) => {
+        console.error('Error fetching chat history:', error);
+      }
+    );
+  }
+
+  sendMessage(): void {
     if (this.newMessage.trim() !== '') {
       const message: ChatMessage = {
+        chatRoomId: this.chatRoomId,
         senderId: this.senderId,
         content: this.newMessage.trim(),
         message_side: 'sender',
-        chatRoomId: this.chatRoomId,// Add other necessary properties
-        sessionId: this.sessionId
+        sessionId: this.sessionId,
       };
 
-      // Immediately add the sent message to messages array for display
       this.messages.push(message);
-      console.log("Sent message:", message);
 
-      // Clear the input field
       this.newMessage = '';
       this.messageSent = true;
-      // Send the message through WebSocket service
+
       this.webSocketService.sendMessage(message);
-    
+    }
   }
+
+  closeChat(): void {
+    this.close.emit();
   }
+  
 }

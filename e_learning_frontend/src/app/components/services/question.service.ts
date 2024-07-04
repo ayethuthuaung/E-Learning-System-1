@@ -13,7 +13,7 @@ import { ExamDTO } from '../models/examdto.model';
 export class QuestionService {
   
 
-  private baseURL = "http://localhost:8080/question";
+  private baseURL = "http://localhost:8080/api/question";
   constructor(private httpClient: HttpClient) { }
 
  

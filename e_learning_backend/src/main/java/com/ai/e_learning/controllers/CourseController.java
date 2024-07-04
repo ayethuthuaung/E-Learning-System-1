@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/courses")
+@RequestMapping("/api/courses")
 public class CourseController {
 
     @Autowired
@@ -101,6 +101,7 @@ public class CourseController {
             courseDto.setPhoto(Arrays.toString(photoBytes));
         }
     }
+
   /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
   public ResponseEntity<CourseDto> addCourse(@RequestParam("course") String courseDtoString,
                                              @RequestParam(value = "photo", required = false) MultipartFile photoFile) {

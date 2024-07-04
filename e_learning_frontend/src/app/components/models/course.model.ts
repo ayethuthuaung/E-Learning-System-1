@@ -1,3 +1,4 @@
+import { User } from './user.model';
 import { Category } from "./category.model";
 
 export class Course {
@@ -12,8 +13,13 @@ export class Course {
   badge?: string;
   deleted?: boolean;
   photoFile?: File;
-  photoUrl?: string;
+  photo?: string;
   userId: number;
+  status: string;
+  user: User | undefined;
+  instructorId: number; // Added property
+  chatRoomId: number; // Added property
+  
   
 
   constructor() {
@@ -29,5 +35,8 @@ export class Course {
     this.categorylist = [];
     this.photoFile = undefined;
     this.userId = 1;
+    this.status ='';
+    this.instructorId = 1; // Initialized property
+    this.chatRoomId = 1; // Initialized property
   }
 }
