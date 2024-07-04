@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ForgetPasswordService } from '../../services/forget-password.service';
 
+declare var Swal: any;
 
 @Component({
   selector: 'app-forget-password',
@@ -85,9 +86,7 @@ export class ForgetPasswordComponent {
         } else if (response.message === "Password is updated.") {
           this.errorMessage = '';
           this.successMessage = "Password is changed successfully.";
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 2000);
+          this.showSuccessAlert();
         } else {
           this.errorMessage = response.message;
           this.successMessage = '';
@@ -99,6 +98,7 @@ export class ForgetPasswordComponent {
         this.successMessage = '';
       }
     );
+    
   }
 
   focusNext(event: Event, index: number) {
@@ -117,5 +117,18 @@ export class ForgetPasswordComponent {
     } else if (field === 'confirmPassword') {
       this.showConfirmPassword = !this.showConfirmPassword;
     }
+  }
+
+  showSuccessAlert(): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: 'Password is changed successfully.',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/login']); // Navigate to the login page
+      }
+    });
   }
 }

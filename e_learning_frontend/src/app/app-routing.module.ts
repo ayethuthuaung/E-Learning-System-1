@@ -6,8 +6,8 @@ import { AuthGuard } from './components/auth/auth.guard';
 
 import { CategoryComponent } from './components/category/category.component';
 
-import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 
+import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 import { BlogsComponent } from './components/home/blogs/blogs.component';
 import { ChatComponent } from './components/chat/chat.component';
 
@@ -17,6 +17,9 @@ import { UpdateCourseComponent } from './components/update-course/update-course.
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseListComponent } from './components/course-list/course-list.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
+
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
 import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
 
  
@@ -25,7 +28,8 @@ import { InstructorProfileComponent } from './components/instructor/instructor-p
 import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
 import { InstructorCourseComponent } from './components/instructor/instructor-course/instructor-course.component';
 import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
-import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
 import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
 import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
@@ -34,6 +38,9 @@ import { CreateQuestionFormComponent } from './components/quiz-Ans/create-questi
 import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { AdminCourseComponent } from './components/admin/admin-course/admin-course.component';
+import { AdminCategoryComponent } from './components/admin/admin-category/admin-category.component';
+
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 
 
@@ -65,10 +72,9 @@ const routes: Routes = [
    {path:'answerform' , component: AnswerFormComponent},
    {path:'submitform' , component: SubmitFormComponent},
 
-
-
    {path:'blog', component: BlogsComponent},
 
+   {path:'chat', component: ChatComponent},
 
    { path: 'chat/:chatRoomId', component: ChatComponent },
 
@@ -77,8 +83,10 @@ const routes: Routes = [
    {path:'instructor/course', component: InstructorCourseComponent},
    {path:'instructor/category', component: InstructorCategoryComponent},
 
-
-   { path: 'user/upload-user-data', component: UserUploadComponent },
+   {path:'admin/dashboard', component: AdminDashboardComponent},
+   {path:'admin/upload-user-data', component: UserUploadComponent },
+   {path:'admin/course', component: AdminCourseComponent},
+   {path:'admin/category', component: AdminCategoryComponent},
 
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},

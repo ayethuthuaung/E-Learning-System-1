@@ -1,0 +1,67 @@
+<div class="datatable-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
+    
+    <div class="pagination-controls">
+      <button (click)="firstPage()" [disabled]="currentPage === 1" class="btn btn-secondary"><i class="fas fa-angle-double-left"></i></button>
+      <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn btn-secondary"><i class="fas fa-angle-left"></i></button>
+      <span>Page 
+        <input type="number" class="page-input" [(ngModel)]="currentPage" (ngModelChange)="goToPage($event)" min="1" max="{{ totalPages }}" /> 
+        of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary"><i class="fas fa-angle-right"></i></button>
+      <button (click)="lastPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary"><i class="fas fa-angle-double-right"></i></button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>No</th>
+          <th>Course Name</th>
+          <th>Level</th>
+          <th>Duration</th>
+          <th>Instructor</th>
+          <th>Actions</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of paginatedCourses; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ course.name }}</td>
+          <td>{{ course.level }}</td>
+          <td>{{ course.duration }}</td>
+          <td>{{ course.user?.name }}</td>
+          <td>
+            <button (click)="editCourse(course)" class="btn btn-primary">Edit</button>
+            <!-- <button (click)="deleteCourse(course)" class="btn btn-danger">Delete</button> -->
+          </td>
+
+          <td>
+            <i class="icon" 
+               [ngClass]="{
+                 'pending-accept-icon': course.status === 'Pending',
+                 'accepted-icon': course.status === 'Accepted'
+               }" 
+               (click)="acceptCourse(course)">
+              &#10003;
+            </i>
+            
+            <i class="icon" 
+               [ngClass]="{
+                 'pending-reject-icon': course.status === 'Pending',
+                 'rejected-icon': course.status === 'Rejected'
+               }" 
+               (click)="rejectCourse(course)">
+              &#10006;
+            </i>
+          </td>
+
+          <td> <button (click)="detailCourse()" class="btn btn-secondary">Detail</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
