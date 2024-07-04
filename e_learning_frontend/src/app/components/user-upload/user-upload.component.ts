@@ -10,6 +10,7 @@ declare var Swal: any;
   styleUrls: ['./user-upload.component.css']
 })
 export class UserUploadComponent {
+  isSidebarOpen = true;
   selectedFile: File | null = null;
   successmessage: string = '';
   errormessage: string = '';
@@ -57,9 +58,12 @@ export class UserUploadComponent {
       confirmButtonText: 'OK'
     }).then((result: { isConfirmed: boolean }) => {
       if (result.isConfirmed) {
-        this.router.navigate(['/login']); // Navigate to the login page
+        this.router.navigate(['admin/dashboard']); // Navigate to the login page
       }
     });
   }
-  
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 }

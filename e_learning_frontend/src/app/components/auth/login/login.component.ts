@@ -50,6 +50,8 @@ export class LoginModel {
   }
 }
 
+
+
 export class SignUpModel {
   name: string;
   staffId: string;

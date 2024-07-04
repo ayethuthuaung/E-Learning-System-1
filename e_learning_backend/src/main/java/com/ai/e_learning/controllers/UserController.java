@@ -1,7 +1,4 @@
 package com.ai.e_learning.controllers;
-
-
-import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ImageResponse;
 
 import com.ai.e_learning.dto.UserDto;
@@ -26,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @AllArgsConstructor
 public class UserController {
 

@@ -1,0 +1,93 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+    <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar>
+    <div class="flex flex-1">
+      <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
+  
+      <main class="flex-1 p-6">
+        <section>
+            <div class="flex border-b">
+                <button
+                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCategory' }"
+                  (click)="setActiveTab('createCategory')"
+                >
+                 Create Categories
+                </button>
+                <button
+                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'materials' }"
+                  (click)="setActiveTab('materials')"
+                >
+                  Course Lessons
+                </button>
+                <button
+                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
+                  (click)="setActiveTab('additional')"
+                >
+                  Course Certificate
+                </button>
+              </div>
+
+              
+              <div *ngIf="activeTab === 'materials'" class="p-4">
+                <h3 class="text-xl font-bold mb-4">Materials</h3>
+                <p>Content for materials.</p>
+              </div>
+              
+              <div *ngIf="activeTab === 'additional'" class="p-4">
+                <h3 class="text-xl font-bold mb-4">Additional Information</h3>
+                <p>Content for additional information.</p>
+              </div>
+              
+        <div *ngIf="activeTab === 'createCategory'" class="p-4">
+            <!-- Category Create Form -->
+            <div class="flex items-center justify-center bg-gray-100">
+            <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+
+              <form #categoryForm="ngForm" (ngSubmit)="onSubmit(categoryForm)" method="post" class="flex flex-col">
+                <input
+                  type="text"
+                  class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  id="name"
+                 name="name"
+                 [(ngModel)]="category.name"
+                 #name="ngModel"
+                 required  
+                 (input)="validateCategoryName(category.name)"
+                  placeholder="Category Name"
+                />
+                <div *ngIf="nameRequiredError" class="text-red-500">
+                    Name is required. 
+                  </div>
+                  
+                <div *ngIf="nameDuplicateError" class="text-red-500">
+                  This category name already exists.
+                </div>
+          
+                <button
+                  type="submit"
+                  class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
+                  [disabled]="nameDuplicateError">
+                  Submit
+                </button>
+              </form>
+          
+             
+            </div>
+              <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white m-4">
+                  <div class="px-6 py-4">
+                      <div class="font-bold text-xl mb-2">name</div>
+                
+                  </div>
+              </div> 
+             </div>
+               -->
+          </div>
+        </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  

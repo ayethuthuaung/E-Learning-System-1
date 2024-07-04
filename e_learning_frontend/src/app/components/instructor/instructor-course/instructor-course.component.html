@@ -7,7 +7,7 @@
         <section>
             <div class="flex border-b">
                 <button
-                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
+                  class="py-2 px-4 text-sm font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
                   [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCourse' }"
                   (click)="setActiveTab('createCourse')"
                 >
@@ -15,26 +15,23 @@
                 </button>
                 
                 <button
-                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
-                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'materials' }"
-                  (click)="setActiveTab('materials')"
+                  class="py-2 px-4 text-sm font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
+                  (click)="setActiveTab('createLesson')"
                 >
-                  Course Lessons
+                  Create Lessons
                 </button>
                 <button
-                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
+                  class="py-2 px-4 text-sm font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
                   [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
                   (click)="setActiveTab('additional')"
                 >
-                  Course Certificate
+                  Create Certificate
                 </button>
               </div>
 
               
-              <div *ngIf="activeTab === 'materials'" class="p-4">
-                <h3 class="text-xl font-bold mb-4">Materials</h3>
-                <p>Content for materials.</p>
-              </div>
+             
               
               <div *ngIf="activeTab === 'additional'" class="p-4">
                 <h3 class="text-xl font-bold mb-4">Additional Information</h3>
@@ -103,13 +100,23 @@
                 <div class="row">
                   <div *ngFor="let category of categories" class="col-md-4">
                     <label class="checkbox-inline">
-                      <input
+                      <!-- <input
                         type="checkbox"
                         [id]="'category_' + category.id"
                         [name]="'categories'"
                         [value]="category.id"
-                        (change)="toggleCategories($event, category)"
-                      />
+
+                        (change)="toggleCategory($event, category.id)"
+                        [(ngModel)]="categoryList[category.id]"
+                      /> --> 
+                      <!-- Checkbox Mark duplicate -->
+                      <input
+                          type="checkbox"
+                          [id]="'category_' + category.id"
+                          [name]="'categories'"
+                          [value]="category.id"
+                          (change)="toggleCategories($event, category)"
+                        />
                       {{ category.name }}
                     </label>
                   </div>
@@ -120,7 +127,7 @@
           
                 <button
                   type="submit"
-                  class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
+                  class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
                   [disabled]="nameDuplicateError"
                   >
                   Submit
@@ -131,6 +138,8 @@
             </div>
           </div>
           </div>
+
+
           
         <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
                 <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white m-4">
@@ -141,7 +150,25 @@
               </div> 
              </div>
                -->
-         
+          <div *ngIf="activeTab === 'createLesson'" class="p-4">
+            <div class="flex flex-col items-center justify-center light">
+              <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+  
+                <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
+                  <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
+                    <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload Course Lesson</label>
+                    <input
+                        type="file"
+                        id="photo"
+                        name="photo"
+                        (change)="onFileChange($event)"
+                        class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                </div>
+                </form>
+              </div>
+            </div>  
+              </div>
       
         </section>
       </main>

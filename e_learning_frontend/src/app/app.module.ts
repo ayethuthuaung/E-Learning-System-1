@@ -9,8 +9,13 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
-import { CourseComponent } from './components/course/course.component';
 import { CategoryComponent } from './components/category/category.component';
+
+
+import { QuestionService } from './components/services/question.service';
+import { AnswerOptionService } from './components/services/answerOption.service';
+
+
 import { HeroComponent } from './components/home/hero/hero.component';
 import { CoursesComponent } from './components/home/courses/courses.component';
 import { JointUsComponent } from './components/home/joint-us/joint-us.component';
@@ -45,7 +50,7 @@ import { CourseListComponent } from './components/course-list/course-list.compon
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
-import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';
 import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
@@ -59,6 +64,27 @@ import { AdminNavbarComponent } from './components/admin/admin-navbar/admin-navb
 import { AdminSidebarComponent } from './components/admin/admin-sidebar/admin-sidebar.component';
 import { AdminChartComponent } from './components/admin/admin-chart/admin-chart.component';
 
+import { UserUploadComponent } from './components/user-upload/user-upload.component';
+
+import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
+import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
+import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
+import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
+import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
+import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+import { AdminCourseComponent } from './components/admin/admin-course/admin-course.component';
+import { AdminCategoryComponent } from './components/admin/admin-category/admin-category.component';
+import { AdminCourseListComponent } from './components/admin/admin-course-list/admin-course-list.component';
+
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { FilterDataPipe} from './components/filter-data.pipe';
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 @NgModule({
@@ -66,9 +92,17 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AppComponent,
     HomeComponent,
     LoginComponent,
+    HomeComponent,
+    CreateExamComponent,
+    CreateQuestionTypeComponent,
+    CreateAnswerOptionComponent,
+    CreateQuestionFormComponent,
+    CreateQuestionFormComponent,
+    AnswerFormComponent,
     ForgetPasswordComponent,
-    CourseComponent,
     CategoryComponent,
+    ChatComponent,
+    HeroComponent,
     ChatComponent,
     HeroComponent,
     CoursesComponent,
@@ -116,6 +150,16 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AdminNavbarComponent,
     AdminSidebarComponent,
     AdminChartComponent,
+    HomeComponent,
+    CourseDetailsComponent,
+    UserUploadComponent,
+    SubmitFormComponent,
+    AdminCourseComponent,
+    AdminCategoryComponent,
+    AdminCourseListComponent,
+
+    FilterDataPipe
+
   ],
   imports: [
     BrowserModule,
@@ -123,11 +167,25 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+
+    BrowserAnimationsModule,
+    FormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+
     SocketIoModule.forRoot(config)
   ],
   providers: [
     provideClientHydration(),
+
+    QuestionService,
+    AnswerOptionService,
+
     WebSocketService
+
   ],
   bootstrap: [AppComponent]
 })

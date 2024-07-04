@@ -1,9 +1,17 @@
-<div class="container">
-    <h2>Upload User Data</h2>
-    <p class="error-message" *ngIf="errormessage">{{ errormessage }}</p>
-    <p class="success-message" *ngIf="successmessage">{{ successmessage }}</p>
-    <input type="file" (change)="onFileSelected($event)" accept=".xlsx"/>
-    <button (click)="onUpload()">Upload</button>
-    
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar>
+  <div class="flex flex-1">
+    <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
+    <div class="content">
+      <div class="container">
+        <h2>Upload User Data</h2>
+        <p class="error-message" *ngIf="errormessage">{{ errormessage }}</p>
+        <p class="success-message" *ngIf="successmessage">{{ successmessage }}</p>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="customFile" (change)="onFileSelected($event)" accept=".xlsx">
+        </div>
+        <button class="btn btn-primary mt-3" (click)="onUpload()">Upload</button>
+      </div>
+    </div>
   </div>
-  
+</div>
