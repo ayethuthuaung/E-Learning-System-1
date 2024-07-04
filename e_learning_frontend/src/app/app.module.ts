@@ -50,7 +50,15 @@ import { ChatComponent } from './components/chat/chat.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
 
+import { NotificationComponent } from './components/notification/notification.component';
 
+
+
+
+import { CourseListComponent } from './components/course-list/course-list.component';
+
+import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
 
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';
@@ -66,8 +74,6 @@ import { InstructorCategoryComponent } from './components/instructor/instructor-
 import { StudentProfileComponent } from './components/student/student-profile/student-profile.component';
 
 
-import { CourseDetailsComponent } from './components/course-details/course-details.component';
-import { CourseListComponent } from './components/course-list/course-list.component';
 
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -82,6 +88,7 @@ import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-questi
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
 import { AuthComponent } from './components/auth/auth.component';
 
+import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -99,6 +106,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     CreateQuestionFormComponent,
     AnswerFormComponent,
     ForgetPasswordComponent,
+
 
     ChatComponent,
     HeroComponent,
@@ -145,12 +153,20 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
   
     // instructor
         HomeComponent,
+
+        ChatComponent,
+        NotificationComponent,
+
         CourseDetailsComponent,
+          ConservationListComponent,
+
+
         UserUploadComponent,
-        SubmitFormComponent,
         AuthComponent,
-      
- 
+    
+
+         SubmitFormComponent,
+           InstructorLessonComponent,
 
   ],
   imports: [

@@ -1,0 +1,84 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
+  <div class="flex flex-1">
+    <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
+
+    <main class="flex-1 p-6">
+      <section>
+        <div class="flex border-b">
+          <button
+            class="py-2 px-4 text-sm font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+            [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
+            (click)="setActiveTab('createLesson')"
+          >
+            Create Lesson
+          </button>
+        </div>
+
+        <div *ngIf="activeTab === 'createLesson'" class="p-4">
+          <div class="flex flex-col items-center justify-center light">
+            <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+              <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
+                <input
+                  type="text"
+                  class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  id="name"
+                  name="name"
+                  [(ngModel)]="course.name"
+                  required
+                  (input)="validateCourseName(course.name)"
+                  placeholder="Lesson Title"
+                />
+
+                <div *ngFor="let module of modules; let i = index" class="mb-4">
+                  <div class="flex items-center mb-2">
+                    <input
+                      type="text"
+                      class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 flex-grow"
+                      [(ngModel)]="module.name"
+                      name="moduleName{{ i }}"
+                      required
+                      placeholder="Module Name"
+                    />
+                    <button
+                      type="button"
+                      class="ml-2 text-red-400 hover:text-red-600 transition ease-in-out duration-150"
+                      (click)="removeModule(i)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                  <input
+                    type="file"
+                    class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 w-full"
+                    (change)="onFileSelected($event, i)"
+                    name="moduleUrl{{ i }}"
+                    required
+                  />
+                </div>
+
+                <div class="flex space-x-2">
+                  <button
+                    type="button"
+                    class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
+                    (click)="addModule()"
+                  >
+                    Add Module
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
+                    [disabled]="nameDuplicateError"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

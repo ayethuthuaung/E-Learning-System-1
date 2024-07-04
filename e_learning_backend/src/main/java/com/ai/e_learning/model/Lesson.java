@@ -30,6 +30,6 @@ public class Lesson {
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = @JoinColumn(name = "module_id")
     )
-    private Set<Module> modules;
+    private Set<CourseModule> courseModules;
 
 }

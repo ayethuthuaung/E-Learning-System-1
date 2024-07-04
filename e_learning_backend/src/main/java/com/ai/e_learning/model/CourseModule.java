@@ -11,7 +11,7 @@ import java.util.Set;
 @Setter
 @Entity
 @ToString
-public class Module {
+public class CourseModule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Long id;
@@ -19,7 +19,6 @@ public class Module {
     @Column(nullable = false, length = 200)
     private String name;
 
-    private boolean done;
     private Long createdAt;
 
     @PrePersist
@@ -27,7 +26,7 @@ public class Module {
         this.createdAt = System.currentTimeMillis();
     }
 
-    @ManyToMany(mappedBy = "modules")
+    @ManyToMany(mappedBy = "courseModules")
     private Set<Lesson> lessons;
     private String file;
 }

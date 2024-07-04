@@ -1,0 +1,32 @@
+.conversation-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .conversation-item:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .avatar img {
+    border-radius: 50%;
+  }
+  
+  .status-dot {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .bg-green-500 {
+    background-color: #22c55e;
+  }
+  
+  .bg-red-500 {
+    background-color: #ef4444;
+  }
+  

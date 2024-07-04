@@ -99,17 +99,7 @@
                 <div class="row">
                   <div *ngFor="let category of categories" class="col-md-4">
                     <label class="checkbox-inline">
-                      <!-- <input
->>>>>>> ffe639a4b86f3c37da9466ebf3508ebc5d18db7e
-                        type="checkbox"
-                        [id]="'category_' + category.id"
-                        [name]="'categories'"
-                        [value]="category.id"
-                        (change)="toggleCategory($event, category.id)"
-                        [(ngModel)]="categoryList[category.id]"
-                      /> --> 
-                      <!-- Checkbox Mark duplicate -->
-                      <input
+
                           type="checkbox"
                           [id]="'category_' + category.id"
                           [name]="'categories'"
@@ -131,12 +121,36 @@
                 </button>
               </form>
 
-              <div *ngIf="loading" class="loading-overlay">
-                <div class="spinner"></div>
+              <!-- <div *ngIf="loading" class="loading-overlay">
+                <div class="spinner"></div> -->
+
               </div>
             </div>
+            
+          
+            <!-- Course Buttons -->
+           <div class="w-full md:w-1/2 p-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <button *ngFor="let course of courses" (click)="navigateToCourse(course.id)" class="relative p-2 border rounded shadow hover:-translate-y-2 duration-300 bg-white group">
+      <div class="flex items-center">
+        <h2 class="font-medium text-logo-blue mr-2">{{ course.name }}</h2>
+        <span [ngClass]="{
+          'bg-yellow-500': course.status === 'Pending',
+          'bg-green-500': course.status === 'Accept'
+        }" class="text-white px-2 py-1 rounded ml-auto">
+          {{ course.status }}
+        </span>
+      </div>
+      <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        Click to Create Lesson
+      </span>
+    </button>
+  </div>
+</div>
+
+            
           </div>
-        </div>
+
 
 
 
@@ -180,6 +194,7 @@
                         {{ course.status }}
                       </span>                   
                     </button>
+
                   
                  
               </div>
@@ -191,17 +206,53 @@
                 
   
                 <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
-        
                   <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
-                    <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload Course Lesson</label>
-                    <input
-                        type="file"
-                        id="photo"
-                        name="photo"
-                        (change)="onFileChange($event)"
-                        class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                </div>
+                    <label class="block mb-2 font-medium text-gray-700">Select Course:</label>
+                    <div class="row">
+                      <div *ngFor="let category of categories" class="col-md-4">
+                        <label class="checkbox-inline">
+                          <!-- <input
+                            type="checkbox"
+                            [id]="'category_' + category.id"
+                            [name]="'categories'"
+                            [value]="category.id"
+                            (change)="toggleCategory($event, category.id)"
+                            [(ngModel)]="categoryList[category.id]"
+                          /> --> 
+                          <!-- Checkbox Mark duplicate -->
+                          <input
+                              type="checkbox"
+                              [id]="'category_' + category.id"
+                              [name]="'categories'"
+                              [value]="category.id"
+                              (change)="toggleCategories($event, category)"
+                            />
+                          {{ category.name }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                  type="text"
+                  class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  id="name"
+                  name="name"
+                  [(ngModel)]="course.name"
+                  required
+                  (input)="validateCourseName(course.name)"
+                  placeholder="Lesson Title"
+                />
+                  
+               
+                
+            
+                  <button
+                    type="submit"
+                    class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
+                    [disabled]="nameDuplicateError"
+                    >
+                    Submit
+                  </button>
                 </form>
               </div>
             </div>  

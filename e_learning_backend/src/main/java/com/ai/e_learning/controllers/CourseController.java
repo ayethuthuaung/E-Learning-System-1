@@ -26,12 +26,16 @@ public class CourseController {
   @Autowired
   private CourseService courseService;
 
-
   @GetMapping(value = "/courselist", produces = "application/json")
   public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
     return courseService.getAllCourses(status);
-
   }
+
+  @GetMapping(value = "/instructorcourselist", produces = "application/json")
+  public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
+    return courseService.getCoursesByUserId(userId);
+  }
+
   @PostMapping(value = "/changeStatus", produces = "application/json")
   public ResponseEntity<?> changeStatus(ModelMap model,@RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
     try{
@@ -40,78 +44,83 @@ public class CourseController {
     }catch(Exception e){
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
     }
-
   }
+
 
   @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
   public ResponseEntity<CourseDto> addCourse(
     @RequestPart("course") CourseDto courseDto,
     @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
 
-    if (photo.isEmpty()) {
-      return ResponseEntity.badRequest().body(courseDto);
-    }
-    courseDto.setPhotoInput(photo);
-    CourseDto savedCourse = courseService.saveCourse(courseDto);
-    if (savedCourse != null) {
-      return ResponseEntity.ok(savedCourse);
-    } else {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
 
-
-  @GetMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<CourseDto> getCourseById(@PathVariable Long id) {
-    CourseDto courseDto = courseService.getCourseById(id);
-    if (courseDto != null) {
-      return ResponseEntity.ok(courseDto);
-    } else {
-      return ResponseEntity.notFound().build();
-    }
-  }
-
-  @PutMapping(value = "/updatecourse/{id}", produces = "application/json")
-  public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
-    handlePhotoConversion(courseDto);
-    CourseDto updatedCourse = courseService.updateCourse(id, courseDto);
-
-    if (updatedCourse == null) {
-      return ResponseEntity.notFound().build();
+        if (photo.isEmpty()) {
+            return ResponseEntity.badRequest().body(courseDto);
+        }
+        courseDto.setPhotoInput(photo);
+        CourseDto savedCourse = courseService.saveCourse(courseDto);
+        if (savedCourse != null) {
+            return ResponseEntity.ok(savedCourse);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    return ResponseEntity.ok(updatedCourse);
-  }
 
-  @DeleteMapping(value = "/delete/{id}")
-  public ResponseEntity<Void> softDeleteCourse(@PathVariable Long id) {
-    courseService.softDeleteCourse(id);
-    return ResponseEntity.noContent().build();
-  }
-
-  @GetMapping(value = "/byCategory/{categoryId}", produces = "application/json")
-  public ResponseEntity<List<CourseDto>> getCoursesByCategory(@PathVariable Long categoryId) {
-    List<CourseDto> courses = courseService.getCoursesByCategory(categoryId);
-    return ResponseEntity.ok(courses);
-  }
-
-  @PostMapping(value = "/{courseId}/categories/{categoryId}", produces = "application/json")
-  public ResponseEntity<Void> addCategoryToCourse(@PathVariable Long courseId, @PathVariable Long categoryId) {
-    courseService.addCategoryToCourse(courseId, categoryId);
-    return ResponseEntity.ok().build();
-  }
-
-  @GetMapping("/existsByName")
-  public boolean isCourseNameAlreadyExists(@RequestParam String name) {
-    return courseService.isCourseNameAlreadyExists(name);
-  }
-
-  private void handlePhotoConversion(CourseDto courseDto) {
-    if (courseDto.getPhoto() != null) {
-      byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-      courseDto.setPhoto(Arrays.toString(photoBytes));
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<CourseDto> getCourseById(@PathVariable Long id) {
+        CourseDto courseDto = courseService.getCourseById(id);
+        if (courseDto != null) {
+            return ResponseEntity.ok(courseDto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-  }
+
+    @PutMapping(value = "/updatecourse/{id}", produces = "application/json")
+    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
+        handlePhotoConversion(courseDto);
+        CourseDto updatedCourse = courseService.updateCourse(id, courseDto);
+
+        if (updatedCourse == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedCourse);
+    }
+
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<Void> softDeleteCourse(@PathVariable Long id) {
+        courseService.softDeleteCourse(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/byCategory/{categoryId}", produces = "application/json")
+    public ResponseEntity<List<CourseDto>> getCoursesByCategory(@PathVariable Long categoryId) {
+        List<CourseDto> courses = courseService.getCoursesByCategory(categoryId);
+        return ResponseEntity.ok(courses);
+    }
+
+    @PostMapping(value = "/{courseId}/categories/{categoryId}", produces = "application/json")
+    public ResponseEntity<Void> addCategoryToCourse(@PathVariable Long courseId, @PathVariable Long categoryId) {
+        courseService.addCategoryToCourse(courseId, categoryId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/existsByName")
+    public boolean isCourseNameAlreadyExists(@RequestParam String name) {
+        return courseService.isCourseNameAlreadyExists(name);
+    }
+
+
+
+    private void handlePhotoConversion(CourseDto courseDto) {
+        if (courseDto.getPhoto() != null) {
+            byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
+            courseDto.setPhoto(Arrays.toString(photoBytes));
+        }
+    }
+
+
   /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
   public ResponseEntity<CourseDto> addCourse(@RequestParam("course") String courseDtoString,
                                              @RequestParam(value = "photo", required = false) MultipartFile photoFile) {
