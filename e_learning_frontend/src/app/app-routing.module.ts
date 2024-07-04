@@ -20,6 +20,7 @@ import { CategoryListComponent } from './components/category-list/category-list.
 
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
+
 import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
 
  
@@ -36,10 +37,12 @@ import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
 import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
-import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
 import { AdminCourseComponent } from './components/admin/admin-course/admin-course.component';
 import { AdminCategoryComponent } from './components/admin/admin-category/admin-category.component';
+import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-details.component';
+import { QuizExamListComponent  } from './components/quiz-Ans/exam-list/exam-list.component';
 
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 
@@ -70,7 +73,6 @@ const routes: Routes = [
    {path:'answerOption', component: CreateAnswerOptionComponent},
    {path:'createquestionform' , component: CreateQuestionFormComponent},
    {path:'answerform' , component: AnswerFormComponent},
-   {path:'submitform' , component: SubmitFormComponent},
 
    {path:'blog', component: BlogsComponent},
 
@@ -87,6 +89,15 @@ const routes: Routes = [
    {path:'admin/upload-user-data', component: UserUploadComponent },
    {path:'admin/course', component: AdminCourseComponent},
    {path:'admin/category', component: AdminCategoryComponent},
+
+   {path:'course-detail/:id', component: CourseDetailsComponent},
+
+
+   { path: 'exam-detail/:id', component: ExamDetailComponent }, // Add route for ExamDetailComponent
+
+   {path:'exam-list', component: QuizExamListComponent },
+
+
 
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},

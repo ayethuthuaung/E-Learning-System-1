@@ -1,4 +1,4 @@
-<!-- create-exam.component.html -->
+
 <div>
   <h2>Create Exam</h2>
   <form (ngSubmit)="onSubmit(examForm)" #examForm="ngForm">
@@ -10,15 +10,7 @@
       <label for="description">Description:</label>
       <textarea id="description" name="description" [(ngModel)]="exam.description"></textarea>
     </div>
-    <div>
-      <label>Question Types:</label>
-      <div *ngFor="let questionType of questionTypes">
-        <label>
-          <input type="checkbox" name="questionTypes" [value]="questionType.id" (change)="toggleQuestionType($event, questionType)">
-          {{ questionType.type }}
-        </label>
-      </div>
-    </div>
     <button type="submit">Save Exam</button>
   </form>
 </div>
+

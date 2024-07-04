@@ -1,3 +1,5 @@
+
+
 <div class="form-container">
   <div *ngFor="let question of questions; let qIndex = index" class="question">
     <p>{{ question.text }}</p>
@@ -15,9 +17,35 @@
                  [(ngModel)]="option.isAnswered">
           {{ option.label }}
         </label>
+        <div *ngIf="showResults">
+          <span *ngIf="option.isCorrect && option.isSelected" style="color: green;">Correct</span>
+          <span *ngIf="!option.isCorrect && option.isSelected" style="color: red;">Incorrect</span>
+          <span *ngIf="option.isCorrect && !option.isSelected" style="color: green;">Correct Answer</span>
+        </div>
       </div>
     </div>
   </div>
   
   <button (click)="submitAnswers()">Submit Answers</button>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

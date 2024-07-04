@@ -19,9 +19,11 @@ public class StudentAnswerController {
 
     @PostMapping
     public ResponseEntity<StudentAnswer> addStudentAnswer(@RequestBody StudentAnswerRequestDto request) {
-        StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(request.getQuestionId(), request.getStudentOptionId());
+       StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(request.getQuestionId(), request.getAnswerOptionId());
+     // StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(request.getQuestionId(), request.getStudentOptionId());
         return ResponseEntity.ok(studentAnswer);
     }
+
 
     @GetMapping
     public ResponseEntity<List<StudentAnswer>> getAllStudentAnswers() {

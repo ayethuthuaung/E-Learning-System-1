@@ -9,4 +9,5 @@ public interface StudentAnswerService {
     public List<StudentAnswer> getAllStudentAnswers();
     public StudentAnswer getStudentAnswerById(Long id);
     public void deleteStudentAnswer(Long id);
+    Long getSelectedOptionId(Long studentAnswerId); // Add this method
 }

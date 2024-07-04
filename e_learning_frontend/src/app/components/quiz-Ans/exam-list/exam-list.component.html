@@ -1,0 +1,6 @@
+<!-- exam-list.component.html -->
+<div class="exam-container" *ngFor="let exam of exams">
+  <h3 class="exam-title">{{ exam.title }}</h3>
+  <p class="exam-description">{{ exam.description }}</p>
+  <button class="exam-details-button" [routerLink]="['/exam-detail', exam.id]">Details</button>
+</div>
