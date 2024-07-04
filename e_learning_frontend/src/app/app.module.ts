@@ -71,6 +71,7 @@ import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-ex
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -150,6 +151,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
         UserUploadComponent,
 
          SubmitFormComponent,
+           InstructorLessonComponent,
 
   ],
   imports: [

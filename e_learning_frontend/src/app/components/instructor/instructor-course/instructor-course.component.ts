@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
-
+declare var Swal: any;
 @Component({
   selector: 'app-instructor-course',
   templateUrl: './instructor-course.component.html',
@@ -49,7 +49,7 @@ export class InstructorCourseComponent implements OnInit {
         
       }
     }
-    this.getAllCourses();
+    this.getInstructorCourses();
   }
 
   getCategories(): void {
@@ -143,9 +143,14 @@ export class InstructorCourseComponent implements OnInit {
     }
 
     this.courseService.addCourseWithFormData(formData).subscribe(
-      (data) => {
+      (data: Course) => {
         console.log('Course created successfully:', data);
-        this.router.navigate(['/courses']);
+        this.getInstructorCourses(); // Refresh courses list after adding new course
+        this.course = new Course(); // Clear the form
+        this.course.status = data.status; // Update local status with returned status
+        this.course.photoFile = undefined; // Clear the photo input
+        this.course.categories = []; // Clear selected categories
+        this.showSuccessAlert();
       },
       (error) => {
         console.error('Error creating course:', error);
@@ -189,8 +194,8 @@ export class InstructorCourseComponent implements OnInit {
     
   }
 
-  getAllCourses(): void {
-    this.courseService.getAllCourses(this.status).subscribe(
+  getInstructorCourses(): void {
+    this.courseService.getInstructorCourses(this.userId).subscribe(
       (data: Course[]) => {
         this.courses = data;
       },
@@ -198,5 +203,18 @@ export class InstructorCourseComponent implements OnInit {
         console.error('Error fetching courses', error);
       }
     );
+  }
+
+  navigateToCourse(courseId: number) {
+    this.router.navigate([`instructor/lesson/${courseId}`]);
+  }
+
+  showSuccessAlert(): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: 'Course created successfully.',
+      confirmButtonText: 'OK'
+    });
   }
 }

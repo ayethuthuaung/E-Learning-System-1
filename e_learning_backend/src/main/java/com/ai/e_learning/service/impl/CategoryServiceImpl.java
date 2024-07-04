@@ -1,8 +1,9 @@
-package com.ai.e_learning.service;
+package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.dto.CategoryDto;
 import com.ai.e_learning.model.Category;
 import com.ai.e_learning.repository.CategoryRepository;
+import com.ai.e_learning.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

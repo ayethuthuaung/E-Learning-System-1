@@ -33,6 +33,7 @@ import { CreateQuestionFormComponent } from './components/quiz-Ans/create-questi
 import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
 import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 
 
 
@@ -71,7 +72,9 @@ const routes: Routes = [
 
    { path: 'user/upload-user-data', component: UserUploadComponent },
 
-   {path:'course-detail/:id', component: CourseDetailsComponent},
+   {path:'course-detail/:courseId', component: CourseDetailsComponent},
+   {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
+
 ];
 
 

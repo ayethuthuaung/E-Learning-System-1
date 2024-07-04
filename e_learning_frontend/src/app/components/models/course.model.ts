@@ -18,6 +18,7 @@ export class Course {
   status: string;
   user: User | undefined;
   createdDate: string;
+ 
   
 
   constructor() {

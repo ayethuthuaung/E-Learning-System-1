@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { LessonService } from '../services/lesson.service';
+import { Lesson } from '../models/lesson.model';
 import { Course } from '../models/course.model';
-
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-course-details',
@@ -9,18 +10,40 @@ import { Course } from '../models/course.model';
   styleUrls: ['./course-details.component.css']
 })
 export class CourseDetailsComponent implements OnInit {
+  lessons: Lesson[] = [];
+  isDropdownOpen: boolean[] = [];
   course: Course | undefined;
-  isDropdownOpen = false;
+  courseId: number | undefined;
 
-  
-  constructor(private route: ActivatedRoute) { }
+  constructor(private lessonService: LessonService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.course = history.state.course;
+    this.route.paramMap.subscribe(params => {
+      this.courseId = +params.get('courseId')!;
+      this.course = history.state.course;
+      console.log(`Course ID: ${this.courseId}`);
+      console.log(`Course: ${JSON.stringify(this.course)}`);
+      this.fetchLessons();
+    });
   }
 
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  fetchLessons(): void {
+    console.log('Fetching lessons for course ID:', this.courseId);
+    if (this.courseId) {
+      this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+        (data) => {
+          console.log('Fetched lessons:', data);
+          this.lessons = data;
+          this.isDropdownOpen = new Array(this.lessons.length).fill(false);
+        },
+        (error) => {
+          console.error('Error fetching lessons:', error);
+        }
+      );
+    }
   }
 
+  toggleDropdown(index: number) {
+    this.isDropdownOpen[index] = !this.isDropdownOpen[index];
+  }
 }

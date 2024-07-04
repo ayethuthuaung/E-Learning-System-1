@@ -4,17 +4,18 @@ import com.ai.e_learning.model.Lesson;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
 @Getter
 @Setter
 @ToString
-public class ModuleDto {
+public class CourseModuleDto {
     private  Long id;
     private String name;
-    private boolean done;
     private Long createdAt;
     private Set<Lesson> lessons;
     private String file;
+    private MultipartFile fileInput;
 }

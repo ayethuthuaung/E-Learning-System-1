@@ -1,13 +1,14 @@
-package com.ai.e_learning.service;
+package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.dto.CourseDto;
-import com.ai.e_learning.exception.EntityNotFoundException;
 import com.ai.e_learning.model.Category;
 import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.User;
 import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.service.CourseService;
+import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
 import com.ai.e_learning.util.GoogleDriveJSONConnector;
 import com.ai.e_learning.util.Helper;
@@ -51,10 +52,10 @@ public class CourseServiceImpl implements CourseService {
     List<String> statusList = Arrays.asList(status.split(","));
     List<Course> allCourses = courseRepository.findByStatusIn(statusList);
 
-    GoogleDriveJSONConnector driveConnector;
-    driveConnector = new GoogleDriveJSONConnector();
+
       for (Course course : allCourses) {
       try {
+        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
         String fileId = driveConnector.getFileIdByName(course.getPhoto());
         String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
         course.setPhoto(thumbnailLink);
@@ -62,7 +63,7 @@ public class CourseServiceImpl implements CourseService {
         e.printStackTrace();
       }
         // Convert createdAt to createdDate in CourseDto
-        course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()).toString());
+        course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()));
     }
     return allCourses.stream()
             .map(this::convertToDto)
@@ -155,6 +156,12 @@ public class CourseServiceImpl implements CourseService {
     return courseRepository.existsByName(name);
   }
 
+  @Override
+  public List<CourseDto> getCoursesByUserId(Long userId) {
+    List<Course> courses = courseRepository.findByUserId(userId);
+    return DtoUtil.mapList(courses,CourseDto.class,modelMapper);
+  }
+
   private Course convertToEntity(CourseDto dto) {
       return modelMapper.map(dto, Course.class);
   }
@@ -162,4 +169,6 @@ public class CourseServiceImpl implements CourseService {
   private CourseDto convertToDto(Course course) {
       return modelMapper.map(course, CourseDto.class);
   }
+
+
 }
