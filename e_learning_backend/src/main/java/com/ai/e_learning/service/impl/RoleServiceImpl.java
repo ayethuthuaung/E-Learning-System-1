@@ -6,6 +6,8 @@ import com.ai.e_learning.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
@@ -24,5 +26,10 @@ public class RoleServiceImpl implements RoleService {
                 return roleRepository.save(role);
             });
         }
+    }
+
+    @Override
+    public Optional<Role> getRoleByName(String name) {
+        return roleRepository.findByName(name);
     }
 }

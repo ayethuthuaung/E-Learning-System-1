@@ -29,7 +29,11 @@ public class CourseController {
     @GetMapping(value = "/courselist", produces = "application/json")
     public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
         return courseService.getAllCourses(status);
+    }
 
+    @GetMapping(value = "/instructorcourselist", produces = "application/json")
+    public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
+        return courseService.getCoursesByUserId(userId);
     }
 
     @PostMapping(value = "/changeStatus", produces = "application/json")
@@ -106,12 +110,16 @@ public class CourseController {
         return courseService.isCourseNameAlreadyExists(name);
     }
 
+
+
     private void handlePhotoConversion(CourseDto courseDto) {
         if (courseDto.getPhoto() != null) {
             byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
             courseDto.setPhoto(Arrays.toString(photoBytes));
         }
     }
+
+
   /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
   public ResponseEntity<CourseDto> addCourse(@RequestParam("course") String courseDtoString,
                                              @RequestParam(value = "photo", required = false) MultipartFile photoFile) {

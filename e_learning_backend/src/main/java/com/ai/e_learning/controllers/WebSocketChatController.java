@@ -25,8 +25,9 @@ public class WebSocketChatController {
 
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
-    public Message sendMessage(@Payload ChatMessage chatMessage) {
-        return chatService.sendMessage(chatMessage.getChatRoomId(), chatMessage.getSenderId(), chatMessage.getContent()); // Make sure message is serialized as JSON
+    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+        System.out.println(chatMessage.toString());
+        return chatService.sendMessage(chatMessage.getChatRoomId(), chatMessage.getSenderId(), chatMessage.getContent(),chatMessage.getSessionId()); // Make sure message is serialized as JSON
     }
 
 

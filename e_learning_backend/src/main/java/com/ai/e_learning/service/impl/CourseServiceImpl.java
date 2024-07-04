@@ -1,6 +1,9 @@
 package com.ai.e_learning.service.impl;
 
+import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.model.*;
+
 import com.ai.e_learning.model.Category;
 import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.User;
@@ -8,6 +11,8 @@ import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.CourseService;
+import com.ai.e_learning.service.RoleService;
+import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
 import com.ai.e_learning.util.GoogleDriveJSONConnector;
 import com.ai.e_learning.util.Helper;
@@ -22,6 +27,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.ai.e_learning.util.Helper.convertLongToLocalDate;
 
 
 @Service
@@ -43,31 +50,36 @@ public class CourseServiceImpl implements CourseService {
   private final Helper helper;
 
 
+  @Autowired
+  private RoleService roleService;
+
+  @Autowired
+  private NotificationController notificationController;
+
+
   @Override
   public List<CourseDto> getAllCourses(String status) {
+    //Change List
+    List<String> statusList = Arrays.asList(status.split(","));
+    List<Course> allCourses = courseRepository.findByStatusIn(statusList);
 
-
-    List<Course> allCourses = courseRepository.findByStatus(status);
-
-    GoogleDriveJSONConnector driveConnector;
-
-      driveConnector = new GoogleDriveJSONConnector();
 
       for (Course course : allCourses) {
       try {
+        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
         String fileId = driveConnector.getFileIdByName(course.getPhoto());
         String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
         course.setPhoto(thumbnailLink);
       } catch (IOException | GeneralSecurityException e) {
         e.printStackTrace();
       }
+        // Convert createdAt to createdDate in CourseDto
+        course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()));
     }
-
     return allCourses.stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
   }
-
 
   @Override
   public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {
@@ -75,12 +87,10 @@ public class CourseServiceImpl implements CourseService {
     Course course = convertToEntity(courseDto);
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-
     File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
     courseDto.getPhotoInput().transferTo(tempFile);
     String imageUrl = helper.uploadImageToDrive(tempFile, "course");
     course.setPhoto(tempFile.getName());
-
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
@@ -91,17 +101,28 @@ public class CourseServiceImpl implements CourseService {
               .orElse(category);
       mergedCategories.add(managedCategory);
     }
-
     course.setCategories(mergedCategories);
-
     Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
-
+    // Send notifications
+    sendRoleSpecificNotifications(savedCourse);
     return convertToDto(savedCourse);
+  }
+  private void sendRoleSpecificNotifications(Course course) {
+    Optional<Role> adminRoleOptional = roleService.getRoleByName("Admin");
+    if (adminRoleOptional.isPresent()) {
+      Role adminRole = adminRoleOptional.get();
+      Notification adminNotification = new Notification();
+      adminNotification.setMessage("New course added: " + course.getName());
+      adminNotification.setRole(adminRole);
+      notificationController.sendNotificationToPage(adminNotification);
+    } else {
+      // Handle the case where the admin role is not found
+      System.out.println("Admin role not found");
+    }
   }
 
   @Override
   public void changeStatus(Long id,String status){
-
       Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
       course.setStatus(status);
       EntityUtil.saveEntity(courseRepository,course,"Course");
@@ -120,13 +141,6 @@ public class CourseServiceImpl implements CourseService {
       .map(existingCourse -> {
         courseDto.setId(existingCourse.getId());
         modelMapper.map(courseDto, existingCourse);
-
-        // Handle photo conversion
-//        if (courseDto.getPhoto() != null) {
-//          byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-//          existingCourse.setPhoto(photoBytes);
-//        }
-
         Course updatedCourse = courseRepository.save(existingCourse);
         return convertToDto(updatedCourse);
       })
@@ -168,6 +182,12 @@ public class CourseServiceImpl implements CourseService {
     return courseRepository.existsByName(name);
   }
 
+  @Override
+  public List<CourseDto> getCoursesByUserId(Long userId) {
+    List<Course> courses = courseRepository.findByUserId(userId);
+    return DtoUtil.mapList(courses,CourseDto.class,modelMapper);
+  }
+
   private Course convertToEntity(CourseDto dto) {
       return modelMapper.map(dto, Course.class);
   }
@@ -175,4 +195,6 @@ public class CourseServiceImpl implements CourseService {
   private CourseDto convertToDto(Course course) {
       return modelMapper.map(course, CourseDto.class);
   }
+
+
 }

@@ -1,9 +1,6 @@
 package com.ai.e_learning.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
@@ -13,6 +10,7 @@ import java.util.List;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.FileContent;
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.ai.e_learning.dto.ImageResponse;
 import org.springframework.stereotype.Service;
@@ -135,6 +133,21 @@ public class GoogleDriveJSONConnector {
             imageResponse.setMessage(e.getMessage());
         }
         return imageResponse;
+    }
+
+    public String uploadImageToDrive2(InputStream inputStream, String fileName, String contentType) throws GeneralSecurityException, IOException {
+        Drive drive = createDriveService();
+
+        com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+        fileMetaData.setName(fileName);
+        fileMetaData.setParents(Collections.singletonList("1PHnnlrCQb2U-pNZM6Se4bUWVJWegE_mC")); // Use your folder ID
+
+        FileContent mediaContent = new FileContent(contentType, new File(fileName));
+        com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, new InputStreamContent(contentType, inputStream))
+                .setFields("id")
+                .execute();
+
+        return uploadedFile.getId();
     }
 
 }

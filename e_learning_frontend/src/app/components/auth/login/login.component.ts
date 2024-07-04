@@ -33,11 +33,12 @@ export class LoginComponent {
     );
   }
 
+
+
   // Added method
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
-
 }
 
 export class LoginModel {
@@ -49,6 +50,8 @@ export class LoginModel {
     this.password = "";
   }
 }
+
+
 
 
 

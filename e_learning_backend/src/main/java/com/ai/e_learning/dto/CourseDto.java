@@ -21,7 +21,8 @@ public class CourseDto {
   private  String level;
   private String duration;
   private String description;
-  private String createdAt;
+  private String createdDate;
+  private Long createdAt;
   private String certificate;
   private String badge;
   private Set<Category> categories = new HashSet<>();

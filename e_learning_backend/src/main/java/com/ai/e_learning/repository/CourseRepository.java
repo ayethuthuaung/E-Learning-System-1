@@ -1,6 +1,7 @@
 package com.ai.e_learning.repository;
 
 import com.ai.e_learning.model.Course;
+import com.ai.e_learning.model.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,5 +25,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   List<Course> findAllWithCategories();
 
   List<Course> findByStatus(String status);
+
+  List<Course> findByStatusIn(List<String> statusList);
+
+  List<Course> findByUserId(Long userId);
 
 }

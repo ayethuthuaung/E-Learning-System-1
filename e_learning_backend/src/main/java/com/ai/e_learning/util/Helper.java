@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
@@ -21,13 +23,14 @@ public class Helper {
 
     private final GoogleDriveJSONConnector googleDriveJSONConnector;
 
-    public static LocalDate convertLongToLocalDate(Long milliseconds){
+    public static String convertLongToLocalDate(Long milliseconds){
         if (milliseconds == null) {
             throw new IllegalArgumentException("Milliseconds cannot be null");
         }
 
         Instant instant = Instant.ofEpochMilli(milliseconds);
-        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        return localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
     }
 
   public static String generateOTPCode() {
@@ -62,6 +65,9 @@ public class Helper {
             if("course".equals(folderName)){
                 folderId = "1dvIGCGwgdeWUKKiC9H5qq5ZT_ZP77n7I";
             }
+            if("module".equals(folderName)){
+                folderId = "1SnpP8IX_YJea7dN6fGv-gf51XVbABNG7";
+            }
 
 
             Drive drive = googleDriveJSONConnector.createDriveService();
@@ -71,7 +77,7 @@ public class Helper {
             FileContent mediaContent = new FileContent("image/jpeg", file);
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent).setFields("id").execute();
             System.out.println(uploadedFile.getName());
-            imageUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+            imageUrl = uploadedFile.getId();
             //System.out.println("IMAGE URL : " + imageUrl);
             file.delete();
             //isUploaded = true;
@@ -82,4 +88,7 @@ public class Helper {
         }
         return imageUrl;
     }
+
+
+
 }

@@ -33,5 +33,6 @@ public interface CourseService {
   void addCategoryToCourse(Long courseId, Long categoryId);
   boolean isCourseNameAlreadyExists(String name);
   void changeStatus(Long id,String status);
+  List<CourseDto> getCoursesByUserId(Long userId);
 
 }

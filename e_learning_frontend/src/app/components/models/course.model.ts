@@ -17,7 +17,13 @@ export class Course {
   userId: number;
   status: string;
   user: User | undefined;
+
+  instructorId: number; // Added property
+  chatRoomId: number; // Added property
   
+
+  createdDate: string;
+ 
   
 
   constructor() {
@@ -34,5 +40,9 @@ export class Course {
     this.photoFile = undefined;
     this.userId = 1;
     this.status ='';
+    this.instructorId = 1; // Initialized property
+    this.chatRoomId = 1; // Initialized property
+
+    this.createdDate = '';
   }
 }
