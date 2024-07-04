@@ -20,5 +20,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   @Query("SELECT COUNT(c) > 0 FROM Course c WHERE c.name = :name")
   boolean existsByName(String name);
 
+  @Query("SELECT c FROM Course c JOIN FETCH c.categories")
+  List<Course> findAllWithCategories();
 
+  List<Course> findByStatus(String status);
+
+  List<Course> findByStatusIn(List<String> statusList);
 }

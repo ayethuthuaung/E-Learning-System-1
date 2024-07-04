@@ -1,10 +1,9 @@
-// student-profile.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
-
+import { UserCourseService } from '../../services/user-course.service';
 
 @Component({
   selector: 'app-student-profile',
@@ -20,15 +19,14 @@ export class StudentProfileComponent implements OnInit {
   loggedUser: any = '';
   id: number = 0;
   selectedFile: File | null = null;
-  courses: any[] = [
-    { title: 'Course 1', completion: 75, id: 1 },
-    { title: 'Course 2', completion: 50, id: 2 },
-    { title: 'Course 3', completion: 30, id: 3 },
-  ];
   selectedCourse?: Course;
+  enrolledCourses: Course[] = [];
 
-  constructor(private router: Router, private courseService: CourseService,
-    private userService: UserService
+  constructor(
+    private router: Router,
+    private courseService: CourseService,
+    private userService: UserService,
+    private userCourseService: UserCourseService
   ) { }
 
   ngOnInit(): void {
@@ -42,9 +40,22 @@ export class StudentProfileComponent implements OnInit {
         this.division = this.loggedUser.division;
         this.id = this.loggedUser.id;
         console.log(this.id);
+        this.fetchEnrolledCourses();
       }
     }
   }
+
+  fetchEnrolledCourses(): void {
+    if (this.id) {
+      this.userCourseService.getCoursesByUserId(this.id).subscribe({
+        next: (courses) => {
+          this.enrolledCourses = courses;
+        },
+        error: (e) => console.log(e)
+      });
+    }
+  }
+
   onFileSelected(event: any): void {
     console.log("Hi");
 
@@ -94,9 +105,7 @@ export class StudentProfileComponent implements OnInit {
     }
   }
 
-
-
-  viewCourse(course: any): void {
+  viewCourse(course: Course): void {
     this.courseService.getCourseById(course.id).subscribe({
       next: (data) => {
         this.selectedCourse = data;

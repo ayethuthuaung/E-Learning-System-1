@@ -11,6 +11,7 @@ import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
@@ -21,13 +22,14 @@ public class Helper {
 
     private final GoogleDriveJSONConnector googleDriveJSONConnector;
 
-    public static LocalDate convertLongToLocalDate(Long milliseconds){
+    public static String convertLongToLocalDate(Long milliseconds){
         if (milliseconds == null) {
             throw new IllegalArgumentException("Milliseconds cannot be null");
         }
 
         Instant instant = Instant.ofEpochMilli(milliseconds);
-        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        return localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
     }
 
   public static String generateOTPCode() {

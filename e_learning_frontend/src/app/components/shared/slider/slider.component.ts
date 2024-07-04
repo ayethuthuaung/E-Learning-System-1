@@ -10,8 +10,7 @@ import { SlideConfig } from '../../models/slide-config.model';
 })
 export class SliderComponent implements OnInit, AfterViewInit {
 
-  @Input('items')
-  items: string[] | Feedback[] | Client[] = [];
+ @Input() items: any[] = [];
 
   dots: number[] = [];
   activeSlideID = 1;

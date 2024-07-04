@@ -1,3 +1,4 @@
+import { User } from './user.model';
 import { Category } from "./category.model";
 
 export class Course {
@@ -12,9 +13,14 @@ export class Course {
   badge?: string;
   deleted?: boolean;
   photoFile?: File;
-  photoUrl?: string;
-  completion: any;
-photo: any;
+  photo?: string;
+  userId: number;
+  status: string;
+  user: User | undefined;
+  createdDate: string;
+completion: any;
+showDetails: any;
+  
 
   constructor() {
     this.id = 1;
@@ -28,5 +34,8 @@ photo: any;
     this.deleted = false;
     this.categorylist = [];
     this.photoFile = undefined;
+    this.userId = 1;
+    this.status ='';
+    this.createdDate = '';
   }
 }

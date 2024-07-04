@@ -5,6 +5,7 @@ import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ImageResponse;
 import com.ai.e_learning.dto.UserDto;
 import com.ai.e_learning.model.User;
+import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;

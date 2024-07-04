@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Student } from '../models/student.model';
-
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+import { Student } from '../models/student.model';
+import { UserCourse } from '../models/usercourse.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  updateUserCourse(userCourseId: number, completed: boolean, progress: number) {
+    throw new Error('Method not implemented.');
+  }
   private baseURL = 'http://localhost:8080/api/user';
 
   constructor(private httpClient: HttpClient) { }
@@ -23,6 +27,21 @@ export class UserService {
     });
   }
 
+  sendOTP(email: string): Observable<any> {
+    return this.httpClient.post<any>(`${this.baseURL}/sendOTP`, { email });
+  }
+
+  matchOTP(otp: string): Observable<any> {
+    return this.httpClient.post<any>(`${this.baseURL}/matchOTP`, { otp });
+  }
+
+  changePassword(newPassword: string, email: string): Observable<any> {
+    return this.httpClient.post<any>(`${this.baseURL}/changePassword`, { newPassword, email });
+  }
+
+  getUserList(): Observable<Student[]> {
+    return this.httpClient.get<Student[]>(`${this.baseURL}/userList`);
+  }
 
   getUserById(id: number): Observable<Student> {
     return this.httpClient.get<Student>(`${this.baseURL}/${id}`);
@@ -32,9 +51,9 @@ export class UserService {
     const formData: FormData = new FormData();
     formData.append('file', file);
     formData.append('userId', userId.toString());
-    console.log(file, userId.toString());
-    
-    return this.httpClient.post(`${this.baseURL}/updateProfile`, formData);
 
+    return this.httpClient.post(`${this.baseURL}/updateProfile`, formData);
   }
+
+ 
 }

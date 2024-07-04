@@ -32,6 +32,7 @@
     "socket.io-client": "^4.7.5",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
+    "sweetalert2": "^11.12.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

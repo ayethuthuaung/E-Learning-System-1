@@ -21,6 +21,12 @@ export class InstructorCourseComponent implements OnInit {
   errorMessage: string = '';
   loading = false;
 
+  loggedUser: any = '';
+  userId: any;
+
+  courses: Course[] = [];
+  status: string = 'Accept,Pending';
+
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
@@ -29,6 +35,19 @@ export class InstructorCourseComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCategories();
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      console.log(this.loggedUser);
+
+      if (this.loggedUser) {
+    
+        this.userId = this.loggedUser.id;
+       
+        
+      }
+    }
+    this.getAllCourses();
   }
 
   getCategories(): void {
@@ -65,7 +84,10 @@ export class InstructorCourseComponent implements OnInit {
   }
 
   saveCourse(): void {
+    this.course.userId = this.userId;
+    this.course.status = 'Pending';
     const formData = new FormData();
+    
     formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
     if (this.course.photoFile) {
       formData.append('photo', this.course.photoFile, this.course.photoFile.name);
@@ -99,8 +121,12 @@ export class InstructorCourseComponent implements OnInit {
     this.activeTab = tab;
   }
 
+  
+
   toggleCategories(event: any, category: Category) {
+
     if (event.target.checked) {
+
       this.course.categories.push(category);
     } else {
       const index = this.course.categories.findIndex(cat => cat.id === category.id);
@@ -108,5 +134,20 @@ export class InstructorCourseComponent implements OnInit {
         this.course.categories.splice(index, 1);
       }
     }
+    console.log(this.course.categories);
+    console.log(this.course);
+    
+    
+  }
+
+  getAllCourses(): void {
+    this.courseService.getAllCourses(this.status).subscribe(
+      (data: Course[]) => {
+        this.courses = data;
+      },
+      error => {
+        console.error('Error fetching courses', error);
+      }
+    );
   }
 }

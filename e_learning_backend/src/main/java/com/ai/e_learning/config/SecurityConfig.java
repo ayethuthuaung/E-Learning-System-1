@@ -65,7 +65,8 @@ public class SecurityConfig {
                         //to test
                         .requestMatchers("/api/**","/ws/**").permitAll()
 
-                        .requestMatchers("/user/**","/courses/**","/categories/**","/fileUpload/**","/ws/**").permitAll()
+
+//                        .requestMatchers("/user/**","/courses/**","/categories/**","/fileUpload/**","/ws/**","/exam/**","/questionType/**","/question/**","/answerOption/**","/question/exam/**","/studentAnswer/**","/lessons/**").permitAll()
                         .anyRequest().authenticated()
 
 

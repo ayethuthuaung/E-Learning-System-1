@@ -40,6 +40,45 @@
             </tbody>
         </table>
     </div>
+<<<<<<< HEAD
+=======
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Course ID</th>
+                <th>Course Name</th>
+                <th>Course Level</th>
+                <th>Course Duration</th>
+                <th>Course Description</th>
+                <th>Categories</th>
+                <th>Photo</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let course of courses">
+                <td>{{ course.id }}</td>
+                <td>{{ course.name }}</td>
+                <td>{{ course.level }}</td>
+                <td>{{ course.duration }}</td>
+                <td>{{ course.description }}</td>
+                <td>
+                    <ul>
+                        <li *ngFor="let category of course.categories">{{ category.name }}</li>
+                    </ul>
+                </td>
+                <td>
+                    <img *ngIf="course.photo" [src]="course.photo" alt="{{ course.name }}" width="100">
+                </td>
+                <td>
+                    <button (click)="updateCourse(course.id)" class="btn btn-primary">Update</button>
+                    <button (click)="softDeleteCourse(course.id)" class="btn btn-danger">Delete</button>
+                    <button (click)="courseDetails(course.id)" class="btn btn-primary" style="margin-left: 10px">View</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+>>>>>>> ffe639a4b86f3c37da9466ebf3508ebc5d18db7e
 </ng-template>
 <ng-template #noData>
     <div class="flex justify-center items-center min-h-screen bg-gray-100">

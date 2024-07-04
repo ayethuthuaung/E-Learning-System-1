@@ -1,6 +1,11 @@
+import { CourseService } from './../../services/course.service';
+import { Course } from './../../models/course.model';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Courses } from '../../models/courses.model';
+import { Category } from '../../models/category.model';
+import { CategoryService } from '../../services/category.service';
+import { Router } from '@angular/router';
 
 
 
@@ -11,37 +16,60 @@ import { Courses } from '../../models/courses.model';
 })
 export class CoursesComponent implements OnInit {
 
-  courses: Courses[] = [];
-  filteredCourses: Courses[] = [];
+  course: Course[] = [];
+  filteredCourses: Course[] = [];
 
-  categories: string[] = [];
+  selectedCourse: Course | null = null;
 
-  constructor(private httpClient: HttpClient) { }
+  categories: Category[]  = [];
+  selectedCategory: string = '';
+
+  constructor(
+    private categoryService: CategoryService,
+    private courseService: CourseService,
+    private router: Router) { }
 
   ngOnInit(): void {
-    this.getAllCourses()
+    this.getAllCourses();
   }
 
-  getAllCourses() {
-    this.httpClient.get('assets/data/courses.json').subscribe({
-      next: (courses) => {
-        this.courses = courses as Courses[];
-        this.filteredCourses = courses as Courses[];
-        this.getCategories()
+  private getAllCourses() {
+
+    this.courseService.getAllCourses("Accept")
+    .subscribe({
+      next: (data) => {
+        this.course = data;
+        this.filteredCourses = data;
+        console.log(data);
       },
-      error: (errors) => {
-        console.log(errors)
-      }
+      error: (e) => console.log(e)
     })
+    this.getCategories();
+
   }
 
-  getCategories() {
-    this.categories = this.courses.map((course) => { return course.category })
-    this.categories = [...new Set(this.categories)]
+  private getCategories(){
+    this.categoryService.getCategoryList()
+    .subscribe({
+      next: (data) => {
+      this.categories = data;
+      
+      
+    },    
+    error: (e) => console.log(e)
+  });
   }
 
   filterCourses(category: string) {
-    this.filteredCourses = this.courses.filter(course=>course.category===category)
+    if (category === 'all') {
+      this.filteredCourses = this.course;
+    } else {
+      this.filteredCourses = this.course.filter(course => 
+        course.categories.some(cat => cat.name === category)
+      );
+    }
+    this.selectedCategory = category;
   }
-
+  
+  
 }

@@ -11,9 +11,14 @@ export class CourseService {
 
   constructor(private http: HttpClient) {}
 
-  getAllCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseUrl}/courselist`);
+  getAllCourses(status: string): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/courselist?status=`+ status);
   }
+
+  changeStatus(id: number, status: string): Observable<Course> {
+    return this.http.post<Course>(`${this.baseUrl}/changeStatus?id=${id}&status=${status}`, {});
+  }
+  
 
   getCourseList(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/courselist`);
@@ -48,6 +53,6 @@ export class CourseService {
       params: { name }
     });
   }
-
+  
  
 }

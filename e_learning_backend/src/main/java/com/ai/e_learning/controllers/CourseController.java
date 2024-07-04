@@ -26,9 +26,20 @@ public class CourseController {
   @Autowired
   private CourseService courseService;
 
+
   @GetMapping(value = "/courselist", produces = "application/json")
-  public List<CourseDto> displayCourse(ModelMap model) {
-    return courseService.getAllCourses();
+  public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
+    return courseService.getAllCourses(status);
+
+  }
+  @PostMapping(value = "/changeStatus", produces = "application/json")
+  public ResponseEntity<?> changeStatus(ModelMap model,@RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
+    try{
+      courseService.changeStatus( id, status);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
+    }catch(Exception e){
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
+    }
 
   }
 

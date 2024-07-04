@@ -2,6 +2,7 @@ package com.ai.e_learning.dto;
 
 
 import com.ai.e_learning.model.Category;
+import com.ai.e_learning.model.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,12 +16,13 @@ import java.util.Set;
 @Setter
 @ToString
 public class CourseDto {
-  private Long id;
+  private Long id, userId;
   private String name;
   private  String level;
   private String duration;
   private String description;
-  private String createdAt;
+  private String createdDate;
+  private Long createdAt;
   private String certificate;
   private String badge;
   private Set<Category> categories = new HashSet<>();
@@ -28,4 +30,7 @@ public class CourseDto {
   private boolean isDeleted;
   private String photo;
   private MultipartFile photoInput;
+  private User user;
+  private String status;
+
 }

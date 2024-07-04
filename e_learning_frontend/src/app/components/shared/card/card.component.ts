@@ -1,7 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Courses } from '../../models/courses.model';
-import { Blog } from '../../models/blog.model';
-
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Course } from '../../models/course.model';
 
 @Component({
   selector: 'app-card',
@@ -10,23 +8,15 @@ import { Blog } from '../../models/blog.model';
 })
 export class CardComponent implements OnInit {
 
-  @Input('input')
-  input!:Courses|Blog;
+  @Input() input!: Course;
+  @Output() enrolledClick = new EventEmitter<Course>();
+  course: Course|undefined;
+  router: any;
 
-  @Input('type')
-  type = 'C' // C,B
-  
-  constructor() { }
+  constructor() {}
 
-  castToCourse(input:Courses|Blog){
-    return input as Courses;
-  }
+  ngOnInit(): void {}
 
-  castToBlog(input:Courses|Blog){
-    return input as Blog;
-  }
-
-  ngOnInit(): void {
-  }
+ 
 
 }
