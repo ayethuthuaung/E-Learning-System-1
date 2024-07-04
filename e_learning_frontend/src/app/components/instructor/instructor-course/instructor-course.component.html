@@ -126,7 +126,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <button *ngFor="let course of courses" (click)="navigateToCourse(course.id)" class="relative p-2 border rounded shadow hover:-translate-y-2 duration-300 bg-white group">
       <div class="flex items-center">
-        <h2 class="font-medium text-logo-blue mr-2">{{ course.name }}</h2>
+        <h2 class="text-logo-blue mr-2">{{ course.name }}</h2>
         <span [ngClass]="{
           'bg-yellow-500': course.status === 'Pending',
           'bg-green-500': course.status === 'Accept'

@@ -88,6 +88,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FilterDataPipe} from './components/filter-data.pipe';
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -201,7 +202,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     QuestionService,
     AnswerOptionService,
 
-    WebSocketService
+    WebSocketService,
+      provideAnimationsAsync()
 
   ],
   bootstrap: [AppComponent]
