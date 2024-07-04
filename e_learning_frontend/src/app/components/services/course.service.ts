@@ -11,9 +11,20 @@ export class CourseService {
 
   constructor(private http: HttpClient) {}
 
-  getAllCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseUrl}/courselist`);
+  getAllCourses(status: string): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/courselist?status=`+ status);
   }
+
+  getInstructorCourses(userId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
+      params: { userId: userId.toString() }
+    });
+  }
+
+  changeStatus(id: number, status: string): Observable<Course> {
+    return this.http.post<Course>(`${this.baseUrl}/changeStatus?id=${id}&status=${status}`, {});
+  }
+  
 
   getCourseList(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/courselist`);

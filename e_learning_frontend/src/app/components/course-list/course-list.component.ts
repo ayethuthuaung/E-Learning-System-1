@@ -16,11 +16,11 @@ export class CourseListComponent implements OnInit {
   constructor(private courseService: CourseService, private router: Router) {}
 
   ngOnInit(): void {
-    this.getCourses();
+    this.getCourses('Accept');
   }
 
-  private getCourses(): void {
-    this.courseService.getAllCourses().subscribe({
+  private getCourses(status: string): void {
+    this.courseService.getAllCourses(status).subscribe({
       next: (data) => {
         this.courses = data;
         this.check = this.courses.length !== 0;

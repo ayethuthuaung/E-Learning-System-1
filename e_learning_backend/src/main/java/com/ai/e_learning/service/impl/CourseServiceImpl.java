@@ -3,11 +3,16 @@ package com.ai.e_learning.service.impl;
 import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.model.*;
+
+import com.ai.e_learning.model.Category;
+import com.ai.e_learning.model.Course;
+import com.ai.e_learning.model.User;
 import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.RoleService;
+import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
 import com.ai.e_learning.util.GoogleDriveJSONConnector;
 import com.ai.e_learning.util.Helper;
@@ -22,6 +27,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.ai.e_learning.util.Helper.convertLongToLocalDate;
 
 
 @Service
@@ -51,68 +58,50 @@ public class CourseServiceImpl implements CourseService {
 
 
   @Override
-  public List<CourseDto> getAllCourses() {
-    System.out.println("Hi");
+  public List<CourseDto> getAllCourses(String status) {
+    //Change List
+    List<String> statusList = Arrays.asList(status.split(","));
+    List<Course> allCourses = courseRepository.findByStatusIn(statusList);
 
-
-    List<Course> allCourses = courseRepository.findByStatus("Accept");
-    System.out.println("Hi");
-    for (Course course: allCourses){
-      System.out.println(course.toString());
-    }
-    GoogleDriveJSONConnector driveConnector;
-
-      driveConnector = new GoogleDriveJSONConnector();
 
       for (Course course : allCourses) {
       try {
+        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
         String fileId = driveConnector.getFileIdByName(course.getPhoto());
         String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
         course.setPhoto(thumbnailLink);
       } catch (IOException | GeneralSecurityException e) {
-        // Log the error and continue with the next course
         e.printStackTrace();
       }
+        // Convert createdAt to createdDate in CourseDto
+        course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()));
     }
-
     return allCourses.stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
   }
 
-
   @Override
   public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {
     courseDto.setId(null);
-    System.out.println(courseDto.toString());
     Course course = convertToEntity(courseDto);
-
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-
-//      Set<Category> categories = new HashSet<>(courseDto.getCategories());
-//    course.setCategories(categories);
-
     File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
     courseDto.getPhotoInput().transferTo(tempFile);
     String imageUrl = helper.uploadImageToDrive(tempFile, "course");
     course.setPhoto(tempFile.getName());
-
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
               .map(existingCategory -> {
-                // Update existing category details if necessary
                 existingCategory.setName(category.getName());
                 return existingCategory;
               })
               .orElse(category);
       mergedCategories.add(managedCategory);
     }
-
-
     course.setCategories(mergedCategories);
-
     Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
     // Send notifications
     sendRoleSpecificNotifications(savedCourse);
@@ -133,6 +122,13 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  public void changeStatus(Long id,String status){
+      Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
+      course.setStatus(status);
+      EntityUtil.saveEntity(courseRepository,course,"Course");
+  }
+
+  @Override
   public CourseDto getCourseById(Long id) {
     return courseRepository.findById(id)
       .map(this::convertToDto)
@@ -145,13 +141,6 @@ public class CourseServiceImpl implements CourseService {
       .map(existingCourse -> {
         courseDto.setId(existingCourse.getId());
         modelMapper.map(courseDto, existingCourse);
-
-        // Handle photo conversion
-//        if (courseDto.getPhoto() != null) {
-//          byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-//          existingCourse.setPhoto(photoBytes);
-//        }
-
         Course updatedCourse = courseRepository.save(existingCourse);
         return convertToDto(updatedCourse);
       })
@@ -193,27 +182,19 @@ public class CourseServiceImpl implements CourseService {
     return courseRepository.existsByName(name);
   }
 
+  @Override
+  public List<CourseDto> getCoursesByUserId(Long userId) {
+    List<Course> courses = courseRepository.findByUserId(userId);
+    return DtoUtil.mapList(courses,CourseDto.class,modelMapper);
+  }
+
   private Course convertToEntity(CourseDto dto) {
-    Course course = modelMapper.map(dto, Course.class);
-
-    // Handle photo conversion
-//    if (dto.getPhoto() != null) {
-//      byte[] photoBytes = ProfileImageService.convertStringToByteArray(dto.getPhoto());
-//      course.setPhoto(photoBytes);
-//    }
-
-    return course;
+      return modelMapper.map(dto, Course.class);
   }
 
   private CourseDto convertToDto(Course course) {
-    CourseDto courseDto = modelMapper.map(course, CourseDto.class);
-
-    // Handle photo conversion
-//    if (course.getPhoto() != null) {
-//      String base64Photo = ProfileImageService.generateStringOfImage(course.getPhoto());
-//      courseDto.setPhoto(base64Photo);
-//    }
-
-    return courseDto;
+      return modelMapper.map(course, CourseDto.class);
   }
+
+
 }

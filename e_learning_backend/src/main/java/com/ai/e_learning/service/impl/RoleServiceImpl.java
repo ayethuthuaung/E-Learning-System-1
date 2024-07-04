@@ -16,6 +16,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void addRoles() {
+
         String[] roleNames = {"Student", "Admin", "Instructor"};
 
         for (String roleName : roleNames) {

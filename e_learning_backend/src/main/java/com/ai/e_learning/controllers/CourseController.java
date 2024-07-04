@@ -27,8 +27,23 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping(value = "/courselist", produces = "application/json")
-    public List<CourseDto> displayCourse(ModelMap model) {
-        return courseService.getAllCourses();
+    public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
+        return courseService.getAllCourses(status);
+    }
+
+    @GetMapping(value = "/instructorcourselist", produces = "application/json")
+    public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
+        return courseService.getCoursesByUserId(userId);
+    }
+
+    @PostMapping(value = "/changeStatus", produces = "application/json")
+    public ResponseEntity<?> changeStatus(ModelMap model,@RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
+        try{
+            courseService.changeStatus( id, status);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
+        }
 
     }
 
@@ -95,12 +110,15 @@ public class CourseController {
         return courseService.isCourseNameAlreadyExists(name);
     }
 
+
+
     private void handlePhotoConversion(CourseDto courseDto) {
         if (courseDto.getPhoto() != null) {
             byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
             courseDto.setPhoto(Arrays.toString(photoBytes));
         }
     }
+
 
   /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
   public ResponseEntity<CourseDto> addCourse(@RequestParam("course") String courseDtoString,
