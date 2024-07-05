@@ -115,5 +115,16 @@ public class ExamService {
         examDTO.setQuestions(new HashSet<>(questionDtoList));
         return examDTO;
     }
+    //for exam with questions lists
+    public ExamDto getExamWithQuestions(Long examId) {
+        Exam exam = examRepository.findByIdWithQuestions(examId)
+                .orElseThrow(() -> new EntityNotFoundException("Exam not found"));
+
+        return convertToDto(exam);
+    }
+
+
+
+
 
 }

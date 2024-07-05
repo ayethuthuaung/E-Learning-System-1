@@ -188,6 +188,7 @@ export class InstructorCourseComponent implements OnInit {
         this.course.categories.splice(index, 1);
       }
     }
+
     console.log(this.course.categories);
     console.log(this.course);
     

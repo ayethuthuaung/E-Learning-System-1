@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/exam")
-//@CrossOrigin("*")
+@CrossOrigin("*")
 public class ExamController {
 
     @Autowired
@@ -64,5 +64,10 @@ public class ExamController {
         ExamDto exam = this.examService.getExamById(examId);
         return ResponseEntity.ok(exam);
     }
-
+//for exams with questions list
+@GetMapping("/examsWithQuestions/{examId}")
+public ResponseEntity<ExamDto> getExamWithQuestions(@PathVariable("examId") Long examId) {
+    ExamDto examDTO = examService.getExamWithQuestions(examId);
+    return ResponseEntity.ok(examDTO);
+}
 }

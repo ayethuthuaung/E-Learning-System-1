@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SubmitFormComponent } from './submit-form.component';
+import { AdminNavbarComponent } from './admin-navbar.component';
 
-describe('SubmitFormComponent', () => {
-  let component: SubmitFormComponent;
-  let fixture: ComponentFixture<SubmitFormComponent>;
+describe('AdminNavbarComponent', () => {
+  let component: AdminNavbarComponent;
+  let fixture: ComponentFixture<AdminNavbarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SubmitFormComponent]
+      declarations: [AdminNavbarComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(SubmitFormComponent);
+
+    fixture = TestBed.createComponent(AdminNavbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

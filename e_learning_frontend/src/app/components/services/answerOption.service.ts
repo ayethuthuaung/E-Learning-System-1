@@ -9,7 +9,7 @@ import { AnswerOptionDTO } from '../models/answerOption.model';
   providedIn: 'root'
 })
 export class AnswerOptionService {
-  private apiUrl = 'http://your-api-endpoint/answerOption'; // Update with your API endpoint
+  private apiUrl = 'http://your-api-endpoint/api/answerOption'; // Update with your API endpoint
 
   constructor(private http: HttpClient) {}
 

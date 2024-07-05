@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService {
                 System.out.println(roleList.get(index));
                 Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
 
+
                 Set<Role> roles = new HashSet<>();
                 roles.add(role);
                 update_user.setRoles(roles);
@@ -124,8 +125,6 @@ public class UserServiceImpl implements UserService {
                     index++;
               System.out.println(index);
                 }
-
-
 
 
           // Set the status of users not present in the uploaded file to "Inactive"

@@ -1,39 +1,47 @@
 package com.ai.e_learning.controllers;
 
-import com.ai.e_learning.dto.AnswerFeedback;
+import com.ai.e_learning.dto.QuestionCreationDto;
+import com.ai.e_learning.dto.QuestionDto;
+import com.ai.e_learning.dto.StudentAnswerRequestDto;
 import com.ai.e_learning.dto.QuestionCreationDto;
 import com.ai.e_learning.dto.QuestionDto;
 import com.ai.e_learning.model.StudentAnswer;
+
 import com.ai.e_learning.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/api/question")
+@CrossOrigin(origins = "http://localhost:4200")
 public class QuestionController {
 
     @Autowired
     private QuestionService questionService;
 
-    // Add question
+//original
 //    @PostMapping("/add")
-//    public ResponseEntity<QuestionDTO> addQuestion(@RequestBody QuestionDTO questionDTO) {
-//        QuestionDTO createdQuestion = this.questionService.addQuestion(questionDTO);
-//        return ResponseEntity.ok(createdQuestion);
+//    public ResponseEntity<?> createQuestion(@RequestBody List<QuestionCreationDto> questionCreationDtoList){
+//        for(QuestionCreationDto questionCreationDTO : questionCreationDtoList){
+//            System.out.println(questionCreationDTO.toString());
+//        }
+//        boolean isCreated = questionService.createQuestion(questionCreationDtoList);
+//
+//        return ResponseEntity.ok(isCreated);
 //    }
-    @PostMapping("/add")
-    public ResponseEntity<?> createQuestion(@RequestBody List<QuestionCreationDto> questionCreationDtoList){
-        for(QuestionCreationDto questionCreationDTO : questionCreationDtoList){
-            System.out.println(questionCreationDTO.toString());
-        }
-        boolean isCreated = questionService.createQuestion(questionCreationDtoList);
-
-        return ResponseEntity.ok(isCreated);
+@PostMapping("/add")
+public ResponseEntity<?> createQuestion(@RequestBody List<QuestionCreationDto> questionCreationDtoList){
+    for(QuestionCreationDto questionCreationDTO : questionCreationDtoList){
+        System.out.println(questionCreationDTO.toString());
     }
+    boolean isCreated = questionService.createQuestion(questionCreationDtoList);
+    return ResponseEntity.ok(isCreated);
+}
 
     // Get question
     @GetMapping("/viewOne/{questionId}")
@@ -75,14 +83,18 @@ public class QuestionController {
         QuestionDto question = questionService.getQuestion(questionId);
         return ResponseEntity.ok(question);
     }
-    @PostMapping("/submitAnswers")
-    public ResponseEntity<List<AnswerFeedback>> submitStudentAnswers(@RequestBody List<StudentAnswer> studentAnswers) {
-        List<AnswerFeedback> feedbackList = questionService.submitStudentAnswers(studentAnswers);
-        return ResponseEntity.ok(feedbackList);
-    }
-//    @GetMapping("/exam/{examId}/questionsWithAnswers")
-//    public ResponseEntity<List<QuestionDTO>> getQuestionsWithAnswers(@PathVariable Long examId) {
-//        List<QuestionDTO> questionsWithAnswers = questionService.getQuestionsWithAnswers(examId);
-//        return ResponseEntity.ok(questionsWithAnswers);
-//    }
+
+@PostMapping("/submitAnswers")
+public ResponseEntity<?> submitAnswers(@RequestBody List<StudentAnswerRequestDto> studentAnswerRequestDtoList) {
+    List<Map<String, Object>> result = questionService.saveStudentAnswers(studentAnswerRequestDtoList);
+    return ResponseEntity.ok(result);
 }
+
+//add marks
+    @PostMapping("/saveStudentAnswers")
+    public ResponseEntity<List<Map<String, Object>>> saveStudentAnswers(@RequestBody List<StudentAnswerRequestDto> studentAnswerRequestDTOList) {
+        List<Map<String, Object>> result = questionService.saveStudentAnswers(studentAnswerRequestDTOList);
+        return ResponseEntity.ok(result);
+    }
+}
+
