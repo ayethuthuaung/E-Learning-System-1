@@ -20,6 +20,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.FileList;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -135,12 +136,19 @@ public class GoogleDriveJSONConnector {
         return imageResponse;
     }
 
-    public String uploadImageToDrive2(InputStream inputStream, String fileName, String contentType) throws GeneralSecurityException, IOException {
+    public String uploadImageToDrive2(MultipartFile photoInput,String folderName) throws GeneralSecurityException, IOException {
+        InputStream inputStream = photoInput.getInputStream();
+        String fileName = photoInput.getOriginalFilename();
+        String contentType = photoInput.getContentType();
         Drive drive = createDriveService();
 
         com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
         fileMetaData.setName(fileName);
-        fileMetaData.setParents(Collections.singletonList("1PHnnlrCQb2U-pNZM6Se4bUWVJWegE_mC")); // Use your folder ID
+        if("Course".equals(folderName)){
+            fileMetaData.setParents(Collections.singletonList("1dvIGCGwgdeWUKKiC9H5qq5ZT_ZP77n7I"));
+        } else if ("Module".equals(folderName)) {
+            fileMetaData.setParents(Collections.singletonList("1SnpP8IX_YJea7dN6fGv-gf51XVbABNG7"));
+        }
 
         FileContent mediaContent = new FileContent(contentType, new File(fileName));
         com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, new InputStreamContent(contentType, inputStream))
@@ -148,6 +156,12 @@ public class GoogleDriveJSONConnector {
                 .execute();
 
         return uploadedFile.getId();
+    }
+
+    public String getFileType(String fileId) throws GeneralSecurityException, IOException {
+        Drive drive = createDriveService();
+        com.google.api.services.drive.model.File file = drive.files().get(fileId).setFields("id, name, mimeType").execute();
+        return file.getMimeType();
     }
 
 }

@@ -1,6 +1,6 @@
 
 export interface Module {
-fileType: any;
+fileType: string;
 
   name:string;
   file: string;

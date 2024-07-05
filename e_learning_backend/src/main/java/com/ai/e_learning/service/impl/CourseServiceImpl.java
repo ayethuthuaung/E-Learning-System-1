@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,20 +66,18 @@ public class CourseServiceImpl implements CourseService {
 
 
       for (Course course : allCourses) {
-      try {
-        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-        String fileId = driveConnector.getFileIdByName(course.getPhoto());
-        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-        course.setPhoto(thumbnailLink);
-      } catch (IOException | GeneralSecurityException e) {
-        e.printStackTrace();
-      }
+//      try {
+//        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//        String fileId = driveConnector.getFileIdByName(course.getPhoto());
+//        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+//        course.setPhoto(thumbnailLink);
+//      } catch (IOException | GeneralSecurityException e) {
+//        e.printStackTrace();
+//      }
         // Convert createdAt to createdDate in CourseDto
         course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()));
     }
-    return allCourses.stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
+    return DtoUtil.mapList(allCourses,CourseDto.class,modelMapper);
   }
 
   @Override
@@ -87,10 +86,19 @@ public class CourseServiceImpl implements CourseService {
     Course course = convertToEntity(courseDto);
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
-    courseDto.getPhotoInput().transferTo(tempFile);
-    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
-    course.setPhoto(tempFile.getName());
+//    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
+//    courseDto.getPhotoInput().transferTo(tempFile);
+//    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
+//    course.setPhoto(tempFile.getName());
+    String fileId;
+    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+
+    try {
+      fileId = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
+    } catch (IOException | GeneralSecurityException e) {
+      throw new RuntimeException("Failed to upload file to Google Drive", e);
+    }
+    course.setPhoto(fileId);
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())

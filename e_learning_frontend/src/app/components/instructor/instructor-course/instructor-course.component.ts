@@ -28,7 +28,7 @@ export class InstructorCourseComponent implements OnInit {
   userId: any;
 
   courses: Course[] = [];
-  status: string = 'Accept,Pending';
+  status: string = 'Accept,Pending'; 
 
   constructor(
     private categoryService: CategoryService,
@@ -212,10 +212,15 @@ export class InstructorCourseComponent implements OnInit {
 
   showSuccessAlert(): void {
     Swal.fire({
-      icon: 'success',
-      title: 'Success!',
-      text: 'Course created successfully.',
+      icon: 'info',
+      title: 'Request Admin Approval',
+      text: 'Your request has been submitted and is awaiting admin approval.',
       confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        // Navigate to createLesson tab
+        this.setActiveTab('createLesson');
+      }
     });
   }
 }

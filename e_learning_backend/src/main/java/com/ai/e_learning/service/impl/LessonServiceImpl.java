@@ -64,8 +64,8 @@ public class LessonServiceImpl implements LessonService {
             String fileId;
             GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
 
-            try (InputStream inputStream = moduleDto.getFileInput().getInputStream()) {
-                fileId = driveConnector.uploadImageToDrive2(inputStream, moduleDto.getFileInput().getOriginalFilename(), moduleDto.getFileInput().getContentType());
+            try  {
+                fileId = driveConnector.uploadImageToDrive2( moduleDto.getFileInput(),"Module");
             } catch (IOException | GeneralSecurityException e) {
                 throw new RuntimeException("Failed to upload file to Google Drive", e);
             }
@@ -105,6 +105,7 @@ public class LessonServiceImpl implements LessonService {
 //                String thumbnailLink = "https://drive.google.com/uc?export=view&id=" + courseModule.getFile();
 
                 courseModuleDto.setFile(courseModule.getFile());
+
                 courseModuleDtos.add(courseModuleDto);
             }
             lessonDto.setModules(courseModuleDtos);
@@ -149,7 +150,7 @@ public class LessonServiceImpl implements LessonService {
                     LessonDto lessonDto = new LessonDto();
                     lessonDto.setId(lesson.getId());
                     lessonDto.setTitle(lesson.getTitle());
-
+                    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
                     Set<CourseModule> courseModules = lesson.getCourseModules();
                     List<CourseModuleDto> courseModuleDtos = courseModules.stream()
                             .map(module -> {
@@ -157,6 +158,12 @@ public class LessonServiceImpl implements LessonService {
                                 moduleDto.setId(module.getId());
                                 moduleDto.setName(module.getName());
                                 moduleDto.setFile(module.getFile());
+                                try {
+                                    moduleDto.setFileType(driveConnector.getFileType(moduleDto.getFile()));
+                                } catch (GeneralSecurityException | IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                System.out.println("File Type:"+ moduleDto.getFileType());
                                 return moduleDto;
                             }).collect(Collectors.toList());
 

@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
                     } else {
                         user.setPassword(passwordEncoder.encode("123@dirace"));
 
-                user.setPhoto("userPhoto.png");
+                user.setPhoto("14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
                         Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
 
                         Set<Role> roles = new HashSet<>();
