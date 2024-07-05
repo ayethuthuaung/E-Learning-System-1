@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ChatMessage {
+public class ChatMessageDto {
     private Long chatRoomId;
     private Long senderId;
     private String content;

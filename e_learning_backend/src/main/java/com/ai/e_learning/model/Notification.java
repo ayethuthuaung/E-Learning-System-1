@@ -3,6 +3,8 @@ package com.ai.e_learning.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,8 +24,12 @@ public class Notification {
     private Role role;
 
     @Column(name = "is_read")
-    private boolean isRead;
+    private boolean isRead = false; // default to false
 
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
+    private Date createdAt;
 }

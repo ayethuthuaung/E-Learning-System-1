@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { WebSocketService } from '../services/websocket.service';
-import { Notification } from '../models/notification';
+import { Notification } from '../models/notification.model';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
@@ -21,7 +21,10 @@ export class NotificationComponent implements OnInit {
     if (this.userRole === 'Admin') {
       this.webSocketService.fetchNotifications().subscribe(
         (notifications) => {
-          this.notifications = notifications;
+          console.log(notifications);
+          this.notifications = notifications
+            .filter(notification => !notification.deleted)
+            .map(notification => ({ ...notification, createdAt: new Date(notification.createdAt) }));
         },
         (error) => {
           console.error('Failed to fetch notifications:', error);
@@ -29,7 +32,7 @@ export class NotificationComponent implements OnInit {
       );
 
       this.webSocketService.getNotifications().subscribe((notification) => {
-        this.notifications.push(notification);
+        this.notifications.push({ ...notification, createdAt: new Date(notification.createdAt) });
         this.playNotificationSound();
       });
     }
@@ -40,13 +43,10 @@ export class NotificationComponent implements OnInit {
   }
 
   markAsRead(notification: Notification): void {
-    if (!notification.isRead) {
+    if (!notification.read) {
       this.webSocketService.markAsRead(notification.id).subscribe(
-        (updatedNotification) => {
-          const index = this.notifications.findIndex(n => n.id === notification.id);
-          if (index !== -1) {
-            this.notifications[index] = updatedNotification;
-          }
+        () => {
+          notification.read = true; // Update the local state
         },
         (error) => {
           console.error('Failed to mark notification as read:', error);
@@ -54,6 +54,7 @@ export class NotificationComponent implements OnInit {
       );
     }
   }
+
   softDeleteNotification(notification: Notification): void {
     this.webSocketService.softDeleteNotification(notification.id).subscribe(
       () => {

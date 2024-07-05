@@ -5,7 +5,7 @@ import SockJS from 'sockjs-client';
 import { BehaviorSubject, Observable, Subject, catchError, throwError } from 'rxjs';
 import { ChatMessage } from '../models/message';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Notification } from '../models/notification';
+import { Notification } from '../models/notification.model';
 
 @Injectable({
   providedIn: 'root'
@@ -98,9 +98,11 @@ export class WebSocketService {
         catchError(this.handleError)
       );
   }
+
   markAsRead(id: number): Observable<Notification> {
-    return this.http.post<Notification>(`${this.baseUrl}/${id}/read`, {});
+    return this.http.post<Notification>(`${this.baseUrl}/read/${id}`, {});
   }
+
   getChatHistory(chatRoomId: number): Observable<ChatMessage[]> {
     return this.http.get<ChatMessage[]>(`http://localhost:8080/api/chat/history/${chatRoomId}`).pipe(
       catchError(this.handleError)
