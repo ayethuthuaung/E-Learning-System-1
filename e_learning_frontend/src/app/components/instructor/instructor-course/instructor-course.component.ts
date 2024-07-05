@@ -79,8 +79,9 @@ export class InstructorCourseComponent implements OnInit {
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.submitted = false;
-      this.saveCourse();
       this.loading = true;
+      this.saveCourse();
+      
     } else {
       this.submitted = true;
       console.log('invalid form');
@@ -147,16 +148,18 @@ export class InstructorCourseComponent implements OnInit {
     this.courseService.addCourseWithFormData(formData).subscribe(
       (data: Course) => {
         console.log('Course created successfully:', data);
+        this.loading = false;
+
         this.getInstructorCourses(); // Refresh courses list after adding new course
         this.course = new Course(); // Clear the form
         this.course.status = data.status; // Update local status with returned status
         this.course.photoFile = undefined; // Clear the photo input
         this.course.categories = []; // Clear selected categories
         this.showSuccessAlert();
-        this.loading = false;
       },
       (error) => {
         console.error('Error creating course:', error);
+        this.loading = false;
       }
     );
   }

@@ -8,9 +8,11 @@ import java.util.List;
 
 public interface UserCourseService {
   UserCourse enrollUserInCourse(Long userId, Long courseId);
-  UserCourse updateUserCourse(Long userCourseId, boolean completed, int progress);
+  UserCourse updateUserCourse(Long userCourseId, boolean completed, int progress, String status);
   User findById(Long userId);
   Course findCourseById(Long courseId);
   List<Course> getCoursesByUserId(Long userId);
+  void changeStatus(Long id, String status);
+  boolean checkEnrollment(Long userId, Long courseId); // Add this method
+  boolean checkEnrollmentAcceptance(Long userId, Long courseId);
 }
-

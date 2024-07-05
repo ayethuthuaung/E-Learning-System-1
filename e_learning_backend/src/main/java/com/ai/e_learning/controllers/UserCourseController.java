@@ -5,6 +5,7 @@ import com.ai.e_learning.model.User;
 import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.service.UserCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +35,8 @@ public class UserCourseController {
   ) {
     boolean completed = (Boolean) payload.get("completed");
     int progress = (Integer) payload.get("progress");
-    return userCourseService.updateUserCourse(userCourseId, completed, progress);
+    String status = (String) payload.get("status"); // Get the status from the payload
+    return userCourseService.updateUserCourse(userCourseId, completed, progress, status);
   }
 
   @GetMapping("/user/{userId}")
@@ -46,8 +48,19 @@ public class UserCourseController {
   public Course getCourseById(@PathVariable Long courseId) {
     return userCourseService.findCourseById(courseId);
   }
+
   @GetMapping("/user/{userId}/courses")
   public List<Course> getCoursesByUserId(@PathVariable Long userId) {
     return userCourseService.getCoursesByUserId(userId);
+  }
+
+  @GetMapping("/check")
+  public boolean checkEnrollment(@RequestParam Long userId, @RequestParam Long courseId) {
+    return userCourseService.checkEnrollment(userId, courseId);
+  }
+  @GetMapping("/check-enrollment-acceptance/{userId}/{courseId}")
+  public ResponseEntity<Boolean> checkEnrollmentAcceptance(@PathVariable Long userId, @PathVariable Long courseId) {
+    boolean isAccepted = userCourseService.checkEnrollmentAcceptance(userId, courseId);
+    return ResponseEntity.ok(isAccepted);
   }
 }

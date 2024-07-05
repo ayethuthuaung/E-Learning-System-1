@@ -56,8 +56,6 @@ export class CourseDetailsComponent implements OnInit {
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
     }
-
-   
   }
 
   toggleChatRoom(): void {
@@ -79,7 +77,6 @@ export class CourseDetailsComponent implements OnInit {
     );
   }
 
- 
   fetchLessons(): void {
     console.log('Fetching lessons for course ID:', this.courseId);
     if (this.courseId) {
@@ -100,4 +97,3 @@ export class CourseDetailsComponent implements OnInit {
     this.isDropdownOpen[index] = !this.isDropdownOpen[index];
   }
 }
-

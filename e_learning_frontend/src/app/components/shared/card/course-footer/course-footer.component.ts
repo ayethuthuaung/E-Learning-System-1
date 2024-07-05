@@ -15,28 +15,28 @@ export class CourseFooterComponent implements OnInit {
 
   @Input() course: Course | undefined;
   user: User | null = null;
-  loggedUser: User | null = null;
   userId: number | undefined;
+  isEnrolled: boolean = false; // Flag to check enrollment status
+  isAccepted: boolean = false; // Flag to check if user's enrollment is accepted by instructor
+  userCourseId: number | undefined; // Initialize userCourseId as undefined
 
   constructor(private userCourseService: UserCourseService, private router: Router) { }
 
   ngOnInit(): void {
-    
-    this.enrollUser();
+    this.fetchUserData();
+  }
 
-  
+  fetchUserData(): void {
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
-      this.loggedUser = JSON.parse(storedUser);
-
-      if (this.loggedUser) {
-        this.userId = this.loggedUser.id;
- 
-        this.userCourseService.getUserById(this.userId).subscribe(
+      const loggedUser = JSON.parse(storedUser);
+      if (loggedUser) {
+        this.userId = loggedUser.id;
+        this.userCourseService.getUserById(this.userId!).subscribe(
           (user: User | null) => {
             if (user) {
               this.user = user;
-              this.loggedUser = user;
+              this.checkEnrollmentStatus(); // Check enrollment status after fetching user data
             } else {
               console.error('User details not found or invalid');
             }
@@ -49,13 +49,50 @@ export class CourseFooterComponent implements OnInit {
     } else {
       console.error('Logged user not found in localStorage');
     }
+  }
 
-  
+  checkEnrollmentStatus(): void {
+    if (this.course && this.userId) {
+      this.userCourseService.checkEnrollment(this.userId, this.course.id).subscribe(
+        (isEnrolled: boolean) => {
+          this.isEnrolled = isEnrolled;
+          if (isEnrolled) {
+            this.checkEnrollmentAcceptance(); // Check if enrolled user is accepted by instructor
+          }
+        },
+        (error) => {
+          console.error('Error checking enrollment status', error);
+        }
+      );
+    }
+  }
+
+  checkEnrollmentAcceptance(): void {
+    if (this.course && this.userId) {
+      this.userCourseService.checkEnrollmentAcceptance(this.userId, this.course.id).subscribe(
+        (isAccepted: boolean) => {
+          this.isAccepted = isAccepted;
+        },
+        (error) => {
+          console.error('Error checking enrollment acceptance', error);
+        }
+      );
+    }
   }
 
   enrollUser(): void {
     if (!this.course || !this.user) {
       console.error('Course or user is undefined');
+      return;
+    }
+
+    if (this.isEnrolled) {
+      Swal.fire({
+        title: 'Already Enrolled',
+        text: 'You are already enrolled in this course. Please wait for the instructor to approve your enrollment.',
+        icon: 'info',
+        confirmButtonText: 'OK'
+      });
       return;
     }
 
@@ -72,6 +109,8 @@ export class CourseFooterComponent implements OnInit {
         this.userCourseService.enrollUserInCourse(this.userId!, this.course!.id).subscribe(
           (userCourse: UserCourse) => {
             Swal.fire('Enrolled!', `You have successfully enrolled in ${courseName}.`, 'success');
+            this.isEnrolled = true;
+            this.checkEnrollmentAcceptance(); // Update acceptance status after enrollment
           },
           (error) => {
             console.error('Error enrolling in course', error);
@@ -82,4 +121,39 @@ export class CourseFooterComponent implements OnInit {
     });
   }
 
+  goToCourseDetails(): void {
+    if (!this.course) {
+      console.error('Course is undefined');
+      return;
+    }
+    
+
+    if (!this.isAccepted) {
+      Swal.fire({
+        title: 'Enrollment Not Accepted',
+        text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    this.router.navigate(['/course-detail', this.course.id]);
+  }
+
+  changeUserCourseStatus(status: string): void {
+    if (this.userCourseId) { // Ensure userCourseId is defined
+      this.userCourseService.changeStatus(this.userCourseId, status).subscribe(
+        () => {
+          Swal.fire('Status Changed!', `The status has been changed to ${status}.`, 'success');
+        },
+        (error) => {
+          console.error('Error changing status', error);
+          Swal.fire('Error', 'There was an issue changing the status. Please try again.', 'error');
+        }
+      );
+    } else {
+      console.error('userCourseId is undefined');
+    }
+  }
 }

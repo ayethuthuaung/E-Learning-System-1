@@ -17,8 +17,8 @@ export class UserCourseService {
     return this.httpClient.post<UserCourse>(`${this.baseURL}/enroll`, { userId, courseId });
   }
 
-  updateUserCourse(userCourseId: number, completed: boolean, progress: number): Observable<UserCourse> {
-    return this.httpClient.put<UserCourse>(`${this.baseURL}/update/${userCourseId}`, { completed, progress });
+  updateUserCourse(userCourseId: number, completed: boolean, progress: number, status: string): Observable<UserCourse> {
+    return this.httpClient.put<UserCourse>(`${this.baseURL}/update/${userCourseId}`, { completed, progress, status });
   }
 
   getUserById(userId: number): Observable<User> {
@@ -28,7 +28,17 @@ export class UserCourseService {
   getCourseById(courseId: number): Observable<Course> {
     return this.httpClient.get<Course>(`${this.baseURL}/course/${courseId}`);
   }
+
   getCoursesByUserId(userId: number): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/user/${userId}/courses`);
+  }
+  changeStatus(id: number, status: string): Observable<void> {
+    return this.httpClient.put<void>(`${this.baseURL}/change-status/${id}`, { status });
+  }
+  checkEnrollment(userId: number, courseId: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.baseURL}/check?userId=${userId}&courseId=${courseId}`);
+  }
+  checkEnrollmentAcceptance(userId: number, courseId: number): Observable<boolean> {
+    return this.httpClient.get<boolean>(`${this.baseURL}/check-enrollment-acceptance/${userId}/${courseId}`);
   }
 }
