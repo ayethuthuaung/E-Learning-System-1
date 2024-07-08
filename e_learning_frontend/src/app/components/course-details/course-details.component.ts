@@ -51,10 +51,23 @@ export class CourseDetailsComponent implements OnInit {
       
       console.log(this.courseId);
       
-      this.course = history.state.course;
-      console.log(`Course ID: ${this.courseId}`);
-      console.log(`Course: ${JSON.stringify(this.course)}`);
-      this.fetchLessons();
+      if (history.state.course) {
+        this.course = history.state.course;
+        console.log(`Course: ${JSON.stringify(this.course)}`);
+        this.fetchLessons();
+      } else {
+        console.log('Course not found in state. Fetching from service.');
+        this.courseService.getCourseById(this.courseId).subscribe(
+          course => {
+            this.course = course;
+            console.log(`Fetched Course: ${JSON.stringify(this.course)}`);
+            this.fetchLessons();
+          },
+          error => {
+            console.error('Error fetching course:', error);
+          }
+        );
+      }
     });
 
     const storedUser = localStorage.getItem('loggedUser');
