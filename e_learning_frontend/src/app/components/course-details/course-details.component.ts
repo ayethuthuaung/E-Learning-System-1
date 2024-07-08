@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from '../services/course.service';
 import { ChatRoomService } from '../services/chat-room.service';
 import { AuthService } from '../auth/auth.service';
 import { LessonService } from '../services/lesson.service';
 import { Lesson } from '../models/lesson.model';
 import { Course } from '../models/course.model';
+
+import { ActivatedRoute, Router } from '@angular/router';
+import { log } from 'console';
 
 @Component({
   selector: 'app-course-details',
@@ -37,14 +39,17 @@ export class CourseDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.courseId = +params.get('courseId')!;
+      this.courseId = +params.get('id')!;
+
+      
+      console.log(this.courseId);
+      
       this.course = history.state.course;
       console.log(`Course ID: ${this.courseId}`);
       console.log(`Course: ${JSON.stringify(this.course)}`);
       this.fetchLessons();
     });
 
-    this.course = history.state.course;
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
       this.loggedUser = JSON.parse(storedUser);
@@ -83,7 +88,10 @@ export class CourseDetailsComponent implements OnInit {
       this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
         (data) => {
           console.log('Fetched lessons:', data);
+
           this.lessons = data;
+          console.log(this.lessons);
+          
           this.isDropdownOpen = new Array(this.lessons.length).fill(false);
         },
         (error) => {

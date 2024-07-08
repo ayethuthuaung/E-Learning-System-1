@@ -74,7 +74,7 @@ public class UserCourseServiceImpl implements UserCourseService {
 
   @Override
   public List<Course> getCoursesByUserId(Long userId) {
-    return userCourseRepository.findByUserId(userId).stream()
+    return userCourseRepository.findByUserIdAndStatus(userId, "accept").stream()
       .map(UserCourse::getCourse)
       .collect(Collectors.toList());
   }

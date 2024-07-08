@@ -13,4 +13,5 @@ public class QuestionDto {
     private Long id, questionTypeId;
     private String content;
     private List<AnswerOptionDto> answerList;
+    private List<MarksDto> marksList;
 }

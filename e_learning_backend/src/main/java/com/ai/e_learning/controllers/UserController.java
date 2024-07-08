@@ -1,7 +1,6 @@
 package com.ai.e_learning.controllers;
-
-import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ImageResponse;
+
 import com.ai.e_learning.dto.UserDto;
 import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.service.MailSenderService;
@@ -136,7 +135,6 @@ public class UserController {
     userService.softDeleteUser(id);
     return ResponseEntity.noContent().build();
   }
-
 
   @PostMapping("/updateProfile")
   public ResponseEntity<ImageResponse> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("userId")String userId) throws IOException, GeneralSecurityException {

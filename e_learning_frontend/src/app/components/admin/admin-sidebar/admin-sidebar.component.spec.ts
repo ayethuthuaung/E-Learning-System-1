@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SubmitFormComponent } from './submit-form.component';
+import { AdminSidebarComponent } from './admin-sidebar.component';
 
-describe('SubmitFormComponent', () => {
-  let component: SubmitFormComponent;
-  let fixture: ComponentFixture<SubmitFormComponent>;
+describe('AdminSidebarComponent', () => {
+  let component: AdminSidebarComponent;
+  let fixture: ComponentFixture<AdminSidebarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SubmitFormComponent]
+      declarations: [AdminSidebarComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(SubmitFormComponent);
+
+    fixture = TestBed.createComponent(AdminSidebarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

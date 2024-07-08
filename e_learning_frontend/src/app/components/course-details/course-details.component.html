@@ -21,6 +21,7 @@
         </div>
       </div>
     </div>
+  
     
     <div *ngFor="let lesson of lessons; let i = index" class="mt-4">
       <div class="flex items-center cursor-pointer" (click)="toggleDropdown(i)">
@@ -31,11 +32,11 @@
         <h1 class="text-xl font-bold text-logo-blue">{{ lesson.title }}</h1>
       </div>
       <div *ngIf="isDropdownOpen[i]" class="mt-2 space-y-2 p-4">
-        <div *ngFor="let module of lesson.modules" class="p-4 bg-gray-100 rounded-lg shadow flex items-center justify-between">
-          <p>{{ module.name }}</p>
-          <ng-container *ngIf="module.fileType === 'video/mp4'">
-            <video width="320" height="240" controls>
-              <source [src]="'https://drive.google.com/uc?export=view&id=' + module.file" type="video/mp4">
+        <div *ngFor="let module of lesson.modules" class="p-4  bg-gray-100 rounded-lg shadow flex items-center justify-between">
+          <p>{{ module.fileType }}</p>
+          <ng-container *ngIf="module.fileType === 'video/mp4'"> <!-- Check if the file type is a video -->
+            <video width="320" height="240" webkit-playsinline="" playsinline="" controlslist="nodownload">
+              <source [src]="'blob:https://youtube.googleapis.com/' + module.file" type="video/mp4">
               Your browser does not support the video tag.
             </video>
           </ng-container>

@@ -38,11 +38,14 @@
               }
             ],
             "styles": [
+              "src/custom-theme.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.css",
               "src/output.css"
             ],
             "scripts": [
-
+              "node_modules/bootstrap/dist/js/bootstrap.js"
             ]
           },
           "configurations": {
@@ -100,9 +103,12 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.css",
               "src/output.css"
-              ],
+            ],
             "scripts": []
           }
         }

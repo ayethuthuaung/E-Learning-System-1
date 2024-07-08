@@ -3,10 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@layer components{
-    .container{
-        @apply max-w-7xl px-5 mx-auto;
-    }
+@layer components {
+  .container {
+    @apply max-w-7xl px-5 mx-auto;
+  }
 }
+
+
+
+html, body { height: 100%; }
+body { margin: 0; }
 

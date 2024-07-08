@@ -1,0 +1,65 @@
+.datatable-container {
+  margin-top: 0px;
+}
+
+.form-control {
+  width: 30%;
+  border-color: #343a40;
+}
+
+.table-responsive {
+  margin-top: 20px;
+}
+
+thead.thead-dark th {
+  background-color: #343a40;
+  color: white;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.btn {
+  margin-right: 5px;
+}
+
+.pagination-controls {
+  margin-top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-controls button {
+  margin: 0 1px;
+}
+
+.icon {
+  font-size: 32px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+}
+
+.pending-accept-icon,
+.pending-reject-icon {
+  color: white;
+  background-color: grey;
+}
+
+.accepted-icon {
+  background-color: green;
+  color: white;
+  border: 2px solid green;
+}
+
+.rejected-icon {
+  background-color: red;
+  color: white;
+  border: 2px solid red;
+}

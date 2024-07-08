@@ -13,27 +13,24 @@ export class ExamService {
 
     constructor(private httpClient: HttpClient) { }
 
-    submitFormWithAnswers(examId: number, studentAnswers: StudentAnswer[]): Observable<any> {
-        const formData = {
-          examId: examId,
-          studentAnswers: studentAnswers
-        };
     
-        return this.httpClient.post(`${this.baseURL}/submitForm`, formData);
-      }
-    getViewList(): Observable<Exam[]> {
-        return this.httpClient.get<Exam[]>(`${this.baseURL}/viewList`);
+    getExams(): Observable<ExamDTO[]> {
+        return this.httpClient.get<ExamDTO[]>(`${this.baseURL}/viewList`);
     }
     getExamById(id: number): Observable<ExamDTO> {
         return this.httpClient.get<ExamDTO>(`${this.baseURL}/${id}`);
     }
+    submitFormWithAnswers(examId: number, studentAnswers: StudentAnswer[]): Observable<any> {
+        const formData = { examId, studentAnswers };
+        return this.httpClient.post(`${this.baseURL}/submitForm`, formData);
+      }
 
     createExam(exam: Exam): Observable<Object> {
         return this.httpClient.post(`${this.baseURL}/add`, exam);
     }
 
-    getExam(id: number): Observable<Exam> {
-        return this.httpClient.get<Exam>(`${this.baseURL}/viewOne/${id}`);
+    getExam(id: number): Observable<ExamDTO> {
+        return this.httpClient.get<ExamDTO>(`${this.baseURL}/viewOne/${id}`);
     }
 
     updateExam(id: number, exam: Exam): Observable<Object> {
@@ -51,4 +48,7 @@ export class ExamService {
     addQuestionTypeToExam(examId: number, questionTypeId: number): Observable<Object> {
         return this.httpClient.post(`${this.baseURL}/addQuestionTypeToExam`, { examId, questionTypeId });
     }
+    getExamWithQuestions(examId: number): Observable<ExamDTO> {
+        return this.httpClient.get<ExamDTO>(`${this.baseURL}/examsWithQuestions/${examId}`);
+      }
 }

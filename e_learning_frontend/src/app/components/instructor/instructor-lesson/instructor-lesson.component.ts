@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Module } from '../../models/module.model';
 import { Lesson } from '../../models/lesson.model';
 import { LessonService } from '../../services/lesson.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-instructor-lesson',
@@ -30,7 +31,7 @@ export class InstructorLessonComponent implements OnInit {
   }
 
   addModule() {
-    this.modules.push({ name: '', file:'',fileInput: null, fileType:null }); // Initialize File as null
+    this.modules.push({ name: '', file:'',fileInput: null, fileType:'' }); // Initialize File as null
     console.log(this.modules);
     
   }
@@ -50,6 +51,15 @@ export class InstructorLessonComponent implements OnInit {
 
   onSubmit(courseForm: any) {
     if (courseForm.valid) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to submit this lesson?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, submit!',
+        cancelButtonText: 'No, cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
         const formData = new FormData();
         formData.append('courseId', this.courseId.toString());
         formData.append('title', this.course.name);
@@ -64,12 +74,19 @@ export class InstructorLessonComponent implements OnInit {
         this.lessonService.createLesson(formData).subscribe(
             (createdLesson) => {
                 console.log('Lesson Created:', createdLesson);
+                Swal.fire('Success!', 'Lesson created successfully!', 'success');
             },
             (error) => {
                 console.error('Error creating lesson:', error);
+                Swal.fire('Error!', 'Failed to create lesson.', 'error');
+
             }
         );
+    }else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire('Cancelled', 'Lesson creation cancelled.', 'info');
     }
+  });
+}
 }
 
  

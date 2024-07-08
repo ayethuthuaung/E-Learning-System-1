@@ -7,7 +7,7 @@
       <section>
           <div class="flex border-b">
               <button
-                class="py-2 px-4 text-sm font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+                class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
                 [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCourse' }"
                 (click)="setActiveTab('createCourse')"
               >
@@ -15,14 +15,14 @@
               </button>
               
               <button
-                class="py-2 px-4 text-sm font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+                class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
                 [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
                 (click)="setActiveTab('createLesson')"
               >
                 Create Lessons
               </button>
               <button
-                class="py-2 px-4 text-sm font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+                class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
                 [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
                 (click)="setActiveTab('additional')"
               >
@@ -30,169 +30,128 @@
               </button>
             </div>
 
+            
+           
+            
             <div *ngIf="activeTab === 'additional'" class="p-4">
               <h3 class="text-xl font-bold mb-4">Additional Information</h3>
               <p>Content for additional information.</p>
             </div>
             
-            <div *ngIf="activeTab === 'createCourse'" class="p-4 flex flex-col md:flex-row">
-              <!-- Course Create Form -->
-              <div class="flex flex-col items-center justify-center light w-full md:w-1/2">
-                <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-                  <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
-                    <input
-                      type="text"
-                      class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                      id="name"
-                      name="name"
-                      [(ngModel)]="course.name"
-                      required
-                      (input)="validateCourseName(course.name)"
-                      placeholder="name"
-                    />
-                    <div *ngIf="nameDuplicateError" class="text-red-500">
-                      Course name already exists.
-                    </div>
-                    <input
-                      type="text"
-                      class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                      id="level"
-                      name="level"
-                      [(ngModel)]="course.level"
-                      required
-                      placeholder="Level"
-                    />
-                    <input
-                      type="text"
-                      class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                      id="duration"
-                      name="duration"
-                      [(ngModel)]="course.duration"
-                      required
-                      placeholder="duration"
-                    />
-                    <input
-                      type="text"
-                      class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                      id="description"
-                      name="description"
-                      [(ngModel)]="course.description"
-                      required 
-                      placeholder="description"
-                    />
-                    <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
-                      <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload Photo</label>
-                      <input
-                          type="file"
-                          id="photo"
-                          name="photo"
-                          (change)="onFileChange($event)"
-                          class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
-                      <label class="block mb-2 font-medium text-gray-700">Select Categories:</label>
-                      <div class="row">
-                        <div *ngFor="let category of categories" class="col-md-4">
-                          <label class="checkbox-inline">
-                            <input
-                                type="checkbox"
-                                [id]="'category_' + category.id"
-                                [name]="'categories'"
-                                [value]="category.id"
-                                (change)="toggleCategories($event, category)"
-                              />
-                            {{ category.name }}
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
-                      [disabled]="nameDuplicateError">
-                      Submit
-                    </button>
-                  </form>
+ 
+        <div *ngIf="activeTab === 'createCourse'" class="p-4 flex flex-col md:flex-row">
+          <!-- Course Create Form -->
+          <div class="flex flex-col items-center justify-center light w-full md:w-1/2">
+            <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+              <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
+                <input
+                  type="text"
+                  class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  id="name"
+                  name="name"
+                  [(ngModel)]="course.name"
+                  required
+                  (input)="validateCourseName(course.name)"
+                  placeholder="name"
+                />
+               <div *ngIf="nameDuplicateError" class="text-red-500">
+                  Course name already exists.
                 </div>
-              </div>
-            
-              <!-- Course Buttons -->
-             <div class="w-full md:w-1/2 p-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <button *ngFor="let course of courses" (click)="navigateToCourse(course.id)" class="relative p-2 border rounded shadow hover:-translate-y-2 duration-300 bg-white group">
-                    <div class="flex items-center">
-                      <h2 class="font-medium text-logo-blue mr-2">{{ course.name }}</h2>
-                      <span [ngClass]="{
-                        'bg-yellow-500': course.status === 'Pending',
-                        'bg-green-500': course.status === 'Accept'
-                      }" class="text-white px-2 py-1 rounded ml-auto">
-                        {{ course.status }}
-                      </span>
-                    </div>
-                    <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      Click to Create Lesson
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div *ngIf="loading" class="loading-overlay">
-              <div class="spinner"></div>
-            </div>
-
-            <div *ngIf="activeTab === 'createLesson'" class="p-4">
-              <div class="p-4">
-                <div class="flex mb-4 space-x-2">
-                  <div class="relative flex-1">
-                    <input
-                      type="text"
-                      placeholder="Search by month or year"
-                      class="p-2 border-lo rounded w-full pl-10 border-logo-blue text-logo-blue"
-                    />
-                    <span class="absolute left-3 top-2 text-logo-blue">
-                      <i class="fas fa-search"></i>
-                    </span>
-                  </div>
-                  <select class="p-2 border rounded border-logo-blue">
-                    <option>All</option>
-                    <!-- Add more options as needed -->
-                  </select>
-                </div>
-             
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <button *ngFor="let course of courses" class="p-4 border rounded shadow hover:-translate-y-2 duration-300 bg-blue-100">
-                        <h2 class="font-bold text-lg">{{course.name}}</h2>
-                        <p>{{course.createdDate}}</p><br>
-                        <span [ngClass]="{
-                          'bg-yellow-500': course.status === 'Pending',
-                          'bg-green-500': course.status === 'Accept'
-                        }" class="text-white px-2 py-1 rounded">
-                          {{ course.status }}
-                        </span>                   
-                      </button>
-                </div>
-            </div>
-            
-            <div class="flex flex-col items-center justify-center light">
-              <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-                <form class="flex flex-col" #courseForm="ngForm">
-                  <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
-                    <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload Course Lesson</label>
-                    <input
+                <input
+                  type="text"
+                  class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  id="level"
+                  name="level"
+                  [(ngModel)]="course.level"
+                  required
+                  placeholder="Level"
+                />
+                <input
+                  type="text"
+                  class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  id="duration"
+                  name="duration"
+                  [(ngModel)]="course.duration"
+                  required
+                  placeholder="duration"
+                />
+                <input
+                  type="text"
+                  class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+                  id="description"
+                  name="description"
+                  [(ngModel)]="course.description"
+                  required 
+                  placeholder="description"
+                />
+                <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
+                  <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload Photo</label>
+                  <input
                       type="file"
                       id="photo"
                       name="photo"
                       (change)="onFileChange($event)"
                       class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
+                  />
+                </div>
+                <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
+                  <label class="block mb-2 font-medium text-gray-700">Select Categories:</label>
+                  <div class="row">
+                    <div *ngFor="let category of categories" class="col-md-4">
+                      <label class="checkbox-inline">
+                        <input
+                            type="checkbox"
+                            [id]="'category_' + category.id"
+                            [name]="'categories'"
+                            [value]="category.id"
+                            (change)="toggleCategories($event, category)"
+                          />
+                        {{ category.name }}
+                      </label>
+                    </div>
                   </div>
-                </form>
-              </div>
+                </div>
+                <button
+                  type="submit"
+                  class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
+                  [disabled]="nameDuplicateError">
+                  Submit
+                </button>
+              </form>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+        
+
+        <div *ngIf="activeTab === 'createLesson'" class="p-4">
+          <div class="p-4">
+            <div class="flex mb-4 space-x-2">
+              <div class="relative flex-1">
+                 <!-- Course Buttons -->
+         <div class="w-full md:w-1/2 p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button *ngFor="let course of courses" (click)="navigateToCourse(course.id)" class="relative p-2 border rounded shadow hover:-translate-y-2 duration-300 bg-white group">
+              <div class="flex items-center">
+                <h2 class="text-logo-blue mr-2">{{ course.name }}</h2>
+                <span [ngClass]="{
+                  'bg-yellow-500': course.status === 'Pending',
+                  'bg-green-500': course.status === 'Accept'
+                }" class="text-white px-2 py-1 rounded ml-auto">
+                  {{ course.status }}
+                </span>
+              </div>
+              <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Click to Create Lesson
+              </span>
+            </button>
+          </div>
+        </div>
+               
+              </div>
+            </div>
+          </div>     
+        </div>
+      </section>
+    </main>
   </div>
 </div>

@@ -106,11 +106,9 @@ export class StudentProfileComponent implements OnInit {
   }
 
   viewCourse(course: Course): void {
-    this.courseService.getCourseById(course.id).subscribe({
-      next: (data) => {
-        this.selectedCourse = data;
-      },
-      error: (e) => console.log(e)
-    });
-  }
+    this.selectedCourse = course; // Assign the selected course to selectedCourse property
+    if (this.selectedCourse) {
+      this.router.navigate(['/course-detail', this.selectedCourse.id]);
+    }
+}
 }
