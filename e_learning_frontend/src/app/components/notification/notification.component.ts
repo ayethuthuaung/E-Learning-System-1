@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { WebSocketService } from '../services/websocket.service';
 import { Notification } from '../models/notification.model';
 import { AuthService } from '../auth/auth.service';
@@ -11,6 +11,7 @@ import { AuthService } from '../auth/auth.service';
 export class NotificationComponent implements OnInit {
   notifications: Notification[] = [];
   userRole!: string;
+  @Output() newNotification = new EventEmitter<void>();
   @ViewChild('audio', { static: false }) audio!: ElementRef<HTMLAudioElement>;
 
   constructor(private webSocketService: WebSocketService, private authService: AuthService) {}
@@ -24,7 +25,8 @@ export class NotificationComponent implements OnInit {
           console.log(notifications);
           this.notifications = notifications
             .filter(notification => !notification.deleted)
-            .map(notification => ({ ...notification, createdAt: new Date(notification.createdAt) }));
+            .map(notification => ({ ...notification, createdAt: new Date(notification.createdAt) }))
+            .reverse(); // Reverse the array to display newest first
         },
         (error) => {
           console.error('Failed to fetch notifications:', error);
@@ -32,8 +34,12 @@ export class NotificationComponent implements OnInit {
       );
 
       this.webSocketService.getNotifications().subscribe((notification) => {
-        this.notifications.push({ ...notification, createdAt: new Date(notification.createdAt) });
+        // Add new notification to the beginning of the array
+        this.notifications.unshift({ ...notification, createdAt: new Date(notification.createdAt) });
         this.playNotificationSound();
+        if (!notification.read) {
+          this.newNotification.emit(); // Emit event only if notification is unread
+        }
       });
     }
   }
@@ -64,5 +70,9 @@ export class NotificationComponent implements OnInit {
         console.error('Failed to delete notification:', error);
       }
     );
+  }
+  
+  closeNotifications(): void {
+    this.notifications = [];
   }
 }

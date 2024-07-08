@@ -113,7 +113,11 @@ export class WebSocketService {
       catchError(this.handleError)
     );
   }
-
+  public softDeleteMessage(messageId: number): Observable<void> {
+    return this.http.put<void>(`http://localhost:8080/api/chat/soft-delete/${messageId}`, {}).pipe(
+      catchError(this.handleError)
+    );
+  }
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error!';
     if (error.error instanceof ErrorEvent) {

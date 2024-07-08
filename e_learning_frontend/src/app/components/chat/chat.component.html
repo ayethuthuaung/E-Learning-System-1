@@ -3,23 +3,54 @@
     <h2 class="text-lg">{{ userName }}</h2>
     <button (click)="closeChat()" class="text-2xl">&times;</button>
   </div>
-  <div class="p-4 overflow-y-auto h-96">
+  <div class="p-4 overflow-y-auto h-96" (click)="hideDropdown()">
     <div *ngIf="messages.length === 0" class="text-center text-gray-500">
       No Conversation
     </div>
-    <div *ngFor="let message of messages" [ngClass]="{'text-right': message.message_side === 'sender'}">
-      <div class="inline-block p-2 m-1 rounded-lg" [ngClass]="{
-        'bg-gray-200 text-black': message.message_side === 'receiver',
-        'bg-logo-blue text-white': message.message_side === 'sender'
-      }">
+    <div *ngFor="let message of messages" 
+         [ngClass]="{'text-right': message.message_side === 'sender'}"
+         (contextmenu)="onRightClick($event, message)">
+         <div class="inline-block p-2 m-1 rounded-lg relative" 
+         [ngClass]="{
+           'bg-gray-200 text-black': message.message_side === 'receiver',
+           'bg-logo-blue text-white': message.message_side === 'sender'
+         }">
+      <div class="flex justify-between items-center">
         <div>{{ message.content }}</div>
+        <audio controls *ngIf="message.voiceMessageUrl">
+          <source [src]="message.voiceMessageUrl" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div *ngIf="message.showDropdown" class="ml-2">
+          <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer flex items-center" 
+            (click)="softDeleteMessage(message.id)">
+        <i class="fas fa-trash-alt mr-1"></i> Delete
+      </span>
+        </div>
       </div>
+    </div>
+    
     </div>
   </div>
   <div class="p-4 border-t flex gap-2">
-    <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" type="text" class="flex-1 p-2 border rounded-lg" placeholder="Type a message...">
-    <button (click)="sendMessage()" class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+    <input [(ngModel)]="newMessage" 
+           (keyup.enter)="sendMessage()" 
+           type="text" 
+           class="flex-1 p-2 border rounded-lg" 
+           placeholder="Type a message...">
+    <button (click)="sendMessage()" 
+            class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
       <i class="fas fa-paper-plane"></i>
+    </button>
+    <button (click)="startRecording()" 
+            [disabled]="isRecording" 
+            class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+      <i class="fas fa-microphone"></i>
+    </button>
+    <button (click)="stopRecording()" 
+            [disabled]="!isRecording" 
+            class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+      <i class="fas fa-stop"></i>
     </button>
   </div>
 </div>

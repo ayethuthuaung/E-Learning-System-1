@@ -67,29 +67,3 @@
   </div>
 </div>
 
-<!-- Chat Icon -->
-<button (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600">
-  <i class="fas fa-comments"></i>
-</button>
-
-<!-- Chat List -->
-<div *ngIf="chatRoomVisible" class="fixed bottom-16 right-4 bg-white border border-gray-300 rounded-md shadow-lg w-64">
-  <ul>
-    <li *ngFor="let conversation of conversationList" class="p-2 hover:bg-gray-100 cursor-pointer" (click)="openChat(conversation)">
-      <div class="flex items-center">
-        <img [src]="conversation.photo" alt="{{ conversation.name }}" class="w-10 h-10 rounded-full mr-2">
-        <div>
-          <p class="text-sm font-semibold">{{ conversation.name }}</p>
-          
-        </div>
-      </div>
-    </li>
-  </ul>
-</div>
-
-
-<!-- Chat Room Section -->
-<app-chat *ngIf="selectedConversation" [chatRoomId]="selectedConversation.chatRoomId" [userName]="selectedConversation.name" (close)="closeChat()"></app-chat>
-
-
-

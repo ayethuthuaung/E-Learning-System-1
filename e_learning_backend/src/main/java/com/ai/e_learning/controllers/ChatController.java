@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ai.e_learning.model.Message;
 import com.ai.e_learning.service.impl.ChatServiceImpl;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,5 +82,27 @@ public class ChatController {
     public Message sendMessage(Message message) {
         // Logic to handle sending a message
         return chatServiceImpl.saveMessage(message);
+    }
+    @PostMapping("/uploadVoiceMessage")
+    public ResponseEntity<String> uploadVoiceMessage(@RequestParam("voiceMessage") MultipartFile voiceMessage) {
+        try {
+            // Save the voice message file and get the URL
+            System.out.println(voiceMessage);
+            String fileUrl = chatServiceImpl.saveVoiceMessageFile(voiceMessage);
+
+            return ResponseEntity.ok(fileUrl);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/soft-delete/{messageId}")
+    public ResponseEntity<?> softDeleteMessage(@PathVariable Long messageId) {
+        try {
+            chatServiceImpl.softDeleteMessage(messageId);
+            return ResponseEntity.ok("Message soft deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting message");
+        }
     }
 }

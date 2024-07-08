@@ -149,5 +149,20 @@ public class GoogleDriveJSONConnector {
 
         return uploadedFile.getId();
     }
+    public String uploadVoiceMessageToDrive(InputStream inputStream, String fileName, String contentType) throws GeneralSecurityException, IOException {
+        Drive drive = createDriveService();
+
+        com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+        fileMetaData.setName(fileName);
+        fileMetaData.setParents(Collections.singletonList("1PHnnlrCQb2U-pNZM6Se4bUWVJWegE_mC")); // Use your folder ID
+
+        InputStreamContent mediaContent = new InputStreamContent(contentType, inputStream);
+        com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
+                .setFields("id")
+                .execute();
+
+        return uploadedFile.getId();
+    }
+
 
 }

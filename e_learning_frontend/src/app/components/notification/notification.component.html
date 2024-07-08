@@ -1,26 +1,27 @@
-<div *ngIf="notifications.length > 0" class="max-w-md mx-auto">
-  <h3 class="text-lg font-semibold mb-4">Notifications</h3>
-  <ul class="list-none p-0">
-    <li *ngFor="let notification of notifications"
-        [class.bg-gray-100]="!notification.read"
-        class="border-b border-gray-300 p-3 cursor-pointer">
-      <div class="flex justify-between items-center" (click)="markAsRead(notification)">
-        <div>
-          <span [ngClass]="{'font-bold':!notification.read}">
+<div class="notification-panel" *ngIf="notifications.length > 0">
+  <div class="notification-header flex justify-between items-center p-4">
+    <h3 class="text-lg font-semibold">Notifications</h3>
+    <button class="cancel-btn" (click)="closeNotifications()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="notification-body overflow-y-auto" style="max-height: 400px;">
+    <ul class="notification-list">
+      <li *ngFor="let notification of notifications"
+          [class.unread]="!notification.read"
+          class="notification-item flex justify-between p-3 cursor-pointer border-b" (click)="markAsRead(notification)">
+        <div class="notification-content">
+          <div class="notification-message font-bold">
             {{ notification.message }}
-          </span>
-          <div class="text-gray-500 text-sm">
+          </div>
+          <div class="notification-time text-gray-500 text-sm">
             {{ notification.createdAt | date:'short' }}
           </div>
         </div>
-        <button (click)="softDeleteNotification(notification); $event.stopPropagation()">Delete</button>
-      </div>
-    </li>
-  </ul>
-</div>
-
-<div *ngIf="notifications.length === 0" class="max-w-md mx-auto text-center">
-  <p class="text-gray-500">No notifications yet.</p>
+        <button class="delete-btn text-red-600" (click)="softDeleteNotification(notification); $event.stopPropagation()">Delete</button>
+      </li>
+    </ul>
+  </div>
 </div>
 
 <audio #audio src="../../../assets/notification/notification.wav"></audio>

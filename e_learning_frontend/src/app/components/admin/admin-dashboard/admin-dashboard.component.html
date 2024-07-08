@@ -5,7 +5,9 @@
     <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
   
     <main class="flex-1 p-6">
-
+      <div *ngIf="showNotificationsPage">
+        <app-notification></app-notification>
+      </div>
       <!-- Bar Chart -->
       <div class="my-4">
         <app-admin-chart
