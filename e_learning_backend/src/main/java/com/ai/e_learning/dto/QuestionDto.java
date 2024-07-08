@@ -12,6 +12,7 @@ import java.util.List;
 public class QuestionDto {
     private Long id, questionTypeId;
     private String content;
+    private double marks;
     private List<AnswerOptionDto> answerList;
     private List<MarksDto> marksList;
 }

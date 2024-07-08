@@ -1,3 +1,4 @@
+import { ExamCreationDto } from './../models/examCreationDto.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -25,9 +26,13 @@ export class ExamService {
         return this.httpClient.post(`${this.baseURL}/submitForm`, formData);
       }
 
-    createExam(exam: Exam): Observable<Object> {
-        return this.httpClient.post(`${this.baseURL}/add`, exam);
-    }
+    // createExam(exam: Exam): Observable<Object> {
+    //     return this.httpClient.post(`${this.baseURL}/add`, exam);
+    // }
+
+    createExam(examCreationDto: ExamCreationDto): Observable<Object> {
+        return this.httpClient.post(`${this.baseURL}/add`, examCreationDto);
+      }
 
     getExam(id: number): Observable<ExamDTO> {
         return this.httpClient.get<ExamDTO>(`${this.baseURL}/viewOne/${id}`);

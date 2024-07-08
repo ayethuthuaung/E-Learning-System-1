@@ -1,12 +1,12 @@
 <div class="border border-dark-blue rounded-3xl p-3 max-w-sm">
-  <img class="w-full h-32 object-cover rounded-lg" [src]="'https://lh3.google.com/u/0/d/' + input.photo" alt="{{ input.name }}">
+  <img class="w-full h-32 object-cover rounded-lg" [src]="input.photo" alt="{{ input.name }}">
   <div class="flex justify-between mt-3 items-center">
     <div class="flex items-center gap-2">
       <!-- <img class="w-8 h-8 rounded-full" [src]="input.user?.photo" alt="{{ input.user?.name }}"> -->
       <p class="text-slate-500 font-semibold text-sm">{{ input.user?.name }} (Instructor)</p>
     </div>
     <div>
-      <button class="px-3 py-1 bg-logo-blue rounded text-opacity-80 text-emerald-600 text-sm">
+      <button class="px-3 py-1 bg-logo-blue rounded text-opacity-80 text-white text-sm">
         <span *ngFor="let category of input.categories">{{ category.name }}</span>
       </button>
     </div>

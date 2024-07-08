@@ -77,6 +77,7 @@ public class CourseServiceImpl implements CourseService {
         // Convert createdAt to createdDate in CourseDto
         course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()));
     }
+
     return DtoUtil.mapList(allCourses,CourseDto.class,modelMapper);
   }
 
@@ -90,15 +91,17 @@ public class CourseServiceImpl implements CourseService {
 //    courseDto.getPhotoInput().transferTo(tempFile);
 //    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
 //    course.setPhoto(tempFile.getName());
-    String fileId;
+    String imageUrl;
     GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
 
     try {
-      fileId = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
+      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
     } catch (IOException | GeneralSecurityException e) {
       throw new RuntimeException("Failed to upload file to Google Drive", e);
     }
-    course.setPhoto(fileId);
+    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
+
+//    course.setPhoto(imageUrl);
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())

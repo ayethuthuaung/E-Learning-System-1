@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +91,18 @@ public class Helper {
         return imageUrl;
     }
 
+
+    public static String extractFileId(String fileUrl) {
+        String fileId = null;
+        String regex = "https://drive\\.google\\.com/file/d/([^/]+)/view";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(fileUrl);
+
+        if (matcher.find()) {
+            fileId = matcher.group(1);
+        }
+        return fileId;
+    }
 
 
 }

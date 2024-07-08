@@ -1,5 +1,6 @@
 package com.ai.e_learning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class CourseModule {
     }
 
     @ManyToMany(mappedBy = "courseModules")
+    @JsonIgnore
     private Set<Lesson> lessons;
     private String file;
 }

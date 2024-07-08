@@ -30,9 +30,10 @@ import { InstructorCategoryComponent } from './components/instructor/instructor-
 
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
+
 import { CourseListComponent } from './components/course-list/course-list.component';
 
-import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
+
 import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
@@ -45,6 +46,7 @@ import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-det
 import { QuizExamListComponent  } from './components/quiz-Ans/exam-list/exam-list.component';
 
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
+import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
 
 
 
@@ -67,7 +69,6 @@ const routes: Routes = [
    //{ path: 'chat/:chatRoomId/:userName', component: ChatComponent },
 
 
-   {path:'exam', component: CreateExamComponent},
    {path:'questionType', component: CreateQuestionTypeComponent},
    {path:'answerOption', component: CreateAnswerOptionComponent},
    {path:'createquestionform' , component: CreateQuestionFormComponent},
@@ -100,9 +101,13 @@ const routes: Routes = [
    {path:'exam-list', component: QuizExamListComponent },
 
 
-
+   {path:'course-video-view/:moduleId', component: CourseVideoViewComponent},
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
+
+
+
+
 
 ];
 

@@ -1,8 +1,7 @@
 import { QuestionDto } from './question.model';
 
-export interface ExamDTO {
-  id: number;
+export interface ExamCreationDto {
   title: string;
   description: string;
-  questions: QuestionDto[];
+  questionList: QuestionDto[];
 }

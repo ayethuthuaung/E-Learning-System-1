@@ -122,7 +122,7 @@ public class GoogleDriveJSONConnector {
                     .setFields("id")
                     .execute();
 
-            String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+            String fileUrl ="https://drive.google.com/file/d/"+ uploadedFile.getId()+"/preview";
             System.out.println("FILE URL : " + fileUrl);
 
             imageResponse.setStatus(200);
@@ -154,7 +154,6 @@ public class GoogleDriveJSONConnector {
         com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, new InputStreamContent(contentType, inputStream))
                 .setFields("id")
                 .execute();
-
         return uploadedFile.getId();
     }
 
