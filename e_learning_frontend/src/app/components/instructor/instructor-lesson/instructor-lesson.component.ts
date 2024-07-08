@@ -1,15 +1,36 @@
+import { ExamCreationDto } from './../../models/examCreationDto.model';
+import { ExamService } from './../../services/exam.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Module } from '../../models/module.model';
-import { Lesson } from '../../models/lesson.model';
 import { LessonService } from '../../services/lesson.service';
+import Swal from 'sweetalert2';
+import { QuestionDto } from '../../models/question.model';
+import { AnswerOptionDTO } from '../../models/questiondto.model';
+import { Location } from '@angular/common';
+
+interface Option {
+  label: string;
+  value: string;
+  isAnswered: boolean;
+  isCorrect?: boolean; // Add this property to track correctness
+}
+
+interface Question {
+  text: string;
+  type: string;
+  marks: number;
+  options: Option[];
+  correctAnswer?: string; // Add this property to store the correct answer
+  isNew?: boolean; // Add this property to track if the question is new
+}
 
 @Component({
   selector: 'app-instructor-lesson',
   templateUrl: './instructor-lesson.component.html',
   styleUrls: ['./instructor-lesson.component.css']
 })
-export class InstructorLessonComponent implements OnInit {
+export class InstructorLessonComponent implements OnInit {  
 
   courseId: number = -1; // Initialize courseId with a default value
   course = { name: '' };
@@ -17,8 +38,14 @@ export class InstructorLessonComponent implements OnInit {
   nameDuplicateError = false;
   isSidebarOpen = true;
   activeTab: string = 'createLesson';
+examForm: any;
 
-  constructor(private route: ActivatedRoute, private lessonService: LessonService) { }
+  constructor(private route: ActivatedRoute,
+     private lessonService: LessonService,
+     private examService: ExamService,
+     private location: Location
+    ) {}
+
 
   ngOnInit(): void {
     const courseIdParam = this.route.snapshot.paramMap.get('courseId');
@@ -30,15 +57,14 @@ export class InstructorLessonComponent implements OnInit {
   }
 
   addModule() {
-    this.modules.push({ name: '', file:'',fileInput: null, fileType:null }); // Initialize File as null
+    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' }); // Initialize File as null
     console.log(this.modules);
     
   }
 
   validateCourseName(name: string) {
-    // Implement your validation logic here
-    // For example, checking for duplicate names
-    this.nameDuplicateError = false; // Set to true if a duplicate name is found
+   
+    this.nameDuplicateError = false; 
   }
 
   removeModule(index: number) {
@@ -50,6 +76,15 @@ export class InstructorLessonComponent implements OnInit {
 
   onSubmit(courseForm: any) {
     if (courseForm.valid) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to submit this lesson?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, submit!',
+        cancelButtonText: 'No, cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
         const formData = new FormData();
         formData.append('courseId', this.courseId.toString());
         formData.append('title', this.course.name);
@@ -64,12 +99,19 @@ export class InstructorLessonComponent implements OnInit {
         this.lessonService.createLesson(formData).subscribe(
             (createdLesson) => {
                 console.log('Lesson Created:', createdLesson);
+                Swal.fire('Success!', 'Lesson created successfully!', 'success');
             },
             (error) => {
                 console.error('Error creating lesson:', error);
+                Swal.fire('Error!', 'Failed to create lesson.', 'error');
+
             }
         );
+    }else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire('Cancelled', 'Lesson creation cancelled.', 'info');
     }
+  });
+}
 }
 
  
@@ -84,5 +126,97 @@ export class InstructorLessonComponent implements OnInit {
   onFileSelected(event: any, index: number) {
     const file: File = event.target.files[0];
     this.modules[index].fileInput = file;
+  }
+
+  //Create Exam
+  examId: number = 1; // Example exam ID
+  examTitle: string='';
+  examDescription: string= '';
+  formDescription: string = 'Please fill out this form';
+
+  questions: Question[] = [
+    {
+      text: 'Untitled Question',
+      type: 'multiple-choice',
+      options: [
+        { label: 'Option 1', value: 'option1', isAnswered: false }
+      ],
+      marks:0
+    }
+  ];
+
+  showResults: boolean = false; // Add this property to toggle result display
+
+
+
+  addOption(questionIndex: number) {
+    this.questions[questionIndex].options.push({
+      label: `Option ${this.questions[questionIndex].options.length + 1}`,
+      value: `option${this.questions[questionIndex].options.length + 1}`,
+      isAnswered: false
+    });
+  }
+
+  addQuestion() {
+    this.questions.push({
+      text: 'New Question',
+      type: 'multiple-choice',
+      options: [
+        { label: 'Option 1', value: 'option1', isAnswered: false }
+      ],
+      marks:0,
+      isNew: true // Mark this question as new
+    });
+  }
+
+  deleteNewQuestion(questionIndex: number) {
+    if (this.questions[questionIndex].isNew) {
+      this.questions.splice(questionIndex, 1);
+    }
+  }
+
+  selectOption(questionIndex: number, optionIndex: number) {
+    const question = this.questions[questionIndex];
+    question.options.forEach((option, idx) => {
+      option.isAnswered = (idx === optionIndex);
+    });
+  }
+
+  onSubmitExam(examForm: any) {
+    const examCreationDto: ExamCreationDto = {
+      title: this.examTitle,
+      description: this.examDescription,
+      questionList: this.questions.map(question => ({
+        content: question.text,
+        questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
+        answerList: question.options.map(option => ({
+          answer: option.label,
+          isAnswered: option.isAnswered
+        } as AnswerOptionDTO)),
+        marks: question.marks
+      } as QuestionDto))
+    };
+
+    this.examService.createExam(examCreationDto)
+      .subscribe(response => {
+        console.log('Form submitted successfully', response);
+        this.checkAnswers(response);
+        this.showResults = true; // Show the results
+      }, error => {
+        console.error('Error submitting form', error);
+      });
+  }
+
+  checkAnswers(response: any) {
+    this.questions.forEach((question, qIndex) => {
+      question.correctAnswer = response.questionList[qIndex].correctAnswer; // Assuming the correct answer is provided in the response
+      question.options.forEach(option => {
+        option.isCorrect = option.isAnswered && (option.label === question.correctAnswer);
+      });
+    });
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

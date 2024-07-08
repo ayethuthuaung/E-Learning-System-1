@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { QuestionCreationDTO } from '../models/QuestionCreationDTO.model';
-import { QuestionDTO } from '../models/question.model';
+import { QuestionDto } from '../models/question.model';
 import { StudentAnswer } from '../models/student-answer.model';
 import { Exam } from '../models/exam.model';
 import { ExamDTO } from '../models/examdto.model';
@@ -23,8 +23,8 @@ export class QuestionService {
     return this.httpClient.get<any[]>(`${this.baseURL}/viewList`);
   }
   //for answer-form
-  getQuestionsForExam(examId: number): Observable<QuestionDTO[]> {
-    return this.httpClient.get<QuestionDTO[]>(`${this.baseURL}/exam/${examId}`);
+  getQuestionsForExam(examId: number): Observable<QuestionDto[]> {
+    return this.httpClient.get<QuestionDto[]>(`${this.baseURL}/exam/${examId}`);
   }
    // Submits student answers to backend
   submitAnswers(answers: any): Observable<any> {

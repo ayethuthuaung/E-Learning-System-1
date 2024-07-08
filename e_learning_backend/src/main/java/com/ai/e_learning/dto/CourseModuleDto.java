@@ -13,9 +13,10 @@ import java.util.Set;
 @ToString
 public class CourseModuleDto {
     private  Long id;
-    private String name;
+    private String name,fileType;
     private Long createdAt;
     private Set<Lesson> lessons;
     private String file;
     private MultipartFile fileInput;
+
 }

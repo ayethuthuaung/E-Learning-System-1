@@ -36,5 +36,9 @@ export class InstructorNavbarComponent implements OnInit {
   navigateToConversationList(): void {
     this.router.navigate(['/conservation-list']);
   }
-  
+
+
+  gohome():void{
+    this.router.navigate(['home']);
+  }
 }
