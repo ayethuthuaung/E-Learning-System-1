@@ -6,6 +6,8 @@ import { Lesson } from '../models/lesson.model';
 import { Course } from '../models/course.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { log } from 'console';
+import { CourseService } from '../services/course.service';
+import { CourseModuleService } from '../services/course-module.service';
 
 @Component({
   selector: 'app-course-details',
@@ -13,6 +15,8 @@ import { log } from 'console';
   styleUrls: ['./course-details.component.css']
 })
 export class CourseDetailsComponent implements OnInit {
+
+
   lessons: Lesson[] = [];
   isDropdownOpen: boolean[] = [];
   course: Course | undefined;
@@ -25,13 +29,17 @@ export class CourseDetailsComponent implements OnInit {
 
   chatRoomId!: number;
   chatRoomVisible: boolean = false; // Add chatRoomVisible property
+  lesson: Lesson | undefined;
+  module: Course | undefined;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private chatRoomService: ChatRoomService,
     private authService: AuthService,
-    private lessonService: LessonService
+    private lessonService: LessonService,
+    private courseService: CourseService,
+    private courseModuleService: CourseModuleService
   ) {}
 
   ngOnInit(): void {
@@ -104,5 +112,19 @@ export class CourseDetailsComponent implements OnInit {
   toggleDropdown(index: number) {
     this.isDropdownOpen[index] = !this.isDropdownOpen[index];
   }
-}
 
+  viewVideoDetailClick(moduleId: number): void {
+    if (this.course) {
+      this.courseModuleService.getModuleById(moduleId).subscribe(
+        (module) => {
+          console.log("Module:", module);
+          
+          this.router.navigate([`/course-video-view/${module.id}`], { state: { module } });
+        },
+        (error) => {
+          console.error('Error fetching course video view', error);
+        }
+      );
+    }
+}
+}

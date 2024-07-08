@@ -49,4 +49,8 @@ export class InstructorNavbarComponent implements OnInit {
     });
     this.dropdownOpen = false;
   }
+
+  gohome():void{
+    this.router.navigate(['home']);
+  }
 }

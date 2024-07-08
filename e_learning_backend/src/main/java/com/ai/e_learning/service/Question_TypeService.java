@@ -2,7 +2,7 @@ package com.ai.e_learning.service;
 
 import com.ai.e_learning.dto.QuestionTypeDto;
 import com.ai.e_learning.model.QuestionType;
-import com.ai.e_learning.repository.Question_TypeRepository;
+import com.ai.e_learning.repository.QuestionTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class Question_TypeService {
 
     @Autowired
-    private Question_TypeRepository questionTypeRepository;
+    private QuestionTypeRepository questionTypeRepository;
 
     @Autowired
     private ModelMapper modelMapper;

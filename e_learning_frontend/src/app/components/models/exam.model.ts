@@ -1,13 +1,13 @@
 // exam.model.ts
 
 import { Question_Type } from "./question-type.model";
-import { QuestionDTO } from "./question.model";
+import { QuestionDto } from "./question.model";
 
 export class Exam {
     id?: number;
     title: string;
     description: string;
-    questions:QuestionDTO[];
+    questions:QuestionDto[];
     questionTypes: Question_Type[]; // Ensure this is an array of Question_Type objects
     questionTypeList: number[];
 

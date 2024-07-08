@@ -1,6 +1,6 @@
-import { QuestionDTO } from './question.model';
+import { QuestionDto } from './question.model';
 
 export interface QuestionCreationDTO {
   examId: number;
-  questionList: QuestionDTO[];
+  questionList: QuestionDto[];
 }

@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
                     } else {
                         user.setPassword(passwordEncoder.encode("123@dirace"));
 
-                user.setPhoto("14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
+                user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
                         Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
 
                         Set<Role> roles = new HashSet<>();
@@ -215,14 +215,7 @@ public class UserServiceImpl implements UserService {
       User user = userRepository.findUserByStaffId(staff_id);
       if (user == null)
         return null;
-        try {
-            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-            String fileId = driveConnector.getFileIdByName(user.getPhoto());
-            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-            user.setPhoto(thumbnailLink);
-        } catch (IOException | GeneralSecurityException e) {
 
-        }
       return DtoUtil.map(user,UserDto.class,modelMapper);
     }
 

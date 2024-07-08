@@ -9,10 +9,7 @@ import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.LessonRepository;
 import com.ai.e_learning.repository.CourseModuleRepository;
 import com.ai.e_learning.service.LessonService;
-import com.ai.e_learning.util.DtoUtil;
-import com.ai.e_learning.util.EntityUtil;
-import com.ai.e_learning.util.GoogleDriveJSONConnector;
-import com.ai.e_learning.util.Helper;
+import com.ai.e_learning.util.*;
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +40,9 @@ public class LessonServiceImpl implements LessonService {
     @Autowired
     private CourseModuleRepository courseModuleRepository;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     private final Helper helper;
     private final ModelMapper modelMapper;
 
@@ -59,18 +59,29 @@ public class LessonServiceImpl implements LessonService {
         Set<CourseModule> courseModules = lessonDto.getModules().stream().map(moduleDto -> {
             CourseModule courseModule = new CourseModule();
             courseModule.setName(moduleDto.getName());
+            String fileType = moduleDto.getFileInput().getContentType();
+            String fileId = null;
+            String fileUrl = null;
+            if(!"video/mp4".equals(fileType)){
+                GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+                try  {
+                    fileId = driveConnector.uploadImageToDrive2(moduleDto.getFileInput(),"Module");
+                    fileUrl = "https://drive.google.com/file/d/" + fileId +"/view";
 
-            // Directly handle the file input stream from MultipartFile
-            String fileId;
-            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+                } catch (IOException | GeneralSecurityException e) {
+                    throw new RuntimeException("Failed to upload file to Google Drive", e);
+                }
+            }else{
+                try {
+                    fileUrl = cloudinaryService.uploadVideo(moduleDto.getFileInput());
+                } catch (IOException e) {
+                    throw new RuntimeException("Fail to upload file to Cloudinary", e);
+                }
 
-            try  {
-                fileId = driveConnector.uploadImageToDrive2( moduleDto.getFileInput(),"Module");
-            } catch (IOException | GeneralSecurityException e) {
-                throw new RuntimeException("Failed to upload file to Google Drive", e);
             }
 
-            courseModule.setFile(fileId);
+
+            courseModule.setFile(fileUrl);
             return courseModuleRepository.save(courseModule); // Save each module
         }).collect(Collectors.toSet());
 
@@ -157,12 +168,27 @@ public class LessonServiceImpl implements LessonService {
                                 CourseModuleDto moduleDto = new CourseModuleDto();
                                 moduleDto.setId(module.getId());
                                 moduleDto.setName(module.getName());
+
                                 moduleDto.setFile(module.getFile());
-                                try {
-                                    moduleDto.setFileType(driveConnector.getFileType(moduleDto.getFile()));
-                                } catch (GeneralSecurityException | IOException e) {
-                                    throw new RuntimeException(e);
+                                String fileUrl = module.getFile();
+
+                                String fileId = null;
+                                String driveUrlPrefix = "https://drive.google.com/file/d/";
+                                String  cloudinaryUrlPrefix = "http://res.cloudinary.com/dshrtebct/video/upload/";
+                                String fileType = null;
+                                if (fileUrl.startsWith(driveUrlPrefix)) {
+                                    try {
+                                            fileId = Helper.extractFileId(fileUrl);
+                                            fileType= driveConnector.getFileType(fileId);
+                                        System.out.println(fileType);
+                                    } catch (GeneralSecurityException | IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }else if(fileUrl.startsWith(cloudinaryUrlPrefix)){
+                                   fileType = "video/mp4";
                                 }
+                                moduleDto.setFileType(fileType);
+
                                 System.out.println("File Type:"+ moduleDto.getFileType());
                                 return moduleDto;
                             }).collect(Collectors.toList());
