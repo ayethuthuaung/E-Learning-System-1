@@ -6,18 +6,14 @@
         <div class="bg-white p-4 rounded-lg shadow-lg">
           <div class="flex flex-col items-center">
             <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden profile-picture">
-
-              <img [src]="'https://lh3.google.com/u/0/d/' + photo" alt="Profile Picture" class="w-full h-full object-cover">
+              <img [src]="photo" alt="Profile Picture" class="w-full h-full object-cover">
               <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                 <label for="file-input" class="cursor-pointer">
                   <i class="fas fa-camera text-white text-xl"></i>
                 </label>
                 <input type="file" id="file-input" class="hidden" (change)="onFileSelected($event)">
-                <!-- Download icon -->
-                <i class="fas fa-download text-white text-xl ml-4 cursor-pointer" (click)="downloadPhoto()"></i>
               </div>
-            </div>
-            
+            </div><br>
             <h1 class="text-2xl font-bold">{{name}}</h1><br>
             <p>Team: {{team}}</p>
             <p>Department: {{department}}</p>
@@ -85,7 +81,9 @@
               </div>
               <div>
                 <p>#tech-news</p>
-              <!-- PDF View  -->
+                <div class="w-full bg-gray-300 rounded-full h-2.5 mb-2">
+                  <div class="bg-logo-blue h-2.5 rounded-full" style="width: 20%"></div>
+                </div>
               </div>
             </div>
           </div>

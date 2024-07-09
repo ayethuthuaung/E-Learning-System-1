@@ -153,15 +153,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getCurrentUser(String staffId) {
         User user=userRepository.findUserByStaffId(staffId);
-        try {
-            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-            String fileId = driveConnector.getFileIdByName(user.getPhoto());
-            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-            user.setPhoto(thumbnailLink);
-            System.out.println(thumbnailLink);
-        } catch (IOException | GeneralSecurityException e) {
-
-        }
+//        try {
+//            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//            String fileId = driveConnector.getFileIdByName(user.getPhoto());
+//            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+//            user.setPhoto(thumbnailLink);
+//            System.out.println(thumbnailLink);
+//        } catch (IOException | GeneralSecurityException e) {
+//
+//        }
         return DtoUtil.map(user,UserDto.class,modelMapper);
 
     }
