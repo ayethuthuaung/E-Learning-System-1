@@ -47,6 +47,7 @@ import { QuizExamListComponent  } from './components/quiz-Ans/exam-list/exam-lis
 
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
+import { AllCoursesComponent } from './components/all-courses/all-courses.component';
 
 
 
@@ -67,7 +68,6 @@ const routes: Routes = [
    {path:'blog', component: BlogsComponent},
 
    //{ path: 'chat/:chatRoomId/:userName', component: ChatComponent },
-
 
    {path:'questionType', component: CreateQuestionTypeComponent},
    {path:'answerOption', component: CreateAnswerOptionComponent},
@@ -106,9 +106,7 @@ const routes: Routes = [
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
 
 
-
-
-
+   {path:'all-courses', component: AllCoursesComponent},
 ];
 
 

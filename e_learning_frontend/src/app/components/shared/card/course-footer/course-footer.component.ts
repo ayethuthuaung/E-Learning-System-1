@@ -19,6 +19,7 @@ export class CourseFooterComponent implements OnInit {
   isEnrolled: boolean = false; // Flag to check enrollment status
   isAccepted: boolean = false; // Flag to check if user's enrollment is accepted by instructor
   userCourseId: number | undefined; // Initialize userCourseId as undefined
+input: Course|undefined;
 
   constructor(private userCourseService: UserCourseService, private router: Router) { }
 

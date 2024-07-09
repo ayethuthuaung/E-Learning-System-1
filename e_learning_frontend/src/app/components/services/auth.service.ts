@@ -14,20 +14,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  login(authDto: AuthDto): Observable<User | null> {
-    return this.http.post<AuthResponse>(this.authUrl, authDto).pipe(
-      tap(response => {
-        if (response.currentUser) {
-          this.currentUser = response.currentUser;
-          // Store the currentUser in localStorage or sessionStorage if needed
-          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-        }
-      }),
-      map(response => response.currentUser),
-      catchError(this.handleError<User | null>('login', null))
-    );
-  }
-
+  
   getCurrentUser(): User | null {
     if (!this.currentUser) {
       const storedUser = localStorage.getItem('currentUser');

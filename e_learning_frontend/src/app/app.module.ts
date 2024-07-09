@@ -101,6 +101,8 @@ import { QuizExamListComponent } from './components/quiz-Ans/exam-list/exam-list
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
+import { CourseCardComponent } from './components/shared/course-card/course-card.component';
+import { AllCoursesComponent } from './components/all-courses/all-courses.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -206,6 +208,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     UserUploadComponent,   
     InstructorLessonComponent,
     CourseVideoViewComponent,
+    CourseCardComponent,
+    AllCoursesComponent,
   ],
   imports: [
     BrowserModule,
