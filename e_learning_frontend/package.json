@@ -30,6 +30,7 @@
     "@stomp/ng2-stompjs": "^8.0.0",
     "@stomp/stompjs": "^7.0.0",
     "@sweetalert2/ngx-sweetalert2": "^12.4.0",
+    "@swimlane/ngx-datatable": "^20.1.0",
     "autoprefixer": "^10.4.19",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",

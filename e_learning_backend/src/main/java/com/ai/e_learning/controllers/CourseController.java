@@ -27,9 +27,16 @@ public class CourseController {
   private CourseService courseService;
 
   @GetMapping(value = "/courselist", produces = "application/json")
-  public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
-    return courseService.getAllCourses(status);
+  public List<CourseDto> displayCourseByStatus(ModelMap model,@RequestParam(value = "status") String status) {
+    return courseService.getAllCoursesByStatus(status);
   }
+
+  //AT
+  @GetMapping(value = "/allCoursesList", produces = "application/json")
+  public List<CourseDto> allCourses() {
+      return courseService.getAllCourses();
+  }
+  //AT
 
   @GetMapping(value = "/instructorcourselist", produces = "application/json")
   public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {

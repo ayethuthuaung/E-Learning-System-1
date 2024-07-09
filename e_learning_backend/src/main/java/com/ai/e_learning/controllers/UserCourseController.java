@@ -1,11 +1,15 @@
 package com.ai.e_learning.controllers;
 
+import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.UserCourseDto;
 import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.User;
 import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.service.UserCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/user-course")
 public class UserCourseController {
+
   private final UserCourseService userCourseService;
 
   @Autowired
@@ -27,6 +32,24 @@ public class UserCourseController {
     Long courseId = payload.get("courseId");
     return userCourseService.enrollUserInCourse(userId, courseId);
   }
+
+  //ATTA
+  @GetMapping(value = "/userCourselist", produces = "application/json")
+  public List<UserCourseDto> displayUserCourse() {
+    return userCourseService.getAllUserCourses();
+  }
+
+  @PostMapping(value = "/changeStatus", produces = "application/json")
+  public ResponseEntity<?> changeStatus(ModelMap model, @RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
+    try{
+      userCourseService.changeStatus( id, status);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
+    }catch(Exception e){
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
+    }
+  }
+  //ATTA
+
 
   @PutMapping("/update/{userCourseId}")
   public UserCourse updateUserCourse(

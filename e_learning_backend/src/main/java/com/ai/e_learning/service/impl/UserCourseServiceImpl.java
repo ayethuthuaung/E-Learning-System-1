@@ -1,5 +1,7 @@
 package com.ai.e_learning.service.impl;
 
+import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.UserCourseDto;
 import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.User;
 import com.ai.e_learning.model.UserCourse;
@@ -7,6 +9,10 @@ import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserCourseRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.UserCourseService;
+import com.ai.e_learning.util.DtoUtil;
+import com.ai.e_learning.util.EntityUtil;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +26,9 @@ public class UserCourseServiceImpl implements UserCourseService {
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
   private final UserCourseRepository userCourseRepository;
+
+  @Autowired
+  private ModelMapper modelMapper;
 
   @Autowired
   public UserCourseServiceImpl(UserRepository userRepository, CourseRepository courseRepository,
@@ -50,13 +59,31 @@ public class UserCourseServiceImpl implements UserCourseService {
     return userCourseRepository.save(userCourse);
   }
 
+  //AT
+  @Override
+  public  List<UserCourseDto> getAllUserCourses(){
+    List<UserCourse> userCourseList = EntityUtil.getAllEntities(userCourseRepository);
+    if(userCourseList==null)
+      return null;
+    return DtoUtil.mapList(userCourseList, UserCourseDto.class, modelMapper);
+  }
+
+  @Override
+  public void changeStatus(Long id, String status) {
+    UserCourse userCourse = userCourseRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
+    userCourse.setStatus(status);
+    userCourseRepository.save(userCourse);
+  }
+  //AT
+
   @Override
   public UserCourse updateUserCourse(Long userCourseId, boolean completed, int progress, String status) {
     UserCourse userCourse = userCourseRepository.findById(userCourseId)
       .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
 
     userCourse.setCompleted(completed);
-    userCourse.setProgress(progress);
+    userCourse.setProgress(0);
     userCourse.setStatus(status);
 
     return userCourseRepository.save(userCourse);
@@ -79,13 +106,7 @@ public class UserCourseServiceImpl implements UserCourseService {
       .collect(Collectors.toList());
   }
 
-  @Override
-  public void changeStatus(Long id, String status) {
-    UserCourse userCourse = userCourseRepository.findById(id)
-      .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
-    userCourse.setStatus(status);
-    userCourseRepository.save(userCourse);
-  }
+
 
   @Override
   public boolean checkEnrollment(Long userId, Long courseId) {
@@ -98,4 +119,6 @@ public class UserCourseServiceImpl implements UserCourseService {
     Optional<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
     return userCourseOptional.isPresent() && userCourseOptional.get().getStatus().equals("accept");
   }
+
+
 }

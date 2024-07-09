@@ -17,6 +17,14 @@ export class UserCourseService {
     return this.httpClient.post<UserCourse>(`${this.baseURL}/enroll`, { userId, courseId });
   }
 
+  getAllUserCourses(): Observable<UserCourse[]> {
+    return this.httpClient.get<UserCourse[]>(`${this.baseURL}/userCourselist`);
+  }
+
+  changeStatus(id: number, status: string): Observable<void> {
+    return this.httpClient.post<void>(`${this.baseURL}/change-status/${id}`, { status });
+  }
+
   updateUserCourse(userCourseId: number, completed: boolean, progress: number, status: string): Observable<UserCourse> {
     return this.httpClient.put<UserCourse>(`${this.baseURL}/update/${userCourseId}`, { completed, progress, status });
   }
@@ -32,9 +40,7 @@ export class UserCourseService {
   getCoursesByUserId(userId: number): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/user/${userId}/courses`);
   }
-  changeStatus(id: number, status: string): Observable<void> {
-    return this.httpClient.put<void>(`${this.baseURL}/change-status/${id}`, { status });
-  }
+ 
   checkEnrollment(userId: number, courseId: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.baseURL}/check?userId=${userId}&courseId=${courseId}`);
   }

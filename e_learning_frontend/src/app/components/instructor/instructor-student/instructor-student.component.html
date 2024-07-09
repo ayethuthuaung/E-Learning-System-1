@@ -1,0 +1,70 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar>
+  <div class="flex flex-1">
+    <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
+<div class="datatable-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
+    
+    <div class="pagination-controls">
+      <button (click)="firstPage()" [disabled]="currentPage === 1" class="btn btn-secondary"><i class="fas fa-angle-double-left"></i></button>
+      <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn btn-secondary"><i class="fas fa-angle-left"></i></button>
+      <span>Page 
+        <input type="number" class="page-input" [(ngModel)]="currentPage" (ngModelChange)="goToPage($event)" min="1" max="{{ totalPages }}" /> 
+        of {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary"><i class="fas fa-angle-right"></i></button>
+      <button (click)="lastPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary"><i class="fas fa-angle-double-right"></i></button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>No</th>
+          <th>Course Name</th>
+          <th>Student Name</th>
+          <th>Dept</th>
+          <th>Team</th>
+          <th>Email</th>
+          <th>Action</th>
+          <th>Status</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let userCourse of paginatedUserCourses; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ userCourse.course?.name}}</td>
+          <td>{{ userCourse.user?.name }}</td>
+          <td>{{ userCourse.user?.department }}</td>
+          <td>{{ userCourse.user?.team }}</td>
+          <td>{{ userCourse.user?.email }}</td>
+          <td>
+            <i class="icon" 
+               [ngClass]="{
+                 'pending-accept-icon': userCourse.status === 'Pending',
+                 'accepted-icon': userCourse.status === 'Accepted'
+               }" 
+               (click)="acceptStudent(userCourse)">
+              &#10003;
+            </i>
+            
+            <i class="icon" 
+               [ngClass]="{
+                 'pending-reject-icon': userCourse.status === 'Pending',
+                 'rejected-icon': userCourse.status === 'Rejected'
+               }" 
+               (click)="rejectStudent(userCourse)">
+              &#10006;
+            </i>
+          </td>
+          <td>{{ userCourse.status }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+</div>
