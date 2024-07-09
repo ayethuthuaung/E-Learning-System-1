@@ -29,4 +29,10 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
+
+    @Column(nullable = false)
+    private boolean softDeleted = false;
+
+    @Column
+    private String voiceMessageUrl;
 }

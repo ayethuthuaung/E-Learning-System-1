@@ -6,12 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
-
+  showNotificationsPage: boolean = false;
   isSidebarOpen = true;
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
-
+  toggleNotificationsPage() {
+    this.showNotificationsPage = !this.showNotificationsPage;
+  }
   barChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [{

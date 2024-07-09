@@ -123,7 +123,8 @@ public class CourseServiceImpl implements CourseService {
     if (adminRoleOptional.isPresent()) {
       Role adminRole = adminRoleOptional.get();
       Notification adminNotification = new Notification();
-      adminNotification.setMessage("New course added: " + course.getName());
+      String username = course.getUser().getName();
+      adminNotification.setMessage(username+" :   new course added:   " + course.getName());
       adminNotification.setRole(adminRole);
       notificationController.sendNotificationToPage(adminNotification);
     } else {
