@@ -1,7 +1,6 @@
-
 import { Component } from '@angular/core';
 import { QuestionService } from '../../services/question.service';
-import { QuestionDTO } from '../../models/question.model';
+import { QuestionDto } from '../../models/question.model';
 import { QuestionCreationDTO } from '../../models/QuestionCreationDTO.model';
 import { AnswerOptionDTO } from '../../models/answerOption.model';
 
@@ -17,6 +16,7 @@ interface Question {
   type: string;
   options: Option[];
   correctAnswer?: string; // Add this property to store the correct answer
+  isNew?: boolean; // Add this property to track if the question is new
 }
 
 @Component({
@@ -56,8 +56,15 @@ export class CreateQuestionFormComponent {
       type: 'multiple-choice',
       options: [
         { label: 'Option 1', value: 'option1', isAnswered: false }
-      ]
+      ],
+      isNew: true // Mark this question as new
     });
+  }
+
+  deleteNewQuestion(questionIndex: number) {
+    if (this.questions[questionIndex].isNew) {
+      this.questions.splice(questionIndex, 1);
+    }
   }
 
   selectOption(questionIndex: number, optionIndex: number) {
@@ -77,7 +84,7 @@ export class CreateQuestionFormComponent {
           answer: option.label,
           isAnswered: option.isAnswered
         } as AnswerOptionDTO))
-      } as QuestionDTO))
+      } as QuestionDto))
     };
 
     this.questionService.createQuestion([questionCreationDTO])
@@ -101,3 +108,6 @@ export class CreateQuestionFormComponent {
     });
   }
 }
+
+
+

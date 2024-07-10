@@ -1,6 +1,8 @@
 package com.ai.e_learning.controllers;
 
+import com.ai.e_learning.dto.ExamCreationDto;
 import com.ai.e_learning.dto.ExamDto;
+import com.ai.e_learning.dto.QuestionCreationDto;
 import com.ai.e_learning.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,17 +12,25 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/exam")
-//@CrossOrigin("*")
+@CrossOrigin("*")
 public class ExamController {
 
     @Autowired
     private ExamService examService;
 
     // Add exam
-    @PostMapping(value = "/add", produces = "application/json")
-    public ResponseEntity<ExamDto> addExam(@RequestBody ExamDto examDTO) {
-        ExamDto savedExam = examService.addExam(examDTO);
-        return ResponseEntity.ok(savedExam);
+//    @PostMapping(value = "/add", produces = "application/json")
+//    public ResponseEntity<ExamDto> addExam(@RequestBody ExamDto examDTO) {
+//        ExamDto savedExam = examService.addExam(examDTO);
+//        return ResponseEntity.ok(savedExam);
+//    }
+
+    @PostMapping("/add")
+    public ResponseEntity<?> createExam(@RequestBody ExamCreationDto examCreationDto ){
+
+
+        boolean isCreated = examService.createExam(examCreationDto);
+        return ResponseEntity.ok(isCreated);
     }
 
     // Get exam by ID
@@ -64,5 +74,10 @@ public class ExamController {
         ExamDto exam = this.examService.getExamById(examId);
         return ResponseEntity.ok(exam);
     }
-
+//for exams with questions list
+@GetMapping("/examsWithQuestions/{examId}")
+public ResponseEntity<ExamDto> getExamWithQuestions(@PathVariable("examId") Long examId) {
+    ExamDto examDTO = examService.getExamWithQuestions(examId);
+    return ResponseEntity.ok(examDTO);
+}
 }

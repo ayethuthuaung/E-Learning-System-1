@@ -60,4 +60,105 @@
   .add-question-button:hover {
     background-color: #3700b3;
   }
+
+  /* ------------------------------------------------------------ */
+
+  /* .form-container {
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .question-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    position: relative;
+  }
+  
+  .marks-input {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  
+  .marks-input input {
+    width: 50px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+  }
+  
+  .question-text-input {
+    display: inline-block;
+    width: calc(100% - 60px);
+  }
+  
+  .mark-input {
+    display: inline-block;
+    width: 50px;
+    margin-left: 10px;
+  }
+  
+  .btn {
+    margin-top: 10px;
+  } */
+  
+
+  /* ----------------------------------------------------------- */
+  
+  /* .form-container {
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .question {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    position: relative;
+  }
+  
+  .marks-input {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  
+  .marks-input input {
+    width: 50px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+  }
+  
+  .question-text-input {
+    display: inline-block;
+    width: calc(100% - 60px);
+  }
+  
+  .mark-input {
+    display: inline-block;
+    width: 50px;
+    margin-left: 10px;
+  }
+  
+  .btn {
+    margin-top: 10px;
+  } */
   

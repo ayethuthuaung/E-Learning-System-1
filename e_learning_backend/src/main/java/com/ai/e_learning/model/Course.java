@@ -24,7 +24,7 @@ public class Course  {
   @Column(nullable = false, length = 50)
   private String duration;
 
-  @Column(nullable = false, length = 100)
+  @Column(nullable = false, length = 500)
   private String description;
   private Long createdAt;
   private String createdDate;
@@ -47,6 +47,10 @@ public class Course  {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+
+  @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonIgnore
+  private Set<UserCourse> userCourses;
 
 
   @PrePersist

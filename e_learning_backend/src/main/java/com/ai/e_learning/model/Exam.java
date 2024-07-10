@@ -23,7 +23,21 @@ public class Exam {
 
     private boolean isDeleted;
 
+    private Long createdAt;
+
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Question> questions = new LinkedHashSet<>();
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    @JsonIgnore
+    private Course course;
+
+    @PrePersist
+    protected void onCreate() {
+
+        this.createdAt = System.currentTimeMillis();
+    }
 }

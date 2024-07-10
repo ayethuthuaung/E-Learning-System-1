@@ -61,13 +61,6 @@ export class CourseService {
       params: { name }
     });
   }
-
-  private createFormData(course: Course): FormData {
-    const formData = new FormData();
-    formData.append('course', new Blob([JSON.stringify(course)], { type: 'application/json' }));
-    if (course.photoFile) {
-      formData.append('photo', course.photoFile, course.photoFile.name);
-    }
-    return formData;
-  }
+  
+ 
 }

@@ -83,6 +83,7 @@ public class CategoryServiceImpl implements CategoryService {
   private CategoryDto convertToDto(Category category) {
     return modelMapper.map(category, CategoryDto.class);
   }
+
   @Override
   public boolean isCategoryNameAlreadyExists(String name) {
     return categoryRepository.existsByName(name);

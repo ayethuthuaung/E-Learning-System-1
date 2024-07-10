@@ -1,7 +1,7 @@
 export interface Role {
   id: number;
   name: string;
-  // Add other fields as necessary
+  
 }
 
 
@@ -22,6 +22,8 @@ export class User   {
   createdDate: string;
   roles: Role[];
   roleIdList: number[];
+  userCourses: any;
+  
 
   constructor( ) {
     this.id = 1;
@@ -39,5 +41,6 @@ export class User   {
     this.createdDate = '';
     this.roles = [];
     this.roleIdList = [];
+    
   }
 }

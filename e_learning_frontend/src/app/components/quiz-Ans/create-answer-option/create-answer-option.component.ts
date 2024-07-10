@@ -3,7 +3,7 @@ import { AnswerOptionService } from '../../services/answerOption.service';
 import { QuestionService } from '../../services/question.service';
 import { Router } from '@angular/router';
 import { AnswerOptionDTO } from '../../models/answerOption.model';
-import { QuestionDTO } from '../../models/question.model';
+import { QuestionDto } from '../../models/question.model';
 
 @Component({
   selector: 'app-create-answer-option',
@@ -12,7 +12,7 @@ import { QuestionDTO } from '../../models/question.model';
 })
 export class CreateAnswerOptionComponent implements OnInit {
   answerOption: AnswerOptionDTO = { answer: '', isAnswered: false };
-  questions: QuestionDTO[] = [];
+  questions: QuestionDto[] = [];
   submitted = false;
 
   constructor(
@@ -27,7 +27,7 @@ export class CreateAnswerOptionComponent implements OnInit {
 
   loadQuestions(): void {
     this.questionService.getViewList().subscribe(
-      (data: QuestionDTO[]) => {
+      (data: QuestionDto[]) => {
         this.questions = data;
       },
       (error) => {

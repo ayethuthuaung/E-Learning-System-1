@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { WebSocketService } from '../services/websocket.service';
-import { Notification } from '../models/notification';
+import { Notification } from '../models/notification.model';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
@@ -11,6 +11,7 @@ import { AuthService } from '../auth/auth.service';
 export class NotificationComponent implements OnInit {
   notifications: Notification[] = [];
   userRole!: string;
+  @Output() newNotification = new EventEmitter<void>();
   @ViewChild('audio', { static: false }) audio!: ElementRef<HTMLAudioElement>;
 
   constructor(private webSocketService: WebSocketService, private authService: AuthService) {}
@@ -21,7 +22,11 @@ export class NotificationComponent implements OnInit {
     if (this.userRole === 'Admin') {
       this.webSocketService.fetchNotifications().subscribe(
         (notifications) => {
-          this.notifications = notifications;
+          console.log(notifications);
+          this.notifications = notifications
+            .filter(notification => !notification.deleted)
+            .map(notification => ({ ...notification, createdAt: new Date(notification.createdAt) }))
+            .reverse(); // Reverse the array to display newest first
         },
         (error) => {
           console.error('Failed to fetch notifications:', error);
@@ -29,8 +34,12 @@ export class NotificationComponent implements OnInit {
       );
 
       this.webSocketService.getNotifications().subscribe((notification) => {
-        this.notifications.push(notification);
+        // Add new notification to the beginning of the array
+        this.notifications.unshift({ ...notification, createdAt: new Date(notification.createdAt) });
         this.playNotificationSound();
+        if (!notification.read) {
+          this.newNotification.emit(); // Emit event only if notification is unread
+        }
       });
     }
   }
@@ -40,13 +49,10 @@ export class NotificationComponent implements OnInit {
   }
 
   markAsRead(notification: Notification): void {
-    if (!notification.isRead) {
+    if (!notification.read) {
       this.webSocketService.markAsRead(notification.id).subscribe(
-        (updatedNotification) => {
-          const index = this.notifications.findIndex(n => n.id === notification.id);
-          if (index !== -1) {
-            this.notifications[index] = updatedNotification;
-          }
+        () => {
+          notification.read = true; // Update the local state
         },
         (error) => {
           console.error('Failed to mark notification as read:', error);
@@ -54,6 +60,7 @@ export class NotificationComponent implements OnInit {
       );
     }
   }
+
   softDeleteNotification(notification: Notification): void {
     this.webSocketService.softDeleteNotification(notification.id).subscribe(
       () => {
@@ -63,5 +70,9 @@ export class NotificationComponent implements OnInit {
         console.error('Failed to delete notification:', error);
       }
     );
+  }
+  
+  closeNotifications(): void {
+    this.notifications = [];
   }
 }

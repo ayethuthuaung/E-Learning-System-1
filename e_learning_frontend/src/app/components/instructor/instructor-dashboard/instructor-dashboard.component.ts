@@ -19,14 +19,11 @@ interface Conversation {
 export class InstructorDashboardComponent implements OnInit {
   isSidebarOpen = true;
   chatRoomVisible: boolean = false;
-  chatRoom:boolean=false;
-  conversationList: Conversation[] = [];
-  selectedConversation: Conversation | null = null;
+  
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.fetchConversationList();
   }
 
   toggleSidebar() {
@@ -37,23 +34,5 @@ export class InstructorDashboardComponent implements OnInit {
     this.chatRoomVisible = !this.chatRoomVisible;
   }
 
-  fetchConversationList(): void {
-    const userId = this.authService.getLoggedInUserId();
-    if (userId !== null) {
-      this.http.get<Conversation[]>(`http://localhost:8080/api/chat/conversation-list/${userId}`).subscribe({
-        next: (conversations) => this.conversationList = conversations,
-        error: (error) => console.error('Error fetching conversation list:', error)
-      });
-    }
-  }
-
-  openChat(conversation: Conversation): void {
-    this.selectedConversation = conversation;
-    this.chatRoomVisible = true;
-  }
-
-  closeChat(): void {
-    this.selectedConversation = null;
-    this.chatRoomVisible = true;
-  }
+  
 }

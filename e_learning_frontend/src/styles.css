@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,4 +9,9 @@
   }
 }
 
-/* Add additional custom styles below */
+
+
+html, body { height: 100%; }
+
+body { margin: 0; }
+

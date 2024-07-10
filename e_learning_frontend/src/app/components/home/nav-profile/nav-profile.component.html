@@ -1,6 +1,6 @@
 <!-- Profile Picture -->
 <div class="relative inline-block text-left">
-    <img src="{{photo}}" class="w-14 h-14 rounded-full cursor-pointer border-2 border-logo-blue" (click)="toggleDropdown()">
+    <img [src]="photo" class="w-14 h-14 rounded-full cursor-pointer border-2 border-logo-blue" (click)="toggleDropdown()">
   
     <!-- Dropdown Menu -->
     <div *ngIf="isDropdownOpen" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 border border-blue-500">

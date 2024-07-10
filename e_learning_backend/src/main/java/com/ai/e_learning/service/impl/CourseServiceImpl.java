@@ -2,6 +2,7 @@ package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.UserDto;
 import com.ai.e_learning.model.*;
 
 import com.ai.e_learning.model.Category;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,27 +65,37 @@ public class CourseServiceImpl implements CourseService {
     if ("all".equalsIgnoreCase(status)) {
       return getAllCourseList();
     }
+
     //Change List
     List<String> statusList = Arrays.asList(status.split(","));
     List<Course> allCourses = courseRepository.findByStatusIn(statusList);
 
-
       for (Course course : allCourses) {
-      try {
-        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-        String fileId = driveConnector.getFileIdByName(course.getPhoto());
-        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-        course.setPhoto(thumbnailLink);
-      } catch (IOException | GeneralSecurityException e) {
-        e.printStackTrace();
-      }
+
+//      try {
+//        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//        String fileId = driveConnector.getFileIdByName(course.getPhoto());
+//        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+//        course.setPhoto(thumbnailLink);
+//      } catch (IOException | GeneralSecurityException e) {
+//        e.printStackTrace();
+//      }
         // Convert createdAt to createdDate in CourseDto
         course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()));
     }
-    return allCourses.stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
+
+    return DtoUtil.mapList(allCourses,CourseDto.class,modelMapper);
   }
+
+  //AT
+  @Override
+  public List<CourseDto> getAllCourses(){
+    List<Course> courseList = EntityUtil.getAllEntities(courseRepository);
+    if(courseList==null)
+      return null;
+    return DtoUtil.mapList(courseList, CourseDto.class, modelMapper);
+  }
+  //AT
 
   @Override
   public List<CourseDto> getAllCourseList() {
@@ -99,18 +111,29 @@ public class CourseServiceImpl implements CourseService {
     Course course = convertToEntity(courseDto);
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
-    courseDto.getPhotoInput().transferTo(tempFile);
-    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
-    course.setPhoto(tempFile.getName());
+//    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
+//    courseDto.getPhotoInput().transferTo(tempFile);
+//    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
+//    course.setPhoto(tempFile.getName());
+    String imageUrl;
+    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+
+    try {
+      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
+    } catch (IOException | GeneralSecurityException e) {
+      throw new RuntimeException("Failed to upload file to Google Drive", e);
+    }
+    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
+
+//    course.setPhoto(imageUrl);
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
-              .map(existingCategory -> {
-                existingCategory.setName(category.getName());
-                return existingCategory;
-              })
-              .orElse(category);
+        .map(existingCategory -> {
+          existingCategory.setName(category.getName());
+          return existingCategory;
+        })
+        .orElse(category);
       mergedCategories.add(managedCategory);
     }
     course.setCategories(mergedCategories);
@@ -124,7 +147,8 @@ public class CourseServiceImpl implements CourseService {
     if (adminRoleOptional.isPresent()) {
       Role adminRole = adminRoleOptional.get();
       Notification adminNotification = new Notification();
-      adminNotification.setMessage("New course added: " + course.getName());
+      String username = course.getUser().getName();
+      adminNotification.setMessage(username+" :   new course added:   " + course.getName());
       adminNotification.setRole(adminRole);
       notificationController.sendNotificationToPage(adminNotification);
     } else {
@@ -135,9 +159,9 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public void changeStatus(Long id,String status){
-      Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
-      course.setStatus(status);
-      EntityUtil.saveEntity(courseRepository,course,"Course");
+    Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
+    course.setStatus(status);
+    EntityUtil.saveEntity(courseRepository,course,"Course");
   }
 
   @Override
@@ -201,11 +225,11 @@ public class CourseServiceImpl implements CourseService {
   }
 
   private Course convertToEntity(CourseDto dto) {
-      return modelMapper.map(dto, Course.class);
+    return modelMapper.map(dto, Course.class);
   }
 
   private CourseDto convertToDto(Course course) {
-      return modelMapper.map(course, CourseDto.class);
+    return modelMapper.map(course, CourseDto.class);
   }
 
 

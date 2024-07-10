@@ -23,6 +23,8 @@ export class Course {
   
 
   createdDate: string;
+completion: any;
+showDetails: any;
  
   
 

@@ -24,8 +24,8 @@ import java.util.List;
 @RequestMapping("/api/courses")
 public class CourseController {
 
-    @Autowired
-    private CourseService courseService;
+  @Autowired
+  private CourseService courseService;
 
   @GetMapping(value = "/courselist", produces = "application/json")
   public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
@@ -35,29 +35,33 @@ public class CourseController {
     return ResponseEntity.ok(courseService.getAllCourses(status));
   }
 
+  //AT
+  @GetMapping(value = "/allCoursesList", produces = "application/json")
+  public List<CourseDto> allCourses() {
+      return courseService.getAllCourses();
+  }
+  //AT
 
   @GetMapping(value = "/instructorcourselist", produces = "application/json")
-    public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
-        return courseService.getCoursesByUserId(userId);
-    }
+  public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
+    return courseService.getCoursesByUserId(userId);
+  }
 
-    @PostMapping(value = "/changeStatus", produces = "application/json")
-    public ResponseEntity<?> changeStatus(ModelMap model,@RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
-        try{
-            courseService.changeStatus( id,  status);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
-        }
-
+  @PostMapping(value = "/changeStatus", produces = "application/json")
+  public ResponseEntity<?> changeStatus(ModelMap model,@RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
+    try{
+      courseService.changeStatus( id, status);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
+    }catch(Exception e){
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
     }
+  }
 
 
   @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
-    public ResponseEntity<CourseDto> addCourse(
-            @RequestPart("course") CourseDto courseDto,
-            @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
-
+  public ResponseEntity<CourseDto> addCourse(
+    @RequestPart("course") CourseDto courseDto,
+    @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
         if (photo.isEmpty()) {
             return ResponseEntity.badRequest().body(courseDto);
         }
@@ -151,4 +155,3 @@ public class CourseController {
     }
   }*/
 }
-

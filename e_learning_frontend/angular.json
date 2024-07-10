@@ -38,6 +38,7 @@
               }
             ],
             "styles": [
+              "src/custom-theme.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.css",
@@ -103,11 +104,12 @@
               }
             ],
             "styles": [
-             "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.css",
               "src/output.css"
-              ],
+            ],
             "scripts": []
           }
         }
@@ -117,6 +119,7 @@
   "cli": {
     "analytics": "bb6f2ecf-ad61-4c9c-890b-371b2c0d816b"
   }
+  
   
    
   
