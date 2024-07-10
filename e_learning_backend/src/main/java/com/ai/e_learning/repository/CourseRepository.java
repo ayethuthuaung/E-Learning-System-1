@@ -30,4 +30,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
   List<Course> findByUserId(Long userId);
 
+
+
 }

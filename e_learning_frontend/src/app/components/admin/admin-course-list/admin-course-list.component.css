@@ -12,7 +12,7 @@
 }
 
 thead.thead-dark th {
-  background-color: #343a40;
+  background-color: #036ad1;
   color: white;
 }
 
@@ -35,31 +35,141 @@ thead.thead-dark th {
   margin: 0 1px;
 }
 
-.icon {
-  font-size: 32px;
-  cursor: pointer;
-  border-radius: 50%;
+.icon-container {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  height: 100%;
 }
 
-.pending-accept-icon,
-.pending-reject-icon {
-  color: white;
-  background-color: grey;
+.icon-container svg {
+  width: 24px;
+  height: 24px;
 }
 
-.accepted-icon {
-  background-color: green;
-  color: white;
-  border: 2px solid green;
+.status-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.rejected-icon {
-  background-color: red;
-  color: white;
-  border: 2px solid red;
+/* General Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-dialog {
+  max-width: 60%; /* Adjusted the max-width */
+  margin: 0 auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+}
+
+.btn-close:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.profile-picture {
+  width: 200px; /* Increased size */
+  height: 200px; /* Increased size */
+  overflow: hidden;
+}
+
+.profile-picture img {
+  width: 70%;
+  height: 70%;
+  object-fit: cover; /* Ensure the image covers the entire area */
+}
+
+.profile-picture .absolute {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+
+.profile-picture .hover\:opacity-100 {
+  opacity: 1;
+}
+
+.profile-picture input[type="file"] {
+  display: none;
+}
+
+.modal-footer {
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    max-width: 50%; /* Adjusted the max-width for larger screens */
+  }
+}
+
+.status-buttons button {
+  font-size: 24px; /* Adjust size as needed */
+  padding: 5px; /* Adjust padding as needed */
+}
+
+.icon-green {
+  color: green;
+}
+
+.icon-red {
+  color: red;
 }
