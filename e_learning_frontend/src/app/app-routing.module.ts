@@ -4,33 +4,33 @@ import { LoginComponent } from './components/auth/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { AuthGuard } from './components/auth/auth.guard';
 
-import { CategoryComponent } from './components/category/category.component';
 
 
 import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
 import { BlogsComponent } from './components/home/blogs/blogs.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { StudentProfileComponent } from './components/student/student-profile/student-profile.component';
+
 
 import { NotificationComponent } from './components/notification/notification.component';
 
-import { UpdateCourseComponent } from './components/update-course/update-course.component';
-import { UpdateCategoryComponent } from './components/update-category/update-category.component';
-import { CourseListComponent } from './components/course-list/course-list.component';
-import { CategoryListComponent } from './components/category-list/category-list.component';
+
 
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
 
 import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
 
- 
- 
 import { InstructorProfileComponent } from './components/instructor/instructor-profile/instructor-profile.component';
 import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
 import { InstructorCourseComponent } from './components/instructor/instructor-course/instructor-course.component';
 import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
 
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+
+
+import { CourseListComponent } from './components/course-list/course-list.component';
+
 
 import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
@@ -45,6 +45,7 @@ import { QuizExamListComponent  } from './components/quiz-Ans/exam-list/exam-lis
 
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
+import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
 
 
 
@@ -52,12 +53,11 @@ const routes: Routes = [
   {path:'', redirectTo:'/login',pathMatch:'full'},
    {path:'login', component: LoginComponent},
    {path: 'forget-password', component: ForgetPasswordComponent },
-   {path:'category', component: CategoryComponent},
-   { path: 'course/:courseId/update', component: UpdateCourseComponent},
-   {path:'category/:categoryId/update', component: UpdateCategoryComponent},
+
+   { path: 'student-profile', component: StudentProfileComponent },
+
    {path:'courses', component: CourseListComponent},
-   {path:'categories', component: CategoryListComponent},
-   
+  
    { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
 
    { path: 'conservation-list', component: ConservationListComponent },
@@ -74,6 +74,8 @@ const routes: Routes = [
    {path:'answerform' , component: AnswerFormComponent},
 
    {path:'blog', component: BlogsComponent},
+   {path:'chat', component: ChatComponent},
+
 
    {path:'chat', component: ChatComponent},
 
@@ -83,6 +85,7 @@ const routes: Routes = [
    {path:'instructor/dashboard', component: InstructorDashboardComponent},
    {path:'instructor/course', component: InstructorCourseComponent},
    {path:'instructor/category', component: InstructorCategoryComponent},
+
 
    {path:'admin/dashboard', component: AdminDashboardComponent},
    {path:'admin/upload-user-data', component: UserUploadComponent },
@@ -100,6 +103,7 @@ const routes: Routes = [
    {path:'course-video-view/:moduleId', component: CourseVideoViewComponent},
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
+   {path:'instructor/student', component: InstructorStudentComponent},
 
 
 

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CourseService } from '../services/course.service';
 import { ChatRoomService } from '../services/chat-room.service';
 import { AuthService } from '../auth/auth.service';
 import { LessonService } from '../services/lesson.service';
 import { Lesson } from '../models/lesson.model';
 import { Course } from '../models/course.model';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { log } from 'console';
-import { CourseService } from '../services/course.service';
 import { CourseModuleService } from '../services/course-module.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class CourseDetailsComponent implements OnInit {
 
   lessons: Lesson[] = [];
   isDropdownOpen: boolean[] = [];
-  course: Course | undefined;
+  course!: Course;
   courseId: number | undefined;
 
   loggedUser: any = '';
@@ -32,12 +33,15 @@ export class CourseDetailsComponent implements OnInit {
   lesson: Lesson | undefined;
   module: Course | undefined;
 
+  isOwner: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private chatRoomService: ChatRoomService,
     private authService: AuthService,
     private lessonService: LessonService,
+
     private courseService: CourseService,
     private courseModuleService: CourseModuleService
   ) {}
@@ -49,10 +53,28 @@ export class CourseDetailsComponent implements OnInit {
       
       console.log(this.courseId);
       
-      this.course = history.state.course;
-      console.log(`Course ID: ${this.courseId}`);
-      console.log(`Course: ${JSON.stringify(this.course)}`);
-      this.fetchLessons();
+      if (history.state.course) {
+        this.course = history.state.course;
+        console.log(`Course: ${JSON.stringify(this.course)}`);
+        this.fetchLessons();
+      } else {
+        console.log('Course not found in state. Fetching from service.');
+        this.courseService.getCourseById(this.courseId).subscribe(
+          course => {
+            this.course = course;
+            console.log(this.course);
+            console.log(this.course.userId);
+            this.instructorId = this.course.userId;
+            this.isOwner = this.checkIsOwner();
+
+            console.log(`Fetched Course: ${JSON.stringify(this.course)}`);
+            this.fetchLessons();
+          },
+          error => {
+            console.error('Error fetching course:', error);
+          }
+        );
+      }
     });
 
     const storedUser = localStorage.getItem('loggedUser');
@@ -62,13 +84,15 @@ export class CourseDetailsComponent implements OnInit {
 
       if (this.loggedUser) {
         this.userId = this.loggedUser.id;
-        this.instructorId = this.course?.user?.id;
+        // this.instructorId = this.course.userId;
+        // console.log(this.instructorId);
+        
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    }
-
-   
+    }    
   }
+
+  checkIsOwner(): boolean{return this.userId===this.instructorId}
 
   toggleChatRoom(): void {
     if (!this.chatRoomVisible) {
@@ -89,7 +113,6 @@ export class CourseDetailsComponent implements OnInit {
     );
   }
 
- 
   fetchLessons(): void {
     console.log('Fetching lessons for course ID:', this.courseId);
     if (this.courseId) {

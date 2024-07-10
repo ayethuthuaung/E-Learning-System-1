@@ -100,6 +100,13 @@ public class UserServiceImpl implements UserService {
                 update_user.setStatus(update_user.getStatus());
               }
 
+              if (!update_user.getEmail().equalsIgnoreCase(user.getEmail())) {
+                update_user.setEmail(user.getEmail());
+              } else {
+                update_user.setEmail(update_user.getEmail());
+              }
+
+
               if(update_user.getPassword().equalsIgnoreCase("")) {
                 update_user.setPassword(passwordEncoder.encode("123@dirace"));
               }
@@ -153,15 +160,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getCurrentUser(String staffId) {
         User user=userRepository.findUserByStaffId(staffId);
-        try {
-            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-            String fileId = driveConnector.getFileIdByName(user.getPhoto());
-            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-            user.setPhoto(thumbnailLink);
-            System.out.println(thumbnailLink);
-        } catch (IOException | GeneralSecurityException e) {
-
-        }
+//        try {
+//            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//            String fileId = driveConnector.getFileIdByName(user.getPhoto());
+//            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+//            user.setPhoto(thumbnailLink);
+//            System.out.println(thumbnailLink);
+//        } catch (IOException | GeneralSecurityException e) {
+//
+//        }
         return DtoUtil.map(user,UserDto.class,modelMapper);
 
     }

@@ -45,6 +45,7 @@
               "src/output.css"
             ],
             "scripts": [
+              "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.js"
             ]
           },
@@ -118,6 +119,7 @@
   "cli": {
     "analytics": "bb6f2ecf-ad61-4c9c-890b-371b2c0d816b"
   }
+  
   
    
   

@@ -11,7 +11,7 @@ describe('CourseListComponent', () => {
       declarations: [CourseListComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(CourseListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

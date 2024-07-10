@@ -47,6 +47,6 @@ export class CourseListComponent implements OnInit {
   }
 
   getPhotoUrl(photoUrl: string): string {
-    return photoUrl ? photoUrl : 'assets/default-photo.jpg'; // Default photo if none provided
+    return photoUrl ? photoUrl : 'assets/default-photo.jpg'; 
   }
 }

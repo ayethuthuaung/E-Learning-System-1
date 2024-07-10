@@ -48,6 +48,10 @@ public class Course  {
     @JsonIgnore
     private User user;
 
+  @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonIgnore
+  private Set<UserCourse> userCourses;
+
 
   @PrePersist
   protected void onCreate() {

@@ -11,7 +11,7 @@
                   [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCourse' }"
                   (click)="setActiveTab('createCourse')"
                 >
-                 Create Course
+                 Add Course
                 </button>
                 
                 <button
@@ -19,18 +19,20 @@
                   [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
                   (click)="setActiveTab('createLesson')"
                 >
-                  Create Lessons And Exam
+                  Add Lessons And Exam
                 </button>
                 <button
                   class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
                   [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
                   (click)="setActiveTab('additional')"
                 >
-                  Create Certificate
+                  Add Certificate
                 </button>
               </div>
 
+   
               
+
              
               
               <div *ngIf="activeTab === 'additional'" class="p-4">
@@ -144,15 +146,18 @@
                   Click to Create Lesson
                 </span>
               </button>
-            </div>
-          </div>
-                 
-                </div>
+          
+</div>
+</div>
+            
+           
+          
+               
               </div>
-            </div>     
-          </div>
-        </section>
-      </main>
-    </div>
+            </div>
+          </div>     
+        </div>
+      </section>
+    </main>
   </div>
-  
+</div>

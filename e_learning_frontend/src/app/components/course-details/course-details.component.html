@@ -1,6 +1,6 @@
-
 <div class="flex min-h-screen">
   <app-navbar></app-navbar>
+
  
   <div class="md:w-1/2 p-4 mt-40 mx-auto">
     <div class="bg-gray-50 p-4 rounded-lg shadow-md">
@@ -57,7 +57,7 @@
           <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
             <a [href]="module.file" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" target="_blank">Open File</a>
           </ng-container>          
-          <button class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700">Mark as Done</button>
+          <button *ngIf="!isOwner" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700">Mark as Done</button>
         </div>
       </div>
     </div>
@@ -71,6 +71,7 @@
 
 <!-- Chat Room Section -->
 <app-chat *ngIf="chatRoomVisible" [chatRoomId]="chatRoomId" [userName]="instructorName" (close)="toggleChatRoom()" ></app-chat>
+
 
 
 

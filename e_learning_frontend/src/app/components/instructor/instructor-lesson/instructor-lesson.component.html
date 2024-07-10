@@ -16,14 +16,14 @@
             [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
             (click)="setActiveTab('createLesson')"
           >
-            Create Lesson
+            Add Lesson
           </button>
           <button
             class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
             [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createExam' }"
             (click)="setActiveTab('createExam')"
           >
-            Create Exam
+            Add Exam
           </button>
         </div>
 
@@ -94,7 +94,7 @@
         </div>
 
         <div *ngIf="activeTab === 'createExam'" class="p-4 bg-gray-100 min-h-screen flex flex-col items-center">
-          <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-6">
+          <div class="w-full max-w-xl bg-white rounded-lg shadow-md p-6">
             <input type="text" [(ngModel)]="examTitle" placeholder="Exam Title" class="bg-gray-100 form-input w-full mb-4 px-4 py-2 border rounded">
             <textarea [(ngModel)]="examDescription" placeholder="Exam Description" class="bg-gray-100 form-textarea w-full mb-4 px-4 py-2 border rounded"></textarea>
             
@@ -104,7 +104,7 @@
               <div class="flex items-center">
               <input type="text" [(ngModel)]="question.text" placeholder="Question Text" class="bg-gray-100 form-input w-full mb-2 px-4 py-2 border rounded">
               <button (click)="deleteNewQuestion(qIndex)" class="ml-2 text-gray-500 hover:text-red-600 transition ease-in-out duration-150">
-                <i class="fas fa-trash fa-xl"></i>
+                <i class="fas fa-trash fa-lg"></i>
               </button> 
               </div>
 

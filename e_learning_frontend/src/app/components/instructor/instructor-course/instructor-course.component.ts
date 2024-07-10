@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
 declare var Swal: any;
+
 @Component({
   selector: 'app-instructor-course',
   templateUrl: './instructor-course.component.html',
@@ -26,6 +27,8 @@ export class InstructorCourseComponent implements OnInit {
 
   loggedUser: any = '';
   userId: any;
+
+  loading = false;
 
   courses: Course[] = [];
   status: string = 'Accept,Pending'; 
@@ -77,7 +80,9 @@ export class InstructorCourseComponent implements OnInit {
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.submitted = false;
-      this.saveCourse();
+      this.loading = true;
+      this.sureAlert();
+      
     } else {
       this.submitted = true;
       console.log('invalid form');
@@ -141,10 +146,11 @@ export class InstructorCourseComponent implements OnInit {
     if (this.course.photoFile) {
       formData.append('photo', this.course.photoFile, this.course.photoFile.name);
     }
-
     this.courseService.addCourseWithFormData(formData).subscribe(
       (data: Course) => {
         console.log('Course created successfully:', data);
+        this.loading = false;
+
         this.getInstructorCourses(); // Refresh courses list after adding new course
         this.course = new Course(); // Clear the form
         this.course.status = data.status; // Update local status with returned status
@@ -154,6 +160,7 @@ export class InstructorCourseComponent implements OnInit {
       },
       (error) => {
         console.error('Error creating course:', error);
+        this.loading = false;
       }
     );
   }
@@ -210,6 +217,23 @@ export class InstructorCourseComponent implements OnInit {
     this.router.navigate([`instructor/lesson/${courseId}`]);
   }
 
+  sureAlert(): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'Do you want to create this course?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.saveCourse();
+      } else {
+        this.loading = false;
+      }
+    });
+  }
+
   showSuccessAlert(): void {
     Swal.fire({
       icon: 'info',
@@ -223,4 +247,5 @@ export class InstructorCourseComponent implements OnInit {
       }
     });
   }
+
 }

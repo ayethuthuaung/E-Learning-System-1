@@ -2,8 +2,10 @@ package com.ai.e_learning.controllers;
 import com.ai.e_learning.dto.ImageResponse;
 
 import com.ai.e_learning.dto.UserDto;
+import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.service.MailSenderService;
 import com.ai.e_learning.service.OtpStoreService;
+import com.ai.e_learning.service.UserCourseService;
 import com.ai.e_learning.service.UserService;
 import com.ai.e_learning.util.Helper;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,7 @@ public class UserController {
 
   @Autowired
   private UserService userService;
+  private UserCourseService userCourseService;
   private MailSenderService mailSenderService;
   private OtpStoreService otpStoreService;
 
@@ -151,7 +154,26 @@ public class UserController {
 
     return ResponseEntity.status(imageResponse.getStatus()).body(imageResponse);
   }
+  @PostMapping("/enrollUserInCourse/{userId}/{courseId}")
+  public ResponseEntity<ImageResponse> enrollUserInCourse(@PathVariable Long userId, @PathVariable Long courseId) {
+    try {
 
 
+      UserCourse userCourse = userCourseService.enrollUserInCourse(userId, courseId);
+
+
+      return ResponseEntity.status(200).body(new ImageResponse(200, "User enrolled in course successfully", null));
+    } catch (IllegalArgumentException e) {
+      // Handle not found exceptions
+      return ResponseEntity.status(404).body(new ImageResponse(404, e.getMessage(), null));
+    } catch (Exception e) {
+      // Handle other exceptions
+      e.printStackTrace();
+      return ResponseEntity.status(500).body(new ImageResponse(500, "Internal server error", null));
+    }
+  }
+
+  // Other controller methods...
 }
+
 
