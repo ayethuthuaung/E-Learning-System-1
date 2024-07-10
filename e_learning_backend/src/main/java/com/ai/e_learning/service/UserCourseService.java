@@ -22,4 +22,5 @@ public interface UserCourseService {
   boolean checkEnrollment(Long userId, Long courseId); // Add this method
   boolean checkEnrollmentAcceptance(Long userId, Long courseId);
 
+  List<UserCourseDto> getAllUserCourseByUserId(Long userId);
 }

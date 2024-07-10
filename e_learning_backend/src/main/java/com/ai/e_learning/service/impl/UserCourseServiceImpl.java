@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -118,6 +119,17 @@ public class UserCourseServiceImpl implements UserCourseService {
   public boolean checkEnrollmentAcceptance(Long userId, Long courseId) {
     Optional<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
     return userCourseOptional.isPresent() && userCourseOptional.get().getStatus().equals("accept");
+  }
+
+  @Override
+  public List<UserCourseDto> getAllUserCourseByUserId(Long userId) {
+    List<Course> courses = courseRepository.findByUserId(userId);
+    List<UserCourse> userCourses = new ArrayList<>();
+    for (Course course : courses) {
+      List<UserCourse> courseUserCourses = userCourseRepository.findByCourseId(course.getId());
+      userCourses.addAll(courseUserCourses);
+    }
+    return DtoUtil.mapList(userCourses,UserCourseDto.class,modelMapper);
   }
 
 

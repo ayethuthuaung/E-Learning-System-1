@@ -57,7 +57,7 @@
           <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
             <a [href]="module.file" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" target="_blank">Open File</a>
           </ng-container>          
-          <button class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700">Mark as Done</button>
+          <button *ngIf="!isOwner" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700">Mark as Done</button>
         </div>
       </div>
     </div>

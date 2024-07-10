@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
 declare var Swal: any;
+
 @Component({
   selector: 'app-instructor-course',
   templateUrl: './instructor-course.component.html',

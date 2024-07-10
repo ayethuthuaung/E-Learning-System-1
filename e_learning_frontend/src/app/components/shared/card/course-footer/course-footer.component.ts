@@ -20,11 +20,16 @@ export class CourseFooterComponent implements OnInit {
   isAccepted: boolean = false; // Flag to check if user's enrollment is accepted by instructor
   userCourseId: number | undefined; // Initialize userCourseId as undefined
 
+  isOwner: boolean = false;
+
   constructor(private userCourseService: UserCourseService, private router: Router) { }
 
   ngOnInit(): void {
     this.fetchUserData();
+    this.isOwner = this.checkIsOwner();
   }
+
+  checkIsOwner(): boolean{return this.userId===this.course?.user?.id}
 
   fetchUserData(): void {
     const storedUser = localStorage.getItem('loggedUser');
@@ -128,7 +133,7 @@ export class CourseFooterComponent implements OnInit {
     }
     
 
-    if (!this.isAccepted) {
+    if (!this.isAccepted && !this.isOwner) {
       Swal.fire({
         title: 'Enrollment Not Accepted',
         text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',

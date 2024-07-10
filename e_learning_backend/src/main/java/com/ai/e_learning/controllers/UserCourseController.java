@@ -35,19 +35,21 @@ public class UserCourseController {
 
   //ATTA
   @GetMapping(value = "/userCourselist", produces = "application/json")
-  public List<UserCourseDto> displayUserCourse() {
-    return userCourseService.getAllUserCourses();
+  public List<UserCourseDto> displayUserCourse(@RequestParam("userId")Long userId) {
+    return userCourseService.getAllUserCourseByUserId(userId);
   }
 
-  @PostMapping(value = "/changeStatus", produces = "application/json")
-  public ResponseEntity<?> changeStatus(ModelMap model, @RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
-    try{
-      userCourseService.changeStatus( id, status);
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
-    }catch(Exception e){
+  @PostMapping(value = "/change-status/{id}", produces = "application/json")
+  public ResponseEntity<?> changeStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+    String status = payload.get("status");
+    try {
+      userCourseService.changeStatus(id, status);
+      return ResponseEntity.status(HttpStatus.OK).build();
+    } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
     }
   }
+
   //ATTA
 
 

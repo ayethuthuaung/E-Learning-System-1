@@ -1,6 +1,7 @@
 import { UserCourse } from './../../models/usercourse.model';
 import { UserCourseService } from './../../services/user-course.service';
 import { Component, OnInit } from '@angular/core';
+declare var Swal: any;
 
 @Component({
   selector: 'app-instructor-student',
@@ -18,14 +19,33 @@ export class InstructorStudentComponent implements OnInit {
   totalPages = 0;
   isSidebarOpen = true;
 
+  loggedUser: any = '';
+  userId: any;
+
   constructor(private userCourseService: UserCourseService) {}
 
   ngOnInit() {
+ 
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      console.log(this.loggedUser);
+
+      // if (this.loggedUser) {
+    
+        this.userId = this.loggedUser.id;
+       console.log(this.userId);
+       
+        
+      // }
+    }
     this.fetchAllStudentByCourse();
   }
 
   fetchAllStudentByCourse() {
-    this.userCourseService.getAllUserCourses().subscribe({
+    console.log(this.userId);
+    console.log(this.loggedUser.id);
+    this.userCourseService.getAllUserCourses(this.userId).subscribe({
       next: (data) => {
         this.userCourses = data;
         this.updatePaginatedStudentByCourses();
@@ -88,13 +108,49 @@ export class InstructorStudentComponent implements OnInit {
   }
 
   acceptStudent(userCourse: UserCourse) {
-    userCourse.status= 'accept';
-    //this.updateCourseStatus(course);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You are about to accept this student.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, accept!'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        this.changeStatus(userCourse, 'accept');
+      }
+    });
   }
 
   rejectStudent(userCourse: UserCourse) {
-    userCourse.status = 'reject';
-    // this.updateCourseStatus(course);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You are about to reject this student.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, reject!'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        this.changeStatus(userCourse, 'reject');
+      }
+    });
+
+  }
+
+  changeStatus(userCourse: UserCourse, status: string) {
+    this.userCourseService.changeStatus(userCourse.id, status).subscribe({
+      next: () => {
+        userCourse.status = status;
+        console.log("Hi");
+        
+        this.updatePaginatedStudentByCourses();
+        this.fetchAllStudentByCourse();
+      },
+      error: (err) => console.error('Error changing status:', err)
+    });
   }
 
   toggleSidebar(): void {

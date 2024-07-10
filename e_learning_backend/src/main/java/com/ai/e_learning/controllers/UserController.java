@@ -158,6 +158,7 @@ public class UserController {
   public ResponseEntity<ImageResponse> enrollUserInCourse(@PathVariable Long userId, @PathVariable Long courseId) {
     try {
 
+
       UserCourse userCourse = userCourseService.enrollUserInCourse(userId, courseId);
 
 

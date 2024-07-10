@@ -11,7 +11,7 @@
             [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCategory' }"
             (click)="setActiveTab('createCategory')"
           >
-            Create Categories
+            Add Categories
           </button>
           <button
             class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none ml-4"
@@ -48,7 +48,7 @@
 
                 <button
                   type="submit"
-                  class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
+                  class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
                   [disabled]="nameDuplicateError"
                 >
                   Submit
