@@ -45,8 +45,8 @@
             <span class="font-semibold">Original Message:</span> {{ message.content }}
           </div>
           <input [(ngModel)]="message.content" (keyup.enter)="saveMessage(message)"  class="p-1 border rounded-lg">
-          <button (click)="saveMessage(message)" class="bg-green-500 text-white px-2 py-1 rounded-lg">Save</button>
-          <button (click)="cancelEdit(message)" class="bg-red-500 text-white px-2 py-1 rounded-lg">Cancel</button>
+          <button (click)="saveMessage(message)" class="bg-green-500 text-gray-500 px-2 py-1 rounded-lg">Save</button>
+          <button (click)="cancelEdit(message)" class="bg-red-500 text-gray-500 px-2 py-1 rounded-lg">Cancel</button>
         </div>
         
       </div>
