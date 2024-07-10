@@ -8,6 +8,7 @@ import com.ai.e_learning.repository.ChatRoomRepository;
 import com.ai.e_learning.repository.MessageRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.ChatService;
+import com.ai.e_learning.util.CloudinaryService;
 import com.ai.e_learning.util.EntityUtil;
 import com.ai.e_learning.util.GoogleDriveJSONConnector;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,68 +33,38 @@ public class ChatServiceImpl implements ChatService {
     private final ModelMapper modelMapper;
     private final GoogleDriveJSONConnector googleDriveJSONConnector;
     private final SimpMessagingTemplate messagingTemplate;
+    private final CloudinaryService cloudinaryService;
 
-    public ChatMessageDto sendMessage(Long chatRoomId, Long senderId, String content, String sessionId) {
-        System.out.println("chatRoomId: " + chatRoomId + " senderId: " + senderId + " content: " + content);
+    public ChatMessageDto sendMessage(Long chatRoomId, Long senderId, String content, String file, String messageType, String sessionId) throws IOException, GeneralSecurityException {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Message message = new Message();
-        message.setContent(content);
         message.setTimestamp(System.currentTimeMillis());
+
         message.setSender(sender);
         message.setChatRoom(chatRoom);
-        Message savedMessage = messageRepository.save(message);
-        ChatMessageDto chatMessageDto = modelMapper.map(savedMessage, ChatMessageDto.class);
-        chatMessageDto.setSessionId(sessionId);
-        chatMessageDto.setMessage_side(senderId.equals(sender.getId()) ? "sender" : "receiver");
-        return chatMessageDto;
-    }
-    @Override
-    public ChatMessageDto sendVoiceMessage(Long chatRoomId, Long senderId, MultipartFile voiceMessage, String sessionId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Save the voice message file
-        String voiceMessageUrl;
-        try {
-            voiceMessageUrl = saveVoiceMessageFile(voiceMessage);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save voice message", e);
+        if ("text".equalsIgnoreCase(messageType)) {
+            message.setContent(content != null ? content : ""); // Ensure content is not null
+        } else {
+            message.setFileUrl(file);
+            // Handle other message types or scenarios where content might be null
+//            message.setContent(""); // Set default empty content
         }
 
-        Message message = new Message();
-        message.setContent("Voice message");
-        message.setTimestamp(System.currentTimeMillis());
-        message.setSender(sender);
-        message.setChatRoom(chatRoom);
-        message.setVoiceMessageUrl(voiceMessageUrl); // Set the voice message URL
-        System.out.println(message);
+        message.setMessageType(messageType);
         Message savedMessage = messageRepository.save(message);
 
         ChatMessageDto chatMessageDto = modelMapper.map(savedMessage, ChatMessageDto.class);
         chatMessageDto.setSessionId(sessionId);
         chatMessageDto.setMessage_side(senderId.equals(sender.getId()) ? "sender" : "receiver");
-
-        // Send the chat message to WebSocket topic for real-time updates
-        messagingTemplate.convertAndSend("/topic/messages", chatMessageDto);
-
         return chatMessageDto;
     }
 
 
-    public String saveVoiceMessageFile(MultipartFile voiceMessage) throws GeneralSecurityException, IOException {
-        InputStream inputStream = voiceMessage.getInputStream();
-        String fileName = voiceMessage.getOriginalFilename();
-        String contentType = voiceMessage.getContentType();
-
-        String fileId = googleDriveJSONConnector.uploadVoiceMessageToDrive(inputStream, fileName, contentType);
-        return googleDriveJSONConnector.getFileDownloadUrl(fileId);
-    }
     public List<Message> getChatHistory(Long chatRoomId) {
         if (chatRoomId == null) {
             throw new IllegalArgumentException("Chat room ID must not be null");
@@ -150,5 +122,11 @@ public class ChatServiceImpl implements ChatService {
         message.setSoftDeleted(true);
         messageRepository.save(message);
     }
+    public Message updateMessageContent(Long messageId, String newContent) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
 
+        message.setContent(newContent);
+        return messageRepository.save(message);
+    }
 }

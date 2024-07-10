@@ -1,56 +1,70 @@
-<div class="fixed bottom-20 right-4 w-full max-w-md bg-white rounded-lg shadow-lg">
-  <div class="flex justify-between items-center p-4 bg-logo-blue rounded-t-lg text-white">
+<div class="fixed bottom-20 right-8 w-full max-w-sm bg-white rounded-lg shadow-lg">
+  <div class="flex justify-between items-center p-2 bg-logo-blue rounded-t-lg text-white">
     <h2 class="text-lg">{{ userName }}</h2>
     <button (click)="closeChat()" class="text-2xl">&times;</button>
   </div>
-  <div class="p-4 overflow-y-auto h-96" (click)="hideDropdown()">
+  <div class="p-3 overflow-y-auto" style="height: 19rem;">
     <div *ngIf="messages.length === 0" class="text-center text-gray-500">
       No Conversation
     </div>
     <div *ngFor="let message of messages" 
-         [ngClass]="{'text-right': message.message_side === 'sender'}"
-         (contextmenu)="onRightClick($event, message)">
-         <div class="inline-block p-2 m-1 rounded-lg relative" 
-         [ngClass]="{
-           'bg-gray-200 text-black': message.message_side === 'receiver',
-           'bg-logo-blue text-white': message.message_side === 'sender'
-         }">
-      <div class="flex justify-between items-center">
-        <div>{{ message.content }}</div>
-        <audio controls *ngIf="message.voiceMessageUrl">
-          <source [src]="message.voiceMessageUrl" type="audio/mpeg">
-          Your browser does not support the audio element.
-        </audio>
-        <div *ngIf="message.showDropdown" class="ml-2">
-          <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer flex items-center" 
-            (click)="softDeleteMessage(message.id)">
-        <i class="fas fa-trash-alt mr-1"></i> Delete
-      </span>
+         [ngClass]="{'text-right': message.message_side === 'sender'}">
+      <div class="inline-block p-2 m-2 rounded-lg relative" 
+           [ngClass]="{
+             'bg-gray-200 text-black': message.message_side === 'receiver',
+             'bg-logo-blue text-white': message.message_side === 'sender'
+           }">
+        <div *ngIf="!message.editMode" class="relative">
+          <div *ngIf="message.messageType === 'text'" class="hover:bg-gray-300 p-2 rounded-lg cursor-pointer"
+               (mouseenter)="message.showDropdown = true"
+               (mouseleave)="message.showDropdown = false">
+            {{ message.content }}
+            <div *ngIf="message.showDropdown" class="absolute right-0 top-0 mt-2 mr-2">
+              <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer flex items-center" 
+                    (click)="softDeleteMessage(message.id)">
+                <i class="fas fa-trash-alt mr-1"></i>
+              </span>
+              <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer flex items-center" 
+                    (click)="editMessage(message)">
+                <i class="fas fa-edit mr-1"></i>
+              </span>
+            </div>
+          </div>
+          <img *ngIf="message.messageType === 'image'" [src]="message.fileUrl" alt="Image" style="max-width: 100px; height: auto;">
+          <audio *ngIf="message.messageType === 'voice'" controls>
+            <source [src]="message.fileUrl" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+          <video *ngIf="message.messageType === 'video'" controls style="max-width: 100px; height: auto;">
+            <source [src]="message.fileUrl" type="video/mp4">
+            Your browser does not support the video element.
+          </video>
         </div>
+        <div *ngIf="message.editMode">
+          <div class="mb-2">
+            <span class="font-semibold">Original Message:</span> {{ message.content }}
+          </div>
+          <input [(ngModel)]="message.content" (keyup.enter)="saveMessage(message)"  class="p-1 border rounded-lg">
+          <button (click)="saveMessage(message)" class="bg-green-500 text-white px-2 py-1 rounded-lg">Save</button>
+          <button (click)="cancelEdit(message)" class="bg-red-500 text-white px-2 py-1 rounded-lg">Cancel</button>
+        </div>
+        
       </div>
     </div>
-    
-    </div>
   </div>
-  <div class="p-4 border-t flex gap-2">
+  <div class="p-2 border-t flex gap-2">
     <input [(ngModel)]="newMessage" 
            (keyup.enter)="sendMessage()" 
            type="text" 
            class="flex-1 p-2 border rounded-lg" 
            placeholder="Type a message...">
+    <input type="file" (change)="uploadFile($event)" class="hidden" #fileInput>
+    <button (click)="fileInput.click()" class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+      <i class="fas fa-paperclip"></i>
+    </button>
     <button (click)="sendMessage()" 
             class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
       <i class="fas fa-paper-plane"></i>
-    </button>
-    <button (click)="startRecording()" 
-            [disabled]="isRecording" 
-            class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
-      <i class="fas fa-microphone"></i>
-    </button>
-    <button (click)="stopRecording()" 
-            [disabled]="!isRecording" 
-            class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
-      <i class="fas fa-stop"></i>
     </button>
   </div>
 </div>

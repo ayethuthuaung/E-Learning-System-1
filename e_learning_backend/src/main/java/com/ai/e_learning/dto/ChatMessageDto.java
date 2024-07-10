@@ -1,23 +1,28 @@
 package com.ai.e_learning.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties(ignoreUnknown = true)
+@RequiredArgsConstructor
+@AllArgsConstructor
+
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatMessageDto {
+    private Long id;
     private Long chatRoomId;
     private Long senderId;
     private String content;
     private  String message_side;
     private String sessionId;
     private Long timestamp;
-    private boolean softDeleted;
-    private String voiceMessageUrl;
+    private boolean softDeleted,showDropdown;
+//    private MultipartFile file;
+    private String fileUrl;
+    private String messageType;
 
     // Getters and setters
 }

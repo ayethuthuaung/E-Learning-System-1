@@ -9,6 +9,10 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 @Controller
 public class WebSocketChatController {
@@ -24,9 +28,10 @@ public class WebSocketChatController {
 
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
-    public ChatMessageDto sendMessage(@Payload ChatMessageDto chatMessageDto) {
-        System.out.println(chatMessageDto.toString());
-        return chatServiceImpl.sendMessage(chatMessageDto.getChatRoomId(), chatMessageDto.getSenderId(), chatMessageDto.getContent(), chatMessageDto.getSessionId()); // Make sure message is serialized as JSON
+    public ChatMessageDto sendMessage(@Payload ChatMessageDto chatMessageDto) throws GeneralSecurityException, IOException {
+        return chatServiceImpl.sendMessage(chatMessageDto.getChatRoomId(), chatMessageDto.getSenderId(),
+                chatMessageDto.getContent(), chatMessageDto.getFileUrl(),
+                chatMessageDto.getMessageType(), chatMessageDto.getSessionId());
     }
 
 
