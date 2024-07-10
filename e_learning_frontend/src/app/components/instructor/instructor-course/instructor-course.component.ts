@@ -81,7 +81,7 @@ export class InstructorCourseComponent implements OnInit {
     if (form.valid) {
       this.submitted = false;
       this.loading = true;
-      this.saveCourse();
+      this.sureAlert();
       
     } else {
       this.submitted = true;
@@ -217,6 +217,23 @@ export class InstructorCourseComponent implements OnInit {
     this.router.navigate([`instructor/lesson/${courseId}`]);
   }
 
+  sureAlert(): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'Do you want to create this course?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.saveCourse();
+      } else {
+        this.loading = false;
+      }
+    });
+  }
+
   showSuccessAlert(): void {
     Swal.fire({
       icon: 'info',
@@ -230,4 +247,5 @@ export class InstructorCourseComponent implements OnInit {
       }
     });
   }
+
 }

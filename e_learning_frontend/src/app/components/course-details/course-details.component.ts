@@ -89,8 +89,7 @@ export class CourseDetailsComponent implements OnInit {
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    }
-    
+    }    
   }
 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
