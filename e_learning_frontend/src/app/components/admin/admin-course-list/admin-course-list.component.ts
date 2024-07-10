@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CourseService } from '../../services/course.service';
 import { Course } from '../../models/course.model';
 
+declare var Swal: any;
+
 @Component({
   selector: 'app-admin-course-list',
   templateUrl: './admin-course-list.component.html',
@@ -11,6 +13,8 @@ export class AdminCourseListComponent implements OnInit {
   courses: Course[] = [];
   paginatedCourses: Course[] = [];
   searchTerm = '';
+  statusFilter = 'all';
+  selectedCourse: Course | null = null;
 
   itemsPerPage = 10;
   currentPage = 1;
@@ -19,31 +23,76 @@ export class AdminCourseListComponent implements OnInit {
   constructor(private courseService: CourseService) {}
 
   ngOnInit() {
-    this.fetchAcceptedCourses();
+    this.fetchCourses();
   }
 
-  fetchAcceptedCourses() {
-    this.courseService.getAllCourses('accept').subscribe({
+  fetchCourses() {
+    this.courseService.getAllCourses(this.statusFilter).subscribe({
       next: (data) => {
         this.courses = data;
         this.updatePaginatedCourses();
         this.totalPages = Math.ceil(this.courses.length / this.itemsPerPage);
       },
-      error: (err) => console.error('Error fetching courses:', err)
+      error: (err) => {
+        console.error(err);
+      }
     });
   }
 
   onSearchChange() {
-    this.currentPage = 1;
     this.updatePaginatedCourses();
+  }
+
+  onStatusChange() {
+    this.fetchCourses();
+  }
+
+  acceptCourse(course: Course) {
+    course.status = 'Accept';
+    this.courseService.changeStatus(course.id, 'Accept').subscribe({
+      next: () => {
+        Swal.fire('Success!', 'Course accepted successfully!', 'success');
+        this.updatePaginatedCourses();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  rejectCourse(course: Course) {
+    course.status = 'Reject';
+    this.courseService.changeStatus(course.id, 'Reject').subscribe({
+      next: () => {
+        Swal.fire('Success!', 'Course rejected successfully!', 'success');
+        this.updatePaginatedCourses();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  openModal(course: Course) {
+    // You can use a service or other logic to open the modal
+    this.selectedCourse = course;
+    const modal = document.getElementById('fullScreenModal');
+    if (modal) {
+      modal.style.display = 'block';
+    }
+  }
+
+  closeModal() {
+    this.selectedCourse = null;
+    const modal = document.getElementById('fullScreenModal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
   }
 
   updatePaginatedCourses() {
     const filteredCourses = this.courses.filter(course =>
-      course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      course.level.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      course.duration.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      course.description.toLowerCase().includes(this.searchTerm.toLowerCase())
+      course.name.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 
     this.totalPages = Math.ceil(filteredCourses.length / this.itemsPerPage);
@@ -82,35 +131,5 @@ export class AdminCourseListComponent implements OnInit {
       this.updatePaginatedCourses();
     }
   }
-
-  acceptCourse(course: Course) {
-    course.status = 'Accepted';
-    //this.updateCourseStatus(course);
-  }
-
-  rejectCourse(course: Course) {
-    course.status = 'Rejected';
-    // this.updateCourseStatus(course);
-  }
-
-  updateCourseStatus() {
-    
-  }
-
-  editCourse(course: Course) {
-    // Implement edit functionality
-    console.log('Editing course', course);
-  }
-
-  deleteCourse(course: Course) {
-    // Implement delete functionality
-    console.log('Deleting course', course);
-    this.courses = this.courses.filter(c => c !== course);
-    this.updatePaginatedCourses(); // Update the paginated courses after deleting
-  }
-
-  detailCourse() {
-    // Implement detail functionality
-    //console.log('Detail course', course);
-  }
 }
+

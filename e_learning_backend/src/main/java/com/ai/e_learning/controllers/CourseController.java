@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,12 +27,16 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping(value = "/courselist", produces = "application/json")
-    public List<CourseDto> displayCourse(ModelMap model,@RequestParam(value = "status") String status) {
-        return courseService.getAllCourses(status);
+  @GetMapping(value = "/courselist", produces = "application/json")
+  public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
+    if ("all".equalsIgnoreCase(status) || status == null) {
+      return ResponseEntity.ok(courseService.getAllCourseList());
     }
+    return ResponseEntity.ok(courseService.getAllCourses(status));
+  }
 
-    @GetMapping(value = "/instructorcourselist", produces = "application/json")
+
+  @GetMapping(value = "/instructorcourselist", produces = "application/json")
     public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
         return courseService.getCoursesByUserId(userId);
     }
@@ -39,7 +44,7 @@ public class CourseController {
     @PostMapping(value = "/changeStatus", produces = "application/json")
     public ResponseEntity<?> changeStatus(ModelMap model,@RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
         try{
-            courseService.changeStatus( id, status);
+            courseService.changeStatus( id,  status);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
@@ -47,7 +52,8 @@ public class CourseController {
 
     }
 
-    @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
+
+  @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
     public ResponseEntity<CourseDto> addCourse(
             @RequestPart("course") CourseDto courseDto,
             @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
@@ -86,6 +92,7 @@ public class CourseController {
 
         return ResponseEntity.ok(updatedCourse);
     }
+
 
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Void> softDeleteCourse(@PathVariable Long id) {

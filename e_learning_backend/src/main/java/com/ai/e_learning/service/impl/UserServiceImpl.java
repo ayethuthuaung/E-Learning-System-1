@@ -100,6 +100,13 @@ public class UserServiceImpl implements UserService {
                 update_user.setStatus(update_user.getStatus());
               }
 
+              if (!update_user.getEmail().equalsIgnoreCase(user.getEmail())) {
+                update_user.setEmail(user.getEmail());
+              } else {
+                update_user.setEmail(update_user.getEmail());
+              }
+
+
               if(update_user.getPassword().equalsIgnoreCase("")) {
                 update_user.setPassword(passwordEncoder.encode("123@dirace"));
               }

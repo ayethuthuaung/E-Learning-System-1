@@ -22,8 +22,6 @@ import { UserUploadComponent } from './components/user-upload/user-upload.compon
 
 import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
 
- 
- 
 import { InstructorProfileComponent } from './components/instructor/instructor-profile/instructor-profile.component';
 import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
 import { InstructorCourseComponent } from './components/instructor/instructor-course/instructor-course.component';
