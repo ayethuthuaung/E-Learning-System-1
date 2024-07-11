@@ -34,6 +34,9 @@ public interface UserService {
     boolean checkPassword(String oldPassword, String inputPassword);
 
     void addAdmin();
-
+    long countStudents();
+    List<UserDto> findByRoleId(Long roleId);
     ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException;
+
+    long countStudentsByRoleId(Long instructorRoleId);
 }

@@ -44,76 +44,76 @@ public class UserServiceImpl implements UserService {
 
 
     public void updateExcel(MultipartFile file) {
-      if (ExcelUploadService.isValidExcelFile(file)) {
-        try {
-          List<User> insert_user = new ArrayList<>();
-            ExcelUploadDto excelUploadDto = ExcelUploadService.getUserDataFromExcel(file.getInputStream());
-          List<User> users = excelUploadDto.getUserList();
-            List<String> roleList = excelUploadDto.getRoles();
+        if (ExcelUploadService.isValidExcelFile(file)) {
+            try {
+                List<User> insert_user = new ArrayList<>();
+                ExcelUploadDto excelUploadDto = ExcelUploadService.getUserDataFromExcel(file.getInputStream());
+                List<User> users = excelUploadDto.getUserList();
+                List<String> roleList = excelUploadDto.getRoles();
 
-          // Fetch all users from the database
-          List<User> allUsers = userRepository.findAll();
+                // Fetch all users from the database
+                List<User> allUsers = userRepository.findAll();
 
 
-            // Convert the list of users from the Excel file to a set of staff IDs
-          Set<String> uploadedStaffIds = users.stream()
-            .map(User::getStaffId)
-            .collect(Collectors.toSet());
-            int index = 0;
-          for (User user : users) {
+                // Convert the list of users from the Excel file to a set of staff IDs
+                Set<String> uploadedStaffIds = users.stream()
+                        .map(User::getStaffId)
+                        .collect(Collectors.toSet());
+                int index = 0;
+                for (User user : users) {
 
-            User update_user = userRepository.findUserByStaffId(user.getStaffId());
-            if (update_user != null) {
-              if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
-                update_user.setDivision(user.getDivision());
-              } else {
-                update_user.setDivision(update_user.getDivision());
-              }
+                    User update_user = userRepository.findUserByStaffId(user.getStaffId());
+                    if (update_user != null) {
+                        if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
+                            update_user.setDivision(user.getDivision());
+                        } else {
+                            update_user.setDivision(update_user.getDivision());
+                        }
 
-              if (!update_user.getName().equalsIgnoreCase(user.getName())) {
-                update_user.setName(user.getName());
-              } else {
-                update_user.setName(update_user.getName());
-              }
+                        if (!update_user.getName().equalsIgnoreCase(user.getName())) {
+                            update_user.setName(user.getName());
+                        } else {
+                            update_user.setName(update_user.getName());
+                        }
 
-              if (update_user.getDoorLogNo() != user.getDoorLogNo()) {
-                update_user.setDoorLogNo(user.getDoorLogNo());
-              } else {
-                update_user.setDoorLogNo(update_user.getDoorLogNo());
-              }
+                        if (update_user.getDoorLogNo() != user.getDoorLogNo()) {
+                            update_user.setDoorLogNo(user.getDoorLogNo());
+                        } else {
+                            update_user.setDoorLogNo(update_user.getDoorLogNo());
+                        }
 
-              if (!update_user.getDepartment().equalsIgnoreCase(user.getDepartment())) {
-                update_user.setDepartment(user.getDepartment());
-              } else {
-                update_user.setDepartment(update_user.getDepartment());
-              }
+                        if (!update_user.getDepartment().equalsIgnoreCase(user.getDepartment())) {
+                            update_user.setDepartment(user.getDepartment());
+                        } else {
+                            update_user.setDepartment(update_user.getDepartment());
+                        }
 
-              if (!update_user.getTeam().equalsIgnoreCase(user.getTeam())) {
-                update_user.setTeam(user.getTeam());
-              } else {
-                update_user.setTeam(update_user.getTeam());
-              }
+                        if (!update_user.getTeam().equalsIgnoreCase(user.getTeam())) {
+                            update_user.setTeam(user.getTeam());
+                        } else {
+                            update_user.setTeam(update_user.getTeam());
+                        }
 
-              if (!update_user.getStatus().equalsIgnoreCase(user.getStatus())) {
-                update_user.setStatus(user.getStatus());
-              } else {
-                update_user.setStatus(update_user.getStatus());
-              }
+                        if (!update_user.getStatus().equalsIgnoreCase(user.getStatus())) {
+                            update_user.setStatus(user.getStatus());
+                        } else {
+                            update_user.setStatus(update_user.getStatus());
+                        }
 
-              if(update_user.getPassword().equalsIgnoreCase("")) {
-                update_user.setPassword(passwordEncoder.encode("123@dirace"));
-              }
-                System.out.println(roleList.get(index));
-                Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
+                        if (update_user.getPassword().equalsIgnoreCase("")) {
+                            update_user.setPassword(passwordEncoder.encode("123@dirace"));
+                        }
+                        System.out.println(roleList.get(index));
+                        Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
 
-                Set<Role> roles = new HashSet<>();
-                roles.add(role);
-                update_user.setRoles(roles);
+                        Set<Role> roles = new HashSet<>();
+                        roles.add(role);
+                        update_user.setRoles(roles);
                         insert_user.add(update_user);
                     } else {
                         user.setPassword(passwordEncoder.encode("123@dirace"));
 
-                user.setPhoto("userPhoto.png");
+                        user.setPhoto("userPhoto.png");
                         Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
 
                         Set<Role> roles = new HashSet<>();
@@ -122,38 +122,36 @@ public class UserServiceImpl implements UserService {
                         insert_user.add(user);
                     }
                     index++;
-              System.out.println(index);
+                    System.out.println(index);
                 }
 
 
+                // Set the status of users not present in the uploaded file to "Inactive"
+                for (User dbUser : allUsers) {
+                    if (!uploadedStaffIds.contains(dbUser.getStaffId()) && dbUser.getStatus().equalsIgnoreCase("Active")) {
+                        dbUser.setStatus("Inactive");
+                        insert_user.add(dbUser);
+                    }
+                }
 
-
-          // Set the status of users not present in the uploaded file to "Inactive"
-          for (User dbUser : allUsers) {
-            if (!uploadedStaffIds.contains(dbUser.getStaffId()) && dbUser.getStatus().equalsIgnoreCase("Active")) {
-              dbUser.setStatus("Inactive");
-              insert_user.add(dbUser);
+                this.userRepository.saveAll(insert_user);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("This file is not a valid excel file");
             }
-          }
-
-          this.userRepository.saveAll(insert_user);
-        } catch (IOException e) {
-          throw new IllegalArgumentException("This file is not a valid excel file");
         }
-      }
     }
 
     @Override
     public List<UserDto> getUsers() {
         List<User> userList = EntityUtil.getAllEntities(userRepository);
-        if(userList==null)
+        if (userList == null)
             return null;
         return DtoUtil.mapList(userList, UserDto.class, modelMapper);
     }
 
     @Override
     public UserDto getCurrentUser(String staffId) {
-        User user=userRepository.findUserByStaffId(staffId);
+        User user = userRepository.findUserByStaffId(staffId);
         try {
             GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
             String fileId = driveConnector.getFileIdByName(user.getPhoto());
@@ -163,7 +161,7 @@ public class UserServiceImpl implements UserService {
         } catch (IOException | GeneralSecurityException e) {
 
         }
-        return DtoUtil.map(user,UserDto.class,modelMapper);
+        return DtoUtil.map(user, UserDto.class, modelMapper);
 
     }
 
@@ -175,10 +173,17 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    //original
+//    @Override
+//    public UserDto getUserById(Long id) {
+//        return userRepository.findById(id)
+//                .map(this::convertToDto)
+//                .orElse(null);
+//    }
     @Override
     public UserDto getUserById(Long id) {
         return userRepository.findById(id)
-                .map(this::convertToDto)
+                .map(user -> modelMapper.map(user, UserDto.class))
                 .orElse(null);
     }
 
@@ -211,11 +216,12 @@ public class UserServiceImpl implements UserService {
                     userRepository.save(user);
                 });
     }
+
     @Override
-    public UserDto getUserByStaffId(String staff_id){
-      User user = userRepository.findUserByStaffId(staff_id);
-      if (user == null)
-        return null;
+    public UserDto getUserByStaffId(String staff_id) {
+        User user = userRepository.findUserByStaffId(staff_id);
+        if (user == null)
+            return null;
         try {
             GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
             String fileId = driveConnector.getFileIdByName(user.getPhoto());
@@ -224,41 +230,40 @@ public class UserServiceImpl implements UserService {
         } catch (IOException | GeneralSecurityException e) {
 
         }
-      return DtoUtil.map(user,UserDto.class,modelMapper);
+        return DtoUtil.map(user, UserDto.class, modelMapper);
     }
-
 
 
     @Override
     public UserDto getUserByEmail(String email) {
-      User user = userRepository.findUserByEmail(email);
-      return user != null ? new UserDto(user) : null;
+        User user = userRepository.findUserByEmail(email);
+        return user != null ? new UserDto(user) : null;
     }
 
     @Override
     public int updatePassword(String email, String newPassword) {
-    User user = userRepository.findUserByEmail(email);
-    if (user == null) {
-      return 0; // User not found
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            return 0; // User not found
+        }
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            return 2; // New password is the same as the old password
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return 1; // Password updated successfully
     }
-    if (passwordEncoder.matches(newPassword, user.getPassword())) {
-      return 2; // New password is the same as the old password
+
+    @Override
+    public boolean checkPassword(String oldPassword, String inputPassword) {
+        if (oldPassword != inputPassword) {
+            return false;
+        } else
+            return true;
     }
-    user.setPassword(passwordEncoder.encode(newPassword));
-    userRepository.save(user);
-    return 1; // Password updated successfully
-  }
-
-  @Override
-  public boolean checkPassword(String oldPassword, String inputPassword) {
-    if (oldPassword != inputPassword) {
-      return false;
-    } else
-      return true;
-  }
 
 
-  private UserDto convertToDto(User user) {
+    private UserDto convertToDto(User user) {
         UserDto userDto = modelMapper.map(user, UserDto.class);
         return userDto;
     }
@@ -271,9 +276,9 @@ public class UserServiceImpl implements UserService {
         if (adminRoleOpt.isPresent()) {
             adminRole = adminRoleOpt.get();
         }
-        User admin =userRepository.findUserByStaffId("11-11111");
+        User admin = userRepository.findUserByStaffId("11-11111");
 
-        if(admin == null){
+        if (admin == null) {
             User user = new User(
                     1L,
                     "11-11111",
@@ -298,13 +303,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ImageResponse uploadProfile(MultipartFile file,Long userId) throws IOException, GeneralSecurityException {
-        User user = EntityUtil.getEntityById(userRepository, userId,"user");
+    public ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException {
+        User user = EntityUtil.getEntityById(userRepository, userId, "user");
         File tempFile = File.createTempFile(user.getName() + "_" + Helper.getCurrentTimestamp(), null);
         file.transferTo(tempFile);
         String imageUrl = helper.uploadImageToDrive(tempFile, "user");
         //boolean isUploaded = helper.uploadImageToDrive(tempFile);
-       // return new GoogleDriveJSONConnector().uploadFileToDrive(file, contentType);
+        // return new GoogleDriveJSONConnector().uploadFileToDrive(file, contentType);
         user.setPhoto(tempFile.getName());
         userRepository.save(user);
         ImageResponse imageResponse = new ImageResponse();
@@ -312,11 +317,38 @@ public class UserServiceImpl implements UserService {
         imageResponse.setMessage("File Successfully Uploaded To Drive");
         GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
         String fileId = driveConnector.getFileIdByName(user.getPhoto());
-        System.out.println("fileId"+fileId);
+        System.out.println("fileId" + fileId);
         String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
         imageResponse.setUrl(thumbnailLink);
-        System.out.println("thumnailLink"+thumbnailLink);
+        System.out.println("thumnailLink" + thumbnailLink);
         return imageResponse;
     }
 
+    @Override
+    public long countStudents() {
+        Role studentRole = roleRepository.findById(1L)  // Assuming role ID 1 is for students
+                .orElseThrow(() -> new RuntimeException("Student role not found"));
+
+        return userRepository.countByRolesContains(studentRole);
+    }
+    @Override
+    public long countStudentsByRoleId(Long instructorRoleId) {
+        Role role = roleRepository.findById(instructorRoleId)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        return userRepository.countByRolesContains(role);
+    }
+
+    @Override
+    public List<UserDto> findByRoleId(Long roleId) {
+        List<User> users = userRepository.findByRoleId(roleId);
+        return users.stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .collect(Collectors.toList());
+    }
+
+
 }
+
+
+

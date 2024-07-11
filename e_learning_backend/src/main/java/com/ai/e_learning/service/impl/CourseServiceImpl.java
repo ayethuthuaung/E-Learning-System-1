@@ -176,6 +176,14 @@ public class CourseServiceImpl implements CourseService {
       courseRepository.save(course);
     }
   }
+  @Override
+  public List<CourseDto> getCoursesByInstructor(Long instructorRoleId) {
+    List<Course> courses = courseRepository.findByUser_Roles_Id(instructorRoleId);
+    return courses.stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
+  }
+
 
   @Override
   public boolean isCourseNameAlreadyExists(String name) {
@@ -195,6 +203,7 @@ public class CourseServiceImpl implements CourseService {
   private CourseDto convertToDto(Course course) {
       return modelMapper.map(course, CourseDto.class);
   }
+
 
 
 }

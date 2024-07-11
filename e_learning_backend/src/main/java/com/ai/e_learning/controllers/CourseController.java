@@ -31,6 +31,7 @@ public class CourseController {
         return courseService.getAllCourses(status);
     }
 
+
     @GetMapping(value = "/instructorcourselist", produces = "application/json")
     public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
         return courseService.getCoursesByUserId(userId);
@@ -118,6 +119,7 @@ public class CourseController {
             courseDto.setPhoto(Arrays.toString(photoBytes));
         }
     }
+
 
 
   /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
