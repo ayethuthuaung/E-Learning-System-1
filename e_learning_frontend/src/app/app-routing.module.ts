@@ -48,6 +48,7 @@ import { QuizExamListComponent  } from './components/quiz-Ans/exam-list/exam-lis
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
 import { AllCoursesComponent } from './components/all-courses/all-courses.component';
+import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
 
 
 
@@ -56,7 +57,7 @@ const routes: Routes = [
    {path:'login', component: LoginComponent},
    {path: 'forget-password', component: ForgetPasswordComponent },
 
-   { path: 'student-profile', component: StudentProfileComponent },
+   { path: 'student/student-profile', component: StudentProfileComponent },
 
    {path:'courses', component: CourseListComponent},
   
@@ -78,7 +79,6 @@ const routes: Routes = [
    {path:'chat', component: ChatComponent},
 
 
-   {path:'chat', component: ChatComponent},
 
    { path: 'chat/:chatRoomId', component: ChatComponent },
 
@@ -104,6 +104,7 @@ const routes: Routes = [
    {path:'course-video-view/:moduleId', component: CourseVideoViewComponent},
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
+   {path:'instructor/student', component: InstructorStudentComponent},
 
 
    {path:'all-courses', component: AllCoursesComponent},

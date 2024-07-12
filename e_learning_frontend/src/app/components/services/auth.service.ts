@@ -15,6 +15,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) { }
 
   
+
   getCurrentUser(): User | null {
     if (!this.currentUser) {
       const storedUser = localStorage.getItem('currentUser');

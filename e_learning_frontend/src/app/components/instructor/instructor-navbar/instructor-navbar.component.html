@@ -9,7 +9,10 @@
         <i class="fas fa-bars text-lg"></i>
       </button>
     </div>
-    <div class="flex items-center ml-auto relative">
+    <div class="flex items-center ml-auto relative space-x-6"> <!-- Added space-x-4 for spacing -->
+      <button class="text-gray-500 focus:outline-none text-2xl font-bold" (click)="navigateToConversationList()"> <!-- Added text-2xl and font-bold -->
+        <i class="fa-solid fa-message"></i>
+      </button>
       <app-nav-profile></app-nav-profile>
     </div>
   </div>

@@ -104,6 +104,9 @@ import { CourseVideoViewComponent } from './components/course-video-view/course-
 import { CourseCardComponent } from './components/shared/course-card/course-card.component';
 import { AllCoursesComponent } from './components/all-courses/all-courses.component';
 
+import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { UserCourseModuleService } from './components/services/usercoursemodule.service';
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 @NgModule({
@@ -135,9 +138,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     ExamDetailComponent,
     ForgetPasswordComponent,
     
-    ChatComponent,
+ 
     HeroComponent,
-    ChatComponent,
+  
     HeroComponent,
     CoursesComponent,
     JointUsComponent,
@@ -210,6 +213,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     CourseVideoViewComponent,
     CourseCardComponent,
     AllCoursesComponent,
+    InstructorStudentComponent,
   ],
   imports: [
     BrowserModule,
@@ -226,6 +230,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     MatFormFieldModule,
     MatButtonModule,
 
+
     SocketIoModule.forRoot(config)
   ],
   providers: [
@@ -233,7 +238,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
     QuestionService,
     AnswerOptionService,
-
+    UserCourseModuleService,
     WebSocketService,
       provideAnimationsAsync()
 

@@ -9,6 +9,8 @@ import { Course } from '../models/course.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { log } from 'console';
 import { CourseModuleService } from '../services/course-module.service';
+import { UserCourseModuleService } from '../services/usercoursemodule.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-course-details',
@@ -20,7 +22,7 @@ export class CourseDetailsComponent implements OnInit {
 
   lessons: Lesson[] = [];
   isDropdownOpen: boolean[] = [];
-  course: Course | undefined;
+  course!: Course;
   courseId: number | undefined;
 
   loggedUser: any = '';
@@ -33,6 +35,8 @@ export class CourseDetailsComponent implements OnInit {
   lesson: Lesson | undefined;
   module: Course | undefined;
 
+  isOwner: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -41,7 +45,8 @@ export class CourseDetailsComponent implements OnInit {
     private lessonService: LessonService,
 
     private courseService: CourseService,
-    private courseModuleService: CourseModuleService
+    private courseModuleService: CourseModuleService,
+    private userCourseModuleService:UserCourseModuleService
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +65,11 @@ export class CourseDetailsComponent implements OnInit {
         this.courseService.getCourseById(this.courseId).subscribe(
           course => {
             this.course = course;
+            console.log(this.course);
+            console.log(this.course.userId);
+            this.instructorId = this.course.userId;
+            this.isOwner = this.checkIsOwner();
+
             console.log(`Fetched Course: ${JSON.stringify(this.course)}`);
             this.fetchLessons();
           },
@@ -77,11 +87,15 @@ export class CourseDetailsComponent implements OnInit {
 
       if (this.loggedUser) {
         this.userId = this.loggedUser.id;
-        this.instructorId = this.course?.user?.id;
+        // this.instructorId = this.course.userId;
+        // console.log(this.instructorId);
+        
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    }
+    }    
   }
+
+  checkIsOwner(): boolean{return this.userId===this.instructorId}
 
   toggleChatRoom(): void {
     if (!this.chatRoomVisible) {
@@ -138,5 +152,29 @@ export class CourseDetailsComponent implements OnInit {
         }
       );
     }
+}
+markAsDone(moduleId: number, index: number) {
+  this.userCourseModuleService.markModuleAsDone(this.userId, moduleId).subscribe(
+    (response) => {
+      console.log('Module marked as done:', response);
+      this.lessons.forEach((lesson, lessonIndex) => {
+        if (lessonIndex === index) {
+          lesson.modules.forEach((module: { id: number; done: boolean; }) => {
+            if (module.id === moduleId) {
+              module.done = true;
+            }
+          });
+        }
+      });
+    },
+    (error: HttpErrorResponse) => {
+      console.error('Error marking module as done:', error);
+      if (error.status === 404) {
+        alert('UserCourseModule not found.');
+      } else {
+        alert('An error occurred. Please try again later.');
+      }
+    }
+  );
 }
 }

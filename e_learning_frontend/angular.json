@@ -20,6 +20,7 @@
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
+        
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
@@ -118,6 +119,7 @@
   "cli": {
     "analytics": "bb6f2ecf-ad61-4c9c-890b-371b2c0d816b"
   }
+  
   
   
    

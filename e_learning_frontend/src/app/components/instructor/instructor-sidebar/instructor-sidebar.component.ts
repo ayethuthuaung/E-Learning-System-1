@@ -13,7 +13,7 @@ export class InstructorSidebarComponent {
     { label: 'Dashboard', link: 'instructor/dashboard', icon: 'fas fa-tachometer-alt', isActive: false },
     { label: 'Course', link: 'instructor/course', icon: 'fas fa-book', isActive: false },
     { label: 'Category', link: 'instructor/category', icon: 'fas fa-folder', isActive: false },
-    { label: 'Students', link: '#', icon: 'fas fa-user-graduate', isActive: false },
+    { label: 'Students', link: 'instructor/student', icon: 'fas fa-user-graduate', isActive: false },
     { label: 'Tests', link: '#', icon: 'fas fa-clipboard-list', isActive: false },
     { label: 'Meeting', link: '#', icon: 'fas fa-video', isActive: false },
     { label: 'Report', link: '#', icon: 'fas fa-file-alt', isActive: false },

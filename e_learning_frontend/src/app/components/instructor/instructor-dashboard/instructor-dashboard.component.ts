@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { CourseService } from '../../services/course.service';
+import { Course } from '../../models/course.model';
+import { UserCourseService } from '../../services/user-course.service';
+import { UserCourse } from '../../models/usercourse.model';
 
 interface Conversation {
   id: number;
@@ -19,14 +23,20 @@ interface Conversation {
 export class InstructorDashboardComponent implements OnInit {
   isSidebarOpen = true;
   chatRoomVisible: boolean = false;
-  chatRoom:boolean=false;
-  conversationList: Conversation[] = [];
-  selectedConversation: Conversation | null = null;
+ // createdCoursesCount: number = 0;
+  acceptedCoursesCount: number = 0;
+  studentCounts: { courseId: number, studentCount: number, acceptedCount: number }[] = [];
+  
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+  constructor(private http: HttpClient,
+     private router: Router,
+     private authService: AuthService,
+     private courseService: CourseService,
+     private userCourseService: UserCourseService) {}
 
   ngOnInit(): void {
-    this.fetchConversationList();
+    this.loadInstructorCourseCounts();
+    this.loadStudentCounts();
   }
 
   toggleSidebar() {
@@ -36,24 +46,48 @@ export class InstructorDashboardComponent implements OnInit {
   toggleChatRoom(): void {
     this.chatRoomVisible = !this.chatRoomVisible;
   }
-
-  fetchConversationList(): void {
+  private loadInstructorCourseCounts(): void {
     const userId = this.authService.getLoggedInUserId();
-    if (userId !== null) {
-      this.http.get<Conversation[]>(`http://localhost:8080/api/chat/conversation-list/${userId}`).subscribe({
-        next: (conversations) => this.conversationList = conversations,
-        error: (error) => console.error('Error fetching conversation list:', error)
-      });
-    }
+    this.courseService.getInstructorCourses(userId).subscribe(
+      (courses: Course[]) => {
+       // this.createdCoursesCount = courses.length;
+        this.acceptedCoursesCount = courses.filter(course => course.status === 'Accept').length;
+      },
+      (error) => {
+        console.error('Error fetching instructor courses', error);
+      }
+    );
   }
+  private loadStudentCounts(): void {
+    const instructorId = this.authService.getLoggedInUserId();
+    this.userCourseService.getAllUserCourses(instructorId).subscribe(
+      (userCourses: UserCourse[]) => {
+        const courseCounts = new Map<number, { studentCount: number, acceptedCount: number }>();
 
-  openChat(conversation: Conversation): void {
-    this.selectedConversation = conversation;
-    this.chatRoomVisible = true;
-  }
+        userCourses.forEach(userCourse => {
+          const courseId = userCourse.courseId;
+          if (!courseCounts.has(courseId)) {
+            courseCounts.set(courseId, { studentCount: 0, acceptedCount: 0 });
+          }
+          const counts = courseCounts.get(courseId)!;
+          counts.studentCount++;
+          if (userCourse.status === 'Accept') {
+            counts.acceptedCount++;
+          }
+        });
 
-  closeChat(): void {
-    this.selectedConversation = null;
-    this.chatRoomVisible = true;
+        this.studentCounts = Array.from(courseCounts, ([courseId, counts]) => ({
+          courseId,
+          ...counts
+        }));
+      },
+      (error) => {
+        console.error('Error fetching student counts', error);
+      }
+    );
   }
 }
+
+
+  
+

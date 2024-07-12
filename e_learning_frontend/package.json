@@ -29,6 +29,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@stomp/ng2-stompjs": "^8.0.0",
     "@stomp/stompjs": "^7.0.0",
+    "@sweetalert2/ngx-sweetalert2": "^12.4.0",
+    "@swimlane/ngx-datatable": "^20.1.0",
     "autoprefixer": "^10.4.19",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
@@ -45,7 +47,7 @@
     "socket.io-client": "^4.7.5",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
-    "sweetalert2": "^11.12.1",
+    "sweetalert2": "^11.12.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

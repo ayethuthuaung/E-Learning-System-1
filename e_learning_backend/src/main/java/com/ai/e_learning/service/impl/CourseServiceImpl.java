@@ -2,6 +2,7 @@ package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.UserDto;
 import com.ai.e_learning.model.*;
 
 import com.ai.e_learning.model.Category;
@@ -59,7 +60,7 @@ public class CourseServiceImpl implements CourseService {
 
 
   @Override
-  public List<CourseDto> getAllCourses(String status) {
+  public List<CourseDto> getAllCoursesByStatus(String status) {
     //Change List
     List<String> statusList = Arrays.asList(status.split(","));
     List<Course> allCourses = courseRepository.findByStatusIn(statusList);
@@ -80,6 +81,16 @@ public class CourseServiceImpl implements CourseService {
 
     return DtoUtil.mapList(allCourses,CourseDto.class,modelMapper);
   }
+
+  //AT
+  @Override
+  public List<CourseDto> getAllCourses(){
+    List<Course> courseList = EntityUtil.getAllEntities(courseRepository);
+    if(courseList==null)
+      return null;
+    return DtoUtil.mapList(courseList, CourseDto.class, modelMapper);
+  }
+  //AT
 
   @Override
   public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {
@@ -123,7 +134,8 @@ public class CourseServiceImpl implements CourseService {
     if (adminRoleOptional.isPresent()) {
       Role adminRole = adminRoleOptional.get();
       Notification adminNotification = new Notification();
-      adminNotification.setMessage("New course added: " + course.getName());
+      String username = course.getUser().getName();
+      adminNotification.setMessage(username+" :   new course added:   " + course.getName());
       adminNotification.setRole(adminRole);
       notificationController.sendNotificationToPage(adminNotification);
     } else {
@@ -207,5 +219,15 @@ public class CourseServiceImpl implements CourseService {
     return modelMapper.map(course, CourseDto.class);
   }
 
+  @Override
+  public List<CourseDto> getLatestAcceptedCourses() {
+    List<Course> courses = courseRepository.findLatestAcceptedCourses();
+    return courses.stream()
+      .map(course -> modelMapper.map(course, CourseDto.class))
+      .limit(3) // Limit to latest 3 courses
+      .collect(Collectors.toList());
+  }
+
 
 }
+

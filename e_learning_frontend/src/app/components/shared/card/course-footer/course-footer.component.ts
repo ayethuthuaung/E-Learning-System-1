@@ -3,8 +3,9 @@ import { Router } from '@angular/router';
 import { Course } from '../../../models/course.model';
 import { UserCourseService } from '../../../services/user-course.service';
 import { User } from '../../../models/user.model';
-import { UserCourse } from '../../../models/usercourse.model';
+
 import Swal from 'sweetalert2';
+import { UserCourse } from '../../../models/usercourse.model';
 
 @Component({
   selector: 'app-course-footer',
@@ -16,10 +17,9 @@ export class CourseFooterComponent implements OnInit {
   @Input() course: Course | undefined;
   user: User | null = null;
   userId: number | undefined;
-  isEnrolled: boolean = false; // Flag to check enrollment status
-  isAccepted: boolean = false; // Flag to check if user's enrollment is accepted by instructor
-  userCourseId: number | undefined; // Initialize userCourseId as undefined
-input: Course|undefined;
+  isEnrolled: boolean = false; 
+  isAccepted: boolean = false; 
+  userCourseId: number | undefined; 
 
   constructor(private userCourseService: UserCourseService, private router: Router) { }
 
@@ -37,7 +37,7 @@ input: Course|undefined;
           (user: User | null) => {
             if (user) {
               this.user = user;
-              this.checkEnrollmentStatus(); // Check enrollment status after fetching user data
+              this.checkEnrollmentStatus(); 
             } else {
               console.error('User details not found or invalid');
             }
@@ -58,7 +58,7 @@ input: Course|undefined;
         (isEnrolled: boolean) => {
           this.isEnrolled = isEnrolled;
           if (isEnrolled) {
-            this.checkEnrollmentAcceptance(); // Check if enrolled user is accepted by instructor
+            this.checkEnrollmentAcceptance(); 
           }
         },
         (error) => {
@@ -109,9 +109,9 @@ input: Course|undefined;
       if (result.isConfirmed) {
         this.userCourseService.enrollUserInCourse(this.userId!, this.course!.id).subscribe(
           (userCourse: UserCourse) => {
-            Swal.fire('Enrolled!', `You have successfully enrolled in ${courseName}.`, 'success');
+            //Swal.fire('Enrolled!', `You have successfully enrolled in ${courseName}.`, 'success');
             this.isEnrolled = true;
-            this.checkEnrollmentAcceptance(); // Update acceptance status after enrollment
+            this.checkEnrollmentAcceptance(); 
           },
           (error) => {
             console.error('Error enrolling in course', error);
@@ -127,7 +127,6 @@ input: Course|undefined;
       console.error('Course is undefined');
       return;
     }
-    
 
     if (!this.isAccepted) {
       Swal.fire({
