@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,8 +34,11 @@ public class CourseController {
   private ModelMapper modelMapper;
 
   @GetMapping(value = "/courselist", produces = "application/json")
-  public List<CourseDto> displayCourseByStatus(ModelMap model,@RequestParam(value = "status") String status) {
-    return courseService.getAllCoursesByStatus(status);
+  public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
+    if ("all".equalsIgnoreCase(status) || status == null) {
+      return ResponseEntity.ok(courseService.getAllCourseList());
+    }
+    return ResponseEntity.ok(courseService.getAllCourses(status));
   }
 
   //AT
@@ -64,8 +68,6 @@ public class CourseController {
   public ResponseEntity<CourseDto> addCourse(
     @RequestPart("course") CourseDto courseDto,
     @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
-
-
         if (photo.isEmpty()) {
             return ResponseEntity.badRequest().body(courseDto);
         }
@@ -100,6 +102,7 @@ public class CourseController {
 
         return ResponseEntity.ok(updatedCourse);
     }
+
 
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Void> softDeleteCourse(@PathVariable Long id) {

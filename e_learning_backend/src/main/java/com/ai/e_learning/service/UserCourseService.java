@@ -20,6 +20,8 @@ public interface UserCourseService {
   List<Course> getCoursesByUserId(Long userId);
   boolean checkEnrollment(Long userId, Long courseId);
   boolean checkEnrollmentAcceptance(Long userId, Long courseId);
+
   List<UserCourseDto> getAllUserCourseByUserId(Long userId);
   List<Course> getTrendingCourses();
+
 }

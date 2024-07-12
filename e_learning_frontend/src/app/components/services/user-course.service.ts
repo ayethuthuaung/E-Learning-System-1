@@ -17,17 +17,19 @@ export class UserCourseService {
     return this.httpClient.post<UserCourse>(`${this.baseURL}/enroll`, { userId, courseId });
   }
 
-  getAllUserCourses(userId: number): Observable<UserCourse[]> {
+
+  getAllUserCourses(userId: any): Observable<UserCourse[]> {
     console.log(userId);
-    return this.httpClient.get<UserCourse[]>(`${this.baseURL}/userCourselist`, {
-      params: { userId: userId.toString() }
-    });
+    
+    return this.httpClient.get<UserCourse[]>(`${this.baseURL}/userCourselist?userId=${userId}`);
+
   }
 
 
   changeStatus(id: number, status: string): Observable<void> {
     return this.httpClient.post<void>(`${this.baseURL}/change-status/${id}`, { status });
   }  
+
   updateUserCourse(userCourseId: number, completed: boolean, progress: number, status: string): Observable<UserCourse> {
     return this.httpClient.put<UserCourse>(`${this.baseURL}/update/${userCourseId}`, { completed, progress, status });
   }

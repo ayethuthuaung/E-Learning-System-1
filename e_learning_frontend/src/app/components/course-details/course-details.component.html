@@ -55,6 +55,7 @@
             <button (click)="viewVideoDetailClick(module.id)" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" >view</button>
 
           </ng-container>
+
           
             <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
               <a [href]="module.file" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" target="_blank">Open File</a>
@@ -64,6 +65,8 @@
               {{ module.done ? 'Done' : 'Mark as Done' }}
             </button>
           </div>
+
+
         </div>
       </div>
     </div>

@@ -1,70 +1,112 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
-  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar>
+  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
-    <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
-<div class="datatable-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
-    
-    <div class="pagination-controls">
-      <button (click)="firstPage()" [disabled]="currentPage === 1" class="btn btn-secondary"><i class="fas fa-angle-double-left"></i></button>
-      <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn btn-secondary"><i class="fas fa-angle-left"></i></button>
-      <span>Page 
-        <input type="number" class="page-input" [(ngModel)]="currentPage" (ngModelChange)="goToPage($event)" min="1" max="{{ totalPages }}" /> 
-        of {{ totalPages }}</span>
-      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary"><i class="fas fa-angle-right"></i></button>
-      <button (click)="lastPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary"><i class="fas fa-angle-double-right"></i></button>
+    <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
+    <div class="flex-1 p-6">
+      <div class="datatable-container bg-white p-6 rounded-lg shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+          <input 
+            type="text" 
+            class="form-control w-1/4 p-2 border rounded" 
+            placeholder="Search..." 
+            [(ngModel)]="searchTerm" 
+            (ngModelChange)="onSearchChange()" 
+          />
+
+          <div class="pagination-controls flex items-center space-x-2">
+            <button 
+              (click)="firstPage()" 
+              [disabled]="currentPage === 1" 
+              class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+            >
+              <i class="fas fa-angle-double-left"></i>
+            </button>
+            <button 
+              (click)="previousPage()" 
+              [disabled]="currentPage === 1" 
+              class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+            >
+              <i class="fas fa-angle-left"></i>
+            </button>
+            <span class="flex items-center">
+              Page 
+              <input 
+                type="number" 
+                class="page-input mx-2 w-16 text-center border rounded p-1" 
+                [(ngModel)]="currentPage" 
+                (ngModelChange)="goToPage($event)" 
+                min="1" 
+                [max]="totalPages" 
+              /> 
+              of {{ totalPages }}
+            </span>
+            <button 
+              (click)="nextPage()" 
+              [disabled]="currentPage === totalPages" 
+              class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+            >
+              <i class="fas fa-angle-right"></i>
+            </button>
+            <button 
+              (click)="lastPage()" 
+              [disabled]="currentPage === totalPages" 
+              class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+            >
+              <i class="fas fa-angle-double-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table-auto w-full border-collapse">
+            <thead class="bg-logo-blue text-white">
+              <tr>
+                <th class="p-2 border">No</th>
+                <th class="p-2 border">Course Name</th>
+                <th class="p-2 border">Student Name</th>
+                <th class="p-2 border">Dept</th>
+                <th class="p-2 border">Team</th>
+                <th class="p-2 border">Email</th>
+                <th class="p-2 border">Action</th>
+                <th class="p-2 border">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let userCourse of paginatedUserCourses; let i = index" class="hover:bg-gray-100">
+                <td class="p-2 border">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                <td class="p-2 border">{{ userCourse.course?.name }}</td>
+                <td class="p-2 border">{{ userCourse.user?.name }}</td>
+                <td class="p-2 border">{{ userCourse.user?.department }}</td>
+                <td class="p-2 border">{{ userCourse.user?.team }}</td>
+                <td class="p-2 border">{{ userCourse.user?.email }}</td>
+                <td class="p-2 border">
+                  <i 
+                    class="fas fa-check fa-xl cursor-pointer "
+                    style="color: green;"
+                    (click)="acceptStudent(userCourse)"
+                  ></i>
+                  
+                  <i 
+                    class="fas fa-times fa-xl cursor-pointer ml-4"
+                    style="color: red;"
+                    (click)="rejectStudent(userCourse)"
+                  ></i>
+                  <td class="p-2 border">
+                    <span 
+                      [ngClass]="{
+                        'text-green-700': userCourse.status === 'accept',
+                        'text-red-500': userCourse.status === 'reject',
+                        'text-yellow-500': userCourse.status === 'pending'
+                      }"
+                    >
+                      {{ userCourse.status }}
+                    </span>
+                  </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover">
-      <thead class="thead-dark">
-        <tr>
-          <th>No</th>
-          <th>Course Name</th>
-          <th>Student Name</th>
-          <th>Dept</th>
-          <th>Team</th>
-          <th>Email</th>
-          <th>Action</th>
-          <th>Status</th>
-          
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let userCourse of paginatedUserCourses; let i = index">
-          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-          <td>{{ userCourse.course?.name}}</td>
-          <td>{{ userCourse.user?.name }}</td>
-          <td>{{ userCourse.user?.department }}</td>
-          <td>{{ userCourse.user?.team }}</td>
-          <td>{{ userCourse.user?.email }}</td>
-          <td>
-            <i class="icon" 
-               [ngClass]="{
-                 'pending-accept-icon': userCourse.status === 'Pending',
-                 'accepted-icon': userCourse.status === 'Accepted'
-               }" 
-               (click)="acceptStudent(userCourse)">
-              &#10003;
-            </i>
-            
-            <i class="icon" 
-               [ngClass]="{
-                 'pending-reject-icon': userCourse.status === 'Pending',
-                 'rejected-icon': userCourse.status === 'Rejected'
-               }" 
-               (click)="rejectStudent(userCourse)">
-              &#10006;
-            </i>
-          </td>
-          <td>{{ userCourse.status }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-</div>
 </div>

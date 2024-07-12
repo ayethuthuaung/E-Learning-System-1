@@ -135,5 +135,7 @@ public class UserCourseServiceImpl implements UserCourseService {
     List<Course> trendingCourses = userCourseRepository.findTopTrendingCourses();
     return trendingCourses.stream().limit(3).collect(Collectors.toList());
   }
+
+
 }
 

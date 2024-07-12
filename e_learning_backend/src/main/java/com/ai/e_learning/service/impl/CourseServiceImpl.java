@@ -60,7 +60,12 @@ public class CourseServiceImpl implements CourseService {
 
 
   @Override
-  public List<CourseDto> getAllCoursesByStatus(String status) {
+  public List<CourseDto> getAllCourses(String status) {
+
+    if ("all".equalsIgnoreCase(status)) {
+      return getAllCourseList();
+    }
+
     //Change List
     List<String> statusList = Arrays.asList(status.split(","));
     List<Course> allCourses = courseRepository.findByStatusIn(statusList);
@@ -91,6 +96,14 @@ public class CourseServiceImpl implements CourseService {
     return DtoUtil.mapList(courseList, CourseDto.class, modelMapper);
   }
   //AT
+
+  @Override
+  public List<CourseDto> getAllCourseList() {
+    List<Course> courses = courseRepository.findAll();
+    return courses.stream()
+      .map(this::convertToDto)
+      .collect(Collectors.toList());
+  }
 
   @Override
   public CourseDto saveCourse(CourseDto courseDto) throws IOException, GeneralSecurityException {

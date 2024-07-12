@@ -30,6 +30,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
   List<Course> findByUserId(Long userId);
 
+
   @Query("SELECT c FROM Course c WHERE c.status = 'Accept' ORDER BY c.createdAt DESC ")
   List<Course> findLatestAcceptedCourses();
+
 }

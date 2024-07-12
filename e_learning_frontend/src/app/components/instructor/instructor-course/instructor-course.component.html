@@ -4,19 +4,32 @@
       <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
 
       <main class="flex-1 p-6">
-          <section>
-              <div class="flex border-b">
-                  <button class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
-                      [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCourse' }"
-                      (click)="setActiveTab('createCourse')">Create Course</button>
 
-                  <button class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
-                      [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
-                      (click)="setActiveTab('createLesson')">Create Lessons And Exam</button>
+        <section>
+            <div class="flex border-b">
+                <button
+                  class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCourse' }"
+                  (click)="setActiveTab('createCourse')"
+                >
+                 Add Course
+                </button>
+                
+                <button
+                  class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
+                  (click)="setActiveTab('createLesson')"
+                >
+                  Add Lessons And Exam
+                </button>
+                <button
+                  class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
+                  (click)="setActiveTab('additional')"
+                >
+                  Add Certificate
+                </button>
 
-                  <button class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
-                      [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
-                      (click)="setActiveTab('additional')">Create Certificate</button>
               </div>
 
               <div *ngIf="activeTab === 'additional'" class="p-4">
