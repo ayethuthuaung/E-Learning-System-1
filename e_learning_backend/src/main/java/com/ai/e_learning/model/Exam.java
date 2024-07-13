@@ -31,9 +31,9 @@ public class Exam {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "lesson_id")
     @JsonIgnore
-    private Course course;
+    private Lesson lesson;
 
     @PrePersist
     protected void onCreate() {

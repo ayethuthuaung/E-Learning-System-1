@@ -48,7 +48,6 @@ import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
 
 import { NotificationComponent } from './components/notification/notification.component';
-import { CourseListComponent } from './components/course-list/course-list.component';
 
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
 import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
@@ -102,6 +101,10 @@ import { InstructorLessonComponent } from './components/instructor/instructor-le
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
+import { FilterSortDropdownComponent } from './components/instructor/filter-sort-dropdown/filter-sort-dropdown.component';
+import { ClickOutsideDirective } from './components/click-outside.directive';
+import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -166,7 +169,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HomeComponent,
 
 
-    CourseListComponent,
     HomeComponent,
     StudentProfileComponent,
 
@@ -208,6 +210,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     InstructorLessonComponent,
     CourseVideoViewComponent,
     InstructorStudentComponent,
+    CreateModuleExamComponent,
+    FilterSortDropdownComponent,
+    ClickOutsideDirective,
+    StudentQuestionFormComponent
   ],
   imports: [
     BrowserModule,

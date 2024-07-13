@@ -30,7 +30,8 @@ public class LessonController {
         List<LessonDto> lessons = lessonService.getAllLessons();
         return ResponseEntity.ok(lessons);
     }
-    @GetMapping("/course/{courseId}")
+
+    @GetMapping("/getLesonsByCourse/{courseId}")
     public ResponseEntity<List<LessonDto>> getLessonsByCourseId(@PathVariable Long courseId) {
         List<LessonDto> lessons = lessonService.getLessonsByCourseId(courseId);
         return ResponseEntity.ok(lessons);

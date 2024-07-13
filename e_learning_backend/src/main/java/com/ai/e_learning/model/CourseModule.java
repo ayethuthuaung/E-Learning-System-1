@@ -27,8 +27,10 @@ public class CourseModule {
         this.createdAt = System.currentTimeMillis();
     }
 
-    @ManyToMany(mappedBy = "courseModules")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_id")
     @JsonIgnore
-    private Set<Lesson> lessons;
+    private Lesson lesson;
+
     private String file;
 }

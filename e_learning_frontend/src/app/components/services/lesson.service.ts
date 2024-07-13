@@ -27,7 +27,7 @@ getAllLessons(): Observable<Lesson[]> {
 
 getLessonsByCourseId(courseId: number): Observable<Lesson[]> {
   console.log(`Fetching lessons for course ID: ${courseId}`);
-  return this.http.get<Lesson[]>(`${this.baseUrl}/course/${courseId}`);
+  return this.http.get<Lesson[]>(`${this.baseUrl}/getLesonsByCourse/${courseId}`);
 }
 
 getLessonById(lessonId: number): Observable<Lesson> {

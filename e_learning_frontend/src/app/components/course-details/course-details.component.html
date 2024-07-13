@@ -2,10 +2,10 @@
   <app-navbar></app-navbar>
 
  
-  <div class="md:w-1/2 p-4 mt-40 mx-auto">
+  <div class="md:w-2/3 p-4 mt-40 mx-auto">
     <div class="bg-gray-50 p-4 rounded-lg shadow-md">
         <div *ngIf="course" class="flex items-center">
-            <img src="../../../assets/DAT.png" alt="Profile Picture" class="w-1/2 h-auto object-cover">
+            <img [src]="course.photo" alt="Profile Picture" class="w-1/2 h-auto object-cover">
             <div class="ml-4">
                 <h1 class="text-3xl font-bold text-logo-blue text-center">{{ course.name }}</h1><br>
                 <p>{{ course.description }}</p>
@@ -43,6 +43,7 @@
       <div *ngIf="isDropdownOpen[i]" class="mt-2 space-y-2 p-4">
         <div *ngFor="let module of lesson.modules" class="p-4  bg-gray-50 rounded-lg shadow flex items-center justify-between">
           <p>{{ module.name }}</p>
+        <div class="flex justify-end">
           <ng-container *ngIf="module.fileType === 'video/mp4'"> 
 
             
@@ -54,10 +55,12 @@
             <button (click)="viewVideoDetailClick(module.id)" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" >view</button>
 
           </ng-container>
-          <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
-            <a [href]="module.file" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" target="_blank">Open File</a>
-          </ng-container>          
-          <button *ngIf="!isOwner" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700">Mark as Done</button>
+          
+            <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
+              <a [href]="module.file" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" target="_blank">Open File</a>
+            </ng-container>          
+            <button *ngIf="!isOwner" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700">Mark as Done</button>
+          </div>
         </div>
       </div>
     </div>

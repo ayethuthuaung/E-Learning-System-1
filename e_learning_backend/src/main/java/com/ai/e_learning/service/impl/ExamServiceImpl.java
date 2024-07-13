@@ -30,16 +30,20 @@ public class ExamServiceImpl implements ExamService {
     @Autowired
     private AnswerOptionRepository answerOptionRepository;
     @Autowired
+    private LessonRepository lessonRepository;
+    @Autowired
     private ModelMapper modelMapper;
 
 
     @Override
     public boolean createExam(ExamCreationDto examCreationDto) {
         try {
+            Lesson lesson = EntityUtil.getEntityById(lessonRepository,examCreationDto.getLessonId(),"Lesson");
             Exam exam = new Exam();
             exam.setTitle(examCreationDto.getTitle());
             exam.setDescription(examCreationDto.getDescription());
             exam.setDeleted(false);
+            exam.setLesson(lesson);
             Exam savedExam = EntityUtil.saveEntity(examRepository, exam, "Exam");
             List<QuestionDto> questionDtoList = examCreationDto.getQuestionList();
             for (QuestionDto questionDTO : questionDtoList) {
