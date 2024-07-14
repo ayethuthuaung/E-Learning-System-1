@@ -130,9 +130,11 @@ public class ExamServiceImpl implements ExamService {
             List<AnswerOption> answerOptionList = answerOptionRepository.findByQuestionId(question.getId());
 
             // Map the answer options to their respective DTOs
-            List<AnswerOptionDto> answerOptionDtoList = answerOptionList.stream()
-                    .map(answerOption -> DtoUtil.map(answerOption, AnswerOptionDto.class, modelMapper))
-                    .collect(Collectors.toList());
+//            List<AnswerOptionDto> answerOptionDtoList = answerOptionList.stream()
+//                    .map(answerOption -> DtoUtil.map(answerOption, AnswerOptionDto.class, modelMapper))
+//                    .collect(Collectors.toList());
+
+            List<AnswerOptionDto> answerOptionDtoList = DtoUtil.mapList(answerOptionList, AnswerOptionDto.class,modelMapper);
 
             // Map the question to a QuestionDTO
             QuestionDto questionDTO = DtoUtil.map(question, QuestionDto.class, modelMapper);

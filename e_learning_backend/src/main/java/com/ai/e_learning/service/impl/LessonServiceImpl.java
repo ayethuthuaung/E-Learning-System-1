@@ -1,11 +1,13 @@
 package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.dto.CourseModuleDto;
+import com.ai.e_learning.dto.ExamListDto;
 import com.ai.e_learning.dto.LessonDto;
 import com.ai.e_learning.exception.EntityNotFoundException;
 import com.ai.e_learning.model.*;
 import com.ai.e_learning.model.CourseModule;
 import com.ai.e_learning.repository.CourseRepository;
+import com.ai.e_learning.repository.ExamRepository;
 import com.ai.e_learning.repository.LessonRepository;
 import com.ai.e_learning.repository.CourseModuleRepository;
 import com.ai.e_learning.service.LessonService;
@@ -39,6 +41,9 @@ public class LessonServiceImpl implements LessonService {
 
     @Autowired
     private CourseModuleRepository courseModuleRepository;
+
+    @Autowired
+    private ExamRepository examRepository;
 
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -156,27 +161,27 @@ public class LessonServiceImpl implements LessonService {
             throw new EntityNotFoundException("No Lessons Found for Course ID: " + courseId);
         }
 
-//        return lessons.stream()
-//                .map(lesson -> {
-//                    LessonDto lessonDto = new LessonDto();
-//                    lessonDto.setId(lesson.getId());
-//                    lessonDto.setTitle(lesson.getTitle());
-//                    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-//                    Set<CourseModule> courseModules = lesson.getCourseModules();
-//                    List<CourseModuleDto> courseModuleDtos = courseModules.stream()
-//                            .map(module -> {
-//                                CourseModuleDto moduleDto = new CourseModuleDto();
-//                                moduleDto.setId(module.getId());
-//                                moduleDto.setName(module.getName());
-//
-//                                moduleDto.setFile(module.getFile());
-//                                String fileUrl = module.getFile();
-//
-//                                String fileId = null;
-//                                String driveUrlPrefix = "https://drive.google.com/file/d/";
-//                                String  cloudinaryUrlPrefix = "http://res.cloudinary.com/dshrtebct/video/upload/";
-//                                String fileType = null;
-//                                if (fileUrl.startsWith(driveUrlPrefix)) {
+        return lessons.stream()
+                .map(lesson -> {
+                    LessonDto lessonDto = new LessonDto();
+                    lessonDto.setId(lesson.getId());
+                    lessonDto.setTitle(lesson.getTitle());
+                    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+                    Set<CourseModule> courseModules = lesson.getCourseModules();
+                    List<CourseModuleDto> courseModuleDtos = courseModules.stream()
+                            .map(module -> {
+                                CourseModuleDto moduleDto = new CourseModuleDto();
+                                moduleDto.setId(module.getId());
+                                moduleDto.setName(module.getName());
+
+                                moduleDto.setFile(module.getFile());
+                                String fileUrl = module.getFile();
+
+                                String fileId = null;
+                                String driveUrlPrefix = "https://drive.google.com/file/d/";
+                                String  cloudinaryUrlPrefix = "http://res.cloudinary.com/dshrtebct/video/upload/";
+                                String fileType = null;
+                                if (fileUrl.startsWith(driveUrlPrefix)) {
 //                                    try {
 //                                            fileId = Helper.extractFileId(fileUrl);
 //                                            fileType= driveConnector.getFileType(fileId);
@@ -184,19 +189,26 @@ public class LessonServiceImpl implements LessonService {
 //                                    } catch (GeneralSecurityException | IOException e) {
 //                                        throw new RuntimeException(e);
 //                                    }
-//                                }else if(fileUrl.startsWith(cloudinaryUrlPrefix)){
-//                                   fileType = "video/mp4";
-//                                }
-//                                moduleDto.setFileType(fileType);
-//
-//                                System.out.println("File Type:"+ moduleDto.getFileType());
-//                                return moduleDto;
-//                            }).collect(Collectors.toList());
-//
-//                    lessonDto.setModules(courseModuleDtos);
-//                    return lessonDto;
-//                }).collect(Collectors.toList());
-    return DtoUtil.mapList(lessons, LessonDto.class,modelMapper);
+                                    fileType="notVideo";
+                                }else if(fileUrl.startsWith(cloudinaryUrlPrefix)){
+                                   fileType = "video/mp4";
+                                }
+                                moduleDto.setFileType(fileType);
+
+                                System.out.println("File Type:"+ moduleDto.getFileType());
+                                return moduleDto;
+                            }).collect(Collectors.toList());
+                    ExamListDto examListDto = new ExamListDto();
+                    Exam exam = examRepository.findByLessonId(lesson.getId());
+                    if(exam != null){
+                        examListDto.setId(exam.getId());
+                        examListDto.setTitle(exam.getTitle());
+                    }
+                    lessonDto.setExamListDto(examListDto);
+                    lessonDto.setModules(courseModuleDtos);
+                    return lessonDto;
+                }).collect(Collectors.toList());
+//    return DtoUtil.mapList(lessons, LessonDto.class,modelMapper);
     }
 
 

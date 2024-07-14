@@ -39,6 +39,7 @@
     "datatables.net": "^2.0.8",
     "datatables.net-dt": "^2.0.8",
     "express": "^4.18.2",
+    "html2canvas": "^1.4.1",
     "jquery": "^3.7.1",
     "lodash": "^4.17.21",
     "ng2-charts": "^6.0.1",

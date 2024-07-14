@@ -42,6 +42,7 @@ import { QuizExamListComponent  } from './components/quiz-Ans/exam-list/exam-lis
 
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
+import { AllCoursesComponent } from './components/all-courses/all-courses.component';
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
 import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
@@ -53,7 +54,7 @@ const routes: Routes = [
    {path:'login', component: LoginComponent},
    {path: 'forget-password', component: ForgetPasswordComponent },
 
-   { path: 'student-profile', component: StudentProfileComponent },
+   { path: 'student/student-profile', component: StudentProfileComponent },
 
   
    { path: 'home', component: HomeComponent},
@@ -65,7 +66,6 @@ const routes: Routes = [
 
    //{ path: 'chat/:chatRoomId/:userName', component: ChatComponent },
 
-
    {path:'questionType', component: CreateQuestionTypeComponent},
    {path:'answerOption', component: CreateAnswerOptionComponent},
    {path:'createquestionform' , component: CreateQuestionFormComponent},
@@ -75,7 +75,6 @@ const routes: Routes = [
    {path:'chat', component: ChatComponent},
 
 
-   {path:'chat', component: ChatComponent},
 
    { path: 'chat/:chatRoomId', component: ChatComponent },
 
@@ -104,10 +103,12 @@ const routes: Routes = [
    {path:'instructor/student', component: InstructorStudentComponent},
    {path:'instructor/module-exam/:lessonId', component: CreateModuleExamComponent},
 
-   {path:'student/question-form', component: StudentQuestionFormComponent},
+   {path:'question-form/:examId', component: StudentQuestionFormComponent},
 
 
 
+
+   {path:'all-courses', component: AllCoursesComponent},
 ];
 
 

@@ -37,7 +37,7 @@ export class CreateModuleExamComponent implements OnInit{
   lessonId: number = -1;
   lessons :Lesson[] =[];
   lesson!: { title: ''; };
-  modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' }];
+  modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false}];
 
 
   isSidebarOpen = true;
@@ -83,7 +83,7 @@ examForm: any;
   }
 
   addModule() {
-    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' }); // Initialize File as null
+    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done:false }); // Initialize File as null
     console.log(this.modules);
     
   }
@@ -209,6 +209,8 @@ examForm: any;
 
   onSubmitExam(examForm: any) {
     const examCreationDto: ExamCreationDto = {
+      lessonId: this.lessonId,
+
       title: this.examTitle,
       description: this.examDescription,
       questionList: this.questions.map(question => ({
@@ -225,21 +227,21 @@ examForm: any;
     this.examService.createExam(examCreationDto)
       .subscribe(response => {
         console.log('Form submitted successfully', response);
-        this.checkAnswers(response);
-        this.showResults = true; // Show the results
+        // this.checkAnswers(response);
+        // this.showResults = true; // Show the results
       }, error => {
         console.error('Error submitting form', error);
       });
   }
 
-  checkAnswers(response: any) {
-    this.questions.forEach((question, qIndex) => {
-      question.correctAnswer = response.questionList[qIndex].correctAnswer; // Assuming the correct answer is provided in the response
-      question.options.forEach(option => {
-        option.isCorrect = option.isAnswered && (option.label === question.correctAnswer);
-      });
-    });
-  }
+  // checkAnswers(response: any) {
+  //   this.questions.forEach((question, qIndex) => {
+  //     question.correctAnswer = response.questionList[qIndex].correctAnswer; // Assuming the correct answer is provided in the response
+  //     question.options.forEach(option => {
+  //       option.isCorrect = option.isAnswered && (option.label === question.correctAnswer);
+  //     });
+  //   });
+  // }
 
   goBack() {
     this.location.back();

@@ -86,6 +86,8 @@ export class InstructorCourseComponent implements OnInit {
     } else {
       this.submitted = true;
       console.log('invalid form');
+      //Swal.fire('Please fill all the fields', '','error')
+      this.errorMessage = 'Please fill the required fields';
     }
     
   }

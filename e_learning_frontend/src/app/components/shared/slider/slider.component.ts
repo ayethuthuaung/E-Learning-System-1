@@ -2,24 +2,21 @@ import { AfterViewInit, Component, ContentChild, ElementRef, EventEmitter, HostL
 import { Client } from '../../models/client.model';
 import { Feedback } from '../../models/feedback.model';
 import { SlideConfig } from '../../models/slide-config.model';
+import { Category } from '../../models/category.model';
 
 @Component({
   selector: 'app-slider',
   templateUrl: './slider.component.html',
   styleUrls: ['./slider.component.css']
 })
-export class SliderComponent implements OnInit, AfterViewInit {
+export class SliderComponent implements  AfterViewInit {
 
  @Input() items: any[] = [];
-
-  dots: number[] = [];
-  activeSlideID = 1;
+ @Input() item: Category[] = [];
+  @Output() categoryClicked: EventEmitter<string> = new EventEmitter<string>();
 
   @ContentChild('template')
   template: TemplateRef<any> | undefined;
-
-  @Output('select')
-  onSelect: EventEmitter<string> = new EventEmitter<string>()
 
   @ViewChild('slideContainer')
   slideContainer!: ElementRef;
@@ -27,36 +24,41 @@ export class SliderComponent implements OnInit, AfterViewInit {
   @Input('slideConfig')
   slideConfig = new SlideConfig();
 
+  dots: number[] = [];
+  activeSlideID = 1;
   sliderContainerWidth = 0;
   slideWidth = 0;
   elementsToShow = 1;
   sliderWidth = 0;
-
   sliderMarginLeft = 0;
-
   isSlidesOver = false;
-
-  @HostListener('window:resize', ['$event'])
-  onScreenResize() {
-    this.setUpSlider()
-  }
 
   constructor() { }
 
-  ngOnInit(): void {
-
-    console.log(this.dots)
-  }
-
-  getItems() {
-    return this.items as any[]
-  }
-
   ngAfterViewInit(): void {
-    this.setUpSlider()
+    this.setUpSlider();
+  }
+
+  onCategoryClick(category: Category) {
+    this.categoryClicked.emit(category.name); 
   }
 
   setUpSlider() {
+    this.calculateDimensions();
+    this.calculateSliderDimensions();
+
+    if (this.slideConfig.autoPlay) {
+      this.autoPlay();
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onScreenResize() {
+    this.calculateDimensions();
+    this.calculateSliderDimensions();
+  }
+
+  calculateDimensions() {
     if (window.innerWidth < 500)
       this.elementsToShow = this.slideConfig.breakpoints.sm;
     else if (window.innerWidth < 900)
@@ -71,24 +73,18 @@ export class SliderComponent implements OnInit, AfterViewInit {
     }
 
     this.dots = Array(this.items.length - this.elementsToShow + 1);
+  }
 
+  calculateSliderDimensions() {
     let container = this.slideContainer.nativeElement as HTMLElement;
-
     this.sliderContainerWidth = container.clientWidth;
     this.slideWidth = this.sliderContainerWidth / this.elementsToShow;
     this.sliderWidth = this.slideWidth * this.items.length;
-
-    // console.log(this.sliderContainerWidth)
-    // console.log(this.sliderWidth)
-    // console.log(this.slideWidth)
-
-    if(this.slideConfig.autoPlay) this.autoPlay()
   }
 
   prev() {
-    console.log(this.sliderMarginLeft)
     if (this.sliderMarginLeft === 0) {
-      return
+      return;
     }
     this.activeSlideID--;
     this.sliderMarginLeft = this.sliderMarginLeft + this.slideWidth;
@@ -99,7 +95,7 @@ export class SliderComponent implements OnInit, AfterViewInit {
     const possibleMargin = -(notShowingElementsCount * this.slideWidth);
     if (this.sliderMarginLeft <= possibleMargin) {
       this.isSlidesOver = true;
-      return
+      return;
     }
     this.isSlidesOver = false;
     this.activeSlideID++;
@@ -107,29 +103,27 @@ export class SliderComponent implements OnInit, AfterViewInit {
   }
 
   move(slideID: number) {
-    console.log("Slide ID" + slideID)
-    console.log("activeSlideID" + this.activeSlideID)
     let difference = slideID - this.activeSlideID;
     if (difference > 0) {
       // Next
       for (let index = 0; index < difference; index++) {
-        this.next()
+        this.next();
       }
     } else if (difference < 0) {
-      //prev
+      // Prev
       for (let index = 0; index < Math.abs(difference); index++) {
-        this.prev()
+        this.prev();
       }
     }
   }
 
-  autoPlay(){
+  autoPlay() {
     setTimeout(() => {
-      if(this.isSlidesOver === true){
+      if (this.isSlidesOver === true) {
         this.sliderMarginLeft = this.slideWidth;
       }
-      this.next()
-      this.autoPlay()
+      this.next();
+      this.autoPlay();
     }, 1000);
   }
 }

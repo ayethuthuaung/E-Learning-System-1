@@ -157,10 +157,10 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
-    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDto> studentAnswerRequestDTOList) {
+    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerDto> studentAnswerDTOList) {
         List<Map<String, Object>> result = new ArrayList<>();
 
-        for (StudentAnswerRequestDto requestDTO : studentAnswerRequestDTOList) {
+        for (StudentAnswerDto requestDTO : studentAnswerDTOList) {
             Map<String, Object> answerResult = new HashMap<>();
             answerResult.put("questionId", requestDTO.getQuestionId());
 
@@ -197,7 +197,7 @@ public class QuestionServiceImpl implements QuestionService {
 
             // Save the student answer with the selected option ID
             StudentAnswer studentAnswer = new StudentAnswer(question, selectedAnswerOption);
-            studentAnswer.setSelectedOptionId(selectedAnswerOption.getId()); // Ensure selectedOptionId is set
+//            studentAnswer.setSelectedOptionId(selectedAnswerOption.getId()); // Ensure selectedOptionId is set
             studentAnswerRepository.save(studentAnswer);
 
             result.add(answerResult);

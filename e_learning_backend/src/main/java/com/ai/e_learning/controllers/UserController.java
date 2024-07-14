@@ -154,24 +154,9 @@ public class UserController {
 
     return ResponseEntity.status(imageResponse.getStatus()).body(imageResponse);
   }
-  @PostMapping("/enrollUserInCourse/{userId}/{courseId}")
-  public ResponseEntity<ImageResponse> enrollUserInCourse(@PathVariable Long userId, @PathVariable Long courseId) {
-    try {
 
 
-      UserCourse userCourse = userCourseService.enrollUserInCourse(userId, courseId);
 
-
-      return ResponseEntity.status(200).body(new ImageResponse(200, "User enrolled in course successfully", null));
-    } catch (IllegalArgumentException e) {
-      // Handle not found exceptions
-      return ResponseEntity.status(404).body(new ImageResponse(404, e.getMessage(), null));
-    } catch (Exception e) {
-      // Handle other exceptions
-      e.printStackTrace();
-      return ResponseEntity.status(500).body(new ImageResponse(500, "Internal server error", null));
-    }
-  }
 
   // Other controller methods...
 }

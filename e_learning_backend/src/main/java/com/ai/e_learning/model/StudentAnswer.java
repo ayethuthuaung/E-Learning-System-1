@@ -17,8 +17,10 @@ public class StudentAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "selected_option_id")
-    private Long selectedOptionId;  // Use Long to store ID of selected answer option
+    private double totalMarks;
+
+//    @Column(name = "selected_option_id")
+//    private Long selectedOptionId;  // Use Long to store ID of selected answer option
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
@@ -27,6 +29,11 @@ public class StudentAnswer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_option_id")
     private AnswerOption answerOption;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
 
     public StudentAnswer(Question question, AnswerOption selectedAnswerOption) {

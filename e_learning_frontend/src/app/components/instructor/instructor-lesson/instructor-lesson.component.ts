@@ -61,7 +61,7 @@ examForm: any;
   }
 
   addModule() {
-    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' }); // Initialize File as null
+    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' ,done: true}); // Initialize File as null
     console.log(this.modules);
     
   }
@@ -184,6 +184,8 @@ examForm: any;
 
   onSubmitExam(examForm: any) {
     const examCreationDto: ExamCreationDto = {
+      lessonId: 1,
+
       title: this.examTitle,
       description: this.examDescription,
       questionList: this.questions.map(question => ({

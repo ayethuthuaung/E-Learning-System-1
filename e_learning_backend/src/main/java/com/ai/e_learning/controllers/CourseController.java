@@ -4,9 +4,12 @@ import com.ai.e_learning.dto.CategoryDto;
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ImageResponse;
 import com.ai.e_learning.model.Category;
+import com.ai.e_learning.model.Course;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.ProfileImageService;
+import com.ai.e_learning.util.DtoUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,9 @@ public class CourseController {
 
   @Autowired
   private CourseService courseService;
+
+  @Autowired
+  private ModelMapper modelMapper;
 
   @GetMapping(value = "/courselist", produces = "application/json")
   public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
@@ -129,6 +135,15 @@ public class CourseController {
             courseDto.setPhoto(Arrays.toString(photoBytes));
         }
     }
+  @GetMapping(value = "/latestAccepted", produces = "application/json")
+  public ResponseEntity<List<CourseDto>> getLatestAcceptedCourses() {
+    List<CourseDto> courses = courseService.getLatestAcceptedCourses();
+    if (courses.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    return new ResponseEntity<>(courses, HttpStatus.OK);
+  }
+
 
 
   /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
