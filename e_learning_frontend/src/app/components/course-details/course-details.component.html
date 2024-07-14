@@ -41,35 +41,23 @@
         <h1 class="text-xl font-bold text-logo-blue">{{ lesson.title }}</h1>
       </div>
       <div *ngIf="isDropdownOpen[i]" class="mt-2 space-y-2 p-4">
-        <div *ngFor="let module of lesson.modules" class="p-4  bg-gray-50 rounded-lg shadow flex items-center justify-between">
+        <div *ngFor="let module of lesson.modules" class="p-4 bg-gray-50 rounded-lg shadow flex items-center justify-between">
           <p>{{ module.name }}</p>
-        <div class="flex justify-end">
-          <ng-container *ngIf="module.fileType === 'video/mp4'"> 
-
-            
-            <!-- Check if the file type is a video -->
-            <!-- <video width="320" height="240" webkit-playsinline="" playsinline="" controlslist="nodownload">
-              <source [src]="module.file" type="video/mp4">
-              Your browser does not support the video tag.
-            </video> -->
-            <button (click)="viewVideoDetailClick(module.id)" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" >view</button>
-
-          </ng-container>
-
-          
+          <div class="flex justify-end">
+            <ng-container *ngIf="module.fileType === 'video/mp4'"> 
+              <button (click)="viewVideoDetailClick(module.id)" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue">View</button>
+            </ng-container>
             <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
               <a [href]="module.file" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" target="_blank">Open File</a>
             </ng-container>          
-            <!-- <button *ngIf="!isOwner" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700">Mark as Done</button> -->
-            <button  *ngIf="!isOwner" id="mark-as-done-{{i}}" (click)="markAsDone(module.id, i)" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700" [disabled]="module.done">
+            <button *ngIf="!isOwner" id="mark-as-done-{{i}}" (click)="markAsDone(module.id, i)" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700" [disabled]="module.done">
               {{ module.done ? 'Done' : 'Mark as Done' }}
             </button>
           </div>
-
-
         </div>
       </div>
     </div>
+    
   </div>
 </div> 
 

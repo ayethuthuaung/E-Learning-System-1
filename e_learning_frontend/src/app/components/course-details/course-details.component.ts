@@ -177,4 +177,5 @@ markAsDone(moduleId: number, index: number) {
     }
   );
 }
+
 }

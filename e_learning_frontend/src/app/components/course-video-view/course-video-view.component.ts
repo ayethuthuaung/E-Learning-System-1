@@ -1,41 +1,116 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LessonService } from '../services/lesson.service';
 import { CourseService } from '../services/course.service';
+import { LessonService } from '../services/lesson.service';
 import { Course } from '../models/course.model';
-import { Lesson } from '../models/lesson.model';
 import { Module } from '../models/module.model';
+import { Lesson } from '../models/lesson.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-course-video-view',
   templateUrl: './course-video-view.component.html',
-  styleUrl: './course-video-view.component.css'
+  styleUrls: ['./course-video-view.component.css']
 })
-export class CourseVideoViewComponent implements OnInit{
+export class CourseVideoViewComponent implements OnInit {
+  lessons: Lesson[] = [];
   courseId: number | undefined;
   course: Course | undefined;
   moduleId: number | undefined;
   module: Module | undefined;
+  isSidebarShowing = false;
+  isMenuScrolled = false;
+  loadingError = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-
-    private lessonService: LessonService,
-    private courseService: CourseService
+    private courseService: CourseService,
+    private lessonService: LessonService
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      
-      this.moduleId = +params.get('id')!;
+      const moduleIdParam = params.get('moduleId');
+      const courseIdParam = params.get('courseId');
 
-      
-      
-      this.module = history.state.module;
-      console.log(`Module ID: ${this.moduleId}`);
-      console.log(`Module: ${JSON.stringify(this.module)}`);
+      if (moduleIdParam) {
+        this.moduleId = +moduleIdParam;
+        console.log(`Module ID: ${this.moduleId}`);
+      } else {
+        console.error('Module ID is not provided');
+      }
+
+      if (courseIdParam) {
+        this.courseId = +courseIdParam;
+        console.log(`Course ID: ${this.courseId}`);
+      } else {
+        console.error('Course ID is not provided');
+      }
+
+      if (this.courseId && this.courseId !== 0) {
+        this.courseService.getCourseById(this.courseId).subscribe(
+          (course: Course) => {
+            this.course = course;
+            console.log('Fetched Course:', this.course);
+            this.fetchLessons(); // Fetch lessons after course is fetched
+          },
+          (error: HttpErrorResponse) => {
+            if (error.status === 404) {
+              console.error('Course not found. Verify the courseId:', this.courseId);
+            } else {
+              console.error('Error fetching course:', error.message);
+            }
+            this.loadingError = true; // Set flag for UI to show error message
+          }
+        );
+      } else {
+        console.error('Invalid courseId:', this.courseId);
+        this.loadingError = true; // Set flag for UI to show error message
+      }
+
+      if (history.state.module) {
+        this.module = history.state.module;
+        console.log(`Module: ${JSON.stringify(this.module)}`);
+      } else {
+        console.error('Module state is not provided');
+      }
     });
+  }
 
-}
+  fetchLessons(): void {
+    console.log('Fetching lessons for course ID:', this.courseId);
+    if (this.courseId) {
+      this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+        (data: Lesson[]) => {
+          console.log('Fetched lessons:', data);
+          this.lessons = data; // Assign fetched lessons to class property
+        },
+        (error) => {
+          console.error('Error fetching lessons:', error);
+        }
+      );
+    }
+  }
+
+  navigateToCourseVideo(courseId: number, moduleId: number) {
+    this.router.navigate(['/course', courseId, 'module', moduleId]);
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  scrollCheck() {
+    this.isMenuScrolled = window.pageYOffset > 100;
+  }
+
+  openSideBar() {
+    this.isSidebarShowing = true;
+  }
+
+  closeSideBar() {
+    this.isSidebarShowing = false;
+  }
+
+  scrollToTop() {
+    document.body.scrollIntoView({ behavior: 'smooth' });
+  }
 }

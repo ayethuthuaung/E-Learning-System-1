@@ -100,6 +100,7 @@ const routes: Routes = [
 
 
    {path:'course-video-view/:moduleId', component: CourseVideoViewComponent},
+   { path: 'course/:courseId/module/:id', component: CourseVideoViewComponent },
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
    {path:'instructor/student', component: InstructorStudentComponent},
