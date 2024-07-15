@@ -5,4 +5,5 @@ export interface Notification {
   read: boolean;
   deleted: boolean;
   createdAt: Date; // Add this line
+  userId: number;
 }

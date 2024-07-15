@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '
 import { WebSocketService } from '../services/websocket.service';
 import { Notification } from '../models/notification.model';
 import { AuthService } from '../auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notification',
@@ -11,16 +12,18 @@ import { AuthService } from '../auth/auth.service';
 export class NotificationComponent implements OnInit {
   notifications: Notification[] = [];
   userRole!: string;
+  userId!: number;
   @Output() newNotification = new EventEmitter<void>();
   @ViewChild('audio', { static: false }) audio!: ElementRef<HTMLAudioElement>;
 
-  constructor(private webSocketService: WebSocketService, private authService: AuthService) {}
+  constructor(private webSocketService: WebSocketService, private authService: AuthService,private router: Router) {}
 
   ngOnInit(): void {
-    this.userRole = this.authService.getLoggedInUserRole();
+    this.userRole = this.authService.getLoggedInUserRole() as 'Admin' | 'Instructor';
+    const userId = this.authService.getLoggedInUserId();
 
-    if (this.userRole === 'Admin') {
-      this.webSocketService.fetchNotifications().subscribe(
+    if (this.userRole === 'Admin' || this.userRole === 'Instructor') {
+      this.webSocketService.fetchNotifications(this.userRole,userId).subscribe(
         (notifications) => {
           console.log(notifications);
           this.notifications = notifications
@@ -33,7 +36,7 @@ export class NotificationComponent implements OnInit {
         }
       );
 
-      this.webSocketService.getNotifications().subscribe((notification) => {
+      this.webSocketService.getNotifications(this.userRole,userId).subscribe((notification) => {
         // Add new notification to the beginning of the array
         this.notifications.unshift({ ...notification, createdAt: new Date(notification.createdAt) });
         this.playNotificationSound();
@@ -71,8 +74,22 @@ export class NotificationComponent implements OnInit {
       }
     );
   }
+  handleNotificationClick(notification: Notification): void {
+    if(this.userRole === 'Admin'){
+      this.router.navigate(['/admin/course'], { queryParams: { tab: 'courseList' } });
+    }
   
+}
+
   closeNotifications(): void {
     this.notifications = [];
+  }
+  getNotificationClass(notification: Notification): string {
+    if (notification.message.includes('Accept')) {
+      return 'text-green-600';
+    } else if (notification.message.includes('Reject')) {
+      return 'text-red-600';
+    }
+    return '';
   }
 }

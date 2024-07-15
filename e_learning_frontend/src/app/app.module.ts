@@ -50,7 +50,7 @@ import { WebSocketService } from './components/services/websocket.service';
 import { NotificationComponent } from './components/notification/notification.component';
 
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
-import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
+import { ConservationListComponent } from './components/instructor/instructor-conservation-list/conservation-list.component';
 
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';

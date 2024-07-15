@@ -14,4 +14,5 @@ public class NotificationDto {
     private String role;
     private boolean isRead ;
     private boolean isDeleted ;
+    private Long userId;
 }

@@ -7,8 +7,8 @@
   </div>
   <div class="notification-body overflow-y-auto" style="max-height: 400px;">
     <ul class="notification-list">
-      <li *ngFor="let notification of notifications"
-          [class.unread]="!notification.read"
+      <li *ngFor="let notification of notifications" (click)="handleNotificationClick(notification)"
+          [ngClass]="getNotificationClass(notification)"
           class="notification-item flex justify-between p-3 cursor-pointer border-b" (click)="markAsRead(notification)">
         <div class="notification-content">
           <div class="notification-message font-bold">

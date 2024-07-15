@@ -19,7 +19,7 @@ import { NotificationComponent } from './components/notification/notification.co
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
 
-import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
+import { ConservationListComponent } from './components/instructor/instructor-conservation-list/conservation-list.component';
 
 import { InstructorProfileComponent } from './components/instructor/instructor-profile/instructor-profile.component';
 import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
@@ -54,7 +54,7 @@ const routes: Routes = [
   
    { path: 'home', component: HomeComponent},
 
-   { path: 'conservation-list', component: ConservationListComponent },
+   { path: 'instructor/conservation-list', component: ConservationListComponent },
    { path: 'notification', component: NotificationComponent },
 
    {path:'blog', component: BlogsComponent},
