@@ -1,3 +1,4 @@
+
 <div class="flex justify-between items-center text-slate-500 font-light">
     <div class="flex gap-1 items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
@@ -16,9 +17,9 @@
     </div>
 </div>
 <div class="flex items-center justify-center mt-3 p-2 bg-logo-blue rounded-2xl">
-    <button *ngIf="!isEnrolled && !isOwner; else detailButton" (click)="enrollUser()" class="text-xl text-white font-semibold text-emerald-600">Enroll</button>
-    <ng-template #detailButton>
-      <button (click)="goToCourseDetails()" class="text-xl text-white font-semibold text-emerald-600">Detail</button>
-    </ng-template>
+    <button *ngIf="!isEnrolled && !isOwner && hasRole(3); else detailButton" (click)="enrollUser()" class="text-xl text-white font-semibold text-emerald-600">Enroll</button>
+<ng-template #detailButton>
+  <button (click)="goToCourseDetails()" class="text-xl text-white font-semibold text-emerald-600">Detail</button>
+</ng-template>
   </div>
   

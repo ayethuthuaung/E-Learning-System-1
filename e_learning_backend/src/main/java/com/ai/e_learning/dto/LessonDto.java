@@ -15,4 +15,5 @@ public class LessonDto {
     private String title;
     private Course course;
     private List<CourseModuleDto> modules;
+    private ExamListDto examListDto;
 }

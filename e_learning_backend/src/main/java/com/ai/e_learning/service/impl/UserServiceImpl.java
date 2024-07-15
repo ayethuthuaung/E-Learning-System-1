@@ -318,4 +318,10 @@ public class UserServiceImpl implements UserService {
         return imageResponse;
     }
 
+    @Override
+    public boolean isExamOwner(Long userId) {
+        return userRepository.findExamOwnerByExamId(userId) == null;
+    }
+
+
 }

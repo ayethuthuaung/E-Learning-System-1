@@ -179,6 +179,8 @@ public class CourseServiceImpl implements CourseService {
     } else {
       System.out.println("Instructor role not found");
     }
+    course.setAcceptedAt(System.currentTimeMillis());
+    EntityUtil.saveEntity(courseRepository,course,"Course");
   }
 
   @Override
@@ -249,5 +251,15 @@ public class CourseServiceImpl implements CourseService {
     return modelMapper.map(course, CourseDto.class);
   }
 
+  @Override
+  public List<CourseDto> getLatestAcceptedCourses() {
+    List<Course> courses = courseRepository.findLatestAcceptedCourses();
+    return courses.stream()
+      .map(course -> modelMapper.map(course, CourseDto.class))
+      .limit(3) // Limit to latest 3 courses
+      .collect(Collectors.toList());
+  }
+
 
 }
+

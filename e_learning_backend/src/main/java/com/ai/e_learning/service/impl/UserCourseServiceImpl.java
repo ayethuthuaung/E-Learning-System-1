@@ -11,13 +11,13 @@ import com.ai.e_learning.service.RoleService;
 import com.ai.e_learning.service.UserCourseService;
 import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,9 +27,7 @@ public class UserCourseServiceImpl implements UserCourseService {
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
   private final UserCourseRepository userCourseRepository;
-
-  @Autowired
-  private ModelMapper modelMapper;
+  private final ModelMapper modelMapper;
 
   @Autowired
   private NotificationController notificationController;
@@ -39,18 +37,18 @@ public class UserCourseServiceImpl implements UserCourseService {
 
   @Autowired
   public UserCourseServiceImpl(UserRepository userRepository, CourseRepository courseRepository,
-                               UserCourseRepository userCourseRepository) {
+                               UserCourseRepository userCourseRepository, ModelMapper modelMapper) {
     this.userRepository = userRepository;
     this.courseRepository = courseRepository;
     this.userCourseRepository = userCourseRepository;
+    this.modelMapper = modelMapper;
   }
 
   @Override
-  public UserCourse enrollUserInCourse(Long userId, Long courseId) {
+  public UserCourseDto enrollUserInCourse(Long userId, Long courseId) {
     User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
     Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
 
-    // Check if user is already enrolled in the course
     boolean isEnrolled = userCourseRepository.existsByUserAndCourse(user, course);
     if (isEnrolled) {
       throw new IllegalStateException("User is already enrolled in this course");
@@ -61,12 +59,15 @@ public class UserCourseServiceImpl implements UserCourseService {
     userCourse.setCourse(course);
     userCourse.setCompleted(false);
     userCourse.setProgress(0);
-    userCourse.setStatus("pending");
+    userCourse.setStatus("Pending");
 
 
     sendInstructorNotification(course, user);
-    return userCourseRepository.save(userCourse);
+    userCourse = userCourseRepository.save(userCourse);
+
+    return modelMapper.map(userCourse, UserCourseDto.class);
   }
+
   private void sendInstructorNotification(Course course, User student) {
     Optional<Role> instructorRoleOptional = roleService.getRoleByName("Instructor");
     if (instructorRoleOptional.isPresent()) {
@@ -92,22 +93,24 @@ public class UserCourseServiceImpl implements UserCourseService {
   @Override
   public void changeStatus(Long id, String status) {
     UserCourse userCourse = userCourseRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
+      .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
     userCourse.setStatus(status);
     userCourseRepository.save(userCourse);
   }
   //AT
 
   @Override
-  public UserCourse updateUserCourse(Long userCourseId, boolean completed, int progress, String status) {
+  public UserCourseDto updateUserCourse(Long userCourseId, boolean completed, int progress, String status) {
     UserCourse userCourse = userCourseRepository.findById(userCourseId)
       .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
 
     userCourse.setCompleted(completed);
-    userCourse.setProgress(0);
+    userCourse.setProgress(progress);
     userCourse.setStatus(status);
 
-    return userCourseRepository.save(userCourse);
+    userCourse = userCourseRepository.save(userCourse);
+
+    return modelMapper.map(userCourse, UserCourseDto.class);
   }
 
   @Override
@@ -122,12 +125,10 @@ public class UserCourseServiceImpl implements UserCourseService {
 
   @Override
   public List<Course> getCoursesByUserId(Long userId) {
-    return userCourseRepository.findByUserIdAndStatus(userId, "accept").stream()
+    return userCourseRepository.findByUserIdAndStatus(userId, "Accept").stream()
       .map(UserCourse::getCourse)
       .collect(Collectors.toList());
   }
-
-
 
   @Override
   public boolean checkEnrollment(Long userId, Long courseId) {
@@ -135,12 +136,12 @@ public class UserCourseServiceImpl implements UserCourseService {
     Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
     return userCourseRepository.existsByUserAndCourse(user, course);
   }
+
   @Override
   public boolean checkEnrollmentAcceptance(Long userId, Long courseId) {
     Optional<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
-    return userCourseOptional.isPresent() && userCourseOptional.get().getStatus().equals("accept");
+    return userCourseOptional.isPresent() && userCourseOptional.get().getStatus().equals("Accept");
   }
-
   @Override
   public List<UserCourseDto> getAllUserCourseByUserId(Long userId) {
     List<Course> courses = courseRepository.findByUserId(userId);
@@ -151,6 +152,12 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
     return DtoUtil.mapList(userCourses,UserCourseDto.class,modelMapper);
   }
+  @Override
+  public List<Course> getTrendingCourses() {
+    List<Course> trendingCourses = userCourseRepository.findTopTrendingCourses();
+    return trendingCourses.stream().limit(3).collect(Collectors.toList());
+  }
 
 
 }
+

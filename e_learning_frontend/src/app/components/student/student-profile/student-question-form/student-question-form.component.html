@@ -1,0 +1,69 @@
+<div class="flex min-h-screen">
+  <div class="container mx-auto p-4">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="px-6 py-4" #questionFormContainer>
+        <div class="font-bold text-3xl mb-2 text-center text-logo-blue">{{exam.title}}</div>
+        <div class="font-semibold text-xl mb-2 text-center text-logo-blue">{{exam.description}}</div>
+        <div *ngIf="showResults" class="text-center text-logo-blue font-semibold mb-2">Total Point: {{totalMarks}} / {{totalQuestionCounts}}</div>
+
+        <form class="space-y-6 text-xl">
+          <div *ngFor="let question of questions; let i = index" class="p-4 bg-gray-100 rounded-lg mb-4">
+            <div class="font-semibold mb-2 flex items-center justify-between">
+              <span>{{ i + 1 }}. {{ question.text }}</span>
+              <div class="flex items-center">
+                <span>{{question.marks}}</span>
+                <span class="ml-1">{{ question.marks === 1 ? 'Point' : 'Points' }}</span>
+              </div>
+            </div>
+            <div *ngFor="let option of question.options; let j = index" class="flex items-center mb-2">
+              <input
+              [type]="question.type === 'multiple-choice' ? 'radio' : 'checkbox'"
+              [checked]="option.isAnswered"
+                [disabled]="showResults"
+                (change)="selectOption(i, j)"
+                class="mr-2"
+                [id]="question.id + '-' + option.id"
+                [name]="'question' + i"
+              />
+              <label [for]="question.id + '-' + option.id" class="cursor-pointer">
+                {{option.label}}
+              </label>
+              <span *ngIf="showResults && option.isCorrect" class="text-green-500 font-semibold ml-2">(Correct Answer)</span>
+            </div>
+
+            <div *ngIf="showResults" class="mt-2">
+              <div *ngIf="question.correctAnswers && question.correctAnswers.length > 0">
+                <span class="font-semibold text-logo-blue">Correct Answers:</span>
+                <ul>
+                  <li *ngFor="let correctAnswer of question.correctAnswers">
+                    {{ getOptionLabel(question, correctAnswer) }}
+                  </li>
+                </ul>
+              </div>
+              <div *ngIf="question.correctAnswers && question.correctAnswers.length === 0">
+                <span class="font-semibold text-red-500">No correct answers available for this question.</span>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="flex justify-center mt-6">
+          <button *ngIf="hasRole(1) && !showResults"
+          type="button"
+          [disabled]="showResults"
+          (click)="submitAnswers()"
+          class="bg-logo-blue hover:bg-dark-blue text-white font-semibold py-2 px-4 rounded">
+    Submit Form
+  </button>
+          <button *ngIf="showResults"
+            type="button" 
+            (click)="captureScreenshot()"
+            class="bg-logo-blue hover:bg-dark-blue text-white font-semibold py-2 px-4 rounded ml-4"
+          >
+            Save Form
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

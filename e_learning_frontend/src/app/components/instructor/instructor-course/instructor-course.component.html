@@ -1,9 +1,8 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
-    <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
-    <div class="flex flex-1">
-      <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
-  
-      <main class="flex-1 p-6">
+  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
+  <div class="flex flex-1">
+      <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>  
+      <main class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
         <section>
             <div class="flex border-b">
                 <button
@@ -19,15 +18,16 @@
                   [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
                   (click)="setActiveTab('createLesson')"
                 >
-                  Add Lessons And Exam
+                  Add Lessons
                 </button>
                 <button
                   class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
-                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
-                  (click)="setActiveTab('additional')"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'courseList' }"
+                  (click)="setActiveTab('courseList')"
                 >
-                  Add Certificate
+                  Course List
                 </button>
+
               </div>
 
    
@@ -35,16 +35,12 @@
 
              
               
-              <div *ngIf="activeTab === 'additional'" class="p-4">
-                <h3 class="text-xl font-bold mb-4">Additional Information</h3>
-                <p>Content for additional information.</p>
-              </div>
-              
+            
    
           <div *ngIf="activeTab === 'createCourse'" class="p-4 flex flex-col md:flex-row">
             <!-- Course Create Form -->
             <div class="flex flex-col items-center justify-center light w-full md:w-full">
-              <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+              <div class="w-full max-w-xl bg-white rounded-lg shadow-md p-6">
                 <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
                   <input
                     type="text"
@@ -77,7 +73,7 @@
                     required
                     placeholder="duration"
                   />
-                  <input
+                  <textarea
                     type="text"
                     class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                     id="description"
@@ -85,7 +81,7 @@
                     [(ngModel)]="course.description"
                     required 
                     placeholder="description"
-                  />
+                  ></textarea>
                   <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
                     <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload Photo</label>
                     <input
@@ -124,7 +120,7 @@
             </div>
           </div>
           
-
+          <!-- Lesson -->
           <div *ngIf="activeTab === 'createLesson'" class="p-4">
             <div class="p-4">
               <div class="flex mb-4 space-x-2">
@@ -132,11 +128,10 @@
                    <!-- Course Buttons -->
            <div class="w-full md:w-full p-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <button *ngFor="let course of courses" (click)="navigateToCourse(course.id)" class="relative p-2 border rounded shadow hover:-translate-y-2 duration-300 bg-white group">
+              <button *ngFor="let course of getAcceptedCourses()" (click)="navigateToCourse(course.id)" class="relative p-2 border rounded shadow hover:-translate-y-2 duration-300 bg-white group">
                 <div class="flex items-center">
                   <h2 class="text-logo-blue mr-2">{{ course.name }}</h2>
                   <span [ngClass]="{
-                    'bg-yellow-500': course.status === 'Pending',
                     'bg-green-500': course.status === 'Accept'
                   }" class="text-white px-2 py-1 rounded ml-auto">
                     {{ course.status }}
@@ -145,18 +140,113 @@
                 <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   Click to Create Lesson
                 </span>
-              </button>
-          
+              </button>    
 </div>
 </div>
-            
-           
-          
-               
               </div>
             </div>
           </div>     
         </div>
+        <!-- Lesson -->
+
+
+        <!-- Course List -->
+        <div *ngIf="activeTab === 'courseList'" class="p-4">
+          <div class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
+            <div class="datatable-container bg-white p-6 rounded-lg shadow-lg">
+              <div class="flex justify-between items-center mb-4">
+                <input 
+                  type="text" 
+                  class="form-control w-1/4 p-2 border rounded" 
+                  placeholder="Search..." 
+                  [(ngModel)]="searchTerm" 
+                  (ngModelChange)="onSearchChange()" 
+                />
+      
+                <div class="pagination-controls flex items-center space-x-2">
+                  <button 
+                    (click)="firstPage()" 
+                    [disabled]="currentPage === 1" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-double-left"></i>
+                  </button>
+                  <button 
+                    (click)="previousPage()" 
+                    [disabled]="currentPage === 1" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-left"></i>
+                  </button>
+                  <span class="flex items-center">
+                    Page 
+                    <input 
+                      type="number" 
+                      class="page-input mx-2 w-16 text-center border rounded p-1" 
+                      [(ngModel)]="currentPage" 
+                      (ngModelChange)="goToPage($event)" 
+                      min="1" 
+                      [max]="totalPages" 
+                    /> 
+                    of {{ totalPages }}
+                  </span>
+                  <button 
+                    (click)="nextPage()" 
+                    [disabled]="currentPage === totalPages" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-right"></i>
+                  </button>
+                  <button 
+                    (click)="lastPage()" 
+                    [disabled]="currentPage === totalPages" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-double-right"></i>
+                  </button>
+                </div>
+              </div>
+      
+              <div class="table-responsive">
+                <table class="table-auto w-full border-collapse">
+                  <thead class="bg-logo-blue text-white">
+                    <tr>
+                      <th class="p-2 border">No</th>
+                      <th class="p-2 border">Name</th>
+                      <th class="p-2 border">duration</th>
+                      <th class="p-2 border">Created Date</th>
+                      <th class="p-2 border">Status</th>
+                      <th class="p-2 border">Detail</th>
+                     
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let course of paginatedInstructorCourses; let i = index" class="hover:bg-gray-100">
+                      <td class="p-2 border">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                      <td class="p-2 border">{{ course.name }}</td>
+                      <td class="p-2 border">{{ course.duration }}</td>
+                      <td class="p-2 border">{{ course.createdAt | date:'short' }}</td>
+                      <td class="p-2 border"
+                      [ngClass]="{
+                          'text-green-700': course.status === 'Accept',
+                          'text-yellow-500': course.status === 'Pending',
+                          'text-red-500': course.status === 'Reject'
+                      }">
+                      {{ course.status }}
+                  </td>
+                      <td class="p-2 border text-center">
+                        <i class="fa-solid fa-list text-logo-blue"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
       </section>
     </main>
   </div>
