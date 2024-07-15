@@ -112,7 +112,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HomeComponent,
     LoginComponent,
     HomeComponent,
-
+    AppStoreComponent,
   
     ForgetPasswordComponent,
 

@@ -1,24 +1,23 @@
 <ul class="lg:flex font-semibold text-slate-700 text-lg gap-8 xl:gap-14">
-    <li class="p-3 border-t lg:border-0">
-        <a [routerLink]="['home']">Home</a>
-    </li>
-    <li class="p-3 border-t lg:border-0">
-        <a href="all-courses">All Courses</a>
-    </li>
-    <li *ngIf="hasRole(1)" class="p-3 border-t lg:border-0">
-        <a href="#">Notification</a>
-      </li>
-    <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
-        <a href="admin/dashboard">Dashboard</a>
-      </li>
-      <li *ngIf="hasRole(3)" class="p-3 border-t lg:border-0">
-        <a href="instructor/dashboard">Dashboard</a>
-      </li>
-      
-    <!-- <li class="p-3 border-t lg:border-0">
-        <a [routerLink]="['blog']">Blog</a>
-    </li> -->
-    <li class="p-3 border-y lg:border-0">
-        <a [routerLink]="['contact']">Contact</a>
-    </li>
+  <li class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/home']">Home</a>
+  </li>
+  <li class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/all-courses']">All Courses</a>
+  </li>
+  <li *ngIf="hasRole(1)" class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/notification']">Notification</a>
+  </li>
+  <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/admin/dashboard']">Dashboard</a>
+  </li>
+  <li *ngIf="hasRole(3)" class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/instructor/dashboard']">Dashboard</a>
+  </li>
+  <!-- <li class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/blog']">Blog</a>
+  </li> -->
+  <li class="p-3 border-y lg:border-0">
+    <a [routerLink]="['/contact']">Contact</a>
+  </li>
 </ul>
