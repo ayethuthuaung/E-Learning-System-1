@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChatMessage } from '../models/message';
-import { WebSocketService } from '../services/websocket.service';
+import { ChatMessage } from '../../models/message';
+import { WebSocketService } from '../../services/websocket.service';
 
 interface Conversation {
   id: number;

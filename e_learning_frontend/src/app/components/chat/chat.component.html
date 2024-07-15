@@ -30,7 +30,7 @@
               </span>
             </div>
           </div>
-          <img *ngIf="message.messageType === 'image'" [src]="message.fileUrl" alt="Image" style="max-width: 100px; height: auto;">
+          <img *ngIf="message.messageType === 'image'" [src]="message.fileUrl" alt="Image" style="max-width: 100px; height: auto;" controls>
           <audio *ngIf="message.messageType === 'voice'" controls>
             <source [src]="message.fileUrl" type="audio/mpeg">
             Your browser does not support the audio element.

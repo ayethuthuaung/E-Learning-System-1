@@ -23,6 +23,10 @@ public class Notification {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")  // Added this
+    private User user;
+
     @Column(name = "is_read")
     private boolean isRead = false; // default to false
 

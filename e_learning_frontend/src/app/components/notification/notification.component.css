@@ -62,3 +62,12 @@
   color: #ef4444;
   cursor: pointer;
 }
+
+.notification-accepted .notification-message {
+  color: green;
+}
+
+.notification-rejected .notification-message {
+  color: red;
+}
+

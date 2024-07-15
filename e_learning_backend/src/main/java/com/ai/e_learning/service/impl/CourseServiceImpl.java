@@ -18,6 +18,7 @@ import com.ai.e_learning.util.EntityUtil;
 import com.ai.e_learning.util.GoogleDriveJSONConnector;
 import com.ai.e_learning.util.Helper;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -139,10 +140,10 @@ public class CourseServiceImpl implements CourseService {
     course.setCategories(mergedCategories);
     Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
     // Send notifications
-    sendRoleSpecificNotifications(savedCourse);
+    sendAdminNotifications(savedCourse);
     return convertToDto(savedCourse);
   }
-  private void sendRoleSpecificNotifications(Course course) {
+  private void sendAdminNotifications(Course course) {
     Optional<Role> adminRoleOptional = roleService.getRoleByName("Admin");
     if (adminRoleOptional.isPresent()) {
       Role adminRole = adminRoleOptional.get();
@@ -161,7 +162,23 @@ public class CourseServiceImpl implements CourseService {
   public void changeStatus(Long id,String status){
     Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
     course.setStatus(status);
-    EntityUtil.saveEntity(courseRepository,course,"Course");
+    Course updatedCourse = EntityUtil.saveEntity(courseRepository, course, "Course");
+
+    Hibernate.initialize(updatedCourse.getUser());
+    // Send notifications
+    sendInstructorNotification(updatedCourse, status);
+  }
+  private void sendInstructorNotification(Course course, String action) {
+    Optional<Role> instructorRoleOptional = roleService.getRoleByName("Instructor");
+    if (instructorRoleOptional.isPresent()) {
+      Role instructorRole = instructorRoleOptional.get();
+      Notification instructorNotification = new Notification();
+      instructorNotification.setMessage("Admin course " + course.getName() + " has been " + action);
+      instructorNotification.setRole(instructorRole);
+      notificationController.sendNotificationToUser(instructorNotification, course.getUser());
+    } else {
+      System.out.println("Instructor role not found");
+    }
   }
 
   @Override

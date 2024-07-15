@@ -51,7 +51,7 @@ import { NotificationComponent } from './components/notification/notification.co
 import { CourseListComponent } from './components/course-list/course-list.component';
 
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
-import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
+import { ConservationListComponent } from './components/instructor/instructor-conservation-list/conservation-list.component';
 
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';

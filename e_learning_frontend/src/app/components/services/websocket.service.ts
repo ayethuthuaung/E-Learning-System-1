@@ -91,11 +91,11 @@ export class WebSocketService {
     return this.messageSubject.asObservable();
   }
 
-  public getNotifications(): Observable<Notification> {
+  public getNotifications(roleName: string,userId:number): Observable<Notification> {
     return this.notificationSubject.asObservable();
   }
-  public fetchNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>('http://localhost:8080/api/notifications')
+  public fetchNotifications(roleName: string,userId: number): Observable<Notification[]> {
+    return this.http.get<Notification[]>(`${this.baseUrl}?roleName=${roleName}&userId=${userId}`)
       .pipe(
         catchError(this.handleError)
       );
