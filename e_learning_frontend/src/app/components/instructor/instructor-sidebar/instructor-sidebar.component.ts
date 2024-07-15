@@ -16,7 +16,7 @@ export class InstructorSidebarComponent implements OnInit {
     { label: 'Students', link: '../../instructor/student', icon: 'fas fa-user-graduate', isActive: false },
     { label: 'Message', link: '../../conservation-list', icon: 'fas fa-envelope', isActive: false },
     { label: 'Report', link: '#', icon: 'fas fa-file-alt', isActive: false },
-    { label: 'Log out', link: '#', icon: 'fas fa-sign-out-alt', isActive: false },
+    // { label: 'Log out', link: '#', icon: 'fas fa-sign-out-alt', isActive: false },
   ];
 
   constructor(public router: Router) {}

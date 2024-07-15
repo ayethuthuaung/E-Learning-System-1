@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Course } from '../../../models/course.model';
 import { UserCourseService } from '../../../services/user-course.service';
-import { User } from '../../../models/user.model';
+import { Role, User } from '../../../models/user.model';
 
 import Swal from 'sweetalert2';
 import { UserCourse } from '../../../models/usercourse.model';
@@ -23,6 +23,9 @@ export class CourseFooterComponent implements OnInit {
 
   isOwner: boolean = false;
 
+  roles: Role[] = [];
+
+
   constructor(private userCourseService: UserCourseService, private router: Router) { }
 
   ngOnInit(): void {
@@ -38,6 +41,14 @@ export class CourseFooterComponent implements OnInit {
       const loggedUser = JSON.parse(storedUser);
       if (loggedUser) {
         this.userId = loggedUser.id;
+        this.roles = loggedUser.roles;
+         // Access role IDs
+         if (this.roles.length > 0) {
+          this.roles.forEach(role => {
+            console.log("courseFooter: ",role.id); // Print each role ID
+          });
+        }
+
         this.userCourseService.getUserById(this.userId!).subscribe(
           (user: User | null) => {
             if (user) {
@@ -133,7 +144,7 @@ export class CourseFooterComponent implements OnInit {
       return;
     }
 
-    if (!this.isAccepted && !this.isOwner) {
+    if (!this.isAccepted && !this.isOwner && this.hasRole(3)) {
       Swal.fire({
         title: 'Enrollment Not Accepted',
         text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',
@@ -160,5 +171,9 @@ export class CourseFooterComponent implements OnInit {
     } else {
       console.error('userCourseId is undefined');
     }
+  }
+
+  hasRole(roleId: number): boolean {
+    return this.roles.some(role => role.id === roleId);
   }
 }

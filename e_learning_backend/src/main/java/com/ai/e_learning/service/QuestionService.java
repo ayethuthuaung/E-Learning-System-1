@@ -24,7 +24,6 @@ public interface QuestionService {
 
     public List<QuestionDto> getQuestionsByQuestionType(Long questionTypeId);
 
-    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerDto> studentAnswerDTOList);
 
 
 //    List<QuestionDTO> getQuestionsWithAnswers(Long examId);

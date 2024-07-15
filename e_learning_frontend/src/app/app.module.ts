@@ -77,10 +77,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
-import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
-import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
-import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
-import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { AuthComponent } from './components/auth/auth.component';
 
 import { AdminCourseComponent } from './components/admin/admin-course/admin-course.component';
@@ -95,8 +91,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FilterDataPipe} from './components/filter-data.pipe';
 
-import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-details.component';
-import { QuizExamListComponent } from './components/quiz-Ans/exam-list/exam-list.component';
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
@@ -119,12 +113,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     LoginComponent,
     HomeComponent,
 
-    CreateQuestionTypeComponent,
-    CreateAnswerOptionComponent,
-    CreateQuestionFormComponent,
-    CreateQuestionFormComponent,
-    AnswerFormComponent,
-
+  
     ForgetPasswordComponent,
 
 
@@ -132,13 +121,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
         HomeComponent,
 
-        CreateQuestionTypeComponent,
-        CreateAnswerOptionComponent,
-        CreateQuestionFormComponent,
-        CreateQuestionFormComponent,
-        AnswerFormComponent,
-        ExamDetailComponent,
-    ExamDetailComponent,
+       
     ForgetPasswordComponent,
     
  
@@ -208,7 +191,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     NotificationComponent,
     CourseDetailsComponent,
     UserUploadComponent,
-    QuizExamListComponent,
     ConservationListComponent,
     UserUploadComponent,   
     InstructorLessonComponent,

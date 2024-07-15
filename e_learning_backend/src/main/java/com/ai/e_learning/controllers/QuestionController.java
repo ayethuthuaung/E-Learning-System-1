@@ -82,17 +82,7 @@ public ResponseEntity<?> createQuestion(@RequestBody List<QuestionCreationDto> q
         return ResponseEntity.ok(question);
     }
 
-@PostMapping("/submitAnswers")
-public ResponseEntity<?> submitAnswers(@RequestBody List<StudentAnswerDto> studentAnswerDtoList) {
-    List<Map<String, Object>> result = questionService.saveStudentAnswers(studentAnswerDtoList);
-    return ResponseEntity.ok(result);
-}
 
-//add marks
-    @PostMapping("/saveStudentAnswers")
-    public ResponseEntity<List<Map<String, Object>>> saveStudentAnswers(@RequestBody List<StudentAnswerDto> studentAnswerDTOList) {
-        List<Map<String, Object>> result = questionService.saveStudentAnswers(studentAnswerDTOList);
-        return ResponseEntity.ok(result);
-    }
+
 }
 

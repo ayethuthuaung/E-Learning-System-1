@@ -26,10 +26,7 @@ export class QuestionService {
   getQuestionsForExam(examId: number): Observable<QuestionDto[]> {
     return this.httpClient.get<QuestionDto[]>(`${this.baseURL}/exam/${examId}`);
   }
-   // Submits student answers to backend
-  submitAnswers(answers: any): Observable<any> {
-    return this.httpClient.post(`${this.baseURL}/submitAnswers`, answers);
-  }
+
   
   getQuestionForExam(examId: number): Observable<ExamDTO[]> {
     return this.httpClient.get<ExamDTO[]>(`${this.baseURL}/exam/${examId}`);
@@ -50,10 +47,7 @@ export class QuestionService {
   deleteQuestion(id: number): Observable<Object> {
     return this.httpClient.delete(`${this.baseURL}/delete/${id}`);
   }
-  submitStudentAnswers(studentAnswers: StudentAnswer[]): Observable<any> {
-    return this.httpClient.post(`${this.baseURL}/submitAnswers`, studentAnswers, { responseType: 'json' });
-  }
-
+ 
   //for marks
 
   getMarks(): Observable<MarksDTO[]> {

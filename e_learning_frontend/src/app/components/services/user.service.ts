@@ -61,6 +61,13 @@ export class UserService {
   getUserConversations(userId: number): Observable<User[]> {
     return this.httpClient.get<User[]>(`${this.baseURL}/showData`);
 }
+
+checkExamOwner(userId: number): Observable<boolean> {
+  return this.httpClient.get<boolean>(`${this.baseURL}/checkExamOwner`, {
+    params: { userId: userId.toString() }
+  });
+}
+
  
 }
 

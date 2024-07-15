@@ -155,10 +155,11 @@ public class UserController {
     return ResponseEntity.status(imageResponse.getStatus()).body(imageResponse);
   }
 
+  public ResponseEntity<Boolean> checkExamOwner(@RequestParam("userId") Long userId){
+    return ResponseEntity.ok(userService.isExamOwner(userId));
+  }
 
 
-
-  // Other controller methods...
 }
 
 

@@ -146,7 +146,7 @@ onFilterChange(event: { key: string, term: string }) {
       confirmButtonText: 'Yes, accept!'
     }).then((result: { isConfirmed: any; }) => {
       if (result.isConfirmed) {
-        this.changeStatus(userCourse, 'accept');
+        this.changeStatus(userCourse, 'Accept');
       }
     });
   }
@@ -162,7 +162,7 @@ onFilterChange(event: { key: string, term: string }) {
       confirmButtonText: 'Yes, reject!'
     }).then((result: { isConfirmed: any; }) => {
       if (result.isConfirmed) {
-        this.changeStatus(userCourse, 'reject');
+        this.changeStatus(userCourse, 'Reject');
       }
     });
 

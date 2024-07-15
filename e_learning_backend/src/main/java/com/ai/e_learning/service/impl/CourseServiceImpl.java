@@ -161,6 +161,7 @@ public class CourseServiceImpl implements CourseService {
   public void changeStatus(Long id,String status){
     Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
     course.setStatus(status);
+    course.setAcceptedAt(System.currentTimeMillis());
     EntityUtil.saveEntity(courseRepository,course,"Course");
   }
 
