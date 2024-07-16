@@ -3,6 +3,8 @@ import { CourseService } from '../../services/course.service';
 import { Course } from '../../models/course.model';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
+import { WebSocketService } from '../../services/websocket.service';
+
 
 @Component({
   selector: 'app-admin-course-list',
@@ -21,7 +23,11 @@ export class AdminCourseListComponent implements OnInit {
   currentPage = 1;
   totalPages = 0;
 
-  constructor(private courseService: CourseService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private courseService: CourseService,
+    private webSocketService:WebSocketService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.fetchCourses();
@@ -98,7 +104,7 @@ export class AdminCourseListComponent implements OnInit {
       }
     });
   }
-
+ 
   openModal(course: Course) {
     this.selectedCourse = course;
     const modal = document.getElementById('fullScreenModal');

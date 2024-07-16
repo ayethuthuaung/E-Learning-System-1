@@ -6,16 +6,14 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @ToString
 public class CourseModuleDto {
-    private  Long id;
+    private  Long id, lessonId;
     private String name,fileType;
     private Long createdAt;
-    private Set<Lesson> lessons;
+    private Lesson lesson;
     private String file;
     private MultipartFile fileInput;
 

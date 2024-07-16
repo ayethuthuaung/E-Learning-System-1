@@ -17,11 +17,14 @@ export class UserCourseService {
     return this.httpClient.post<UserCourse>(`${this.baseURL}/enroll`, { userId, courseId });
   }
 
+
   getAllUserCourses(userId: any): Observable<UserCourse[]> {
     console.log(userId);
     
     return this.httpClient.get<UserCourse[]>(`${this.baseURL}/userCourselist?userId=${userId}`);
+
   }
+
 
   changeStatus(id: number, status: string): Observable<void> {
     return this.httpClient.post<void>(`${this.baseURL}/change-status/${id}`, { status });
@@ -42,10 +45,11 @@ export class UserCourseService {
   getCoursesByUserId(userId: number): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/user/${userId}/courses`);
   }
- 
+
   checkEnrollment(userId: number, courseId: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.baseURL}/check?userId=${userId}&courseId=${courseId}`);
   }
+
   checkEnrollmentAcceptance(userId: number, courseId: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.baseURL}/check-enrollment-acceptance/${userId}/${courseId}`);
   }
@@ -53,4 +57,8 @@ export class UserCourseService {
   getAcceptedUserCounts(): Observable<{ [courseName: string]: number }> {
     return this.httpClient.get<{ [courseName: string]: number }>(`${this.baseURL}/accepted-user-counts`);
   }
+  getTrendingCourses(): Observable<Course[]> {
+    return this.httpClient.get<Course[]>(`${this.baseURL}/trending-courses`);
+  }
+
 }

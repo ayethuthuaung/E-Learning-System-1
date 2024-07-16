@@ -21,4 +21,6 @@ public interface CourseService {
   List<CourseDto> getCoursesByUserId(Long userId);
 
   List<CourseDto> getAllCourses();
+
+  List<CourseDto> getLatestAcceptedCourses();
 }

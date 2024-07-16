@@ -2,6 +2,7 @@ package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.model.Notification;
 import com.ai.e_learning.model.Role;
+import com.ai.e_learning.model.User;
 import com.ai.e_learning.service.impl.NotificationServiceImpl;
 import com.ai.e_learning.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,25 @@ public class NotificationController {
         Notification processedNotification = notificationServiceImpl.processNotification(notification);
         messagingTemplate.convertAndSend("/topic/notifications", processedNotification);
     }
-
+    public void sendNotificationToUser(Notification notification, User user) {
+        notificationServiceImpl.sendNotificationToUser(notification, user);
+    }
     @GetMapping
-    public List<Notification> getNotifications(@RequestParam(required = false) String roleName) {
+    public List<Notification> getNotifications(
+            @RequestParam(required = false) String roleName,
+            @RequestParam(required = false) Long userId) {
         if (roleName != null) {
             Optional<Role> role = roleService.getRoleByName(roleName);
-            return notificationServiceImpl.getNotificationsByRole(role);
+            if (role.isPresent()) {
+                if ("Instructor".equals(roleName) && userId != null) {
+                    return notificationServiceImpl.getNotificationsForUser(userId); // Only fetch for the instructor
+                }
+                return notificationServiceImpl.getNotificationsByRole(role);
+            }
         }
-        return notificationServiceImpl.getAllNotifications();
+        return notificationServiceImpl.getAllNotifications(roleName, userId);
     }
+
 
     @PostMapping("/read/{id}")
     public Notification markAsRead(@PathVariable Long id) {

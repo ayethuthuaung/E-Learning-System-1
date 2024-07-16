@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
@@ -33,7 +33,9 @@ export class AdminCourseComponent implements OnInit {
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
-    private router: Router) { }
+
+    private router:Router,
+    private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.getCategories();
@@ -50,6 +52,11 @@ export class AdminCourseComponent implements OnInit {
         
       }
     }
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.activeTab = params['tab'];
+      }
+    });
   }
 
   getCategories(): void {

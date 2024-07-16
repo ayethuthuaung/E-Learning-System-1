@@ -1,5 +1,6 @@
 package com.ai.e_learning.dto;
 
+import com.ai.e_learning.model.Course;
 import lombok.*;
 
 import java.util.Set;
@@ -10,10 +11,11 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 public class ExamDto {
-    private Long id;
+    private Long id, courseId;
     private String title;
-    private String description;
+    private String description,duration;
     private Set<QuestionDto> questions;
     private Set<QuestionTypeDto> questionTypes;
     private boolean isDeleted;
+    private Course course;
 }

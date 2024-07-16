@@ -7,6 +7,7 @@ export class Category {
     deleted: boolean;
     courses: Course[];
     instructorName: string;
+    createdBy: string;
 
     constructor() {
         this.id=0
@@ -14,5 +15,7 @@ export class Category {
         this.deleted = false;
         this.courses = []; 
         this.instructorName = '';
+        this.createdBy = '';
+        
       }
 }

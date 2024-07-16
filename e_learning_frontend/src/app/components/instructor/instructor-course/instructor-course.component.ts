@@ -81,11 +81,13 @@ export class InstructorCourseComponent implements OnInit {
     if (form.valid) {
       this.submitted = false;
       this.loading = true;
-      this.saveCourse();
+      this.sureAlert();
       
     } else {
       this.submitted = true;
       console.log('invalid form');
+      //Swal.fire('Please fill all the fields', '','error')
+      this.errorMessage = 'Please fill the required fields';
     }
     
   }
@@ -206,6 +208,10 @@ export class InstructorCourseComponent implements OnInit {
     this.courseService.getInstructorCourses(this.userId).subscribe(
       (data: Course[]) => {
         this.courses = data;
+        this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
+        this.updatePaginatedInstructorCourses();
+        this.totalPages = Math.ceil(this.courses.length / this.itemsPerPage);
+   
       },
       error => {
         console.error('Error fetching courses', error);
@@ -215,6 +221,27 @@ export class InstructorCourseComponent implements OnInit {
 
   navigateToCourse(courseId: number) {
     this.router.navigate([`instructor/lesson/${courseId}`]);
+  }
+
+  getAcceptedCourses(): Course[] {
+    return this.courses.filter(course => course.status === 'Accept');
+  }
+
+  sureAlert(): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'Do you want to create this course?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.saveCourse();
+      } else {
+        this.loading = false;
+      }
+    });
   }
 
   showSuccessAlert(): void {
@@ -230,4 +257,64 @@ export class InstructorCourseComponent implements OnInit {
       }
     });
   }
+
+  // Course List
+  searchTerm = '';
+
+  itemsPerPage = 10;
+  currentPage = 1;
+  totalPages = 0;
+  paginatedInstructorCourses: Course[] = [];
+
+
+  onSearchChange() {
+    this.currentPage = 1;
+    this.updatePaginatedInstructorCourses();
+  }
+
+  updatePaginatedInstructorCourses() {
+    const filteredInstructorCourses = this.courses.filter(course =>
+      course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      course.duration.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      course.status.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+
+    this.totalPages = Math.ceil(filteredInstructorCourses.length / this.itemsPerPage);
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.paginatedInstructorCourses = filteredInstructorCourses.slice(start, end);
+  }
+
+  firstPage() {
+    this.currentPage = 1;
+    this.updatePaginatedInstructorCourses();
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePaginatedInstructorCourses();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePaginatedInstructorCourses();
+    }
+  }
+
+  lastPage() {
+    this.currentPage = this.totalPages;
+    this.updatePaginatedInstructorCourses();
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedInstructorCourses();
+    }
+  }
+
 }

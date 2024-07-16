@@ -46,5 +46,7 @@ export class Course {
     this.chatRoomId = 1; // Initialized property
     this.createdAt=1;
     this.createdDate = '';
+    this.createdAt = 0;
+
   }
 }

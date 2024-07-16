@@ -9,6 +9,10 @@ import { Course } from '../models/course.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { log } from 'console';
 import { CourseModuleService } from '../services/course-module.service';
+import { UserCourseModuleService } from '../services/usercoursemodule.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ExamList } from '../models/examList.model';
+import { ExamService } from '../services/exam.service';
 
 @Component({
   selector: 'app-course-details',
@@ -32,6 +36,7 @@ export class CourseDetailsComponent implements OnInit {
   chatRoomVisible: boolean = false; // Add chatRoomVisible property
   lesson: Lesson | undefined;
   module: Course | undefined;
+  exam: ExamList | undefined;
 
   isOwner: boolean = false;
 
@@ -43,7 +48,10 @@ export class CourseDetailsComponent implements OnInit {
     private lessonService: LessonService,
 
     private courseService: CourseService,
-    private courseModuleService: CourseModuleService
+    private courseModuleService: CourseModuleService,
+    private userCourseModuleService:UserCourseModuleService,
+
+    private examService: ExamService
   ) {}
 
   ngOnInit(): void {
@@ -89,8 +97,7 @@ export class CourseDetailsComponent implements OnInit {
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    }
-    
+    }    
   }
 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
@@ -150,5 +157,45 @@ export class CourseDetailsComponent implements OnInit {
         }
       );
     }
+}
+
+viewQuestionFormClick(examId: number): void {
+  // if (this.lesson?.examListDto.id) {
+    this.examService.getExamById(examId).subscribe(
+      (exam) => {
+        console.log("exam:", exam);
+        
+        this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+      },
+      (error) => {
+        console.error('Error fetching course video view', error);
+      }
+    );
+  // }
+}
+
+markAsDone(moduleId: number, index: number) {
+  this.userCourseModuleService.markModuleAsDone(this.userId, moduleId).subscribe(
+    (response) => {
+      console.log('Module marked as done:', response);
+      this.lessons.forEach((lesson, lessonIndex) => {
+        if (lessonIndex === index) {
+          lesson.modules.forEach((module: { id: number; done: boolean; }) => {
+            if (module.id === moduleId) {
+              module.done = true;
+            }
+          });
+        }
+      });
+    },
+    (error: HttpErrorResponse) => {
+      console.error('Error marking module as done:', error);
+      if (error.status === 404) {
+        alert('UserCourseModule not found.');
+      } else {
+        alert('An error occurred. Please try again later.');
+      }
+    }
+  );
 }
 }

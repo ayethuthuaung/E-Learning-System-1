@@ -57,7 +57,7 @@ export class AdminLessonComponent implements OnInit {
     }
   
     addModule() {
-      this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' }); // Initialize File as null
+      this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done: true }); // Initialize File as null
       console.log(this.modules);
       
     }
@@ -194,7 +194,9 @@ export class AdminLessonComponent implements OnInit {
             isAnswered: option.isAnswered
           } as AnswerOptionDTO)),
           marks: question.marks
-        } as QuestionDto))
+        } as QuestionDto)),
+        lessonId: 0,
+        duration: ''
       };
   
       this.examService.createExam(examCreationDto)

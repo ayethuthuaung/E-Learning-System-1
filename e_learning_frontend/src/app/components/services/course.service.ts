@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Course } from '../models/course.model';
 
 @Injectable({
@@ -60,6 +60,9 @@ export class CourseService {
     return this.http.get<boolean>(`${this.baseUrl}/existsByName`, {
       params: { name }
     });
+  }
+  getLatestAcceptedCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/latestAccepted`);
   }
   
  

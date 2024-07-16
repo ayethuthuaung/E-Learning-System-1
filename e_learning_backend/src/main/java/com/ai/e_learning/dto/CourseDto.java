@@ -23,6 +23,7 @@ public class CourseDto {
   private String description;
   private String createdDate;
   private Long createdAt;
+  private Long acceptedAt;
   private String certificate;
   private String badge;
   private Set<Category> categories = new HashSet<>();

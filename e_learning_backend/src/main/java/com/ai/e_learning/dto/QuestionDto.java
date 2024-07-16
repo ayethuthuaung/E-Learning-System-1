@@ -14,5 +14,5 @@ public class QuestionDto {
     private String content;
     private double marks;
     private List<AnswerOptionDto> answerList;
-    private List<MarksDto> marksList;
+
 }

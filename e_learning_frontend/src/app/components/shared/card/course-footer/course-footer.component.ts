@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Course } from '../../../models/course.model';
 import { UserCourseService } from '../../../services/user-course.service';
-import { User } from '../../../models/user.model';
-import { UserCourse } from '../../../models/usercourse.model';
+import { Role, User } from '../../../models/user.model';
+
 import Swal from 'sweetalert2';
+import { UserCourse } from '../../../models/usercourse.model';
 
 @Component({
   selector: 'app-course-footer',
@@ -16,11 +17,14 @@ export class CourseFooterComponent implements OnInit {
   @Input() course: Course | undefined;
   user: User | null = null;
   userId: number | undefined;
-  isEnrolled: boolean = false; // Flag to check enrollment status
-  isAccepted: boolean = false; // Flag to check if user's enrollment is accepted by instructor
-  userCourseId: number | undefined; // Initialize userCourseId as undefined
+  isEnrolled: boolean = false; 
+  isAccepted: boolean = false; 
+  userCourseId: number | undefined; 
 
   isOwner: boolean = false;
+
+  roles: Role[] = [];
+
 
   constructor(private userCourseService: UserCourseService, private router: Router) { }
 
@@ -37,11 +41,19 @@ export class CourseFooterComponent implements OnInit {
       const loggedUser = JSON.parse(storedUser);
       if (loggedUser) {
         this.userId = loggedUser.id;
+        this.roles = loggedUser.roles;
+         // Access role IDs
+         if (this.roles.length > 0) {
+          this.roles.forEach(role => {
+            console.log("courseFooter: ",role.id); // Print each role ID
+          });
+        }
+
         this.userCourseService.getUserById(this.userId!).subscribe(
           (user: User | null) => {
             if (user) {
               this.user = user;
-              this.checkEnrollmentStatus(); // Check enrollment status after fetching user data
+              this.checkEnrollmentStatus(); 
             } else {
               console.error('User details not found or invalid');
             }
@@ -62,7 +74,7 @@ export class CourseFooterComponent implements OnInit {
         (isEnrolled: boolean) => {
           this.isEnrolled = isEnrolled;
           if (isEnrolled) {
-            this.checkEnrollmentAcceptance(); // Check if enrolled user is accepted by instructor
+            this.checkEnrollmentAcceptance(); 
           }
         },
         (error) => {
@@ -113,9 +125,9 @@ export class CourseFooterComponent implements OnInit {
       if (result.isConfirmed) {
         this.userCourseService.enrollUserInCourse(this.userId!, this.course!.id).subscribe(
           (userCourse: UserCourse) => {
-            Swal.fire('Enrolled!', `You have successfully enrolled in ${courseName}.`, 'success');
+            //Swal.fire('Enrolled!', `You have successfully enrolled in ${courseName}.`, 'success');
             this.isEnrolled = true;
-            this.checkEnrollmentAcceptance(); // Update acceptance status after enrollment
+            this.checkEnrollmentAcceptance(); 
           },
           (error) => {
             console.error('Error enrolling in course', error);
@@ -131,9 +143,8 @@ export class CourseFooterComponent implements OnInit {
       console.error('Course is undefined');
       return;
     }
-    
 
-    if (!this.isAccepted && !this.isOwner) {
+    if (!this.isAccepted && !this.isOwner && this.hasRole(3)) {
       Swal.fire({
         title: 'Enrollment Not Accepted',
         text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',
@@ -160,5 +171,9 @@ export class CourseFooterComponent implements OnInit {
     } else {
       console.error('userCourseId is undefined');
     }
+  }
+
+  hasRole(roleId: number): boolean {
+    return this.roles.some(role => role.id === roleId);
   }
 }
