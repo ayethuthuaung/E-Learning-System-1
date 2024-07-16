@@ -17,9 +17,9 @@
     </div>
 </div>
 <div class="flex items-center justify-center mt-3 p-2 bg-logo-blue rounded-2xl">
-    <button *ngIf="!isEnrolled && !isOwner; else detailButton" (click)="enrollUser()" class="text-xl text-white font-semibold text-emerald-600">Enroll</button>
-    <ng-template #detailButton>
-      <button (click)="goToCourseDetails()" class="text-xl text-white font-semibold text-emerald-600">Detail</button>
-    </ng-template>
+    <button *ngIf="!isEnrolled && !isOwner && !hasRole(2); else detailButton" (click)="enrollUser()" class="text-xl text-white font-semibold text-emerald-600">Enroll</button>
+<ng-template #detailButton>
+  <button (click)="goToCourseDetails()" class="text-xl text-white font-semibold text-emerald-600">Detail</button>
+</ng-template>
   </div>
   

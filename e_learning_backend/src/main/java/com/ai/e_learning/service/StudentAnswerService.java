@@ -1,13 +1,12 @@
 package com.ai.e_learning.service;
 
+import com.ai.e_learning.dto.StudentAnswerDto;
 import com.ai.e_learning.model.StudentAnswer;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StudentAnswerService {
-    public StudentAnswer saveStudentAnswer(Long questionId, Long studentOptionId);
-    public List<StudentAnswer> getAllStudentAnswers();
-    public StudentAnswer getStudentAnswerById(Long id);
-    public void deleteStudentAnswer(Long id);
-    Long getSelectedOptionId(Long studentAnswerId); // Add this method
+    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerDto> studentAnswerDTOList);
+
 }

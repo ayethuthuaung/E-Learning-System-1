@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChatMessage } from '../models/message';
-import { WebSocketService } from '../services/websocket.service';
+import { ChatMessage } from '../../models/message';
+import { WebSocketService } from '../../services/websocket.service';
 
 interface Conversation {
   id: number;
@@ -42,23 +42,19 @@ export class ConservationListComponent implements OnInit {
     this.senderId = this.authService.getLoggedInUserId();
     console.log('Logged in user ID:', this.senderId);
 
-    this.loadChatHistory();
+    
 
     this.webSocketService.getMessages().subscribe((message: ChatMessage | null) => {
-      if (message) {
-        console.log("Received message:", message);
+      if (message && message.chatRoomId === this.chatRoomId) {
         message.message_side = message.senderId === this.senderId ? 'sender' : 'receiver';
-        
-        if (this.sessionId !== message.sessionId) {
-          this.messages.push(message);
-          this.messageSent = false;
-        }
+        this.messages.push(message);
       }
     });
+    this.loadChatHistory();
   }
   loadChatHistory(): void {
     this.webSocketService.getChatHistory(this.chatRoomId).subscribe(
-      (history) => {
+      (history:ChatMessage[]) => {
         this.messages = history.map(message => {
           message.message_side = message.senderId === this.senderId ? 'sender' : 'receiver';
           message.showDropdown = false; // Initialize showDropdown to false
@@ -71,25 +67,54 @@ export class ConservationListComponent implements OnInit {
     );
   }
   sendMessage(): void {
-    if (this.newMessage.trim() !== ''&& this.selectedConversation) {
-      const message: ChatMessage = {
-        chatRoomId: this.selectedConversation.chatRoomId,
+    if (this.newMessage && this.newMessage.trim()) {
+      const chatMessage: ChatMessage = {
+        chatRoomId: this.chatRoomId,
         senderId: this.senderId,
-        content: this.newMessage.trim(),
+        content: this.newMessage,
         message_side: 'sender',
         sessionId: this.sessionId,
-        id: Date.now(), // Generate a unique id for each message
-        showDropdown: false // Initialize showDropdown to false
+        id: Date.now(),
+        showDropdown: false,
+        fileUrl: '',
+        messageType: 'text'
       };
 
-      this.messages.push(message);
-
+      this.webSocketService.sendMessage(chatMessage);
       this.newMessage = '';
-      this.messageSent = true;
-
-      this.webSocketService.sendMessage(message);
     }
   }
+  uploadFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const fileType = file.type.split('/')[0];
+      this.webSocketService.uploadFile(file,fileType).subscribe(
+        (fileUrl: string) => {
+          console.log(fileUrl);
+          
+          this.webSocketService.sendFileMessage(fileUrl, this.chatRoomId, this.senderId, fileType, this.sessionId);
+        },
+        (error) => {
+          console.error('File upload failed:', error);
+        }
+      );
+    }
+  }
+  
+  softDeleteMessage(messageId: number): void {
+    this.webSocketService.softDeleteMessage(messageId).subscribe(
+      () => {
+        this.messages = this.messages.filter(message => message.id !== messageId);
+      },
+      (error) => {
+        console.error('Error deleting message:', error);
+      }
+    );
+  }
+
+
+
   fetchConversationList(): void {
     const userId = this.authService.getLoggedInUserId();
     if (userId !== null) {

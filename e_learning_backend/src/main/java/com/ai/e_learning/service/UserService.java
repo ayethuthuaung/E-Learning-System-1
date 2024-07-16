@@ -35,4 +35,5 @@ public interface UserService {
     void addAdmin();
 
       ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException;
-  }
+    boolean isExamOwner(Long userId);
+}

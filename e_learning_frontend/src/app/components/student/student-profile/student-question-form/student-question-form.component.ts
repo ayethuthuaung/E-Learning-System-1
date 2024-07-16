@@ -1,11 +1,14 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { ExamService } from '../../../services/exam.service';
 import { QuestionService } from '../../../services/question.service';
-import { StudentAnswer } from '../../../models/student-answer.model';
+import { StudentAnswerService } from '../../../services/student-answer.service';
+import { UserService } from '../../../services/user.service';
 import { ExamDTO } from '../../../models/examdto.model';
+import { StudentAnswer } from '../../../models/student-answer.model';
+import { Role } from '../../../models/user.model';
 import html2canvas from 'html2canvas';
-
 
 interface Option {
   id: number;
@@ -20,22 +23,23 @@ interface Question {
   id: number;
   text: string;
   type: string;
-  marks : number;
+  marks: number;
   options: Option[];
-  correctAnswer?: string;
+  correctAnswers?: number[];
 }
 
 @Component({
   selector: 'app-student-question-form',
   templateUrl: './student-question-form.component.html',
-  styleUrl: './student-question-form.component.css'
+  styleUrls: ['./student-question-form.component.css']
 })
-export class StudentQuestionFormComponent implements OnInit{
+export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   @ViewChild('questionFormContainer') questionFormContainer!: ElementRef;
 
   exam!: ExamDTO;
   examId: any;
   loggedUser: any = '';
+  roles: Role[] = [];
   userId: any;
   instructorId: any;
   instructorName: string = ''; 
@@ -43,71 +47,127 @@ export class StudentQuestionFormComponent implements OnInit{
   questions: Question[] = [];
   showResults: boolean = false;
   totalMarks: number = 0;
+  questionTotalMarks: number = 0;
+
+  isOwner: boolean = false;
+
+  duration: string = '';
+  remainingTime: number = 0; // Remaining time in seconds
+
+  timerInterval: any; 
 
   constructor(
     private route: ActivatedRoute,
     private examService: ExamService, 
-    private questionService: QuestionService
+    private questionService: QuestionService,
+    private studentAnswerService: StudentAnswerService,
+    private userService: UserService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
-
-    
     this.route.paramMap.subscribe(params => {
-      console.log(params);
-      
-      
       this.examId = +params.get('examId')!;
-      console.log("ExamId", this.examId);
-      
-      if(this.examId != null){
+      if (this.examId != null) {
         this.loadQuestions(this.examId);
-  
       }
-      
-      
       this.exam = history.state.exam;
-      console.log(`Module ID: ${this.examId}`);
-      console.log(`Module: ${JSON.stringify(this.exam)}`);
+      if (this.exam && this.exam.duration) {
+        this.startTimer(this.parseDuration(this.exam.duration));
+      }
     });
-    // const storedUser = localStorage.getItem('loggedUser');
-    // if (storedUser) {
-    //   this.loggedUser = JSON.parse(storedUser);
-    //   console.log(this.loggedUser);
 
-    //   if (this.loggedUser) {
-    //     this.userId = this.loggedUser.id;
-    //     // this.instructorId = this.exam.userId;
-    //     // console.log(this.instructorId);
-        
-    //     // this.instructorName = this.course?.user?.name || ''; // Set instructorName
-    //   }
-    // } 
-    
-   
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      if (this.loggedUser) {
+        this.userId = this.loggedUser.id;
+        this.roles = this.loggedUser.roles;
+
+        // Access role IDs
+        if (this.roles.length > 0) {
+          this.roles.forEach(role => {
+            console.log(role.id); // Print each role ID
+          });
+        }
+      }
+    }
   }
 
-  loadQuestions(examId : number) {
+  ngOnDestroy(): void {
+    clearInterval(this.timerInterval); // Clear interval when component is destroyed
+  }
 
-    // Fetch exam and questions data
+  parseDuration(durationString: string): number {
+    const parts = durationString.split(' ');
+    const value = parseInt(parts[0]);
+    const unit = parts[1].toLowerCase();
 
+    switch (unit) {
+      case 'mins':
+      case 'min':
+        return value * 60; // Convert minutes to seconds
+      default:
+        return 0;
+    }
+  }
+
+  startTimer(durationSeconds: number): void {
+    this.remainingTime = durationSeconds;
+
+    this.timerInterval = setInterval(() => {
+      this.remainingTime--;
+      if (this.remainingTime <= 0) {
+        clearInterval(this.timerInterval);
+        this.submitAnswers(); // Auto-submit when timer expires
+      }
+    }, 1000); // Update every second
+  }
+
+  formatTime(seconds: number): string {
+    const minutes: number = Math.floor(seconds / 60);
+    const remainingSeconds: number = seconds % 60;
+
+    const minutesStr: string = ('0' + minutes).slice(-2); // Ensure two digits
+    const secondsStr: string = ('0' + remainingSeconds).slice(-2); // Ensure two digits
+
+    return `${minutesStr}:${secondsStr}`;
+  }
+
+  hasRole(roleId: number): boolean {
+    return this.roles.some(role => role.id === roleId);
+  }
+
+  checkOwner() {
+    this.userService.checkExamOwner(this.userId).subscribe((response) => {
+      this.isOwner = response;
+    });
+  }
+
+  loadQuestions(examId: number) {
     this.examService.getExamById(examId).subscribe((data: ExamDTO) => {
-      console.log(data);
-      
       this.questions = data.questions.map(question => ({
         id: question.id,
         text: question.content,
         type: question.questionTypeId === 1 ? 'multiple-choice' : 'checkbox',
         marks: question.marks,
-        options: question.answerList.map(option => ({
+        options: this.shuffleArray(question.answerList.map(option => ({
           id: option.id,
           label: option.answer,
           value: option.answer,
           isAnswered: false
-        })),
-        correctAnswer: ''
+        }))),
+        correctAnswers: []
       }));
+      this.questionTotalMarks = this.questions.reduce((total, question) => total + question.marks, 0);
     });
+  }
+
+  shuffleArray(array: any[]): any[] {
+    return array
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
   }
 
   selectOption(questionIndex: number, optionIndex: number) {
@@ -122,40 +182,57 @@ export class StudentQuestionFormComponent implements OnInit{
   }
 
   submitAnswers() {
+    clearInterval(this.timerInterval);
     const answers: StudentAnswer[] = this.questions.map(question => ({
       questionId: question.id,
-      answerOptionId: question.options.find(option => option.isAnswered)?.id || 0, // Replace with appropriate default if no option is selected
-      isAnswered: question.options.some(option => option.isAnswered)
+      answerOptionId: question.options.find(option => option.isAnswered)?.id || null,
+      isAnswered: question.options.some(option => option.isAnswered),
+      userId: this.userId,
     }));
 
-    this.questionService.submitStudentAnswers(answers).subscribe(response => {
-      console.log('Answers submitted successfully', response);
+    this.studentAnswerService.submitStudentAnswers(answers).subscribe(response => {
       this.checkAnswers(response);
       this.showResults = true;
-
     }, error => {
       console.error('Error submitting answers', error);
     });
   }
 
   checkAnswers(response: any) {
+    console.log(response);
+  
     response.forEach((res: any) => {
-      const question = this.questions.find(q => q.id === res.question.id);
+      console.log(res);
+      
+      const question = this.questions.find(q => q.id === res.questionId);
       if (question) {
-        question.correctAnswer = res.correctAnswerId;
+        console.log(question);
+        
+        question.correctAnswers = res.correctAnswerIds || [];
+        const selectedOptions = question.options.filter(option => option.isAnswered).map(option => option.id);
+  
         question.options.forEach(option => {
-          option.isCorrect = option.id === res.correctAnswerId;
-         
-          option.isSelected = option.id === res.selectedOptionId;
-          if(option.isCorrect && option.isSelected){
-
-            this.totalMarks+= question.marks;
-          }
+          if(question.correctAnswers)
+          option.isCorrect = question.correctAnswers.includes(option.id);
+          option.isSelected = selectedOptions.includes(option.id);
         });
+        
+        if (question.type === 'multiple-choice') {
+          const selectedOption = question.options.find(option => option.isAnswered);
+          if(question.correctAnswers)
+          if (selectedOption && question.correctAnswers.includes(selectedOption.id)) {
+            this.totalMarks += question.marks;
+          }
+        } else if (question.type === 'checkbox') {
+          if(question.correctAnswers)
+          if (selectedOptions.length === question.correctAnswers.length && selectedOptions.every(id => question.correctAnswers!.includes(id))) {
+            this.totalMarks += question.marks;
+          }
+        }
       }
     });
   }
-  
+
   captureScreenshot() {
     const container = this.questionFormContainer.nativeElement;
     html2canvas(container).then((canvas) => {
@@ -166,4 +243,12 @@ export class StudentQuestionFormComponent implements OnInit{
     });
   }
 
+  getOptionLabel(question: Question, correctAnswerId: number): string | undefined {
+    const option = question.options.find(option => option.id === correctAnswerId);
+    return option ? option.label : undefined;
+  }
+
+  goBack() {
+    this.location.back();
+  }
 }

@@ -36,8 +36,9 @@ public class StudentAnswer {
 
 
 
-    public StudentAnswer(Question question, AnswerOption selectedAnswerOption) {
-        this.question=question;
-        this.answerOption=selectedAnswerOption;
-    }
+//    public StudentAnswer(Question question, AnswerOption selectedAnswerOption) {
+//        this.question=question;
+//        this.answerOption=selectedAnswerOption;
+//
+//    }
 }

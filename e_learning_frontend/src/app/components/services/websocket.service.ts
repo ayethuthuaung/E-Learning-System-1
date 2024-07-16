@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Client, Message, Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { BehaviorSubject, Observable, Subject, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, catchError, of, switchMap, throwError } from 'rxjs';
 import { ChatMessage } from '../models/message';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Notification } from '../models/notification.model';
@@ -12,6 +12,8 @@ import { Notification } from '../models/notification.model';
 })
 export class WebSocketService {
   private baseUrl = 'http://localhost:8080/api/notifications';
+  private fileUploadUrl = 'http://localhost:8080/api/chat/uploadFile';
+  private updateMessageUrl = 'http://localhost:8080/api/chat/update-message-content';
   private client: Client;
   private messageSubject: BehaviorSubject<ChatMessage | null> = new BehaviorSubject<ChatMessage | null>(null);
   private notificationSubject: Subject<Notification> = new Subject<Notification>();
@@ -89,11 +91,11 @@ export class WebSocketService {
     return this.messageSubject.asObservable();
   }
 
-  public getNotifications(): Observable<Notification> {
+  public getNotifications(roleName: string,userId:number): Observable<Notification> {
     return this.notificationSubject.asObservable();
   }
-  public fetchNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>('http://localhost:8080/api/notifications')
+  public fetchNotifications(roleName: string,userId: number): Observable<Notification[]> {
+    return this.http.get<Notification[]>(`${this.baseUrl}?roleName=${roleName}&userId=${userId}`)
       .pipe(
         catchError(this.handleError)
       );
@@ -118,6 +120,19 @@ export class WebSocketService {
       catchError(this.handleError)
     );
   }
+  public uploadFile(file: File,fileType: string): Observable<string> {
+    const formData: FormData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('fileType',fileType)
+    return this.http.post(this.fileUploadUrl, formData, { responseType: 'text' })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+  updateMessage(messageId: number, newContent: string): Observable<ChatMessage> {
+    const url = `${this.updateMessageUrl}/${messageId}`;
+    return this.http.put<ChatMessage>(url, { newContent });
+  }
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Unknown error!';
     if (error.error instanceof ErrorEvent) {
@@ -129,6 +144,28 @@ export class WebSocketService {
     }
     console.error(errorMessage);
     return throwError(errorMessage);
+  }
+
+  public sendFileMessage(fileUrl: string, chatRoomId: number, senderId: number, messageType: string, sessionId: string): void {
+    if (this.client && this.client.connected) {
+      const message: ChatMessage = {
+        chatRoomId,
+        senderId,
+        content: fileUrl,
+        message_side: 'sender',
+        sessionId,
+        id: Date.now(),
+        messageType,
+        fileUrl
+      };
+
+      this.client.publish({
+        destination: '/app/chat.sendMessage',
+        body: JSON.stringify(message)
+      });
+    } else {
+      console.error('Client is not connected');
+    }
   }
 }
 
