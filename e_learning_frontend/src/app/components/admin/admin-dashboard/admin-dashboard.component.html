@@ -1,29 +1,25 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
-  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar>
+  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar> 
   
   <div class="flex flex-1">
     <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
   
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-12 scrollable-section">
       <div *ngIf="showNotificationsPage">
         <app-notification></app-notification>
-      </div>
-      <!-- Bar Chart -->
-      <div class="my-4">
-        <app-admin-chart
-          [chartType]="'bar'"
-          [chartData]="barChartData"
-          [chartOptions]="chartOptions">
-        </app-admin-chart>
-      </div>
+      </div> 
 
-      <!-- Line Chart -->
-      <div class="my-4">
-        <app-admin-chart
-          [chartType]="'line'"
-          [chartData]="lineChartData"
-          [chartOptions]="chartOptions">
-        </app-admin-chart>
+      <!-- Bar Chart within a Bigger Card -->
+      <div class="my-4 chart-card">
+        <mat-card class="big-card">
+          <mat-card-header >
+            <mat-card-title>Course</mat-card-title>
+            <!-- <mat-card-subtitle>Monthly Data</mat-card-subtitle> -->
+          </mat-card-header>
+          <mat-card-content class="chart-body">
+            <app-admin-chart [chartType]="'bar'"></app-admin-chart>
+          </mat-card-content>
+        </mat-card>
       </div>
     </main>
   </div>

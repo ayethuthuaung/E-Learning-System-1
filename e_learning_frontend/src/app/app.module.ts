@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import {  NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -94,6 +94,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+
 import { FilterDataPipe} from './components/filter-data.pipe';
 
 import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-details.component';
@@ -102,6 +104,12 @@ import { InstructorLessonComponent } from './components/instructor/instructor-le
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { AdminLessonComponent } from './components/admin/admin-lesson/admin-lesson.component';
+import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
+import { AdminStudentListComponent } from './components/admin/admin-student-list/admin-student-list.component';
+import { AdminPiechartComponent } from './components/admin/admin-piechart/admin-piechart.component';
+import { AdminBarchartComponent } from './components/admin/admin-barchart/admin-barchart.component';
+
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -208,6 +216,11 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     InstructorLessonComponent,
     CourseVideoViewComponent,
     InstructorStudentComponent,
+    AdminLessonComponent,
+    AdminStudentComponent,
+    AdminStudentListComponent,
+    AdminPiechartComponent,
+    AdminBarchartComponent,
   ],
   imports: [
     BrowserModule,
@@ -223,9 +236,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-
+    MatCardModule,
 
     SocketIoModule.forRoot(config)
+    
   ],
   providers: [
     provideClientHydration(),

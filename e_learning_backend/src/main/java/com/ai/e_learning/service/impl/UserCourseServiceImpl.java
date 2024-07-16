@@ -11,7 +11,6 @@ import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.UserCourseService;
 import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
+
+
 
 @Service
 public class UserCourseServiceImpl implements UserCourseService {
@@ -132,5 +135,16 @@ public class UserCourseServiceImpl implements UserCourseService {
     return DtoUtil.mapList(userCourses,UserCourseDto.class,modelMapper);
   }
 
+  //PK
+  @Override
+  public Map<String, Long> getAcceptedUserCountsByCourse() {
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("accept");
+    Map<String, Long> acceptedUserCounts = new HashMap<>();
+    for (UserCourse userCourse : acceptedCourses) {
+      String courseName = userCourse.getCourse().getName();
+      acceptedUserCounts.put(courseName, acceptedUserCounts.getOrDefault(courseName, 0L) + 1);
+    }
+    return acceptedUserCounts;
+  }
 
 }

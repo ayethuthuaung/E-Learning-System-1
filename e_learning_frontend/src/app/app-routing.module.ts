@@ -46,6 +46,8 @@ import { QuizExamListComponent  } from './components/quiz-Ans/exam-list/exam-lis
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { AdminLessonComponent } from './components/admin/admin-lesson/admin-lesson.component';
+import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
 
 
 
@@ -91,6 +93,9 @@ const routes: Routes = [
    {path:'admin/upload-user-data', component: UserUploadComponent },
    {path:'admin/course', component: AdminCourseComponent},
    {path:'admin/category', component: AdminCategoryComponent},
+   {path:'admin/lesson/:courseId', component: AdminLessonComponent},
+   {path:'admin/student', component: AdminStudentComponent},
+
 
    {path:'course-detail/:id', component: CourseDetailsComponent},
 

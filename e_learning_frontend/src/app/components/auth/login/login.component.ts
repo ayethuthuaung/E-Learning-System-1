@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -19,9 +20,16 @@ export class LoginComponent {
       response => {
         console.log('Response:', response);
         if (response && response.currentUser) {
-          alert('Login Success');
-          localStorage.setItem('loggedUser', JSON.stringify(response.currentUser));
-          this.router.navigateByUrl('/home');
+          const currentUser: User = response.currentUser;
+
+          // Ensure role is present in the currentUser
+          if (currentUser.roles && currentUser.roles.length > 0) {
+            alert('Login Success');
+            localStorage.setItem('loggedUser', JSON.stringify(currentUser));
+            this.router.navigateByUrl('/home');
+          } else {
+            alert('Login Failed: User role is missing');
+          }
         } else {
           alert('Login Failed: Invalid response structure');
         }
@@ -46,14 +54,10 @@ export class LoginModel {
   password: string;
 
   constructor() {
-    this.staffId = "";
-    this.password = "";
+    this.staffId = '';
+    this.password = '';
   }
 }
-
-
-
-
 
 export class SignUpModel {
   name: string;
@@ -61,9 +65,9 @@ export class SignUpModel {
   password: string;
 
   constructor() {
-    this.staffId = "";
-    this.name = "";
-    this.password = "";
+    this.staffId = '';
+    this.name = '';
+    this.password = '';
   }
 }
 

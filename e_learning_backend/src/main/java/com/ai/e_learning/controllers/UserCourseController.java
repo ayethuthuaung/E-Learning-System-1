@@ -88,4 +88,10 @@ public class UserCourseController {
     boolean isAccepted = userCourseService.checkEnrollmentAcceptance(userId, courseId);
     return ResponseEntity.ok(isAccepted);
   }
+
+  @GetMapping("/accepted-user-counts")
+  public ResponseEntity<Map<String, Long>> getAcceptedUserCountsByCourse() {
+    Map<String, Long> acceptedUserCounts = userCourseService.getAcceptedUserCountsByCourse();
+    return ResponseEntity.ok(acceptedUserCounts);
+  }
 }

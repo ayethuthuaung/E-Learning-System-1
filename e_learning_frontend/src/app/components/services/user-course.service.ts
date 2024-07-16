@@ -49,4 +49,8 @@ export class UserCourseService {
   checkEnrollmentAcceptance(userId: number, courseId: number): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.baseURL}/check-enrollment-acceptance/${userId}/${courseId}`);
   }
+
+  getAcceptedUserCounts(): Observable<{ [courseName: string]: number }> {
+    return this.httpClient.get<{ [courseName: string]: number }>(`${this.baseURL}/accepted-user-counts`);
+  }
 }

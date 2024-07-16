@@ -7,6 +7,7 @@ import com.ai.e_learning.model.User;
 import com.ai.e_learning.model.UserCourse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserCourseService {
   UserCourse enrollUserInCourse(Long userId, Long courseId);
@@ -23,4 +24,7 @@ public interface UserCourseService {
   boolean checkEnrollmentAcceptance(Long userId, Long courseId);
 
   List<UserCourseDto> getAllUserCourseByUserId(Long userId);
+
+  //PK
+  Map<String, Long> getAcceptedUserCountsByCourse();
 }

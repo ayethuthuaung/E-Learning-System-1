@@ -45,7 +45,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let course of paginatedCourses; let i = index">
-          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td class="center-cell">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
           <td>{{ course.name }}</td>
           <td>{{ course.level }}</td>
           <td>{{ course.duration }}</td>
@@ -67,9 +67,12 @@
               
             </div>
           </td>
-          <td>
-            <button (click)="openModal(course)" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#courseDetailModal">Detail</button>
+          <td class="center-cell">
+            <button (click)="openModal(course)" class="btn" data-bs-toggle="modal" data-bs-target="#courseDetailModal">
+              <i class="fa-solid fa-list" style="color: #075ea0;"></i>
+            </button>
           </td>
+          
         </tr>
       </tbody>
     </table>
@@ -78,29 +81,31 @@
 
 <!-- Course Detail Modal -->
 <div id="fullScreenModal" class="modal" tabindex="-1">
-  <div class="modal-dialog modal-lg"> <!-- Adjusted the size to modal-lg -->
+  <div class="modal-dialog modal-xl modal-dialog-centered"> 
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Course Detail</h5>
         <button type="button" class="btn-close" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
-        <div class="d-flex flex-column flex-md-row">
-          <div class="p-4 d-flex justify-content-center align-items-center">
-            <div class="profile-picture">
-              <img *ngIf="selectedCourse?.photo" [src]="selectedCourse?.photo" class="img-fluid rounded-circle" alt="Course Photo">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-4 d-flex justify-content-center align-items-center">
+              <div class="profile-picture">
+                <img *ngIf="selectedCourse?.photo" [src]="selectedCourse?.photo" class="img-fluid rounded-circle" alt="Course Photo">
+              </div>
             </div>
-          </div>
-          <div class="p-4">
-            <div class="bg-white p-4 rounded-lg shadow-lg">
-              <div class="d-flex flex-column align-items-center align-items-md-start">
-                <h1 class="text-2xl font-bold mb-4">{{ selectedCourse?.name }}</h1>
-                <p><strong>Level:</strong> {{ selectedCourse?.level }}</p>
-                <p><strong>Duration:</strong> {{ selectedCourse?.duration }}</p>
-                <p><strong>Instructor:</strong> {{ selectedCourse?.user?.name }}</p>
-                <p><strong>Status:</strong> {{ selectedCourse?.status }}</p>
-                <p><strong>Description:</strong> {{ selectedCourse?.description }}</p>
-                <p><strong>Created Date:</strong> {{ selectedCourse?.createdDate }}</p>
+            <div class="col-md-8">
+              <div class="bg-white p-4 rounded-lg shadow-lg">
+                <div class="d-flex flex-column align-items-center align-items-md-start">
+                  <h1 class="text-2xl font-bold mb-4">{{ selectedCourse?.name }}</h1>
+                  <p><strong>Level:</strong> {{ selectedCourse?.level }}</p>
+                  <p><strong>Duration:</strong> {{ selectedCourse?.duration }}</p>
+                  <p><strong>Instructor:</strong> {{ selectedCourse?.user?.name }}</p>
+                  <p><strong>Status:</strong> {{ selectedCourse?.status }}</p>
+                  <p><strong>Description:</strong> {{ selectedCourse?.description }}</p>
+                  <p><strong>Created Date:</strong> {{ selectedCourse?.createdAt | date: 'short'}}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -112,6 +117,8 @@
     </div>
   </div>
 </div>
+
+
 
  
 
