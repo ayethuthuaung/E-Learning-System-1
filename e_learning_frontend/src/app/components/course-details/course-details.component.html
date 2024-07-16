@@ -70,10 +70,10 @@
   </div>
 </div> 
 
-<!-- Chat Icon -->
-<button (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-logo-blue text-white p-4 rounded-full shadow-lg hover:bg-dark-blue">
+<button *ngIf="!isOwner" (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-logo-blue text-white p-3 rounded-full shadow-lg hover:bg-dark-blue text-sm">
   <i class="fas fa-comments"></i>
 </button>
+
 
 <!-- Chat Room Section -->
 <app-chat *ngIf="chatRoomVisible" [chatRoomId]="chatRoomId" [userName]="instructorName" (close)="toggleChatRoom()" ></app-chat>

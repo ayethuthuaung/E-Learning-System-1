@@ -1,13 +1,14 @@
-import { UserService } from './../../../services/user.service';
-import { StudentAnswerService } from './../../../services/student-answer.service';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { ExamService } from '../../../services/exam.service';
 import { QuestionService } from '../../../services/question.service';
-import { StudentAnswer } from '../../../models/student-answer.model';
+import { StudentAnswerService } from '../../../services/student-answer.service';
+import { UserService } from '../../../services/user.service';
 import { ExamDTO } from '../../../models/examdto.model';
-import html2canvas from 'html2canvas';
+import { StudentAnswer } from '../../../models/student-answer.model';
 import { Role } from '../../../models/user.model';
+import html2canvas from 'html2canvas';
 
 interface Option {
   id: number;
@@ -30,9 +31,9 @@ interface Question {
 @Component({
   selector: 'app-student-question-form',
   templateUrl: './student-question-form.component.html',
-  styleUrl: './student-question-form.component.css'
+  styleUrls: ['./student-question-form.component.css']
 })
-export class StudentQuestionFormComponent implements OnInit {
+export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   @ViewChild('questionFormContainer') questionFormContainer!: ElementRef;
 
   exam!: ExamDTO;
@@ -46,16 +47,22 @@ export class StudentQuestionFormComponent implements OnInit {
   questions: Question[] = [];
   showResults: boolean = false;
   totalMarks: number = 0;
-  totalQuestionCounts: number = 0;
+  questionTotalMarks: number = 0;
 
   isOwner: boolean = false;
+
+  duration: string = '';
+  remainingTime: number = 0; // Remaining time in seconds
+
+  timerInterval: any; 
 
   constructor(
     private route: ActivatedRoute,
     private examService: ExamService, 
     private questionService: QuestionService,
     private studentAnswerService: StudentAnswerService,
-    private userService: UserService
+    private userService: UserService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -65,6 +72,9 @@ export class StudentQuestionFormComponent implements OnInit {
         this.loadQuestions(this.examId);
       }
       this.exam = history.state.exam;
+      if (this.exam && this.exam.duration) {
+        this.startTimer(this.parseDuration(this.exam.duration));
+      }
     });
 
     const storedUser = localStorage.getItem('loggedUser');
@@ -80,22 +90,58 @@ export class StudentQuestionFormComponent implements OnInit {
             console.log(role.id); // Print each role ID
           });
         }
-
       }
     }
   }
 
-  
+  ngOnDestroy(): void {
+    clearInterval(this.timerInterval); // Clear interval when component is destroyed
+  }
+
+  parseDuration(durationString: string): number {
+    const parts = durationString.split(' ');
+    const value = parseInt(parts[0]);
+    const unit = parts[1].toLowerCase();
+
+    switch (unit) {
+      case 'mins':
+      case 'min':
+        return value * 60; // Convert minutes to seconds
+      default:
+        return 0;
+    }
+  }
+
+  startTimer(durationSeconds: number): void {
+    this.remainingTime = durationSeconds;
+
+    this.timerInterval = setInterval(() => {
+      this.remainingTime--;
+      if (this.remainingTime <= 0) {
+        clearInterval(this.timerInterval);
+        this.submitAnswers(); // Auto-submit when timer expires
+      }
+    }, 1000); // Update every second
+  }
+
+  formatTime(seconds: number): string {
+    const minutes: number = Math.floor(seconds / 60);
+    const remainingSeconds: number = seconds % 60;
+
+    const minutesStr: string = ('0' + minutes).slice(-2); // Ensure two digits
+    const secondsStr: string = ('0' + remainingSeconds).slice(-2); // Ensure two digits
+
+    return `${minutesStr}:${secondsStr}`;
+  }
+
   hasRole(roleId: number): boolean {
     return this.roles.some(role => role.id === roleId);
   }
 
   checkOwner() {
-    this.userService.checkExamOwner(this.userId).subscribe(
-      (response) => {
-        this.isOwner = response;
-      }
-    );
+    this.userService.checkExamOwner(this.userId).subscribe((response) => {
+      this.isOwner = response;
+    });
   }
 
   loadQuestions(examId: number) {
@@ -113,7 +159,7 @@ export class StudentQuestionFormComponent implements OnInit {
         }))),
         correctAnswers: []
       }));
-      this.totalQuestionCounts = this.questions.length;
+      this.questionTotalMarks = this.questions.reduce((total, question) => total + question.marks, 0);
     });
   }
 
@@ -123,7 +169,6 @@ export class StudentQuestionFormComponent implements OnInit {
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
   }
-
 
   selectOption(questionIndex: number, optionIndex: number) {
     const question = this.questions[questionIndex];
@@ -137,9 +182,10 @@ export class StudentQuestionFormComponent implements OnInit {
   }
 
   submitAnswers() {
+    clearInterval(this.timerInterval);
     const answers: StudentAnswer[] = this.questions.map(question => ({
       questionId: question.id,
-      answerOptionId: question.options.find(option => option.isAnswered)?.id || 0,
+      answerOptionId: question.options.find(option => option.isAnswered)?.id || null,
       isAnswered: question.options.some(option => option.isAnswered),
       userId: this.userId,
     }));
@@ -162,27 +208,25 @@ export class StudentQuestionFormComponent implements OnInit {
       if (question) {
         console.log(question);
         
-        question.correctAnswers = res.correctAnswerIds || []; // Ensure correctAnswers is always an array
+        question.correctAnswers = res.correctAnswerIds || [];
         const selectedOptions = question.options.filter(option => option.isAnswered).map(option => option.id);
   
         question.options.forEach(option => {
-          if(question.correctAnswers) {
-            option.isCorrect = question.correctAnswers.includes(option.id);
-            option.isSelected = selectedOptions.includes(option.id);
-          }
+          if(question.correctAnswers)
+          option.isCorrect = question.correctAnswers.includes(option.id);
+          option.isSelected = selectedOptions.includes(option.id);
         });
         
-        if(question.correctAnswers){
-          if (question.type === 'multiple-choice') {
-            const selectedOption = question.options.find(option => option.isAnswered);
-
-            if (selectedOption && question.correctAnswers.includes(selectedOption.id)) {
-              this.totalMarks += question.marks;
-            }
-          } else if (question.type === 'checkbox') {
-            if (selectedOptions.length === question.correctAnswers.length && selectedOptions.every(id => question.correctAnswers!.includes(id))) {
-              this.totalMarks += question.marks;
-            }
+        if (question.type === 'multiple-choice') {
+          const selectedOption = question.options.find(option => option.isAnswered);
+          if(question.correctAnswers)
+          if (selectedOption && question.correctAnswers.includes(selectedOption.id)) {
+            this.totalMarks += question.marks;
+          }
+        } else if (question.type === 'checkbox') {
+          if(question.correctAnswers)
+          if (selectedOptions.length === question.correctAnswers.length && selectedOptions.every(id => question.correctAnswers!.includes(id))) {
+            this.totalMarks += question.marks;
           }
         }
       }
@@ -202,5 +246,9 @@ export class StudentQuestionFormComponent implements OnInit {
   getOptionLabel(question: Question, correctAnswerId: number): string | undefined {
     const option = question.options.find(option => option.id === correctAnswerId);
     return option ? option.label : undefined;
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

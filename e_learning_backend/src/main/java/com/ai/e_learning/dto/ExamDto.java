@@ -13,7 +13,7 @@ import java.util.Set;
 public class ExamDto {
     private Long id, courseId;
     private String title;
-    private String description;
+    private String description,duration;
     private Set<QuestionDto> questions;
     private Set<QuestionTypeDto> questionTypes;
     private boolean isDeleted;

@@ -49,7 +49,7 @@ const routes: Routes = [
    
    {path: 'forget-password', component: ForgetPasswordComponent },
 
-   { path: 'student/student-profile', component: StudentProfileComponent },
+   { path: 'student/profile', component: StudentProfileComponent },
 
   
    { path: 'home', component: HomeComponent},

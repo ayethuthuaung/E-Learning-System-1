@@ -25,6 +25,8 @@ public class Exam {
 
     private Long createdAt;
 
+    private String duration;
+
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Question> questions = new LinkedHashSet<>();

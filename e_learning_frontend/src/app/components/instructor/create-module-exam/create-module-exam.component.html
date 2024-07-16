@@ -80,6 +80,8 @@
           <div class="w-full max-w-xl bg-white rounded-lg shadow-md p-6">
             <input type="text" [(ngModel)]="examTitle" placeholder="Exam Title" class="bg-gray-100 form-input w-full mb-4 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500">
             <textarea [(ngModel)]="examDescription" placeholder="Exam Description" class="bg-gray-100 form-textarea w-full mb-4 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+            <input type="text" [(ngModel)]="examDuration" placeholder="Exam Duration" class="bg-gray-100 form-input w-full mb-4 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500">
+
             <hr class="border-blue-800 mb-4">
             <div *ngFor="let question of questions; let qIndex = index" class="mb-6">
               <hr *ngIf="qIndex > 0" class="border-blue-800 mb-4">
