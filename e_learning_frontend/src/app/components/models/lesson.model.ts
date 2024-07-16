@@ -1,3 +1,4 @@
+import { ExamList } from "./examList.model";
 import { Module } from "./module.model";
 
 
@@ -8,4 +9,5 @@ export interface Lesson {
   file:string;
  modules:Module[];
  fileType: string; 
+ examListDto: ExamList;
 }

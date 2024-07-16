@@ -6,6 +6,9 @@ import { Course } from '../models/course.model';
 import { Module } from '../models/module.model';
 import { Lesson } from '../models/lesson.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
+
 
 @Component({
   selector: 'app-course-video-view',
@@ -18,10 +21,9 @@ export class CourseVideoViewComponent implements OnInit {
   course: Course | undefined;
   moduleId: number | undefined;
   module: Module | undefined;
-  isSidebarShowing = false;
-  isMenuScrolled = false;
+  
   loadingError = false;
-
+  faArrowLeft = faArrowLeft;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -72,6 +74,7 @@ export class CourseVideoViewComponent implements OnInit {
       if (history.state.module) {
         this.module = history.state.module;
         console.log(`Module: ${JSON.stringify(this.module)}`);
+        this.fetchLessons();
       } else {
         console.error('Module state is not provided');
       }
@@ -92,25 +95,13 @@ export class CourseVideoViewComponent implements OnInit {
       );
     }
   }
+  goBack(): void {
+    // Example of navigating back to the previous location
+    window.history.back();
+  }
 
   navigateToCourseVideo(courseId: number, moduleId: number) {
     this.router.navigate(['/course', courseId, 'module', moduleId]);
   }
-
-  @HostListener('window:scroll', ['$event'])
-  scrollCheck() {
-    this.isMenuScrolled = window.pageYOffset > 100;
-  }
-
-  openSideBar() {
-    this.isSidebarShowing = true;
-  }
-
-  closeSideBar() {
-    this.isSidebarShowing = false;
-  }
-
-  scrollToTop() {
-    document.body.scrollIntoView({ behavior: 'smooth' });
-  }
+ 
 }

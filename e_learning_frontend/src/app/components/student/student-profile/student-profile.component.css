@@ -79,4 +79,18 @@
   .space-x-4 > * + * {
     margin-left: 1rem;
   }
+  .circle-bg {
+    fill: none;
+    stroke: #e6e6e6;
+    stroke-width: 3.8;
+  }
+  
+  .circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    stroke: #4a90e2;
+    transition: stroke-dasharray 0.3s ease;
+  }
+  
   

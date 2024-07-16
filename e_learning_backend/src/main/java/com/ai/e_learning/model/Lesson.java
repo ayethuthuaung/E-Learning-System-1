@@ -24,13 +24,9 @@ public class Lesson {
     @JsonIgnore
     private Course course;
 
-    @ManyToMany
-    @JoinTable(
-            name = "lesson_has_module",
-            joinColumns = @JoinColumn(name = "lesson_id"),
-            inverseJoinColumns = @JoinColumn(name = "module_id")
-    )
-    @JsonIgnore
+    @OneToMany(mappedBy = "lesson", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<CourseModule> courseModules;
+
+
 
 }

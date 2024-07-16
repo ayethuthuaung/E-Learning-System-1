@@ -1,4 +1,5 @@
-<div class="min-h-screen bg-gray-100 flex flex-col">
+
+              <div class="min-h-screen bg-gray-100 flex flex-col">
   <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
       <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
@@ -151,7 +152,108 @@
                       </div>
                   </div>
               </div>
+               <!-- Lesson -->
+
+
+        <!-- Course List -->
+        <div *ngIf="activeTab === 'courseList'" class="p-4">
+          <div class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
+            <div class="datatable-container bg-white p-6 rounded-lg shadow-lg">
+              <div class="flex justify-between items-center mb-4">
+                <input 
+                  type="text" 
+                  class="form-control w-1/4 p-2 border rounded" 
+                  placeholder="Search..." 
+                  [(ngModel)]="searchTerm" 
+                  (ngModelChange)="onSearchChange()" 
+                />
+      
+                <div class="pagination-controls flex items-center space-x-2">
+                  <button 
+                    (click)="firstPage()" 
+                    [disabled]="currentPage === 1" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-double-left"></i>
+                  </button>
+                  <button 
+                    (click)="previousPage()" 
+                    [disabled]="currentPage === 1" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-left"></i>
+                  </button>
+                  <span class="flex items-center">
+                    Page 
+                    <input 
+                      type="number" 
+                      class="page-input mx-2 w-16 text-center border rounded p-1" 
+                      [(ngModel)]="currentPage" 
+                      (ngModelChange)="goToPage($event)" 
+                      min="1" 
+                      [max]="totalPages" 
+                    /> 
+                    of {{ totalPages }}
+                  </span>
+                  <button 
+                    (click)="nextPage()" 
+                    [disabled]="currentPage === totalPages" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-right"></i>
+                  </button>
+                  <button 
+                    (click)="lastPage()" 
+                    [disabled]="currentPage === totalPages" 
+                    class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300"
+                  >
+                    <i class="fas fa-angle-double-right"></i>
+                  </button>
+                </div>
+              </div>
+      
+              <div class="table-responsive">
+                <table class="table-auto w-full border-collapse">
+                  <thead class="bg-logo-blue text-white">
+                    <tr>
+                      <th class="p-2 border">No</th>
+                      <th class="p-2 border">Name</th>
+                      <th class="p-2 border">duration</th>
+                      <th class="p-2 border">Created Date</th>
+                      <th class="p-2 border">Status</th>
+                      <th class="p-2 border">Detail</th>
+                     
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let course of paginatedInstructorCourses; let i = index" class="hover:bg-gray-100">
+                      <td class="p-2 border">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                      <td class="p-2 border">{{ course.name }}</td>
+                      <td class="p-2 border">{{ course.duration }}</td>
+                      <td class="p-2 border">{{ course.createdAt | date:'short' }}</td>
+                      <td class="p-2 border"
+                      [ngClass]="{
+                          'text-green-700': course.status === 'Accept',
+                          'text-yellow-500': course.status === 'Pending',
+                          'text-red-500': course.status === 'Reject'
+                      }">
+                      {{ course.status }}
+                  </td>
+                      <td class="p-2 border text-center">
+                        <i class="fa-solid fa-list text-logo-blue"></i>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
           </section>
       </main>
   </div>
 </div>
+
+        

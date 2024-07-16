@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CourseService } from '../services/course.service';
 import { ChatRoomService } from '../services/chat-room.service';
 import { AuthService } from '../auth/auth.service';
@@ -11,6 +11,8 @@ import { log } from 'console';
 import { CourseModuleService } from '../services/course-module.service';
 import { UserCourseModuleService } from '../services/usercoursemodule.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ExamList } from '../models/examList.model';
+import { ExamService } from '../services/exam.service';
 
 @Component({
   selector: 'app-course-details',
@@ -34,6 +36,7 @@ export class CourseDetailsComponent implements OnInit {
   chatRoomVisible: boolean = false; // Add chatRoomVisible property
   lesson: Lesson | undefined;
   module: Course | undefined;
+  exam: ExamList | undefined;
 
   isOwner: boolean = false;
 
@@ -46,7 +49,9 @@ export class CourseDetailsComponent implements OnInit {
 
     private courseService: CourseService,
     private courseModuleService: CourseModuleService,
-    private userCourseModuleService:UserCourseModuleService
+    private userCourseModuleService:UserCourseModuleService,
+    private cdr: ChangeDetectorRef,
+    private examService: ExamService
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +97,8 @@ export class CourseDetailsComponent implements OnInit {
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    }    
+    } 
+    this.restoreDoneState();   
   }
 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
@@ -153,19 +159,30 @@ export class CourseDetailsComponent implements OnInit {
       );
     }
 }
-markAsDone(moduleId: number, index: number) {
-  this.userCourseModuleService.markModuleAsDone(this.userId, moduleId).subscribe(
-    (response) => {
-      console.log('Module marked as done:', response);
-      this.lessons.forEach((lesson, lessonIndex) => {
-        if (lessonIndex === index) {
-          lesson.modules.forEach((module: { id: number; done: boolean; }) => {
-            if (module.id === moduleId) {
-              module.done = true;
-            }
-          });
-        }
-      });
+
+viewQuestionFormClick(examId: number): void {
+  // if (this.lesson?.examListDto.id) {
+    this.examService.getExamById(examId).subscribe(
+      (exam) => {
+        console.log("exam:", exam);
+        
+        this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+      },
+      (error) => {
+        console.error('Error fetching course video view', error);
+      }
+    );
+  // }
+}
+
+markAsDone(moduleId: number, module: any): void {
+  this.userCourseModuleService.markModuleAsDone(this.userId!, moduleId).subscribe(
+    response => {
+      module.done = true; // Update the `done` property of the module
+      localStorage.setItem(`module_${moduleId}_done`, 'true'); // Persist `done` state in localStorage
+
+      // Trigger change detection explicitly
+      this.cdr.detectChanges();
     },
     (error: HttpErrorResponse) => {
       console.error('Error marking module as done:', error);
@@ -178,4 +195,18 @@ markAsDone(moduleId: number, index: number) {
   );
 }
 
+
+// Restore 'done' state from localStorage on component initialization
+private restoreDoneState(): void {
+  if (this.lessons && this.lessons.length > 0) {
+    this.lessons.forEach(lesson => {
+      lesson.modules.forEach(module => {
+        const doneState = localStorage.getItem(`module_${module.id}_done`);
+        if (doneState === 'true') {
+          module.done = true;
+        }
+      });
+    });
+  }
+}
 }

@@ -5,10 +5,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StudentAnswerRequestDto {
+public class StudentAnswerDto {
     private Long questionId;
     private Long answerOptionId;
     private Long correctAnswerId; // Include correct answer ID
     private boolean selectedOption;
     private Long studentOptionId;
+    private Long userId;
+    private double totalMarks;
+
 }

@@ -1,0 +1,48 @@
+<div class="flex min-h-screen">
+  <!-- <app-navbar></app-navbar> -->
+  <div class="container mx-auto p-4" >
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="px-6 py-4" #questionFormContainer>
+        <div class="font-bold text-xl mb-2 text-center text-logo-blue">{{exam.title}}</div>
+        <div class="font-semibold text-lg mb-2 text-center text-logo-blue">{{exam.description}}</div>
+        <div class="text-center text-logo-blue font-semibold mb-2">Total Point : {{totalMarks}}</div>
+
+        <form class="space-y-4">
+          
+          <div class="border-t border-gray-200 pt-4">
+            <div *ngFor="let question of questions; let qIndex = index" class="question">
+              <div class="flex justify-between">
+                <p>{{ question.text }}</p>
+                <p>({{ question.marks }})points</p>
+            </div>
+              <div class="options-container">
+                <div *ngFor="let option of question.options; let oIndex = index" class="option">
+                  <label>
+                    <input *ngIf="question.type === 'multiple-choice'" 
+                           type="radio" 
+                           [name]="'question' + qIndex" 
+                           [checked]="option.isAnswered" 
+                           (change)="selectOption(qIndex, oIndex)">
+                    <input *ngIf="question.type === 'checkbox'" 
+                           type="checkbox" 
+                           [(ngModel)]="option.isAnswered">
+                    {{ option.label }}
+                  </label>
+                  <div *ngIf="showResults">
+                    <span *ngIf="option.isCorrect && option.isAnswered" style="color: green;">Correct</span>
+                    <span *ngIf="!option.isCorrect && option.isAnswered" style="color: red;">Incorrect</span>
+                    <span *ngIf="option.isCorrect && !option.isAnswered" style="color: green;">Correct Answer</span>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+          </div>
+        </form>
+        <button (click)="submitAnswers()" class="mt-4 p-2 bg-logo-blue text-white rounded mr-4">Submit Form</button>
+        <button *ngIf="showResults" (click)="captureScreenshot()" class="mt-4 p-2 bg-logo-blue text-white rounded">Save Form</button>
+
+      </div>
+    </div>
+  </div>
+</div>

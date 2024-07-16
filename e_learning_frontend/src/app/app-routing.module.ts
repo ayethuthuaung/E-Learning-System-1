@@ -29,9 +29,6 @@ import { InstructorCategoryComponent } from './components/instructor/instructor-
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
 
-import { CourseListComponent } from './components/course-list/course-list.component';
-
-
 import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
 import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
@@ -47,6 +44,8 @@ import { InstructorLessonComponent } from './components/instructor/instructor-le
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
 import { AllCoursesComponent } from './components/all-courses/all-courses.component';
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
+import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 
 
 
@@ -57,9 +56,8 @@ const routes: Routes = [
 
    { path: 'student/student-profile', component: StudentProfileComponent },
 
-   {path:'courses', component: CourseListComponent},
   
-   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+   { path: 'home', component: HomeComponent},
 
    { path: 'conservation-list', component: ConservationListComponent },
    { path: 'notification', component: NotificationComponent },
@@ -100,10 +98,15 @@ const routes: Routes = [
 
 
    {path:'course-video-view/:moduleId', component: CourseVideoViewComponent},
-   { path: 'course/:courseId/module/:id', component: CourseVideoViewComponent },
+   //{ path: 'course/:courseId/module/:id', component: CourseVideoViewComponent },
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
    {path:'instructor/student', component: InstructorStudentComponent},
+   {path:'instructor/module-exam/:lessonId', component: CreateModuleExamComponent},
+
+   {path:'question-form/:examId', component: StudentQuestionFormComponent},
+
+
 
 
    {path:'all-courses', component: AllCoursesComponent},

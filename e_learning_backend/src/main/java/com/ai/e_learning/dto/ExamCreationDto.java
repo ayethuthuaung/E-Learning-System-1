@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @ToString
 public class ExamCreationDto {
+    private Long lessonId;
     private String title;
     private String description;
     private List<QuestionDto> questionList;

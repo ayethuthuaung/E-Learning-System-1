@@ -1,6 +1,6 @@
 package com.ai.e_learning.controllers;
 
-import com.ai.e_learning.dto.StudentAnswerRequestDto;
+import com.ai.e_learning.dto.StudentAnswerDto;
 import com.ai.e_learning.model.StudentAnswer;
 import com.ai.e_learning.service.StudentAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class StudentAnswerController {
     private StudentAnswerService studentAnswerService;
 
     @PostMapping
-    public ResponseEntity<StudentAnswer> addStudentAnswer(@RequestBody StudentAnswerRequestDto request) {
+    public ResponseEntity<StudentAnswer> addStudentAnswer(@RequestBody StudentAnswerDto request) {
        StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(request.getQuestionId(), request.getAnswerOptionId());
      // StudentAnswer studentAnswer = studentAnswerService.saveStudentAnswer(request.getQuestionId(), request.getStudentOptionId());
         return ResponseEntity.ok(studentAnswer);

@@ -1,7 +1,8 @@
+import { Lesson } from './../../models/lesson.model';
 import { ExamCreationDto } from './../../models/examCreationDto.model';
 import { ExamService } from './../../services/exam.service';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Module } from '../../models/module.model';
 import { LessonService } from '../../services/lesson.service';
 import Swal from 'sweetalert2';
@@ -34,6 +35,7 @@ export class InstructorLessonComponent implements OnInit {
 
   courseId: number = -1; // Initialize courseId with a default value
   course = { name: '' };
+  lessons :Lesson[] =[];
   modules: Module[] = [];
   nameDuplicateError = false;
   isSidebarOpen = true;
@@ -43,7 +45,8 @@ examForm: any;
   constructor(private route: ActivatedRoute,
      private lessonService: LessonService,
      private examService: ExamService,
-     private location: Location
+     private location: Location,
+     private router:Router
     ) {}
 
 
@@ -54,6 +57,7 @@ examForm: any;
     if (courseIdParam !== null) {
       this.courseId = +courseIdParam; // Convert courseIdParam to number if not null
     }
+    this.getLessonsByCourseId();
   }
 
   addModule() {
@@ -89,18 +93,14 @@ examForm: any;
         formData.append('courseId', this.courseId.toString());
         formData.append('title', this.course.name);
 
-        this.modules.forEach((module, index) => {
-            formData.append(`modules[${index}].name`, module.name);
-            if (module.fileInput) {
-                formData.append(`modules[${index}].fileInput`, module.fileInput, module.fileInput.name);
-            }
-        });
+      
 
         this.lessonService.createLesson(formData).subscribe(
             (createdLesson) => {
                 console.log('Lesson Created:', createdLesson);
                 Swal.fire('Success!', 'Lesson created successfully!', 'success');
-            },
+                this.getLessonsByCourseId();
+              },
             (error) => {
                 console.error('Error creating lesson:', error);
                 Swal.fire('Error!', 'Failed to create lesson.', 'error');
@@ -184,6 +184,8 @@ examForm: any;
 
   onSubmitExam(examForm: any) {
     const examCreationDto: ExamCreationDto = {
+      lessonId: 1,
+
       title: this.examTitle,
       description: this.examDescription,
       questionList: this.questions.map(question => ({
@@ -218,5 +220,22 @@ examForm: any;
 
   goBack() {
     this.location.back();
+  }
+
+  getLessonsByCourseId(): void {
+    this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+      (data: Lesson[]) => {
+        this.lessons = data;
+      },
+      error => {
+        console.error('Error fetching courses', error);
+      }
+    );
+  }
+
+  navigateToLesson(lessonId: number) {
+    console.log("Lesson Id :", lessonId);
+    
+    this.router.navigate([`../instructor/module-exam/${lessonId}`]);
   }
 }
