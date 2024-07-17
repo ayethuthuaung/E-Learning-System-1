@@ -53,6 +53,8 @@ export class CourseFooterComponent implements OnInit {
           (user: User | null) => {
             if (user) {
               this.user = user;
+              console.log(this.user);
+              
               this.checkEnrollmentStatus(); 
             } else {
               console.error('User details not found or invalid');
@@ -143,8 +145,13 @@ export class CourseFooterComponent implements OnInit {
       console.error('Course is undefined');
       return;
     }
+    console.log('isAccepted:', this.isAccepted);
+    console.log('isOwner:', this.isOwner);
+    console.log('Roles:', this.roles);
 
-    if (!this.isAccepted && !this.isOwner && this.hasRole(3)) {
+    if (!this.isAccepted && !this.isOwner) {
+      console.log("Hi");
+      
       Swal.fire({
         title: 'Enrollment Not Accepted',
         text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',

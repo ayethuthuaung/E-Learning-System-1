@@ -135,9 +135,7 @@ examForm: any;
               Swal.fire('Error!', error.error.error, 'error');
             }
           );
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          Swal.fire('Cancelled', 'Module creation cancelled.', 'info');
-        }
+        } 
       });
     }
   }
@@ -209,31 +207,43 @@ examForm: any;
   }
 
   onSubmitExam(examForm: any) {
-    const examCreationDto: ExamCreationDto = {
-      lessonId: this.lessonId,
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to submit this exam?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, submit!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const examCreationDto: ExamCreationDto = {
+          lessonId: this.lessonId,
+          title: this.examTitle,
+          description: this.examDescription,
+          duration: this.examDuration,
+          questionList: this.questions.map(question => ({
+            content: question.text,
+            questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
+            answerList: question.options.map(option => ({
+              answer: option.label,
+              isAnswered: option.isAnswered
+            } as AnswerOptionDTO)),
+            marks: question.marks
+          } as QuestionDto))
+        };
 
-      title: this.examTitle,
-      description: this.examDescription,
-      duration: this.examDuration,
-      questionList: this.questions.map(question => ({
-        content: question.text,
-        questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
-        answerList: question.options.map(option => ({
-          answer: option.label,
-          isAnswered: option.isAnswered
-        } as AnswerOptionDTO)),
-        marks: question.marks
-      } as QuestionDto))
-    };
-
-    this.examService.createExam(examCreationDto)
-      .subscribe(response => {
-        console.log('Form submitted successfully', response);
-        // this.checkAnswers(response);
-        // this.showResults = true; // Show the results
-      }, error => {
-        console.error('Error submitting form', error);
-      });
+        this.examService.createExam(examCreationDto).subscribe(
+          (response) => {
+            console.log('Exam submitted successfully', response);
+            Swal.fire('Success!', 'The exam has been submitted successfully.', 'success');
+          },
+          (error) => {
+            console.error('Error submitting exam', error);
+            Swal.fire('Error!', 'There was an error submitting the exam.', 'error');
+          }
+        );
+      } 
+    });
   }
 
   // checkAnswers(response: any) {
@@ -248,6 +258,13 @@ examForm: any;
   goBack() {
     this.location.back();
   }
+
+  onDurationChange(duration: string) {
+    console.log(duration);
+    
+    this.examDuration = duration;
+  }
+
 
 
  }

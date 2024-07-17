@@ -38,4 +38,11 @@ export class MenuComponent implements OnInit {
   hasRole(roleId: number): boolean {
     return this.roles.some(role => role.id === roleId);
   }
+
+  scrollToFooter(): void {
+    const footerElement = document.querySelector('footer');
+    if (footerElement) {
+      footerElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }

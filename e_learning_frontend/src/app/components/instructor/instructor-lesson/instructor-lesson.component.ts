@@ -107,8 +107,6 @@ export class InstructorLessonComponent implements OnInit {
 
             }
         );
-    }else if (result.dismiss === Swal.DismissReason.cancel) {
-      Swal.fire('Cancelled', 'Lesson creation cancelled.', 'info');
     }
   });
 }

@@ -10,17 +10,18 @@
       </div> 
 
       <!-- Bar Chart within a Bigger Card -->
-      <div class="my-4 chart-card">
-        <mat-card class="big-card">
-          <mat-card-header >
+      <div class="my-4 relative -top-8">
+        <mat-card class="w-full max-w-[600px] mx-auto">
+          <mat-card-header>
             <mat-card-title>Course</mat-card-title>
             <!-- <mat-card-subtitle>Monthly Data</mat-card-subtitle> -->
           </mat-card-header>
-          <mat-card-content class="chart-body">
+          <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
             <app-admin-chart [chartType]="'bar'"></app-admin-chart>
           </mat-card-content>
         </mat-card>
       </div>
+      
     </main>
   </div>
 </div>

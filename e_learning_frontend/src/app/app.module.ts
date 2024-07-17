@@ -111,6 +111,7 @@ import { FilterSortDropdownComponent } from './components/filter-sort-dropdown/f
 import { ClickOutsideDirective } from './components/click-outside.directive';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 import { UserCourseModuleService } from './components/services/usercoursemodule.service';
+import { TimerComponent } from './components/shared/timer/timer.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -215,7 +216,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     CreateModuleExamComponent,
     FilterSortDropdownComponent,
     ClickOutsideDirective,
-    StudentQuestionFormComponent
+    StudentQuestionFormComponent,
+    TimerComponent
   ],
   imports: [
     BrowserModule,
