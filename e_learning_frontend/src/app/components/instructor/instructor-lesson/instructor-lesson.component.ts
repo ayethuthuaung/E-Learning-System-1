@@ -132,7 +132,7 @@ export class InstructorLessonComponent implements OnInit {
   }
 
   getLessonsByCourseId(): void {
-    this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+    this.lessonService.getLessonsByCourseId(this.courseId,1).subscribe(
       (data: Lesson[]) => {
         this.lessons = data;
       },
