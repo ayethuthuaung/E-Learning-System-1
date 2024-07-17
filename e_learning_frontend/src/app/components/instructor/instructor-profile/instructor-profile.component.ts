@@ -7,14 +7,13 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./instructor-profile.component.css']
 })
 export class InstructorProfileComponent implements OnInit {
-  photo:any= '';
-
+  photo: any = '';
   name: string = '';
   team: string = '';
   department: string = '';
   division: string = '';
   loggedUser: any = '';
-  id: number=0;
+  id: number = 0;
   selectedFile: File | null = null;
 
   constructor(private userService: UserService) {}
@@ -33,21 +32,20 @@ export class InstructorProfileComponent implements OnInit {
         this.division = this.loggedUser.division;
         this.id = this.loggedUser.id;
         console.log(this.id);
-        
       }
     }
   }
 
   onFileSelected(event: any): void {
     console.log("Hi");
-    
+
     const file: File = event.target.files[0];
     console.log(file);
-    
+
     if (file) {
       console.log("Hi");
       this.selectedFile = file;
-      this.updateProfile()
+      this.updateProfile();
     }
   }
 
@@ -65,6 +63,25 @@ export class InstructorProfileComponent implements OnInit {
           // Handle error response
         }
       );
+    }
+  }
+
+  downloadPhoto(): void {
+    if (this.photo) {
+      fetch(this.photo)
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = 'profile-picture.jpg';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          alert('Your profile picture has been downloaded.');
+        })
+        .catch(error => console.error('Error downloading the photo:', error));
     }
   }
 }

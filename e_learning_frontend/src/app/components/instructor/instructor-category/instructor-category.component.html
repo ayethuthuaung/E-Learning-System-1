@@ -1,93 +1,135 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
-    <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
-    <div class="flex flex-1">
-      <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
-  
-      <main class="flex-1 p-6">
-        <section>
-            <div class="flex border-b">
-                <button
-                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
-                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCategory' }"
-                  (click)="setActiveTab('createCategory')"
-                >
-                 Create Categories
-                </button>
-                <button
-                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
-                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'materials' }"
-                  (click)="setActiveTab('materials')"
-                >
-                  Course Lessons
-                </button>
-                <button
-                  class="py-2 px-4 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none"
-                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
-                  (click)="setActiveTab('additional')"
-                >
-                  Course Certificate
-                </button>
-              </div>
+  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
+  <div class="flex flex-1">
+    <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
 
-              
-              <div *ngIf="activeTab === 'materials'" class="p-4">
-                <h3 class="text-xl font-bold mb-4">Materials</h3>
-                <p>Content for materials.</p>
-              </div>
-              
-              <div *ngIf="activeTab === 'additional'" class="p-4">
-                <h3 class="text-xl font-bold mb-4">Additional Information</h3>
-                <p>Content for additional information.</p>
-              </div>
-              
+    <main class="flex-1 p-6">
+      <section>
+        <div class="flex border-b mb-4">
+          <button
+            class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
+            [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createCategory' }"
+            (click)="setActiveTab('createCategory')"
+          >
+            Add Categories
+          </button>
+          <button
+            class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none ml-4"
+            [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'categoryList' }"
+            (click)="setActiveTab('categoryList')"
+          >
+            Category List
+          </button>
+        </div>
+
+        <!-- Create Category Form -->
         <div *ngIf="activeTab === 'createCategory'" class="p-4">
-            <!-- Category Create Form -->
-            <div class="flex items-center justify-center bg-gray-100">
+          <div class="flex items-center justify-center bg-gray-100">
             <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-
               <form #categoryForm="ngForm" (ngSubmit)="onSubmit(categoryForm)" method="post" class="flex flex-col">
                 <input
                   type="text"
                   class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                   id="name"
-                 name="name"
-                 [(ngModel)]="category.name"
-                 #name="ngModel"
-                 required  
-                 (input)="validateCategoryName(category.name)"
+                  name="name"
+                  [(ngModel)]="category.name"
+                  #name="ngModel"
+                  required
+                  (input)="validateCategoryName(category.name)"
                   placeholder="Category Name"
                 />
                 <div *ngIf="nameRequiredError" class="text-red-500">
-                    Name is required. 
-                  </div>
-                  
+                  Name is required.
+                </div>
+
                 <div *ngIf="nameDuplicateError" class="text-red-500">
                   This category name already exists.
                 </div>
-          
+
                 <button
                   type="submit"
-                  class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
-                  [disabled]="nameDuplicateError">
+                  class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
+                  [disabled]="nameDuplicateError"
+                >
                   Submit
                 </button>
               </form>
-          
-             
             </div>
-              <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-                <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white m-4">
-                  <div class="px-6 py-4">
-                      <div class="font-bold text-xl mb-2">name</div>
-                
-                  </div>
-              </div> 
-             </div>
-               -->
           </div>
         </div>
-        </section>
-      </main>
-    </div>
+
+        <!-- Category List Table -->
+        <div *ngIf="activeTab === 'categoryList'" class="flex items-center justify-center p-3">
+          <div class="w-full max-w-lg"> <!-- Adjusted size to max-w-lg -->
+            <table class="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr class="bg-logo-blue">
+                  <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Category Name</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let category of categories" class="hover:bg-gray-30">
+                  <td class="px-6 py-4 whitespace-nowrap">{{ category.name }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <button class="text-blue-500 hover:text-blue-800 focus:outline-none" (click)="openUpdateDialog(category)">
+                      <i class="fas fa-edit"></i> <!-- Font Awesome edit icon -->
+                    </button>
+                    <button class="text-red-500 hover:text-red-800 focus:outline-none ml-2" (click)="softDeleteCategory(category.id)">
+                      <i class="fas fa-trash-alt"></i> <!-- Font Awesome delete icon -->
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
-  
+
+  <!-- Update Category Modal -->
+  <ng-template #updateCategoryDialog>
+    <div class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="absolute inset-0 bg-black opacity-50"></div>
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative z-10">
+        <h2 class="text-2xl font-semibold text-center mb-4">Update Category</h2>
+        <form #updateForm="ngForm" (ngSubmit)="onUpdateSubmit(updateForm)" class="space-y-4">
+          <input
+            type="text"
+            class="w-full bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+            id="name"
+            name="name"
+            [(ngModel)]="selectedCategory.name"
+            #name="ngModel"
+            required
+            (input)="validateCategoryName(selectedCategory.name)"
+            placeholder="Category Name"
+          />
+          <div *ngIf="nameRequiredError" class="text-red-500">
+            Name is required.
+          </div>
+          <div *ngIf="nameDuplicateError" class="text-red-500">
+            This category name already exists.
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button
+              type="button"
+              class="bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600 transition ease-in-out duration-150"
+              (click)="closeUpdateDialog()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150"
+              [disabled]="nameDuplicateError"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+</div>

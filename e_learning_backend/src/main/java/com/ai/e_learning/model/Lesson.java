@@ -30,6 +30,7 @@ public class Lesson {
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = @JoinColumn(name = "module_id")
     )
+    @JsonIgnore
     private Set<CourseModule> courseModules;
 
 }

@@ -7,7 +7,6 @@ import com.ai.e_learning.dto.QuestionDto;
 import com.ai.e_learning.model.AnswerOption;
 import com.ai.e_learning.model.Exam;
 import com.ai.e_learning.model.Question;
-import com.ai.e_learning.model.Marks;
 import com.ai.e_learning.model.QuestionType;
 import com.ai.e_learning.model.StudentAnswer;
 import com.ai.e_learning.repository.*;
@@ -28,12 +27,11 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
-    private final Question_TypeRepository questionTypeRepository;
+    private final QuestionTypeRepository questionTypeRepository;
     private final AnswerOptionRepository answerOptionRepository;
     private final StudentAnswerRepository studentAnswerRepository;
     private final ExamRepository examRepository;
     private final ModelMapper modelMapper;
-    private final MarksRepository marksRepository;
 
 
 
@@ -140,14 +138,14 @@ public class QuestionServiceImpl implements QuestionService {
                     answerOptionRepository.saveAll(answerOptions);
 
                     // Save Marks
-                    List<Marks> marksList = new ArrayList<>();
-                    for (MarksDto marksDto : questionDTO.getMarksList()) {
-                        Marks marks = new Marks();
-                        marks.setMark(marksDto.getMark());
-                        marks.setQuestion(savedQuestion);
-                        marksList.add(marks);
-                    }
-                    marksRepository.saveAll(marksList);
+//                    List<Marks> marksList = new ArrayList<>();
+//                    for (MarksDto marksDto : questionDTO.getMarksList()) {
+//                        Marks marks = new Marks();
+//                        marks.setMark(marksDto.getMark());
+//                        marks.setQuestion(savedQuestion);
+//                        marksList.add(marks);
+//                    }
+//                    marksRepository.saveAll(marksList);
                 }
             }
             return true;

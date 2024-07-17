@@ -1,59 +1,121 @@
-.container {
-    width: 50%;
-    margin: 100px auto;
-    text-align: center;
-    background-color: #eee;
-    color: #2c5175;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    color: #2c5175;
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  input[type="file"] {
-    display: block;
-    width: 100%;
-    margin: 20px auto;
-    padding: 10px;
-    border: 1px solid #2c5175;
-    background-color: #fff;
-    color: #2c5175;
-    border-radius: 4px;
-    font-size: 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  button {
-    background-color: #103c68;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #1f16cd;
-  }
-  
-  p {
-    margin-top: 20px;
-    font-size: 16px;
-  }
+/* General Layout */
+.min-h-screen {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
 
-  .error-message {
-    color: #ff0000; /* Red color for error messages */
-  }
-  
-  .success-message {
-    color: #008000; /* Green color for success messages */
-  }
-  
-  
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.bg-gray-100 {
+  background-color: #f8f9fa;
+}
+
+/* Content */
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Changed from center to flex-start */
+  flex: 1;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  margin: 40px; /* Reduced margin */
+  padding: 20px; /* Reduced padding */
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h2 {
+  color: #2c5175;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* File Input */
+.custom-file {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.custom-file-input {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #2c5175;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #2c5175;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.custom-file-input:hover {
+  border-color: #103c68;
+}
+
+.custom-file-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px;
+  background-color: #103c68;
+  color: #ffffff;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.custom-file-label::after {
+  content: "Browse";
+  background-color: transparent;
+  color: inherit;
+  border: none;
+}
+
+/* Button */
+button {
+  background-color: #103c68;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1f16cd;
+}
+
+/* Messages */
+p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.error-message {
+  color: #ff0000;
+}
+
+.success-message {
+  color: #008000;
+}

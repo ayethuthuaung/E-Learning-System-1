@@ -1,119 +1,99 @@
-//package com.ai.e_learning.dto;
-//
-//import com.ai.e_learning.model.QuestionType;
-//import com.lowagie.text.*;
-//import com.lowagie.text.pdf.PdfPCell;
-//import com.lowagie.text.pdf.PdfPTable;
-//import com.lowagie.text.pdf.PdfWriter;
-//import jakarta.servlet.http.HttpServletResponse;
-//
-//import java.io.IOException;
-//import java.util.List;
-//
-//public class Question_TypePDFExporter {
-//    private List<QuestionType> questionTypeList;
-//
-//    public Question_TypePDFExporter(List<QuestionType> questionTypeList) {
-//        this.questionTypeList = questionTypeList;
-//    }
-//    private void writeTableHeader(PdfPTable table){
-//        PdfPCell cell = new PdfPCell();
-//        cell.setPadding(5);
-//
-//        Font font = FontFactory.getFont(FontFactory.HELVETICA);
-//
-//        cell.setPhrase(new Phrase("Question_Type ID", font));
-//
-//        table.addCell(cell);
-//
-//        cell.setPhrase(new Phrase("Question_Type Name", font));
-//
-//        table.addCell(cell);
-//
-//    }
-//    private void writeTableData(PdfPTable table){
-//        for(QuestionType questionType : questionTypeList){
-//            table.addCell(String.valueOf(questionType.getId()));
-//            table.addCell(String.valueOf(questionType.getType()));
-//
-//        }
-//
-//    }
-//    public void export(HttpServletResponse response) throws IOException {
-//        Document document = new Document(PageSize.A4);
-//        PdfWriter.getInstance(document,response.getOutputStream());
-//
-//        document.open();
-//
-//        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-//        font.setSize(18);
-//
-//        Paragraph title = new Paragraph("List Of Question_Type",font);
-//        title.setAlignment(Paragraph.ALIGN_CENTER);
-//        document.add(title);
-//
-//        PdfPTable table = new PdfPTable(2);
-//        table.setWidthPercentage(100);
-//        table.setSpacingBefore(15);
-//        table.setWidths(new float[] {1.5f, 3.5f});
-//
-//        writeTableHeader(table);
-//        writeTableData(table);
-//
-//        document.add(table);
-//        document.close();
-//
-//    }
-//}
 package com.ai.e_learning.dto;
 
-import com.ai.e_learning.model.Course;
+import com.ai.e_learning.service.CourseService;
+import com.ai.e_learning.service.UserCourseService;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Component
 public class PDFExporter {
-    private List<Course> courseList;
-    private long studentCount;
 
-    public PDFExporter(List<Course> courseList, long studentCount) {
-        this.courseList = courseList;
-        this.studentCount = studentCount;
-    }
+    @Autowired
+    private CourseService courseService;
 
-    private void writeCourseCount(Document document) throws DocumentException {
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-        font.setSize(12);
+    @Autowired
+    private UserCourseService userCourseService;
 
-        Paragraph courseCount = new Paragraph("Total Number of Courses: " + courseList.size(), font);
-        courseCount.setAlignment(Paragraph.ALIGN_LEFT);
-        document.add(courseCount);
+    public void exportCoursesByInstructor(Long instructorId, HttpServletResponse response) throws IOException {
+        // Fetch courses by instructor ID
+        List<CourseDto> courses = courseService.getCoursesByUserId(instructorId);
 
-        Paragraph studentCountParagraph = new Paragraph("Total Number of Students: " + studentCount, font);
-        studentCountParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-        document.add(studentCountParagraph);
-    }
+        // Fetch user courses by instructor ID
+        List<UserCourseDto> userCourses = userCourseService.getAllUserCourseByUserId(instructorId);
 
-    public void export(HttpServletResponse response) throws IOException {
+        // Create PDF document
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();
 
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-        font.setSize(18);
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        titleFont.setSize(18);
 
-        Paragraph title = new Paragraph("Course Report", font);
+        Paragraph title = new Paragraph("Course Report", titleFont);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
 
-        writeCourseCount(document);
+        writeCourseDetails(document, courses, userCourses);
 
         document.close();
     }
+
+    private void writeCourseDetails(Document document, List<CourseDto> courses, List<UserCourseDto> userCourses) throws DocumentException {
+        Font font = FontFactory.getFont(FontFactory.HELVETICA);
+        font.setSize(12);
+
+        // Date formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        for (CourseDto course : courses) {
+            String instructorName = course.getUser().getName();
+
+            Paragraph instructorParagraph = new Paragraph("Instructor: " + instructorName, font);
+            instructorParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(instructorParagraph);
+
+            Paragraph courseInfo = new Paragraph("Course Name: " + course.getName(), font);
+            courseInfo.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(courseInfo);
+
+            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
+            Paragraph createdAtParagraph = new Paragraph("Created At: " + createdAt.format(formatter), font);
+            createdAtParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(createdAtParagraph);
+
+            Paragraph courseLevel = new Paragraph("Course Level: " + course.getLevel(), font);
+            courseLevel.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(courseLevel);
+
+            Paragraph courseDuration = new Paragraph("Course Duration: " + course.getDuration(), font);
+            courseDuration.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(courseDuration);
+
+            Paragraph courseDescription = new Paragraph("Course Description: " + course.getDescription(), font);
+            courseDescription.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(courseDescription);
+
+            // Calculate student count for the course
+            long studentCount = userCourses.stream()
+                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
+                    .count();
+
+            Paragraph studentCountParagraph = new Paragraph("Student Count: " + studentCount, font);
+            studentCountParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+            document.add(studentCountParagraph);
+
+            document.add(new Paragraph(" "));
+        }
+    }
 }
-
-

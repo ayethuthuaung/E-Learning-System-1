@@ -6,11 +6,13 @@ export class Category {
     name: string;
     deleted: boolean;
     courses: Course[];
+    instructorName: string;
 
     constructor() {
         this.id=0
         this.name = '';
         this.deleted = false;
         this.courses = []; 
+        this.instructorName = '';
       }
 }

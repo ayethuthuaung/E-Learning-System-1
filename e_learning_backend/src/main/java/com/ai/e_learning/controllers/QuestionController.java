@@ -36,6 +36,7 @@ public class QuestionController {
 //    }
 @PostMapping("/add")
 public ResponseEntity<?> createQuestion(@RequestBody List<QuestionCreationDto> questionCreationDtoList){
+
     for(QuestionCreationDto questionCreationDTO : questionCreationDtoList){
         System.out.println(questionCreationDTO.toString());
     }

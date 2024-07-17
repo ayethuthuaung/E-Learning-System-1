@@ -1,0 +1,30 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar>
+  
+  <div class="flex flex-1">
+    <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
+  
+    <main class="flex-1 p-6">
+      <div *ngIf="showNotificationsPage">
+        <app-notification></app-notification>
+      </div>
+      <!-- Bar Chart -->
+      <div class="my-4">
+        <app-admin-chart
+          [chartType]="'bar'"
+          [chartData]="barChartData"
+          [chartOptions]="chartOptions">
+        </app-admin-chart>
+      </div>
+
+      <!-- Line Chart -->
+      <div class="my-4">
+        <app-admin-chart
+          [chartType]="'line'"
+          [chartData]="lineChartData"
+          [chartOptions]="chartOptions">
+        </app-admin-chart>
+      </div>
+    </main>
+  </div>
+</div>

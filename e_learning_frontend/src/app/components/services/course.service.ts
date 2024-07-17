@@ -15,6 +15,8 @@ export class CourseService {
     return this.http.get<Course[]>(`${this.baseUrl}/courselist?status=`+ status);
   }
 
+  
+
   getInstructorCourses(userId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
       params: { userId: userId.toString() }
@@ -59,13 +61,22 @@ export class CourseService {
       params: { name }
     });
   }
+  getCoursesByUserId(userId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
+      params: { userId: userId.toString() }
+    });
+  }
+  exportCoursesByInstructor(instructorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/instructor/excel?instructorId=${instructorId}`, { responseType: 'blob' });
+  }
 
-  private createFormData(course: Course): FormData {
-    const formData = new FormData();
-    formData.append('course', new Blob([JSON.stringify(course)], { type: 'application/json' }));
-    if (course.photoFile) {
-      formData.append('photo', course.photoFile, course.photoFile.name);
-    }
-    return formData;
+  exportAllCourses(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/admin/excel`, { responseType: 'blob' });
+  }
+  exportCoursesByInstructorToPdf(instructorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/instructor/pdf?instructorId=${instructorId}`, { responseType: 'blob' });
+  }
+  exportAllCoursesPDF(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
   }
 }

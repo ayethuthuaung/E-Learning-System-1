@@ -1,6 +1,8 @@
 package com.ai.e_learning.controllers;
 
+import com.ai.e_learning.dto.ExamCreationDto;
 import com.ai.e_learning.dto.ExamDto;
+import com.ai.e_learning.dto.QuestionCreationDto;
 import com.ai.e_learning.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,18 @@ public class ExamController {
     private ExamService examService;
 
     // Add exam
-    @PostMapping(value = "/add", produces = "application/json")
-    public ResponseEntity<ExamDto> addExam(@RequestBody ExamDto examDTO) {
-        ExamDto savedExam = examService.addExam(examDTO);
-        return ResponseEntity.ok(savedExam);
+//    @PostMapping(value = "/add", produces = "application/json")
+//    public ResponseEntity<ExamDto> addExam(@RequestBody ExamDto examDTO) {
+//        ExamDto savedExam = examService.addExam(examDTO);
+//        return ResponseEntity.ok(savedExam);
+//    }
+
+    @PostMapping("/add")
+    public ResponseEntity<?> createExam(@RequestBody ExamCreationDto examCreationDto ){
+
+
+        boolean isCreated = examService.createExam(examCreationDto);
+        return ResponseEntity.ok(isCreated);
     }
 
     // Get exam by ID

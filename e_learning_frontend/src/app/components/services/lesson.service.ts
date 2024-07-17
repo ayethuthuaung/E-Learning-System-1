@@ -30,4 +30,8 @@ getLessonsByCourseId(courseId: number): Observable<Lesson[]> {
   return this.http.get<Lesson[]>(`${this.baseUrl}/course/${courseId}`);
 }
 
+getLessonById(lessonId: number): Observable<Lesson> {
+  return this.http.get<Lesson>(`${this.baseUrl}/${lessonId}`);
+}
+
 }

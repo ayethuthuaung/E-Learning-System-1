@@ -1,0 +1,13 @@
+  
+<!-- Sidebar -->
+<aside [ngClass]="{'w-64': isSidebarOpen, 'w-20': !isSidebarOpen}" class="h-full bg-white shadow-md py-6 px-4 lg:block transition-all duration-300">
+    <ul class="space-y-5">
+      <li *ngFor="let item of menuItems" [ngClass]="{'bg-logo-blue text-white': item.isActive && isSidebarOpen, 'justify-center': !isSidebarOpen}">
+        <a [routerLink]="item.link" class="flex items-center block py-2.5 px-4 rounded transition duration-200 hover:bg-sky-blue" (click)="setActiveItem(item)">
+          <i [class]="item.icon"></i>
+          <span *ngIf="isSidebarOpen" class="ml-2">{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+  

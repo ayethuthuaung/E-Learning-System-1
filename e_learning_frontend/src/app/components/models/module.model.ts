@@ -1,6 +1,7 @@
 
 export interface Module {
-fileType: any;
+  id: number ;
+fileType: string;
 
   name:string;
   file: string;

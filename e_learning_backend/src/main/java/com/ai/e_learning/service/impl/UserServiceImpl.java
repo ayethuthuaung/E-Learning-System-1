@@ -100,20 +100,30 @@ public class UserServiceImpl implements UserService {
                             update_user.setStatus(update_user.getStatus());
                         }
 
-                        if (update_user.getPassword().equalsIgnoreCase("")) {
-                            update_user.setPassword(passwordEncoder.encode("123@dirace"));
-                        }
-                        System.out.println(roleList.get(index));
-                        Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
+              if (!update_user.getEmail().equalsIgnoreCase(user.getEmail())) {
+                update_user.setEmail(user.getEmail());
+              } else {
+                update_user.setEmail(update_user.getEmail());
+              }
 
-                        Set<Role> roles = new HashSet<>();
-                        roles.add(role);
-                        update_user.setRoles(roles);
+
+              if(update_user.getPassword().equalsIgnoreCase("")) {
+                update_user.setPassword(passwordEncoder.encode("123@dirace"));
+              }
+                System.out.println(roleList.get(index));
+                Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
+
+
+                Set<Role> roles = new HashSet<>();
+                roles.add(role);
+                update_user.setRoles(roles);
                         insert_user.add(update_user);
                     } else {
                         user.setPassword(passwordEncoder.encode("123@dirace"));
 
-                        user.setPhoto("userPhoto.png");
+
+
+                user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
                         Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
 
                         Set<Role> roles = new HashSet<>();
@@ -137,6 +147,7 @@ public class UserServiceImpl implements UserService {
                 this.userRepository.saveAll(insert_user);
             } catch (IOException e) {
                 throw new IllegalArgumentException("This file is not a valid excel file");
+
             }
         }
     }
@@ -151,17 +162,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getCurrentUser(String staffId) {
-        User user = userRepository.findUserByStaffId(staffId);
-        try {
-            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-            String fileId = driveConnector.getFileIdByName(user.getPhoto());
-            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-            user.setPhoto(thumbnailLink);
-            System.out.println(thumbnailLink);
-        } catch (IOException | GeneralSecurityException e) {
 
-        }
-        return DtoUtil.map(user, UserDto.class, modelMapper);
+        User user=userRepository.findUserByStaffId(staffId);
+//        try {
+//            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//            String fileId = driveConnector.getFileIdByName(user.getPhoto());
+//            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+//            user.setPhoto(thumbnailLink);
+//            System.out.println(thumbnailLink);
+//        } catch (IOException | GeneralSecurityException e) {
+//
+//        }
+        return DtoUtil.map(user,UserDto.class,modelMapper);
 
     }
 
@@ -218,19 +230,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByStaffId(String staff_id) {
-        User user = userRepository.findUserByStaffId(staff_id);
-        if (user == null)
-            return null;
-        try {
-            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-            String fileId = driveConnector.getFileIdByName(user.getPhoto());
-            String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-            user.setPhoto(thumbnailLink);
-        } catch (IOException | GeneralSecurityException e) {
 
-        }
-        return DtoUtil.map(user, UserDto.class, modelMapper);
+    public UserDto getUserByStaffId(String staff_id){
+      User user = userRepository.findUserByStaffId(staff_id);
+      if (user == null)
+        return null;
+
+      return DtoUtil.map(user,UserDto.class,modelMapper);
     }
 
 

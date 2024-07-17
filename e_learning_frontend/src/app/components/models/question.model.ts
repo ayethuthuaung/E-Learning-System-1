@@ -1,12 +1,13 @@
   // question.model.ts
-  export interface QuestionDTO {
+  export interface QuestionDto {
     id: number;
     content: string;
+    marks: number;
     questionTypeId: number;
-    answerList: AnswerOptionDTO[];
+    answerList: AnswerOptionDto[];
   }
 
-  export interface AnswerOptionDTO {
+  export interface AnswerOptionDto {
     id: number;
     questionId: number;
     answer: string;

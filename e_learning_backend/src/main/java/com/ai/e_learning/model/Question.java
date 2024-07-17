@@ -21,6 +21,8 @@ public class Question {
     @Column(length = 5000)
     private String content;
 
+    private double marks;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_id")
     private Exam exam;
@@ -37,7 +39,6 @@ public class Question {
     @JsonIgnore
     private Set<StudentAnswer> studentAnswers = new LinkedHashSet<>(); // Ensure this is initialized
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Marks> marks = new LinkedHashSet<>();
+
 }
 

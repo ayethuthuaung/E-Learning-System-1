@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-100 flex flex-col">
+<!-- <div class="min-h-screen bg-gray-100 flex flex-col">
   <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
@@ -8,22 +8,22 @@
         <h2 class="text-2xl font-semibold mb-4">My task</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-purple-200 p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Landing page product</h3>
-            <p>7 members</p>
-            <p>88 tasks</p>
-            <p>+9.5%</p>
+            <h3 class="text-lg font-semibold text-white">Landing page product</h3>
+            <p class="text-white">7 members</p>
+            <p class="text-white">88 tasks</p>
+            <p class="text-white">+9.5%</p>
           </div>
           <div class="bg-red-200 p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Apartment app</h3>
-            <p>7 members</p>
-            <p>38 tasks</p>
-            <p>+4.5%</p>
+            <h3 class="text-lg font-semibold text-white">Apartment app</h3>
+            <p class="text-white">7 members</p>
+            <p class="text-white">38 tasks</p>
+            <p class="text-white">+4.5%</p>
           </div>
           <div class="bg-green-200 p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Learning app</h3>
-            <p>7 members</p>
-            <p>56 tasks</p>
-            <p>+1.5%</p>
+            <h3 class="text-lg font-semibold text-white">Learning app</h3>
+            <p class="text-white">7 members</p>
+            <p class="text-white">56 tasks</p>
+            <p class="text-white">+1.5%</p>
           </div>
         </div>
       </section>
@@ -38,8 +38,9 @@
               <button class="ml-2 bg-gray-200 px-4 py-2 rounded-lg">Month</button>
             </div>
           </div>
-          <div>
-            <!-- Add Chart.js or any other chart library for the graph -->
+          <div class="mt-4">
+            <!-- Placeholder for your chart -->
+            <!-- <canvas id="myChart" width="400" height="200"></canvas>
           </div>
         </div>
       </section>
@@ -65,31 +66,30 @@
       </section>
     </main>
   </div>
-</div>
-
-<!-- Chat Icon -->
-<button (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600">
-  <i class="fas fa-comments"></i>
-</button>
-
-<!-- Chat List -->
-<div *ngIf="chatRoomVisible" class="fixed bottom-16 right-4 bg-white border border-gray-300 rounded-md shadow-lg w-64">
-  <ul>
-    <li *ngFor="let conversation of conversationList" class="p-2 hover:bg-gray-100 cursor-pointer" (click)="openChat(conversation)">
-      <div class="flex items-center">
-        <img [src]="conversation.photo" alt="{{ conversation.name }}" class="w-10 h-10 rounded-full mr-2">
+</div> --> 
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
+  <div class="flex flex-1">
+    <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
+    
+    <div class="flex-1 p-6">
+      <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center">
+        <i class="fas fa-book text-4xl text-purple-500 mr-4"></i>
         <div>
-          <p class="text-sm font-semibold">{{ conversation.name }}</p>
-          
+          <h3 class="text-xl font-semibold mb-2">Course Counts</h3>
+          <p>{{ acceptedCoursesCount }} courses accepted</p>
         </div>
       </div>
-    </li>
-  </ul>
+    </div>
+
+    <div class="flex-1 p-6">
+      <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center" *ngFor="let count of studentCounts">
+        <i class="fas fa-user-graduate text-4xl text-purple-500 mr-4"></i>
+        <div>
+          <h3 class="text-xl font-semibold mb-2">Student Counts</h3>
+          <p>{{ count.acceptedCount }} students accepted</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-
-<!-- Chat Room Section -->
-<app-chat *ngIf="selectedConversation" [chatRoomId]="selectedConversation.chatRoomId" [userName]="selectedConversation.name" (close)="closeChat()"></app-chat>
-
-
-
