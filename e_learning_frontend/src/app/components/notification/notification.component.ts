@@ -19,10 +19,10 @@ export class NotificationComponent implements OnInit {
   constructor(private webSocketService: WebSocketService, private authService: AuthService,private router: Router) {}
 
   ngOnInit(): void {
-    this.userRole = this.authService.getLoggedInUserRole() as 'Admin' | 'Instructor';
+    this.userRole = this.authService.getLoggedInUserRole() as 'Admin' | 'Instructor' | 'Student';
     const userId = this.authService.getLoggedInUserId();
 
-    if (this.userRole === 'Admin' || this.userRole === 'Instructor') {
+    if (this.userRole === 'Admin' || this.userRole === 'Instructor'||this.userRole === 'Student' ) {
       this.webSocketService.fetchNotifications(this.userRole,userId).subscribe(
         (notifications) => {
           console.log(notifications);
@@ -77,6 +77,8 @@ export class NotificationComponent implements OnInit {
   handleNotificationClick(notification: Notification): void {
     if(this.userRole === 'Admin'){
       this.router.navigate(['/admin/course'], { queryParams: { tab: 'courseList' } });
+    }else if(this.userRole === 'Instructor'){
+        this.router.navigate(['/instructor/course'],{queryParams :{tab :'courseList'}});
     }
   
 }
@@ -84,12 +86,11 @@ export class NotificationComponent implements OnInit {
   closeNotifications(): void {
     this.notifications = [];
   }
-  getNotificationClass(notification: Notification): string {
-    if (notification.message.includes('Accept')) {
-      return 'text-green-600';
-    } else if (notification.message.includes('Reject')) {
-      return 'text-red-600';
-    }
-    return '';
+  highlightMessage(notification: Notification): string {
+    let message = notification.message;
+    message = message.replace(/Accept/g, '<span class="text-green-600">Accept</span>');
+    message = message.replace(/Reject/g, '<span class="text-red-600">Reject</span>');
+    return message;
   }
+  
 }

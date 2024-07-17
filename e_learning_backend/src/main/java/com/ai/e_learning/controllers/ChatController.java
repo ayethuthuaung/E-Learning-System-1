@@ -106,11 +106,12 @@ public class ChatController {
     public ResponseEntity<?> softDeleteMessage(@PathVariable Long messageId) {
         try {
             chatServiceImpl.softDeleteMessage(messageId);
-            return ResponseEntity.ok("Message soft deleted successfully");
+            return ResponseEntity.ok().build(); // or return ResponseEntity.ok("Success");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting message");
         }
     }
+
     @PostMapping("/uploadFile")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("fileType") String fileType) {
         try {

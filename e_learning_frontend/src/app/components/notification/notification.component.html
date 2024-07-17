@@ -8,11 +8,10 @@
   <div class="notification-body overflow-y-auto" style="max-height: 400px;">
     <ul class="notification-list">
       <li *ngFor="let notification of notifications" (click)="handleNotificationClick(notification)"
-          [ngClass]="getNotificationClass(notification)"
+      [class.unread]="!notification.read"
           class="notification-item flex justify-between p-3 cursor-pointer border-b" (click)="markAsRead(notification)">
         <div class="notification-content">
-          <div class="notification-message font-bold">
-            {{ notification.message }}
+          <div class="notification-message font-bold" [innerHTML]="highlightMessage(notification)">
           </div>
           <div class="notification-time text-gray-500 text-sm">
             {{ notification.createdAt | date:'short' }}

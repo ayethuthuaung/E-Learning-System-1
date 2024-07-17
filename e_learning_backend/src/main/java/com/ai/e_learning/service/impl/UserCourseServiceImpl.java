@@ -96,6 +96,24 @@ public class UserCourseServiceImpl implements UserCourseService {
       .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
     userCourse.setStatus(status);
     userCourseRepository.save(userCourse);
+
+    sendStudentNotification(userCourse);
+  }
+  private void sendStudentNotification(UserCourse userCourse) {
+    User student = userCourse.getUser();
+    Course course = userCourse.getCourse();
+    Optional<Role> studentRoleOptional = roleService.getRoleByName("Student");
+    if(studentRoleOptional.isPresent()) {
+      Role instructorRole = studentRoleOptional.get();
+      Notification studentNotification = new Notification();
+      studentNotification.setMessage("Your enrollment status for the course " + course.getName() + " has been changed to " + userCourse.getStatus());
+      studentNotification.setRole(instructorRole);
+      studentNotification.setUser(student);
+
+      notificationController.sendNotificationToUser(studentNotification, student);
+    }else {
+      System.out.println("Student role is not found");
+    }
   }
   //AT
 
