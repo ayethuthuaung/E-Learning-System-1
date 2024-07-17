@@ -21,22 +21,19 @@
                   [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'createLesson' }"
                   (click)="setActiveTab('createLesson')"
                 >
-                  Add Lessons And Exam
+                  Add Lessons
                 </button>
                 <button
                   class="py-2 px-4 text-md font-medium text-logo-blue hover:text-blue-800 focus:outline-none"
-                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'additional' }"
-                  (click)="setActiveTab('additional')"
+                  [ngClass]="{ 'border-b-2 border-blue-600': activeTab === 'courseList' }"
+                  (click)="setActiveTab('courseList')"
                 >
-                  Add Certificate
+                  Course List
                 </button>
 
               </div>
 
-              <div *ngIf="activeTab === 'additional'" class="p-4">
-                  <h3 class="text-xl font-bold mb-4">Additional Information</h3>
-                  <p>Content for additional information.</p>
-              </div>
+           
 
               <div *ngIf="activeTab === 'createCourse'" class="p-4 flex flex-col md:flex-row">
                   <!-- Course Create Form -->
