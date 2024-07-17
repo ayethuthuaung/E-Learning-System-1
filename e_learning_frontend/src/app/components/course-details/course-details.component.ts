@@ -98,7 +98,7 @@ export class CourseDetailsComponent implements OnInit {
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
     } 
-    this.restoreDoneState();   
+    
   }
 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
@@ -125,7 +125,7 @@ export class CourseDetailsComponent implements OnInit {
   fetchLessons(): void {
     console.log('Fetching lessons for course ID:', this.courseId);
     if (this.courseId) {
-      this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+      this.lessonService.getLessonsByCourseId(this.courseId,this.loggedUser.id).subscribe(
         (data) => {
           console.log('Fetched lessons:', data);
 
@@ -175,13 +175,24 @@ viewQuestionFormClick(examId: number): void {
   // }
 }
 
-markAsDone(moduleId: number, module: any): void {
-  this.userCourseModuleService.markModuleAsDone(this.userId!, moduleId).subscribe(
-    response => {
-      module.done = true; // Update the `done` property of the module
-      localStorage.setItem(`module_${moduleId}_done`, 'true'); // Persist `done` state in localStorage
+markAsDone(moduleId: number, lessonIndex: number): void {
+  if (!this.userId || !this.courseId) {
+    console.error('User ID or Course ID not available.');
+    return;
+  }
 
-      // Trigger change detection explicitly
+  const lesson = this.lessons[lessonIndex];
+  const module = lesson.modules.find(m => m.id === moduleId);
+
+  if (!module || module.done) {
+    console.log(`Module ${moduleId} is already marked as done or not found.`);
+    return;
+  }
+
+  this.userCourseModuleService.markModuleAsDone(this.userId, moduleId).subscribe(
+    () => {
+      module.done = true;
+      localStorage.setItem(`module_${moduleId}_done`, 'true');
       this.cdr.detectChanges();
     },
     (error: HttpErrorResponse) => {
@@ -193,20 +204,5 @@ markAsDone(moduleId: number, module: any): void {
       }
     }
   );
-}
-
-
-// Restore 'done' state from localStorage on component initialization
-private restoreDoneState(): void {
-  if (this.lessons && this.lessons.length > 0) {
-    this.lessons.forEach(lesson => {
-      lesson.modules.forEach(module => {
-        const doneState = localStorage.getItem(`module_${module.id}_done`);
-        if (doneState === 'true') {
-          module.done = true;
-        }
-      });
-    });
-  }
 }
 }

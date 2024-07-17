@@ -6,6 +6,7 @@ import { Role, User } from '../../../models/user.model';
 
 import Swal from 'sweetalert2';
 import { UserCourse } from '../../../models/usercourse.model';
+import { log } from 'node:console';
 
 @Component({
   selector: 'app-course-footer',
@@ -87,8 +88,11 @@ export class CourseFooterComponent implements OnInit {
   checkEnrollmentAcceptance(): void {
     if (this.course && this.userId) {
       this.userCourseService.checkEnrollmentAcceptance(this.userId, this.course.id).subscribe(
+        
         (isAccepted: boolean) => {
           this.isAccepted = isAccepted;
+          console.log(this.isAccepted);
+
         },
         (error) => {
           console.error('Error checking enrollment acceptance', error);
@@ -139,12 +143,18 @@ export class CourseFooterComponent implements OnInit {
   }
 
   goToCourseDetails(): void {
+    console.log("Hi");
+    
     if (!this.course) {
+      console.log("Hi");
+
       console.error('Course is undefined');
       return;
     }
 
-    if (!this.isAccepted && !this.isOwner && this.hasRole(3)) {
+    if (!this.isAccepted && !this.isOwner ) {
+      console.log("Hi");
+
       Swal.fire({
         title: 'Enrollment Not Accepted',
         text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',

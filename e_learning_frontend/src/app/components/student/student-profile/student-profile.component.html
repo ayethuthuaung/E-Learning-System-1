@@ -40,7 +40,7 @@
                 </div>
                 <div class="flex-1">
                   <p class="font-semibold text-gray-800 text-base">{{ course.name }}</p>
-                  <p class="text-gray-600">Instructor: {{ course.instructorName }}</p>
+              
                 </div>
               </div>
               <div class="absolute top-4 right-4 text-right">
@@ -54,7 +54,7 @@
                       <path class="circle" [attr.stroke-dasharray]="coursePercentages[course.id] ? (coursePercentages[course.id] * 0.01 * 100) + ', 100' : '0, 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                     </svg>
                     <div class="absolute inset-0 flex items-center justify-center">
-                      <span class="text-gray-800 text-sm">{{ coursePercentages[course.id] || 0 }}%</span>
+                      <span class="text-gray-800 text-sm">{{ coursePercentages[course.id] ? (coursePercentages[course.id] >= 100 ? '100' : coursePercentages[course.id].toFixed(1)) : '0.0' }}%</span>
                     </div>
                   </div>
                 </div>

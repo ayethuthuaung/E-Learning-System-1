@@ -50,9 +50,13 @@
             <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
               <a [href]="module.file" class="ml-4 px-4 py-2 bg-logo-blue text-white rounded hover:bg-dark-blue" target="_blank">Open File</a>
             </ng-container>          
-            <button  *ngIf="!isOwner" id="mark-as-done-{{i}}" (click)="markAsDone(module.id, i)" class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700" [disabled]="module.done">
-              {{ module.done ? 'Done' : 'Mark as Done' }}
-            </button>
+            <button *ngIf="!isOwner"
+                id="mark-as-done-{{i}}"
+                (click)="markAsDone(module.id, i)"
+                class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700"
+                [disabled]="module.done">
+          {{ module.done ? 'Done' : 'Mark as Done' }}
+          </button>
           </div>
         </div>
         

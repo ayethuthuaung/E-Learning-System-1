@@ -84,7 +84,7 @@ export class CourseVideoViewComponent implements OnInit {
   fetchLessons(): void {
     console.log('Fetching lessons for course ID:', this.courseId);
     if (this.courseId) {
-      this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+      this.lessonService.getLessonsByCourseId(this.courseId,1).subscribe(
         (data: Lesson[]) => {
           console.log('Fetched lessons:', data);
           this.lessons = data; // Assign fetched lessons to class property

@@ -20,7 +20,7 @@ export class Course {
   instructorName: string;
   instructorId: number; // Added property
   chatRoomId: number; // Added property
-  
+  acceptedAt: number;
   createdAt: number;
   createdDate: string;
 completion: any;
@@ -47,6 +47,7 @@ showDetails: any;
     this.instructorName='';
     this.createdDate = '';
     this.createdAt = 0;
+    this.acceptedAt = 0;
 
   }
 }

@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 public class UserCourseModuleDto {
 
-    private Long id,userId, moduleId;
-    private User user;
-    private CourseModule courseModule;
-    private boolean done;
+  private Long id,userId, moduleId;
+  private User user;
+  private CourseModule courseModule;
+  private boolean done;
 }
