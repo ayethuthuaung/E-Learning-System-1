@@ -12,6 +12,7 @@ export class UserCourse {
   user?: User;
   course?: Course;
 
+
   constructor() {
     this.id = 0;
     this.userId = 0;

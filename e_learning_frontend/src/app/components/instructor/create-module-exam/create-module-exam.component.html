@@ -41,7 +41,7 @@
                     />
                     <button
                       type="button"
-                      class="ml-2 text-red-400 hover:text-red-600 transition ease-in-out duration-150"
+                      class="ml-2 text-gray-500 hover:text-red-600 transition ease-in-out duration-150"
                       (click)="removeModule(i)"
                     >
                       <i class="fas fa-trash"></i>
@@ -80,23 +80,36 @@
           <div class="w-full max-w-xl bg-white rounded-lg shadow-md p-6">
             <input type="text" [(ngModel)]="examTitle" placeholder="Exam Title" class="bg-gray-100 form-input w-full mb-4 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500">
             <textarea [(ngModel)]="examDescription" placeholder="Exam Description" class="bg-gray-100 form-textarea w-full mb-4 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+            <div class="timer">
+              <app-timer (durationChange)="onDurationChange($event)"></app-timer>
+            </div>
+            <!-- <input type="text" [(ngModel)]="examDuration" placeholder="Exam Duration" class="bg-gray-100 form-input w-full mb-4 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"> -->
+          
             <hr class="border-blue-800 mb-4">
             <div *ngFor="let question of questions; let qIndex = index" class="mb-6">
               <hr *ngIf="qIndex > 0" class="border-blue-800 mb-4">
               <div class="relative">
-                <div class="flex items-center">
-                  <input type="text" [(ngModel)]="question.text" placeholder="Question" class="bg-gray-100 form-input w-full mb-2 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 pr-10">
-                  <button (click)="deleteNewQuestion(qIndex)" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-400 hover:text-red-600 transition ease-in-out duration-150">
+                <div class="relative w-full mb-2">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="question.text" 
+                    placeholder="Question" 
+                    class="appearance-none bg-gray-100 w-full py-2 px-4 border-b-2 border-gray-400 focus:border-blue-500 focus:outline-none pr-10"
+                  >
+                  <button 
+                    (click)="deleteNewQuestion(qIndex)" 
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-red-600 transition ease-in-out duration-150"
+                  >
                     <i class="fas fa-times fa-lg"></i>
                   </button>
                 </div>
               </div>
               <div class="flex items-center mb-2">
-                <select [(ngModel)]="question.type" class="bg-gray-100 form-select w-1/3 mb-2 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select [(ngModel)]="question.type" class="appearance-none bg-gray-100 w-1/3 mb-2 px-4 py-2 border-b-2 border-gray-400 focus:border-blue-500 focus:outline-none">
                   <option value="multiple-choice">Multiple Choice</option>
                   <option value="checkbox">Checkbox</option>
                 </select>
-                <input type="text" [(ngModel)]="question.marks" placeholder="Marks" class="bg-gray-100 form-input w-1/3 mb-2 ml-4 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <input type="text" [(ngModel)]="question.marks" placeholder="Marks" class="appearance-none bg-gray-100 w-1/3 mb-2 ml-4 px-4 py-2 border-b-2 border-gray-400 focus:border-blue-500 focus:outline-none">
               </div>
               <div class="mb-4">
                 <div *ngFor="let option of question.options; let oIndex = index" class="flex items-center mb-2">
@@ -109,16 +122,30 @@
                     </span>
                   </div>
                   <div class="relative w-2/3">
-                    <input type="text" [(ngModel)]="option.label" (click)="handleOptionClick(qIndex, oIndex)" placeholder="Option Label" class="bg-gray-100 form-input w-full mb-2 px-4 py-2 border rounded focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 pr-10">
-                    <button (click)="deleteOption(qIndex, oIndex)" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-400 hover:text-red-600 transition ease-in-out duration-150">
+                    <input type="text" [(ngModel)]="option.label" (click)="handleOptionClick(qIndex, oIndex)" placeholder="Option Label" class="appearance-none bg-gray-100 w-full mb-2 px-4 py-2 border-b-2 border-gray-400 focus:border-blue-500 focus:outline-none pr-10">
+                    <button (click)="deleteOption(qIndex, oIndex)" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-red-600 transition ease-in-out duration-150">
                       <i class="fas fa-times fa-lg"></i>
                     </button>
+                
+              
                   </div>
                 </div>
               </div>
             </div>
-            <button (click)="addQuestion()" class="bg-logo-blue text-white px-4 py-2 rounded mb-2">Add Question</button>
-            <button (click)="onSubmitExam(examForm)" class="bg-logo-blue text-white px-4 py-2 rounded ml-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500">Submit Form</button>
+            <!-- <button (click)="addQuestion()" class="bg-logo-blue text-white font-bold x-4 py-2 rounded mb-2">Add Question</button> -->
+            <!-- <button (click)="onSubmitExam(examForm)" class="bg-logo-blue text-white px-4 py-2 rounded ml-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500">Submit Form</button> -->
+            <button
+                    (click)="addQuestion()"
+                    class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 ml-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
+                  >
+                    Add Question
+            </button>
+            <button
+                    (click)="onSubmitExam(examForm)"
+                    class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 ml-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
+                  >
+                    Submit Form
+            </button>
           </div>
         </div>
         

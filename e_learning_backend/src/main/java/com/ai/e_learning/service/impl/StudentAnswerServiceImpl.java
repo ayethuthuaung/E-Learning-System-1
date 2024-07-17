@@ -41,11 +41,14 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             Map<String, Object> answerResult = new HashMap<>();
             answerResult.put("questionId", requestDTO.getQuestionId());
 
-            // Retrieve question and answer option entities
-            Question question = questionRepository.findById(requestDTO.getQuestionId())
-                    .orElseThrow(() -> new IllegalArgumentException("Question not found for ID: " + requestDTO.getQuestionId()));
-            AnswerOption selectedAnswerOption = answerOptionRepository.findById(requestDTO.getAnswerOptionId())
-                    .orElseThrow(() -> new IllegalArgumentException("Answer option not found for ID: " + requestDTO.getAnswerOptionId()));
+            // Retrieve question entity
+            Question question = EntityUtil.getEntityById(questionRepository, requestDTO.getQuestionId(), "Question");
+
+            // Handle the case where answer option ID might be null or zero
+            AnswerOption selectedAnswerOption = null;
+            if (requestDTO.getAnswerOptionId() != null && requestDTO.getAnswerOptionId() != 0) {
+                selectedAnswerOption = EntityUtil.getEntityById(answerOptionRepository, requestDTO.getAnswerOptionId(), "AnswerOption");
+            }
 
             // Retrieve the correct answer options for the given question
             List<AnswerOption> correctAnswerOptions = answerOptionRepository.findByQuestionIdAndIsAnsweredTrue(question.getId());
@@ -65,7 +68,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             questionMap.put("options", optionsList);
 
             // Add to the result list
-            answerResult.put("selectedOptionId", selectedAnswerOption.getId());
+            answerResult.put("selectedOptionId", selectedAnswerOption != null ? selectedAnswerOption.getId() : null);
             List<Long> correctAnswerIds = new ArrayList<>();
             for (AnswerOption correctAnswerOption : correctAnswerOptions) {
                 correctAnswerIds.add(correctAnswerOption.getId());
@@ -73,7 +76,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             answerResult.put("correctAnswerIds", correctAnswerIds);
 
             // Check if the selected answer is correct
-            if (question.getQuestionType().getId() == 1) { // Multiple-choice
+            if (selectedAnswerOption != null && question.getQuestionType().getId() == 1) { // Multiple-choice
                 if (correctAnswerIds.contains(selectedAnswerOption.getId())) {
                     totalMarks += question.getMarks();
                 }
@@ -81,7 +84,8 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
                 List<Long> selectedAnswerIds = studentAnswerDTOList.stream()
                         .filter(dto -> dto.getQuestionId().equals(question.getId()))
                         .map(StudentAnswerDto::getAnswerOptionId)
-                        .toList();
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
                 if (new HashSet<>(selectedAnswerIds).containsAll(correctAnswerIds) && new HashSet<>(correctAnswerIds).containsAll(selectedAnswerIds)) {
                     totalMarks += question.getMarks();
@@ -103,3 +107,4 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
         return result;
     }
 }
+

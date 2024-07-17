@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import {  NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -89,6 +89,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+
 import { FilterDataPipe} from './components/filter-data.pipe';
 
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
@@ -98,11 +100,18 @@ import { CourseCardComponent } from './components/shared/course-card/course-card
 import { AllCoursesComponent } from './components/all-courses/all-courses.component';
 
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { AdminLessonComponent } from './components/admin/admin-lesson/admin-lesson.component';
+import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
+import { AdminStudentListComponent } from './components/admin/admin-student-list/admin-student-list.component';
+import { AdminPiechartComponent } from './components/admin/admin-piechart/admin-piechart.component';
+import { AdminBarchartComponent } from './components/admin/admin-barchart/admin-barchart.component';
+
 import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
 import { FilterSortDropdownComponent } from './components/filter-sort-dropdown/filter-sort-dropdown.component';
 import { ClickOutsideDirective } from './components/click-outside.directive';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 import { UserCourseModuleService } from './components/services/usercoursemodule.service';
+import { TimerComponent } from './components/shared/timer/timer.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -112,7 +121,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HomeComponent,
     LoginComponent,
     HomeComponent,
-
+    AppStoreComponent,
   
     ForgetPasswordComponent,
 
@@ -198,10 +207,17 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     CourseCardComponent,
     AllCoursesComponent,
     InstructorStudentComponent,
+    AdminLessonComponent,
+    AdminStudentComponent,
+    AdminStudentListComponent,
+    AdminPiechartComponent,
+    AdminBarchartComponent,
+
     CreateModuleExamComponent,
     FilterSortDropdownComponent,
     ClickOutsideDirective,
-    StudentQuestionFormComponent
+    StudentQuestionFormComponent,
+    TimerComponent
   ],
   imports: [
     BrowserModule,
@@ -217,9 +233,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-
+    MatCardModule,
 
     SocketIoModule.forRoot(config)
+    
   ],
   providers: [
     provideClientHydration(),

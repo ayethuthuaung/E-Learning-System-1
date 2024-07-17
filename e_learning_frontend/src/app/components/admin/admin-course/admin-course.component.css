@@ -1,0 +1,5 @@
+.scrollable-section {
+    max-height: 80vh; /* Adjust as needed */
+    overflow-y: auto;
+    padding-right: 15px; /* To avoid content hidden behind scrollbar */
+}

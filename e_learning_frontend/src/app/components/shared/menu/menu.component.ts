@@ -43,4 +43,11 @@ export class MenuComponent implements OnInit {
     this.showNotifications = !this.showNotifications;
   }
 
+
+  scrollToFooter(): void {
+    const footerElement = document.querySelector('footer');
+    if (footerElement) {
+      footerElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }

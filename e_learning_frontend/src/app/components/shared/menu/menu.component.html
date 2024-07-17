@@ -1,27 +1,27 @@
 <ul class="lg:flex font-semibold text-slate-700 text-lg gap-8 xl:gap-14">
-    <li class="p-3 border-t lg:border-0">
-        <a [routerLink]="['home']">Home</a>
+  <li class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/home']">Home</a>
+  </li>
+  <li class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/all-courses']">All Courses</a>
+  </li>
+  <li *ngIf="hasRole(1)" class="p-3 border-t lg:border-0 relative">
+    <a (click)="toggleNotifications()">Notification</a>
+    <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded shadow-lg">
+        <app-notification></app-notification>
+    </div>
     </li>
-    <li class="p-3 border-t lg:border-0">
-        <a href="all-courses">All Courses</a>
-    </li>
-    <li *ngIf="hasRole(1)" class="p-3 border-t lg:border-0 relative">
-      <a (click)="toggleNotifications()">Notification</a>
-      <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded shadow-lg">
-          <app-notification></app-notification>
-      </div>
-      </li>
-    <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
-        <a href="admin/dashboard">Dashboard</a>
-      </li>
-      <li *ngIf="hasRole(3)" class="p-3 border-t lg:border-0">
-        <a href="instructor/dashboard">Dashboard</a>
-      </li>
-      
-    <!-- <li class="p-3 border-t lg:border-0">
-        <a [routerLink]="['blog']">Blog</a>
-    </li> -->
-    <li class="p-3 border-y lg:border-0">
-        <a [routerLink]="['contact']">Contact</a>
-    </li>
+  <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/admin/dashboard']">Dashboard</a>
+  </li>
+  <li *ngIf="hasRole(3)" class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/instructor/dashboard']">Dashboard</a>
+  </li>
+  <!-- <li class="p-3 border-t lg:border-0">
+    <a [routerLink]="['/blog']">Blog</a>
+  </li> -->
+  <li class="p-3 border-y lg:border-0">
+    <button (click)="scrollToFooter()" class="text-left text-lg text-slate-700 font-semibold focus:outline-none">Contact</button>
+  </li>
+  
 </ul>

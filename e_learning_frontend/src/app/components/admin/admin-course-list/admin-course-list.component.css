@@ -12,8 +12,9 @@
 }
 
 thead.thead-dark th {
-  background-color: #036ad1;
+  background-color: #034689;
   color: white;
+  text-align: center;
 }
 
 .table th, .table td {
@@ -22,6 +23,12 @@ thead.thead-dark th {
 
 .btn {
   margin-right: 5px;
+}
+
+.center-cell {
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
 }
 
 .pagination-controls {
@@ -73,14 +80,14 @@ thead.thead-dark th {
 }
 
 .modal-dialog {
-  max-width: 60%; /* Adjusted the max-width */
+  max-width: 80%; /* Adjusted the max-width for a larger modal */
   margin: 0 auto;
 }
 
 .modal-content {
   background-color: #fff;
   border-radius: 10px;
-  padding: 20px;
+  padding: 15px;
 }
 
 .modal-header {
@@ -106,7 +113,8 @@ thead.thead-dark th {
 }
 
 .modal-body {
-  padding: 20px;
+  max-height: 70vh; /* Adjust this value as needed */
+  overflow-y: auto;
 }
 
 .img-fluid {
@@ -123,8 +131,8 @@ thead.thead-dark th {
 }
 
 .profile-picture img {
-  width: 70%;
-  height: 70%;
+  width: 100%;
+  height: 100%;
   object-fit: cover; /* Ensure the image covers the entire area */
 }
 
@@ -157,7 +165,7 @@ thead.thead-dark th {
 
 @media (min-width: 768px) {
   .modal-dialog {
-    max-width: 50%; /* Adjusted the max-width for larger screens */
+    max-width: 70%; /* Adjusted the max-width for larger screens */
   }
 }
 

@@ -38,8 +38,11 @@ import { InstructorLessonComponent } from './components/instructor/instructor-le
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
 import { AllCoursesComponent } from './components/all-courses/all-courses.component';
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { AdminLessonComponent } from './components/admin/admin-lesson/admin-lesson.component';
+import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
 import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
+import { FooterComponent } from './components/shared/footer/footer.component';
 
 
 
@@ -49,7 +52,7 @@ const routes: Routes = [
    
    {path: 'forget-password', component: ForgetPasswordComponent },
 
-   { path: 'student/student-profile', component: StudentProfileComponent },
+   { path: 'student/profile', component: StudentProfileComponent },
 
   
    { path: 'home', component: HomeComponent},
@@ -79,6 +82,9 @@ const routes: Routes = [
    {path:'admin/upload-user-data', component: UserUploadComponent },
    {path:'admin/course', component: AdminCourseComponent},
    {path:'admin/category', component: AdminCategoryComponent},
+   {path:'admin/lesson/:courseId', component: AdminLessonComponent},
+   {path:'admin/student', component: AdminStudentComponent},
+
 
    {path:'course-detail/:id', component: CourseDetailsComponent},
 
@@ -89,11 +95,8 @@ const routes: Routes = [
    {path:'instructor/module-exam/:lessonId', component: CreateModuleExamComponent},
 
    {path:'question-form/:examId', component: StudentQuestionFormComponent},
-
-
-
-
    {path:'all-courses', component: AllCoursesComponent},
+
 ];
 
 

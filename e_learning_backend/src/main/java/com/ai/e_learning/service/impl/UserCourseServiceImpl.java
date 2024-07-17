@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
+
+
 
 @Service
 public class UserCourseServiceImpl implements UserCourseService {
@@ -176,6 +180,17 @@ public class UserCourseServiceImpl implements UserCourseService {
     return trendingCourses.stream().limit(3).collect(Collectors.toList());
   }
 
+  //PK
+  @Override
+  public Map<String, Long> getAcceptedUserCountsByCourse() {
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("accept");
+    Map<String, Long> acceptedUserCounts = new HashMap<>();
+    for (UserCourse userCourse : acceptedCourses) {
+      String courseName = userCourse.getCourse().getName();
+      acceptedUserCounts.put(courseName, acceptedUserCounts.getOrDefault(courseName, 0L) + 1);
+    }
+    return acceptedUserCounts;
+  }
 
 }
 
