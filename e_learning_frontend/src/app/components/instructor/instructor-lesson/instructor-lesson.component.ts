@@ -40,7 +40,7 @@ export class InstructorLessonComponent implements OnInit {
   nameDuplicateError = false;
   isSidebarOpen = true;
   activeTab: string = 'createLesson';
-examForm: any;
+  examForm: any;
 
   constructor(private route: ActivatedRoute,
      private lessonService: LessonService,
@@ -107,8 +107,6 @@ examForm: any;
 
             }
         );
-    }else if (result.dismiss === Swal.DismissReason.cancel) {
-      Swal.fire('Cancelled', 'Lesson creation cancelled.', 'info');
     }
   });
 }

@@ -17,6 +17,7 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
   boolean existsByUserAndCourse(User user, Course course);
   Optional<UserCourse> findByUserIdAndCourseId(Long userId, Long courseId);
   List<UserCourse> findByUserIdAndStatus(Long userId, String status);
+  List<UserCourse> findByStatus(String status); //PK
   @Query("SELECT uc.course FROM UserCourse uc WHERE uc.status = 'Accept' GROUP BY uc.course ORDER BY COUNT(uc.id) DESC")
   List<Course> findTopTrendingCourses();
 }
