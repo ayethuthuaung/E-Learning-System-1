@@ -330,6 +330,10 @@ public class UserServiceImpl implements UserService {
         return imageResponse;
     }
 
+    public boolean isExamOwner(Long userId) {
+        return userRepository.findExamOwnerByExamId(userId) == null;
+    }
+
     @Override
     public long countStudents() {
         Role studentRole = roleRepository.findById(1L)  // Assuming role ID 1 is for students
@@ -351,8 +355,8 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .collect(Collectors.toList());
-    }
 
+    }
 
 }
 

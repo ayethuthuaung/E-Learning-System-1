@@ -34,5 +34,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   List<Course> findByUser(User user);
   List<Course> findByUser_Roles_Id(Long roleId);
 
+  @Query("SELECT c FROM Course c WHERE c.status = 'Accept' ORDER BY c.createdAt DESC ")
+  List<Course> findLatestAcceptedCourses();
 
 }

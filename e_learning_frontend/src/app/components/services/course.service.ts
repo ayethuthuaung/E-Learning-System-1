@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Course } from '../models/course.model';
 
 @Injectable({
@@ -61,6 +61,11 @@ export class CourseService {
       params: { name }
     });
   }
+
+  getLatestAcceptedCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/latestAccepted`);
+  }
+  
   getCoursesByUserId(userId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
       params: { userId: userId.toString() }
@@ -79,4 +84,7 @@ export class CourseService {
   exportAllCoursesPDF(): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
   }
+  
+  
+ 
 }

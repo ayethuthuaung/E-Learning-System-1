@@ -3,8 +3,12 @@ package com.ai.e_learning.controllers;
 import com.ai.e_learning.dto.ChatMessageDto;
 import com.ai.e_learning.model.ChatRoom;
 import com.ai.e_learning.model.User;
+import com.ai.e_learning.util.CloudinaryService;
+import com.ai.e_learning.util.CloudinaryServiceImpl;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -14,6 +18,8 @@ import com.ai.e_learning.model.Message;
 import com.ai.e_learning.service.impl.ChatServiceImpl;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +31,8 @@ public class ChatController {
 
     private final ChatServiceImpl chatServiceImpl;
     private final ModelMapper modelMapper;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public ChatController(ChatServiceImpl chatServiceImpl, ModelMapper modelMapper) {
         this.chatServiceImpl = chatServiceImpl;
@@ -83,16 +91,14 @@ public class ChatController {
         // Logic to handle sending a message
         return chatServiceImpl.saveMessage(message);
     }
-    @PostMapping("/uploadVoiceMessage")
-    public ResponseEntity<String> uploadVoiceMessage(@RequestParam("voiceMessage") MultipartFile voiceMessage) {
+    @PutMapping("/update-message-content/{messageId}")
+    public ResponseEntity<?> updateMessageContent(@PathVariable Long messageId, @RequestParam String newContent) {
         try {
-            // Save the voice message file and get the URL
-            System.out.println(voiceMessage);
-            String fileUrl = chatServiceImpl.saveVoiceMessageFile(voiceMessage);
-
-            return ResponseEntity.ok(fileUrl);
+            Message updatedMessage = chatServiceImpl.updateMessageContent(messageId, newContent);
+            ChatMessageDto updatedMessageDto = modelMapper.map(updatedMessage, ChatMessageDto.class);
+            return ResponseEntity.ok(updatedMessageDto);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating message content");
         }
     }
 
@@ -103,6 +109,30 @@ public class ChatController {
             return ResponseEntity.ok("Message soft deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting message");
+        }
+    }
+    @PostMapping("/uploadFile")
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("fileType") String fileType) {
+        try {
+            String fileUrl=null;
+            String messageType=fileType;
+            if ("image".equalsIgnoreCase(messageType)) {
+                fileUrl = cloudinaryService.uploadFile(file);
+            } else if ("voice".equalsIgnoreCase(messageType)) {
+                fileUrl = cloudinaryService.uploadVoice(file);
+            } else if ("video".equalsIgnoreCase(messageType)) {
+                fileUrl = cloudinaryService.uploadVideo(file);
+            } else {
+                throw new IllegalArgumentException("Unsupported message type: " + messageType);
+            }
+
+//            message.setFileUrl(fileUrl);
+//            message.setContent(file.getOriginalFilename());
+//            String fileUrl = cloudinaryService.uploadFile(file); // Implement this method to save the file and return its URL
+            return ResponseEntity.ok(fileUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
         }
     }
 }

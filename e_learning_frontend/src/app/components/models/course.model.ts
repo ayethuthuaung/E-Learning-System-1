@@ -21,7 +21,7 @@ export class Course {
   instructorId: number; // Added property
   chatRoomId: number; // Added property
   
-
+  createdAt: number;
   createdDate: string;
 completion: any;
 showDetails: any;
@@ -46,5 +46,7 @@ showDetails: any;
     this.chatRoomId = 1; // Initialized property
 
     this.createdDate = '';
+    this.createdAt = 0;
+
   }
 }

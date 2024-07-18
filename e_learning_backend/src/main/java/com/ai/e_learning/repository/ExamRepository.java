@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ExamRepository extends JpaRepository<Exam,Long> {
     @Query("SELECT e FROM Exam e LEFT JOIN FETCH e.questions WHERE e.id = :examId")
     Optional<Exam> findByIdWithQuestions(@Param("examId") Long examId);
+
+    Exam findByLessonId(Long id);
 }

@@ -16,7 +16,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String content;
 
     @Column(nullable = false)
@@ -34,5 +34,8 @@ public class Message {
     private boolean softDeleted = false;
 
     @Column
-    private String voiceMessageUrl;
+    private String fileUrl;
+
+    @Column(nullable = false)
+    private String messageType; // text, image, voice
 }

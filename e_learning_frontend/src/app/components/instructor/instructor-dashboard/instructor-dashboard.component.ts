@@ -87,3 +87,4 @@ export class InstructorDashboardComponent implements OnInit {
     );
   }
 }
+

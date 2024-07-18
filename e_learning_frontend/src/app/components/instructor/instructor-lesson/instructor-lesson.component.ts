@@ -1,7 +1,8 @@
+import { Lesson } from './../../models/lesson.model';
 import { ExamCreationDto } from './../../models/examCreationDto.model';
 import { ExamService } from './../../services/exam.service';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Module } from '../../models/module.model';
 import { LessonService } from '../../services/lesson.service';
 import Swal from 'sweetalert2';
@@ -34,6 +35,7 @@ export class InstructorLessonComponent implements OnInit {
 
   courseId: number = -1; // Initialize courseId with a default value
   course = { name: '' };
+  lessons :Lesson[] =[];
   modules: Module[] = [];
   nameDuplicateError = false;
   isSidebarOpen = true;
@@ -43,7 +45,8 @@ examForm: any;
   constructor(private route: ActivatedRoute,
      private lessonService: LessonService,
      private examService: ExamService,
-     private location: Location
+     private location: Location,
+     private router:Router
     ) {}
 
 
@@ -54,10 +57,11 @@ examForm: any;
     if (courseIdParam !== null) {
       this.courseId = +courseIdParam; // Convert courseIdParam to number if not null
     }
+    this.getLessonsByCourseId();
   }
 
   addModule() {
-    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' }); // Initialize File as null
+    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' ,done: true}); // Initialize File as null
     console.log(this.modules);
     
   }
@@ -89,18 +93,14 @@ examForm: any;
         formData.append('courseId', this.courseId.toString());
         formData.append('title', this.course.name);
 
-        this.modules.forEach((module, index) => {
-            formData.append(`modules[${index}].name`, module.name);
-            if (module.fileInput) {
-                formData.append(`modules[${index}].fileInput`, module.fileInput, module.fileInput.name);
-            }
-        });
+      
 
         this.lessonService.createLesson(formData).subscribe(
             (createdLesson) => {
                 console.log('Lesson Created:', createdLesson);
                 Swal.fire('Success!', 'Lesson created successfully!', 'success');
-            },
+                this.getLessonsByCourseId();
+              },
             (error) => {
                 console.error('Error creating lesson:', error);
                 Swal.fire('Error!', 'Failed to create lesson.', 'error');
@@ -128,95 +128,25 @@ examForm: any;
     this.modules[index].fileInput = file;
   }
 
-  //Create Exam
-  examId: number = 1; // Example exam ID
-  examTitle: string='';
-  examDescription: string= '';
-  formDescription: string = 'Please fill out this form';
-
-  questions: Question[] = [
-    {
-      text: 'Untitled Question',
-      type: 'multiple-choice',
-      options: [
-        { label: 'Option 1', value: 'option1', isAnswered: false }
-      ],
-      marks:0
-    }
-  ];
-
-  showResults: boolean = false; // Add this property to toggle result display
-
-
-
-  addOption(questionIndex: number) {
-    this.questions[questionIndex].options.push({
-      label: `Option ${this.questions[questionIndex].options.length + 1}`,
-      value: `option${this.questions[questionIndex].options.length + 1}`,
-      isAnswered: false
-    });
-  }
-
-  addQuestion() {
-    this.questions.push({
-      text: 'New Question',
-      type: 'multiple-choice',
-      options: [
-        { label: 'Option 1', value: 'option1', isAnswered: false }
-      ],
-      marks:0,
-      isNew: true // Mark this question as new
-    });
-  }
-
-  deleteNewQuestion(questionIndex: number) {
-    if (this.questions[questionIndex].isNew) {
-      this.questions.splice(questionIndex, 1);
-    }
-  }
-
-  selectOption(questionIndex: number, optionIndex: number) {
-    const question = this.questions[questionIndex];
-    question.options.forEach((option, idx) => {
-      option.isAnswered = (idx === optionIndex);
-    });
-  }
-
-  onSubmitExam(examForm: any) {
-    const examCreationDto: ExamCreationDto = {
-      title: this.examTitle,
-      description: this.examDescription,
-      questionList: this.questions.map(question => ({
-        content: question.text,
-        questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
-        answerList: question.options.map(option => ({
-          answer: option.label,
-          isAnswered: option.isAnswered
-        } as AnswerOptionDTO)),
-        marks: question.marks
-      } as QuestionDto))
-    };
-
-    this.examService.createExam(examCreationDto)
-      .subscribe(response => {
-        console.log('Form submitted successfully', response);
-        this.checkAnswers(response);
-        this.showResults = true; // Show the results
-      }, error => {
-        console.error('Error submitting form', error);
-      });
-  }
-
-  checkAnswers(response: any) {
-    this.questions.forEach((question, qIndex) => {
-      question.correctAnswer = response.questionList[qIndex].correctAnswer; // Assuming the correct answer is provided in the response
-      question.options.forEach(option => {
-        option.isCorrect = option.isAnswered && (option.label === question.correctAnswer);
-      });
-    });
-  }
-
+  
   goBack() {
     this.location.back();
+  }
+
+  getLessonsByCourseId(): void {
+    this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+      (data: Lesson[]) => {
+        this.lessons = data;
+      },
+      error => {
+        console.error('Error fetching courses', error);
+      }
+    );
+  }
+
+  navigateToLesson(lessonId: number) {
+    console.log("Lesson Id :", lessonId);
+    
+    this.router.navigate([`../instructor/module-exam/${lessonId}`]);
   }
 }

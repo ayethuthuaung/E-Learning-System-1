@@ -2,6 +2,7 @@ import { CourseService } from '../../services/course.service';
 import { UserCourse } from './../../models/usercourse.model';
 import { UserCourseService } from './../../services/user-course.service';
 import { Component, OnInit } from '@angular/core';
+import { orderBy } from 'lodash';
 declare var Swal: any;
 
 @Component({
@@ -14,6 +15,8 @@ export class InstructorStudentComponent implements OnInit {
   paginatedUserCourses: UserCourse[] = [];
   
   searchTerm = '';
+  filterTerm = '';
+  filterKey = '';
 
   itemsPerPage = 10;
   currentPage = 1;
@@ -22,8 +25,14 @@ export class InstructorStudentComponent implements OnInit {
 
   loggedUser: any = '';
   userId: any;
+  sortKey: string = '';
+sortDirection: string = 'asc';
 
   constructor(private userCourseService: UserCourseService,private courseService: CourseService) {}
+  
+
+
+  
 
   ngOnInit() {
  
@@ -69,7 +78,7 @@ export class InstructorStudentComponent implements OnInit {
     console.log(this.loggedUser.id);
     this.userCourseService.getAllUserCourses(this.userId).subscribe({
       next: (data) => {
-        this.userCourses = data;
+        this.userCourses = data.sort((a, b) => b.createdAt - a.createdAt);
         this.updatePaginatedStudentByCourses();
         this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
       },
@@ -82,16 +91,37 @@ export class InstructorStudentComponent implements OnInit {
     this.updatePaginatedStudentByCourses();
   }
 
+  onSortChange(key: string, direction: string) {
+  this.sortKey = key;
+  this.sortDirection = direction;
+  this.updatePaginatedStudentByCourses();
+}
+
+  
+onFilterChange(event: { key: string, term: string }) {
+  this.filterKey = event.key;
+  this.filterTerm = event.term;
+  this.updatePaginatedStudentByCourses();
+}
+
   updatePaginatedStudentByCourses() {
-    const filteredStudentByCourses = this.userCourses.filter(userCourse =>
+    let filteredStudentByCourses = this.userCourses.filter(userCourse =>
       userCourse.course?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.team.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      userCourse.user?.status.toLowerCase().includes(this.searchTerm.toLowerCase())
+      userCourse.status.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 
+    if (this.sortKey && (this.sortDirection === 'asc' || this.sortDirection === 'desc')) {
+      filteredStudentByCourses = orderBy(filteredStudentByCourses, [this.sortKey], [this.sortDirection as 'asc' | 'desc']);
+    }
+    if (this.filterKey && this.filterTerm) {
+      filteredStudentByCourses = filteredStudentByCourses.filter(userCourse =>
+        (userCourse as any)[this.filterKey].toLowerCase().includes(this.filterTerm.toLowerCase())
+      );
+    }
     this.totalPages = Math.ceil(filteredStudentByCourses.length / this.itemsPerPage);
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
@@ -140,7 +170,7 @@ export class InstructorStudentComponent implements OnInit {
       confirmButtonText: 'Yes, accept!'
     }).then((result: { isConfirmed: any; }) => {
       if (result.isConfirmed) {
-        this.changeStatus(userCourse, 'accept');
+        this.changeStatus(userCourse, 'Accept');
       }
     });
   }
@@ -156,7 +186,7 @@ export class InstructorStudentComponent implements OnInit {
       confirmButtonText: 'Yes, reject!'
     }).then((result: { isConfirmed: any; }) => {
       if (result.isConfirmed) {
-        this.changeStatus(userCourse, 'reject');
+        this.changeStatus(userCourse, 'Reject');
       }
     });
 

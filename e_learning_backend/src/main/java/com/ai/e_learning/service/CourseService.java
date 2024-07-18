@@ -20,4 +20,6 @@ public interface CourseService {
   void changeStatus(Long id, String status);
   List<CourseDto> getCoursesByUserId(Long userId);
   List<CourseDto> getAllCourses();
+
+  List<CourseDto> getLatestAcceptedCourses();
 }

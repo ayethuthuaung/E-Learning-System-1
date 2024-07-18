@@ -48,10 +48,9 @@ import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
 
 import { NotificationComponent } from './components/notification/notification.component';
-import { CourseListComponent } from './components/course-list/course-list.component';
 
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
-import { ConservationListComponent } from './components/conservation-list/conservation-list.component';
+import { ConservationListComponent } from './components/instructor/instructor-conservation-list/conservation-list.component';
 
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';
@@ -78,10 +77,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
-import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
-import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
-import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
-import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
 import { AuthComponent } from './components/auth/auth.component';
 
 import { AdminCourseComponent } from './components/admin/admin-course/admin-course.component';
@@ -96,12 +91,18 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FilterDataPipe} from './components/filter-data.pipe';
 
-import { ExamDetailComponent } from './components/quiz-Ans/exam-details/exam-details.component';
-import { QuizExamListComponent } from './components/quiz-Ans/exam-list/exam-list.component';
 import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
+import { CourseCardComponent } from './components/shared/course-card/course-card.component';
+import { AllCoursesComponent } from './components/all-courses/all-courses.component';
+
 import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
+import { FilterSortDropdownComponent } from './components/filter-sort-dropdown/filter-sort-dropdown.component';
+import { ClickOutsideDirective } from './components/click-outside.directive';
+import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
+import { UserCourseModuleService } from './components/services/usercoursemodule.service';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -111,13 +112,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HomeComponent,
     LoginComponent,
     HomeComponent,
-
-    CreateQuestionTypeComponent,
-    CreateAnswerOptionComponent,
-    CreateQuestionFormComponent,
-    CreateQuestionFormComponent,
-    AnswerFormComponent,
-
+    AppStoreComponent,
+  
     ForgetPasswordComponent,
 
 
@@ -125,18 +121,12 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
         HomeComponent,
 
-        CreateQuestionTypeComponent,
-        CreateAnswerOptionComponent,
-        CreateQuestionFormComponent,
-        CreateQuestionFormComponent,
-        AnswerFormComponent,
-        ExamDetailComponent,
-    ExamDetailComponent,
+       
     ForgetPasswordComponent,
     
-    ChatComponent,
+ 
     HeroComponent,
-    ChatComponent,
+  
     HeroComponent,
     CoursesComponent,
     JointUsComponent,
@@ -166,7 +156,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HomeComponent,
 
 
-    CourseListComponent,
     HomeComponent,
     StudentProfileComponent,
 
@@ -202,12 +191,17 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     NotificationComponent,
     CourseDetailsComponent,
     UserUploadComponent,
-    QuizExamListComponent,
     ConservationListComponent,
     UserUploadComponent,   
     InstructorLessonComponent,
     CourseVideoViewComponent,
+    CourseCardComponent,
+    AllCoursesComponent,
     InstructorStudentComponent,
+    CreateModuleExamComponent,
+    FilterSortDropdownComponent,
+    ClickOutsideDirective,
+    StudentQuestionFormComponent
   ],
   imports: [
     BrowserModule,
@@ -232,7 +226,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
     QuestionService,
     AnswerOptionService,
-
+    UserCourseModuleService,
     WebSocketService,
       provideAnimationsAsync()
 

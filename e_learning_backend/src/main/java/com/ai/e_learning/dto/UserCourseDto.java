@@ -15,4 +15,5 @@ public class UserCourseDto {
     private int progress;
     private String status;
     private Long createdAt;
+
 }

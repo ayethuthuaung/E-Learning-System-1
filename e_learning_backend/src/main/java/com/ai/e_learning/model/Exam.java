@@ -25,15 +25,17 @@ public class Exam {
 
     private Long createdAt;
 
+    private String duration;
+
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Question> questions = new LinkedHashSet<>();
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "lesson_id")
     @JsonIgnore
-    private Course course;
+    private Lesson lesson;
 
     @PrePersist
     protected void onCreate() {

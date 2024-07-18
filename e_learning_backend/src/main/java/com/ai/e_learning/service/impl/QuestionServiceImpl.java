@@ -156,55 +156,6 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
-    @Override
-    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerRequestDto> studentAnswerRequestDTOList) {
-        List<Map<String, Object>> result = new ArrayList<>();
-
-        for (StudentAnswerRequestDto requestDTO : studentAnswerRequestDTOList) {
-            Map<String, Object> answerResult = new HashMap<>();
-            answerResult.put("questionId", requestDTO.getQuestionId());
-
-            // Retrieve question and answer option entities
-            Question question = questionRepository.findById(requestDTO.getQuestionId())
-                    .orElseThrow(() -> new IllegalArgumentException("Question not found for ID: " + requestDTO.getQuestionId()));
-            AnswerOption selectedAnswerOption = answerOptionRepository.findById(requestDTO.getAnswerOptionId())
-                    .orElseThrow(() -> new IllegalArgumentException("Answer option not found for ID: " + requestDTO.getAnswerOptionId()));
-
-            // Retrieve the correct answer option for the given question
-            AnswerOption correctAnswerOption = answerOptionRepository.findByQuestionIdAndIsAnsweredTrue(question.getId());
-
-            // Check if correctAnswerOption is null
-            Long correctAnswerId = (correctAnswerOption != null) ? correctAnswerOption.getId() : null;
-
-            // Simplify the question object to include only necessary attributes
-            Map<String, Object> questionMap = new HashMap<>();
-            questionMap.put("id", question.getId());
-            questionMap.put("content", question.getContent());
-            List<Map<String, Object>> optionsList = new ArrayList<>();
-            for (AnswerOption option : question.getAnswerOptions()) {
-                Map<String, Object> optionMap = new HashMap<>();
-                optionMap.put("id", option.getId());
-                optionMap.put("answer", option.getAnswer());
-                optionMap.put("isAnswered", option.getIsAnswered());
-                optionsList.add(optionMap);
-            }
-            questionMap.put("options", optionsList);
-
-            // Add to the result list
-            answerResult.put("selectedOptionId", selectedAnswerOption.getId());
-            answerResult.put("correctAnswerId", correctAnswerId); // Use correctAnswerId which may be null
-            answerResult.put("question", questionMap);
-
-            // Save the student answer with the selected option ID
-            StudentAnswer studentAnswer = new StudentAnswer(question, selectedAnswerOption);
-            studentAnswer.setSelectedOptionId(selectedAnswerOption.getId()); // Ensure selectedOptionId is set
-            studentAnswerRepository.save(studentAnswer);
-
-            result.add(answerResult);
-        }
-
-        return result;
-    }
 
 
 

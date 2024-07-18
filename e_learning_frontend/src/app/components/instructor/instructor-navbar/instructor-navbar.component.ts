@@ -3,11 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 
-interface Conversation {
-  id: number;
-  name: string;
-  chatRoomId: number;
-}
 
 @Component({
   selector: 'app-instructor-navbar',
@@ -17,6 +12,8 @@ interface Conversation {
 export class InstructorNavbarComponent implements OnInit {
   @Output() toggleSidebarEvent = new EventEmitter<void>();
   dropdownOpen = false;
+  unreadCount: number = 0;
+  showNotifications: boolean = false;
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
@@ -27,12 +24,7 @@ export class InstructorNavbarComponent implements OnInit {
   toggleSidebar() {
     this.toggleSidebarEvent.emit();
   }
-  
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
-  }
 
-  
   navigateToConversationList(): void {
     this.router.navigate(['/conservation-list']);
   }
@@ -40,5 +32,17 @@ export class InstructorNavbarComponent implements OnInit {
 
   gohome():void{
     this.router.navigate(['home']);
+  }
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+    if (this.showNotifications) {
+      this.unreadCount = 0; // Reset unread count when opening notifications
+    }
+  }
+
+  handleNewNotification(): void {
+    if (!this.showNotifications) {
+      this.unreadCount += 1; // Increment unread count only if notifications panel is not open
+    }
   }
 }

@@ -1,6 +1,7 @@
 package com.ai.e_learning.dto;
 
 import com.ai.e_learning.service.CourseService;
+import com.ai.e_learning.service.UserCourseService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,9 +22,15 @@ public class ExcelExporterForAdmin {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private UserCourseService userCourseService;
+
     public void exportAllCourses(HttpServletResponse response) throws IOException {
         // Fetch all courses
         List<CourseDto> courses = courseService.getAllCourseList();
+
+        // Fetch all user courses
+        List<UserCourseDto> userCourses = userCourseService.getAllUserCourses();
 
         // Create a new workbook
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -70,10 +77,18 @@ public class ExcelExporterForAdmin {
 
             cell = row.createCell(6);
             cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
+
+            // Calculate student count for the course
+            long studentCount = userCourses.stream()
+                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
+                    .count();
+
+            cell = row.createCell(7);
+            cell.setCellValue(studentCount);
         }
 
         // Auto size all columns
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 8; i++) {
             sheet.autoSizeColumn(i);
         }
 
@@ -119,6 +134,10 @@ public class ExcelExporterForAdmin {
 
         cell = headerRow.createCell(6);
         cell.setCellValue("Course Status");
+        cell.setCellStyle(style);
+
+        cell = headerRow.createCell(7);
+        cell.setCellValue("Student Count");
         cell.setCellStyle(style);
     }
 }

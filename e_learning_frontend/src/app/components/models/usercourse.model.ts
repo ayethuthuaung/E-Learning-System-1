@@ -8,8 +8,10 @@ export class UserCourse {
   completed: boolean;
   progress: number;
   status: string;
+  createdAt: number;
   user?: User;
   course?: Course;
+
 
   constructor() {
     this.id = 0;
@@ -18,6 +20,7 @@ export class UserCourse {
     this.completed = false;
     this.progress = 0;
     this.status = '';
+    this.createdAt = 0;
   }
     
   }

@@ -138,6 +138,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CourseService } from '../../services/course.service';
 import { Course } from '../../models/course.model';
+import { WebSocketService } from '../../services/websocket.service';
 
 declare var Swal: any;
 
@@ -157,7 +158,7 @@ export class AdminCourseListComponent implements OnInit {
   currentPage = 1;
   totalPages = 0;
 
-  constructor(private courseService: CourseService) {}
+  constructor(private courseService: CourseService,private webSocketService:WebSocketService) {}
 
   ngOnInit() {
     this.fetchCourses();
@@ -209,7 +210,7 @@ export class AdminCourseListComponent implements OnInit {
       }
     });
   }
-
+ 
   openModal(course: Course) {
     this.selectedCourse = course;
     const modal = document.getElementById('fullScreenModal');

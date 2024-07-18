@@ -4,6 +4,7 @@ import { CategoryService } from '../../services/category.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../auth/auth.service';
 
 declare var Swal: any;
 
@@ -22,23 +23,30 @@ export class InstructorCategoryComponent implements OnInit {
   nameRequiredError = false;
   createdCategoryName: string = '';
   selectedCategory: Category = new Category();
+  currentUserId: string = ''; // Change to string type
 
   @ViewChild('updateCategoryDialog') updateCategoryDialog!: TemplateRef<any>;
 
   constructor(
     private categoryService: CategoryService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.getCurrentUserId();
     this.getCategories();
+  }
+
+  getCurrentUserId(): void {
+    this.currentUserId = this.authService.getLoggedInUserId().toString(); // Ensure it's a string
   }
 
   getCategories(): void {
     this.categoryService.getCategoryList().subscribe(
       (data: Category[]) => {
-        this.categories = data;
+        this.categories = data.filter(category => !category.deleted);
       },
       (error) => {
         this.errorMessage = `Error fetching categories: ${error}`;
@@ -67,11 +75,7 @@ export class InstructorCategoryComponent implements OnInit {
 
   onSubmit(form: NgForm): void {
     if (form.valid && !this.nameDuplicateError) {
-      if (this.category.id) {
-        this.updateCategory(this.category.id);
-      } else {
-        this.createCategory();
-      }
+      this.category.id ? this.updateCategory(this.category.id) : this.createCategory();
     } else {
       console.log('Form is invalid.');
       this.nameRequiredError = true;
@@ -79,6 +83,7 @@ export class InstructorCategoryComponent implements OnInit {
   }
 
   createCategory(): void {
+    //this.category.createdBy = this.currentUserId; // Assign the currentUserId as createdBy
     this.categoryService.createCategory(this.category).subscribe(
       () => {
         console.log('Category created successfully');
@@ -126,6 +131,7 @@ export class InstructorCategoryComponent implements OnInit {
     this.categoryService.softDeleteCategory(id).subscribe({
       next: () => {
         this.categories = this.categories.filter(category => category.id !== id);
+        this.getCategories();
       },
       error: (error) => {
         console.error('Error deleting category:', error);

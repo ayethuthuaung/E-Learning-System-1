@@ -2,12 +2,12 @@
   <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
-    <div class="flex-1 p-6">
+    <div class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
       <div class="datatable-container bg-white p-6 rounded-lg shadow-lg">
         <div class="flex justify-between items-center mb-4">
           <input 
             type="text" 
-            class="form-control w-1/4 p-2 border rounded" 
+            class="form-control w-1/4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
             placeholder="Search..." 
             [(ngModel)]="searchTerm" 
             (ngModelChange)="onSearchChange()" 
@@ -76,13 +76,59 @@
             <thead class="bg-logo-blue text-white">
               <tr>
                 <th class="p-2 border">No</th>
-                <th class="p-2 border">Course Name</th>
-                <th class="p-2 border">Student Name</th>
-                <th class="p-2 border">Dept</th>
-                <th class="p-2 border">Team</th>
-                <th class="p-2 border">Email</th>
+                <th class="p-2 border">
+                  Course Name
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('course.name', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                  ></app-filter-sort-dropdown>
+                </th>
+                <!-- Repeat for other columns as needed -->
+                
+                
+                <th class="p-2 border">
+                  Student Name
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('user.name', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Dept
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('user.department', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Team
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('user.team', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Email
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('user.email', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Request Date
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('createdAt', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
                 <th class="p-2 border">Action</th>
-                <th class="p-2 border">Status</th>
+                <th class="p-2 border">
+                  Status
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('status', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -93,6 +139,7 @@
                 <td class="p-2 border">{{ userCourse.user?.department }}</td>
                 <td class="p-2 border">{{ userCourse.user?.team }}</td>
                 <td class="p-2 border">{{ userCourse.user?.email }}</td>
+                <td class="p-2 border">{{ userCourse.createdAt | date:'short' }}</td>
                 <td class="p-2 border">
                   <i 
                     class="fas fa-check fa-xl cursor-pointer "
@@ -108,9 +155,9 @@
                   <td class="p-2 border">
                     <span 
                       [ngClass]="{
-                        'text-green-700': userCourse.status === 'accept',
-                        'text-red-500': userCourse.status === 'reject',
-                        'text-yellow-500': userCourse.status === 'pending'
+                        'text-green-700': userCourse.status === 'Accept',
+                        'text-red-500': userCourse.status === 'Reject',
+                        'text-yellow-500': userCourse.status === 'Pending'
                       }"
                     >
                       {{ userCourse.status }}
