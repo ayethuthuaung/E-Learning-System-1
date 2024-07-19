@@ -1,30 +1,190 @@
-.icon-container {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-  
-  .icon-container svg {
-    width: 24px;
-    height: 24px;
-  }
-  
-  .status-cell {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.datatable-container {
+  margin-top: 0px;
+}
 
-  .status-buttons button {
-    font-size: 24px; /* Adjust size as needed */
-    padding: 5px; /* Adjust padding as needed */
+.form-control {
+  width: 30%;
+  border-color: #343a40;
+}
+
+.table-responsive {
+  margin-top: 20px;
+}
+
+thead.thead-dark th {
+  background-color: #034689;
+  color: white;
+  text-align: center;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.btn {
+  margin-right: 5px;
+}
+
+.center-cell {
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.pagination-controls {
+  margin-top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-controls button {
+  margin: 0 1px;
+}
+
+.icon-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.icon-container svg {
+  width: 24px;
+  height: 24px;
+}
+
+.status-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* General Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-dialog {
+  max-width: 80%; /* Adjusted the max-width for a larger modal */
+  margin: 0 auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+}
+
+.btn-close:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.modal-body {
+  max-height: 70vh; /* Adjust this value as needed */
+  overflow-y: auto;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.profile-picture {
+  width: 200px; /* Increased size */
+  height: 200px; /* Increased size */
+  overflow: hidden;
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image covers the entire area */
+}
+
+.profile-picture .absolute {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+
+.profile-picture .hover\:opacity-100 {
+  opacity: 1;
+}
+
+.profile-picture input[type="file"] {
+  display: none;
+}
+
+.modal-footer {
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    max-width: 70%; /* Adjusted the max-width for larger screens */
   }
-  
-  .icon-green {
-    color: green;
-  }
-  
-  .icon-red {
-    color: red;
-  }
+}
+
+.status-buttons button {
+  font-size: 24px; /* Adjust size as needed */
+  padding: 5px; /* Adjust padding as needed */
+}
+
+.icon-green {
+  color: green;
+}
+
+.icon-red {
+  color: red;
+}
+
+.table-cell-height {
+  height: 50px;
+  padding: 10px; /* Adjust padding as needed */
+  line-height: 30px; /* Adjust line height as needed */
+}
+

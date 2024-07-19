@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 
 @Component({
@@ -7,24 +7,30 @@ import { Router } from '@angular/router';
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.css'
 })
-export class AdminSidebarComponent {
+export class AdminSidebarComponent implements OnInit {
   @Input() isSidebarOpen: boolean = true;
 
   menuItems = [
-    { label: 'Dashboard', link: 'admin/dashboard', icon: 'fas fa-tachometer-alt', isActive: false },
-    { label: 'Excel Upload', link: 'admin/upload-user-data', icon: 'fas fa-book', isActive: false },
-    { label: 'Course', link: 'admin/course', icon: 'fas fa-book', isActive: false },
-    { label: 'Category', link: 'admin/category', icon: 'fas fa-folder', isActive: false },
-    { label: 'Student', link: 'admin/student', icon: 'fas fa-user-graduate', isActive: false },
-    { label: 'Report', link: '#', icon: 'fas fa-file-alt', isActive: false },
-    { label: 'Log out', link: '#', icon: 'fas fa-sign-out-alt', isActive: false },
+    { label: 'Dashboard', link: '../../admin/dashboard', icon: 'fas fa-tachometer-alt', isActive: false },
+    { label: 'Excel Upload', link: '../../admin/upload-user-data', icon: 'fa-solid fa-file-import', isActive: false },
+    { label: 'Course', link: '../../admin/course', icon: 'fas fa-book', isActive: false },
+    { label: 'Category', link: '../../admin/category', icon: 'fas fa-folder', isActive: false },
+    { label: 'Student', link: '../../admin/student', icon: 'fas fa-user-graduate', isActive: false },
   ];
 
   constructor(private router: Router) {}
 
-  setActiveItem(item: any) {
-    this.menuItems.forEach(menuItem => menuItem.isActive = false);
-    item.isActive = true;
-    this.router.navigate([item.link]);
+  ngOnInit() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.setActiveItemByRoute(this.router.url);
+      }
+    });
+  }
+
+  setActiveItemByRoute(url: string) {
+    this.menuItems.forEach(item => {
+      item.isActive = url.includes(item.link) || (item.label === 'Course' && url.includes('instructor/lesson'));
+    });
   }
 }

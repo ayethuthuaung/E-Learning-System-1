@@ -1,39 +1,47 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-admin-navbar',
   templateUrl: './admin-navbar.component.html',
   styleUrls: ['./admin-navbar.component.css']
 })
-export class AdminNavbarComponent {
+export class AdminNavbarComponent implements OnInit {
   @Output() toggleSidebarEvent = new EventEmitter<void>();
+  dropdownOpen = false;
   unreadCount: number = 0;
   showNotifications: boolean = false;
+
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+
+  ngOnInit(): void {
+    
+  }
 
   toggleSidebar() {
     this.toggleSidebarEvent.emit();
   }
 
-  scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  navigateToConversationList(): void {
+    this.router.navigate(['/conservation-list']);
+  }
+
+
+  gohome():void{
+    this.router.navigate(['home']);
   }
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
-    if (!this.showNotifications) {
-      this.unreadCount = 0; // Reset unreadCount when closing notifications
+    if (this.showNotifications) {
+      this.unreadCount = 0; // Reset unread count when opening notifications
     }
   }
 
-  // Method to update unreadCount based on notifications
-  updateUnreadCount(count: number) {
-    this.unreadCount = count;
-  }
-
-  // Method to handle incrementing unreadCount
-  handleNewNotification() {
+  handleNewNotification(): void {
     if (!this.showNotifications) {
-      this.unreadCount++; // Increment unreadCount only if notifications panel is closed
+      this.unreadCount += 1; // Increment unread count only if notifications panel is not open
     }
   }
-  
 }

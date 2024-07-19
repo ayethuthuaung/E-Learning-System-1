@@ -109,7 +109,7 @@ export class AdminStudentComponent implements OnInit {
       confirmButtonText: 'Yes, accept!'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        this.changeStatus(userCourse, 'accept');
+        this.changeStatus(userCourse, 'Accept');
       }
     });
   }
@@ -125,7 +125,7 @@ export class AdminStudentComponent implements OnInit {
       confirmButtonText: 'Yes, reject!'
     }).then((result: any) => {
       if (result.isConfirmed) {
-        this.changeStatus(userCourse, 'reject');
+        this.changeStatus(userCourse, 'Reject');
       }
     });
   }

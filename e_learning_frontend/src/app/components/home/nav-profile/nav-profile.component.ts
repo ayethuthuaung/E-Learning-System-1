@@ -34,6 +34,7 @@ export class NavProfileComponent implements OnInit{
       }
     }
   }
+  
   hasRole(roleId: number): boolean {
     return this.roles.some(role => role.id === roleId);
   }

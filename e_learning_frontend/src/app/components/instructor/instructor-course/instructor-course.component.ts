@@ -207,6 +207,8 @@ export class InstructorCourseComponent implements OnInit {
   getInstructorCourses(): void {
     this.courseService.getInstructorCourses(this.userId).subscribe(
       (data: Course[]) => {
+        console.log("Instructor Course",data);
+        
         this.courses = data;
         this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
         this.updatePaginatedInstructorCourses();
