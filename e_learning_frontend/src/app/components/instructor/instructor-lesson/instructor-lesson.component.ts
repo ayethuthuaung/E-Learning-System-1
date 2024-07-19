@@ -61,7 +61,7 @@ export class InstructorLessonComponent implements OnInit {
   }
 
   addModule() {
-    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' ,done: true}); // Initialize File as null
+    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'' ,done: true, createdAt: Date.now()}); // Initialize File as null
     console.log(this.modules);
     
   }
@@ -112,6 +112,7 @@ export class InstructorLessonComponent implements OnInit {
 }
 }
 
+
  
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
@@ -146,5 +147,34 @@ export class InstructorLessonComponent implements OnInit {
     console.log("Lesson Id :", lessonId);
     
     this.router.navigate([`../instructor/module-exam/${lessonId}`]);
+  }
+
+  deleteLesson(id: number): void {
+    this.lessonService.deleteLesson(id).subscribe(
+      () => {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You won\'t be able to revert this!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'No, cancel!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+        this.getLessonsByCourseId();
+          }
+        });
+      },
+      (error) => {
+        console.error('Error deleting lesson', error);
+        Swal.fire(
+          'Error!',
+          'An error occurred while deleting the lesson.',
+          'error'
+        );
+      }
+    );
   }
 }

@@ -51,16 +51,35 @@
 
     <!-- Lesson List -->
     <div class="w-full lg:w-7/12 xl:w-6/12 p-2">
-      <div class="bg-white rounded-lg shadow-md p-4">
-        <ul class="space-y-4">
-          <li *ngFor="let lesson of lessons" (click)="navigateToLesson(lesson.id)" class="group">
-            <button class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue font-bold group-hover:bg-blue-100">
-              <span>{{lesson.title}}</span>
-              <i class="fas fa-chevron-right"></i>
-            </button>
+        <ul class="space-y-4 ">
+          <li *ngFor="let lesson of lessons" class="group">
+            <div 
+              class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue bg-white font-bold relative">
+              <span>{{ lesson.title }}</span>
+              <div class="flex space-x-2">
+                <button class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400" >
+                  <i class="fa-solid fa-edit"></i>
+                </button>
+                <button (click)="deleteLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+                <button class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400" (click)="navigateToLesson(lesson.id)">
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
           </li>
+          
+          <!-- <li *ngFor="let lesson of lessons" class="group">
+            <button 
+            class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue bg-white font-bold relative">            
+              <span>{{lesson.title}}</span>
+              <button class="rounded-full bg-gray-100 hover:bg-gray-400">    
+              <i class="fa-solid fa-plus" (click)="navigateToLesson(lesson.id)"></i>
+              </button>             
+            </button>
+          </li> -->
         </ul>
-      </div>
     </div>
   </div>
 </div>      

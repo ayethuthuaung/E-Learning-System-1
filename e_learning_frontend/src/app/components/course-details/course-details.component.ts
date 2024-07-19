@@ -7,12 +7,13 @@ import { Lesson } from '../models/lesson.model';
 import { Course } from '../models/course.model';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { log } from 'console';
 import { CourseModuleService } from '../services/course-module.service';
 import { UserCourseModuleService } from '../services/usercoursemodule.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExamList } from '../models/examList.model';
 import { ExamService } from '../services/exam.service';
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-course-details',
@@ -51,7 +52,8 @@ export class CourseDetailsComponent implements OnInit {
     private courseModuleService: CourseModuleService,
     private userCourseModuleService:UserCourseModuleService,
     private cdr: ChangeDetectorRef,
-    private examService: ExamService
+    private examService: ExamService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -129,7 +131,11 @@ export class CourseDetailsComponent implements OnInit {
         (data) => {
           console.log('Fetched lessons:', data);
 
-          this.lessons = data;
+          this.lessons = data.map(lesson => ({
+            ...lesson,
+            modules: lesson.modules.sort((a, b) => a.id - b.id) // Sort modules by moduleId
+          }));
+  
           console.log(this.lessons);
           
           this.isDropdownOpen = new Array(this.lessons.length).fill(false);
@@ -144,6 +150,12 @@ export class CourseDetailsComponent implements OnInit {
   toggleDropdown(index: number) {
     this.isDropdownOpen[index] = !this.isDropdownOpen[index];
   }
+
+  expandAllLessons(): void {
+    const shouldExpand = this.isDropdownOpen.some(open => !open);
+    this.isDropdownOpen.fill(shouldExpand);
+  }
+
 
   viewVideoDetailClick(moduleId: number): void {
     if (this.course) {
@@ -204,5 +216,9 @@ markAsDone(moduleId: number, lessonIndex: number): void {
       }
     }
   );
+}
+
+goBack() {
+  this.location.back();
 }
 }

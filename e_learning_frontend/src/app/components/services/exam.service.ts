@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Exam } from '../models/exam.model';
 import { ExamDTO } from '../models/examdto.model';
 import { StudentAnswer } from '../models/student-answer.model';
+import { ExamList } from '../models/examList.model';
 
 @Injectable({
     providedIn: 'root'
@@ -25,10 +26,6 @@ export class ExamService {
         const formData = { examId, studentAnswers };
         return this.httpClient.post(`${this.baseURL}/submitForm`, formData);
       }
-
-    // createExam(exam: Exam): Observable<Object> {
-    //     return this.httpClient.post(`${this.baseURL}/add`, exam);
-    // }
 
     createExam(examCreationDto: ExamCreationDto): Observable<Object> {
         return this.httpClient.post(`${this.baseURL}/add`, examCreationDto);
@@ -56,4 +53,8 @@ export class ExamService {
     getExamWithQuestions(examId: number): Observable<ExamDTO> {
         return this.httpClient.get<ExamDTO>(`${this.baseURL}/examsWithQuestions/${examId}`);
       }
+
+    getExamByLessonId(lessonId: number): Observable<ExamList[]> {
+        return this.httpClient.get<ExamList[]>(`${this.baseURL}/byLesson/${lessonId}`);
+    }
 }
