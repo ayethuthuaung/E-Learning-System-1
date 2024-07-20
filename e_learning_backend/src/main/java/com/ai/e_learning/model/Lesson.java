@@ -19,12 +19,15 @@ public class Lesson {
     @Column(nullable = false, length = 200)
     private String title;
 
+    private boolean deleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     @JsonIgnore
     private Course course;
 
     @OneToMany(mappedBy = "lesson", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<CourseModule> courseModules;
 
 

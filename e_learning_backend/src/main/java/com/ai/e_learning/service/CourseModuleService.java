@@ -19,6 +19,10 @@ public interface CourseModuleService {
   Long countTotalModulesByCourse(Long courseId);
 
   Double calculateCompletionPercentage(Long userId, Long courseId);
+
     Map<String, Map<String, Double>> getAllStudentsProgress();
     Map<String, Map<String, Double>> getAllCoursesProgress();
+
+    List<CourseModuleDto> getModulesByLessonId(Long lessonId);
+
 }

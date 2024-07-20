@@ -141,9 +141,10 @@ public class LessonServiceImpl implements LessonService {
 
   @Override
   public LessonDto updateLesson(Long id, LessonDto lessonDto) {
+    System.out.println(id+ lessonDto.toString());
     Lesson lesson = EntityUtil.getEntityById(lessonRepository, id, "Lesson");
     lesson.setTitle(lessonDto.getTitle());
-    lesson.setCourse(lessonDto.getCourse());
+    lesson.setCourse(lesson.getCourse());
 //        lesson.setModules(lessonDto.getModules());
     Lesson savedLesson = EntityUtil.saveEntity(lessonRepository, lesson, "Lesson");
 
@@ -153,17 +154,19 @@ public class LessonServiceImpl implements LessonService {
 
   @Override
   public void deleteLesson(Long id) {
-    EntityUtil.deleteEntity(lessonRepository, id, "Lesson");
+    Lesson lesson = EntityUtil.getEntityById(lessonRepository, id, "Lesson");
+    lesson.setDeleted(true);
+    lessonRepository.save(lesson);
   }
 
   @Override
   public List<LessonDto> getLessonsByCourseId(Long courseId,Long userId) {
-    List<Lesson> lessons = lessonRepository.findByCourseId(courseId);
+    List<Lesson> lessons = lessonRepository.findByCourseIdAndDeletedFalse(courseId);
     if (lessons == null) {
       throw new EntityNotFoundException("No Lessons Found for Course ID: " + courseId);
     }
 
-    return lessons.stream()
+      return lessons.stream()
       .map(lesson -> {
         LessonDto lessonDto = new LessonDto();
         lessonDto.setId(lesson.getId());
@@ -205,13 +208,14 @@ public class LessonServiceImpl implements LessonService {
 
             return moduleDto;
           }).collect(Collectors.toList());
-        ExamListDto examListDto = new ExamListDto();
-        Exam exam = examRepository.findByLessonId(lesson.getId());
-        if (exam != null) {
-          examListDto.setId(exam.getId());
-          examListDto.setTitle(exam.getTitle());
-        }
-        lessonDto.setExamListDto(examListDto);
+//        Exam exam = examRepository.findByLessonId(lesson.getId());
+//        if (exam != null) {
+//            examListDtos.setId(exam.getId());
+//            examListDtos.setTitle(exam.getTitle());
+//        }
+        List<Exam> exams= examRepository.findByLesson(lesson);
+        List<ExamListDto> examListDtos = DtoUtil.mapList(exams, ExamListDto.class,modelMapper);
+        lessonDto.setExamListDto(examListDtos);
         lessonDto.setModules(courseModuleDtos);
         return lessonDto;
       }).collect(Collectors.toList());

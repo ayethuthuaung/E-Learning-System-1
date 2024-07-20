@@ -9,5 +9,5 @@ export interface Lesson {
   file:string;
  modules:Module[];
  fileType: string; 
- examListDto: ExamList;
+ examListDto: ExamList[];
 }

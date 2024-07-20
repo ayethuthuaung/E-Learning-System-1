@@ -1,9 +1,12 @@
 package com.ai.e_learning.repository;
 
 import com.ai.e_learning.model.CourseModule;
+import com.ai.e_learning.model.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface CourseModuleRepository extends JpaRepository<CourseModule, Long> {
   @Query("SELECT COUNT(cm) FROM CourseModule cm " +
@@ -15,4 +18,6 @@ public interface CourseModuleRepository extends JpaRepository<CourseModule, Long
     "JOIN cm.lesson l " +
     "WHERE l.course.id = :courseId")
   Long countTotalModulesByCourse(@Param("courseId") Long courseId);
+
+    List<CourseModule> findByLesson(Lesson lesson);
 }
