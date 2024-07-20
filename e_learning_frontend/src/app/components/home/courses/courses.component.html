@@ -1,27 +1,55 @@
-
+<!-- Latest Courses Section -->
 <section class="text-center">
   <div class="mt-12 container mx-auto">
     <h2 class="text-3xl text-logo-blue font-bold mb-6">Latest Courses</h2>
-    <div class="row justify-center">
-      <ng-container *ngFor="let course of latestCourses" class="col-md-4">
-        <div class="col">
-          <app-card class="w-full" type="C" [input]="course"></app-card>
+    <div class="relative bg-blue-50 p-4 rounded-xl shadow-lg">
+      <div class="overflow-hidden" id="latestCoursesSlider">
+        <div class="flex transition-transform duration-1000 ease-in-out" [style.transform]="'translateX(' + translateX + 'px)'">
+          <ng-container *ngFor="let course of latestCourses">
+            <div class="w-96 flex-shrink-0 mx-4">
+              <app-card class="w-full" type="C" [input]="course"></app-card>
+            </div>
+          </ng-container>
         </div>
-      </ng-container>
+      </div>
+      <button (click)="prevLatest()" class="absolute top-1/2 left-0 transform -translate-y-1/2 bg-white text-logo-blue w-12 h-12 rounded-full shadow-md hover:bg-blue-500 hover:text-white transition duration-300 ease-in-out flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.5l-6.75-6.75M15 4.5l-6.75 6.75" />
+        </svg>
+      </button>
+      <button (click)="nextLatest()" class="absolute top-1/2 right-0 transform -translate-y-1/2 bg-white text-logo-blue w-12 h-12 rounded-full shadow-md hover:bg-blue-500 hover:text-white transition duration-300 ease-in-out flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5l6.75 6.75M9 19.5l6.75-6.75" />
+        </svg>
+      </button>
     </div>
   </div>
 </section>
 
+<!-- Trending Courses Section -->
 <section class="pt-24 text-center">
   <div class="mt-12 container mx-auto">
     <h2 class="text-3xl text-logo-blue font-bold mb-6">Trending Courses</h2>
-    <div class="row justify-center">
-      <ng-container *ngFor="let course of trendingCourses" class="col-md-4">
-        <div class="col">
-          <app-card class="w-full" type="C" [input]="course"></app-card>
-          <!-- Replace 'app-card' with your actual component for displaying course details -->
+    <div class="relative bg-blue-50 p-4 rounded-xl shadow-lg">
+      <div class="overflow-hidden" id="trendingCoursesSlider">
+        <div class="flex transition-transform duration-1000 ease-in-out" [style.transform]="'translateX(' + translateXTrending + 'px)'">
+          <ng-container *ngFor="let course of trendingCourses">
+            <div class="w-96 flex-shrink-0 mx-4">
+              <app-card class="w-full" type="C" [input]="course"></app-card>
+            </div>
+          </ng-container>
         </div>
-      </ng-container>
+      </div>
+      <button *ngIf="slideConfig.showLeftRightArrow" (click)="prevTrending()" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-logo-blue w-12 h-12 rounded-full shadow-md hover:bg-blue-500 hover:text-white transition duration-300 ease-in-out flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.5l-6.75-6.75M15 4.5l-6.75 6.75" />
+        </svg>
+      </button>
+      <button *ngIf="slideConfig.showLeftRightArrow" (click)="nextTrending()" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-logo-blue w-12 h-12 rounded-full shadow-md hover:bg-blue-500 hover:text-white transition duration-300 ease-in-out flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5l6.75 6.75M9 19.5l6.75-6.75" />
+        </svg>
+      </button>
     </div>
   </div>
 </section>

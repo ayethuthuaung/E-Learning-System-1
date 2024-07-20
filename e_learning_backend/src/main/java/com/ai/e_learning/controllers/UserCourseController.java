@@ -112,4 +112,9 @@ public class UserCourseController {
       .collect(Collectors.toList());
     return ResponseEntity.ok(courseDtos);
   }
+  @GetMapping("/accepted-student-counts")
+  public ResponseEntity<Map<String, Long>> getAcceptedStudentCounts() {
+    Map<String, Long> acceptedStudentCounts = userCourseService.getAcceptedStudentCount();
+    return ResponseEntity.ok(acceptedStudentCounts);
+  }
 }

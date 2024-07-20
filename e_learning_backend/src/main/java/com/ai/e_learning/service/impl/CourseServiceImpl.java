@@ -261,7 +261,17 @@ public class CourseServiceImpl implements CourseService {
     List<Course> courses = courseRepository.findLatestAcceptedCourses();
     return courses.stream()
       .map(course -> modelMapper.map(course, CourseDto.class))
-      .limit(3) // Limit to latest 3 courses
+      .limit(5) // Limit to latest 5 courses
+      .collect(Collectors.toList());
+  }
+  @Override
+  public List<CourseDto> getCoursesByInstructorId(Long instructorId) {
+    List<Course> courses = courseRepository.findByUserId(instructorId);
+    List<Course> acceptedCourses = courses.stream()
+      .filter(course -> "Accept".equalsIgnoreCase(course.getStatus()))
+      .collect(Collectors.toList());
+    return acceptedCourses.stream()
+      .map(this::convertToDto)
       .collect(Collectors.toList());
   }
 

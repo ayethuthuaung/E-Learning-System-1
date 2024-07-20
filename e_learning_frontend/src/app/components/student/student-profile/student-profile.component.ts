@@ -13,13 +13,17 @@ import { CourseModuleService } from '../../services/course-module.service';
 })
 export class StudentProfileComponent implements OnInit {
   photo: any = '';
-  name: string = 'Default Name';
-  team: string = 'Default Team';
-  department: string = 'Default Department';
-  division: string = 'Default Division';
+  name: string = '';
+  team: string = '';
+  department: string = '';
+  division: string = '';
   loggedUser: any = '';
   id: number = 0;
+  roles: string[] = [];
   selectedFile: File | null = null;
+
+  courseNames: string[] = [];
+ 
   selectedCourse?: Course;
   enrolledCourses: Course[] = [];
   coursePercentages: { [courseId: number]: number } = {};
@@ -36,43 +40,30 @@ export class StudentProfileComponent implements OnInit {
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
       this.loggedUser = JSON.parse(storedUser);
+      console.log(this.loggedUser);
+
       if (this.loggedUser) {
+        this.photo = this.loggedUser.photo;
         this.name = this.loggedUser.name;
         this.team = this.loggedUser.team;
         this.department = this.loggedUser.department;
         this.division = this.loggedUser.division;
         this.id = this.loggedUser.id;
-        this.fetchEnrolledCourses();
+        this.roles = this.loggedUser.roles.map((role: any) => role.name);
+        console.log(this.id);
+          this.fetchEnrolledCourses();
       }
     }
   }
 
-  fetchEnrolledCourses(): void {
-    if (this.id) {
-      this.userCourseService.getCoursesByUserId(this.id).subscribe({
-        next: (courses) => {
-          this.enrolledCourses = courses;
-          this.fetchCoursePercentages(); // Call this method after fetching courses
-        },
-        error: (e) => console.log(e)
-      });
-    }
-  }
-
-  fetchCoursePercentages(): void {
-    this.enrolledCourses.forEach(course => {
-      this.courseModuleService.getCompletionPercentage(this.loggedUser.id, course.id).subscribe({
-        next: (percentage) => {
-          console.log(`Fetched percentage for course ${course.id}: ${percentage}`);
-          this.coursePercentages[course.id] = percentage;
-        },
-        error: (e) => console.log(e)
-      });
-    });
-  }
   onFileSelected(event: any): void {
+    console.log("Hi");
+
     const file: File = event.target.files[0];
+    console.log(file);
+
     if (file) {
+      console.log("Hi");
       this.selectedFile = file;
       this.updateProfile();
     }
@@ -89,6 +80,7 @@ export class StudentProfileComponent implements OnInit {
         },
         error => {
           console.error('Error updating profile:', error);
+          // Handle error response
         }
       );
     }
@@ -113,10 +105,52 @@ export class StudentProfileComponent implements OnInit {
     }
   }
 
+
+  fetchEnrolledCourses(): void {
+    if (this.id) {
+      this.userCourseService.getCoursesByUserId(this.id).subscribe({
+        next: (courses) => {
+          this.enrolledCourses = courses;
+          this.fetchCourseNames(); // Call this method after fetching courses
+          this.fetchCoursePercentages(); // Call this method after fetching courses
+        },
+        error: (e) => console.log(e)
+      });
+    }
+  }
+  
+  fetchCourseNames(): void {
+    this.enrolledCourses.forEach(course => {
+      this.courseService.getCourseById(course.id).subscribe({
+        next: (fetchedCourse) => {
+          course.name = fetchedCourse.name; // Assuming fetchedCourse contains the name property
+        },
+        error: (e) => console.log(`Error fetching course ${course.id} name:`, e)
+      });
+    });
+  }
+  
+
+  fetchCoursePercentages(): void {
+    this.enrolledCourses.forEach(course => {
+      this.courseModuleService.getCompletionPercentage(this.loggedUser.id, course.id).subscribe({
+        next: (percentage) => {
+          console.log(`Fetched percentage for course ${course.id}: ${percentage}`);
+          this.coursePercentages[course.id] = percentage;
+        },
+        error: (e) => console.log(e)
+      });
+    });
+  }
   viewCourse(course: Course): void {
     this.selectedCourse = course;
     if (this.selectedCourse) {
       this.router.navigate(['/course-detail', this.selectedCourse.id]);
     }
   }
+  goBack(): void {
+    // Example of navigating back to the previous location
+    window.history.back();
+  }
+ 
 }

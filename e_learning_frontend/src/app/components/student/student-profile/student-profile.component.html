@@ -1,10 +1,19 @@
 <div class="min-h-screen bg-gray-100 text-gray-900">
   <div class="container mx-auto p-4">
     <div class="flex flex-col md:flex-row">
+    
       <!-- Right Panel -->
       <div class="md:w-1/3 p-4">
+        
         <div class="bg-white p-4 rounded-lg shadow-lg">
-          <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center ">
+            <div class="mt-4 w-full flex justify-start">
+            <button class="cursor-pointer duration-200 hover:scale-125 active:scale-100" title="Go Back" (click)="goBack()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 24 24" class="stroke-blue-300">
+                <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" d="M11 6L5 12M5 12L11 18M5 12H19"></path>
+              </svg>
+            </button>
+            </div>
             <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden profile-picture">
               <img [src]="photo" alt="Profile Picture" class="w-full h-full object-cover">
               <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
@@ -18,6 +27,7 @@
             <p>Team: {{team}}</p>
             <p>Department: {{department}}</p>
             <p>Division: {{division}}</p>
+            <p>Role: <span *ngFor="let role of roles; let i = index">{{role}}{{i < roles.length - 1 ? ', ' : ''}}</span></p>
             <button class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-2 px-4 rounded mt-4" (click)="updateProfile()">Update Profile</button>
             <h3 class="text-lg font-semibold mt-6 mb-2">Active in these Squads</h3>
             <div class="flex space-x-4">
@@ -35,17 +45,15 @@
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div *ngFor="let course of enrolledCourses" class="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition duration-300 p-4 relative">
               <div class="flex items-center mb-2">
-                <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">
-                  <i class="fas fa-book text-sm"></i>
+                <div class="bg-indigo-500 text-white rounded-full h-6 w-6 flex items-center justify-center mr-2">
+                  <i class="fas fa-book text-xs"></i>
                 </div>
-                <div class="flex-1">
-                  <p class="font-semibold text-gray-800 text-base">{{ course.name }}</p>
-              
-                </div>
+                <span class="font-semibold text-base">{{ course.name }}</span>
               </div>
               <div class="absolute top-4 right-4 text-right">
                 <button (click)="viewCourse(course)" class="text-indigo-500 hover:text-indigo-700 font-semibold text-sm">View Course</button>
               </div>
+              <!-- Completion percentage display -->
               <div class="flex items-center justify-between mt-4">
                 <div class="flex items-center">
                   <div class="relative w-12 h-12">
@@ -62,12 +70,10 @@
             </div>
           </div>
         </div>
-
         <div *ngIf="!enrolledCourses.length">
           <h2 class="text-2xl font-bold mb-4 text-indigo-700">No Enrolled Courses</h2>
         </div>
       </div>
-      
     </div>
   </div>
 </div>

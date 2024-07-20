@@ -129,16 +129,7 @@ export class InstructorCourseComponent implements OnInit {
     });
   }
 
-  validateCourseName(name: string): void {
-    this.courseService.isCourseNameAlreadyExists(name).subscribe(
-      (exists: boolean) => {
-        this.nameDuplicateError = exists;
-      },
-      (error) => {
-        console.error('Error checking course name:', error);
-      }
-    );
-  }
+ 
 
   saveCourse(): void {
     this.course.userId = this.userId;

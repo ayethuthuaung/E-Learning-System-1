@@ -44,17 +44,15 @@
                       <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
                           <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)"
                               method="post">
-                              <div *ngIf="nameDuplicateError" class="text-red-500 mb-2">
-                                  Course name already exists.
-                              </div>
+                              
                               <div *ngIf="courseForm.submitted && !course.name" class="text-red-500 mb-2">
                                   Please fill the field.
                               </div>
 
                               <input type="text"
                                   class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                                  id="name" name="name" [(ngModel)]="course.name" required
-                                  (input)="validateCourseName(course.name)" placeholder="Name" />
+                                  id="name" name="name" [(ngModel)]="course.name" required placeholder="Name"
+                                  >
 
 
                                   <div *ngIf="courseForm.submitted && !course.level" class="text-red-500 mb-2">

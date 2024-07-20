@@ -159,7 +159,7 @@ public class UserCourseServiceImpl implements UserCourseService {
   @Override
   public List<Course> getTrendingCourses() {
     List<Course> trendingCourses = userCourseRepository.findTopTrendingCourses();
-    return trendingCourses.stream().limit(3).collect(Collectors.toList());
+    return trendingCourses.stream().limit(5).collect(Collectors.toList());
   }
 
   //PK
@@ -172,6 +172,19 @@ public class UserCourseServiceImpl implements UserCourseService {
       acceptedUserCounts.put(courseName, acceptedUserCounts.getOrDefault(courseName, 0L) + 1);
     }
     return acceptedUserCounts;
+  }
+  @Override
+  public Map<String, Long> getAcceptedStudentCount() {
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("accept");
+    Map<String, Long> acceptedStudentCounts = new HashMap<>();
+
+    for (UserCourse userCourse : acceptedCourses) {
+      String courseName = userCourse.getCourse().getName();
+      Long count = userCourseRepository.countDistinctUsersByCourseAndStatus(userCourse.getCourse(), "accept");
+      acceptedStudentCounts.put(courseName, count);
+    }
+
+    return acceptedStudentCounts;
   }
 
 }

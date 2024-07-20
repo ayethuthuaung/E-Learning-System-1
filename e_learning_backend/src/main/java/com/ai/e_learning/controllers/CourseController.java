@@ -143,6 +143,11 @@ public class CourseController {
     }
     return new ResponseEntity<>(courses, HttpStatus.OK);
   }
+  @GetMapping("/instructor/{instructorId}")
+  public ResponseEntity<List<CourseDto>> getCoursesByInstructorId(@PathVariable Long instructorId) {
+    List<CourseDto> courses = courseService.getCoursesByInstructorId(instructorId);
+    return ResponseEntity.ok(courses);
+  }
 
 
 

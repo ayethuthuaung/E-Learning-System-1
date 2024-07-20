@@ -158,7 +158,7 @@ export class CourseFooterComponent implements OnInit {
     console.log('Roles:', this.roles);
 
 
-    if (!this.isAccepted && !this.isOwner ) {
+    if (!this.isAccepted && !this.isOwner && ! this.hasRole ) {
       console.log("Hi");
 
 

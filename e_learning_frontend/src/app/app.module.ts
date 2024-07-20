@@ -113,6 +113,7 @@ import { StudentQuestionFormComponent } from './components/student/student-profi
 import { UserCourseModuleService } from './components/services/usercoursemodule.service';
 import { TimerComponent } from './components/shared/timer/timer.component';
 
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 @NgModule({
@@ -234,7 +235,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
-
+   
     SocketIoModule.forRoot(config)
     
   ],

@@ -18,6 +18,7 @@
             <p>Team: {{team}}</p>
             <p>Department: {{department}}</p>
             <p>Division: {{division}}</p>
+            <p>Role: <span *ngFor="let role of roles; let i = index">{{role}}{{i < roles.length - 1 ? ', ' : ''}}</span></p>
             <button class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-2 px-4 rounded mt-4" (click)="updateProfile()">Update Profile</button>
             <h3 class="text-lg font-semibold mt-6 mb-2">Active in these Squads</h3>
             <div class="flex space-x-4">
