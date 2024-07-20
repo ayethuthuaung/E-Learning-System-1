@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
 declare var Swal: any;
+import { orderBy } from 'lodash';
 
 @Component({
   selector: 'app-instructor-course',
@@ -266,19 +267,46 @@ export class InstructorCourseComponent implements OnInit {
   totalPages = 0;
   paginatedInstructorCourses: Course[] = [];
 
+  sortKey: string = '';
+sortDirection: string = 'asc';
+
+filterTerm = '';
+  filterKey = '';
+
+
 
   onSearchChange() {
     this.currentPage = 1;
     this.updatePaginatedInstructorCourses();
   }
 
+  onSortChange(key: string, direction: string) {
+    this.sortKey = key;
+    this.sortDirection = direction;
+    this.updatePaginatedInstructorCourses();
+  }
+
+  onFilterChange(event: { key: string, term: string }) {
+    this.filterKey = event.key;
+    this.filterTerm = event.term;
+    this.updatePaginatedInstructorCourses();
+  }
+
   updatePaginatedInstructorCourses() {
-    const filteredInstructorCourses = this.courses.filter(course =>
-      course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+    let filteredInstructorCourses = this.courses.filter(course =>
       course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       course.duration.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       course.status.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
+
+      if (this.sortKey && (this.sortDirection === 'asc' || this.sortDirection === 'desc')) {
+        filteredInstructorCourses = orderBy(filteredInstructorCourses, [this.sortKey], [this.sortDirection as 'asc' | 'desc']);
+      }
+      if (this.filterKey && this.filterTerm) {
+        filteredInstructorCourses = filteredInstructorCourses.filter(course =>
+          (course as any)[this.filterKey].toLowerCase().includes(this.filterTerm.toLowerCase())
+        );
+      }
 
     this.totalPages = Math.ceil(filteredInstructorCourses.length / this.itemsPerPage);
     const start = (this.currentPage - 1) * this.itemsPerPage;

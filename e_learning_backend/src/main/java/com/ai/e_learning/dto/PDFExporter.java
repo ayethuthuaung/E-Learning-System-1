@@ -1,5 +1,6 @@
 package com.ai.e_learning.dto;
 
+import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.UserCourseService;
 import com.lowagie.text.*;
@@ -24,6 +25,9 @@ public class PDFExporter {
     @Autowired
     private UserCourseService userCourseService;
 
+    @Autowired
+    private CourseModuleService courseModuleService;
+
     public void exportCoursesByInstructor(Long instructorId, HttpServletResponse response) throws IOException {
         // Fetch courses by instructor ID
         List<CourseDto> courses = courseService.getCoursesByUserId(instructorId);
@@ -40,60 +44,69 @@ public class PDFExporter {
         Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         titleFont.setSize(18);
 
-        Paragraph title = new Paragraph("Course Report", titleFont);
-        title.setAlignment(Paragraph.ALIGN_CENTER);
-        document.add(title);
+        // Iterate over courses and write details
+        for (CourseDto course : courses) {
+            // Write course details
+            writeCourseDetails(document, course, userCourses);
 
-        writeCourseDetails(document, courses, userCourses);
+            // Add space between courses
+            document.add(Chunk.NEWLINE);
+        }
 
         document.close();
     }
 
-    private void writeCourseDetails(Document document, List<CourseDto> courses, List<UserCourseDto> userCourses) throws DocumentException {
+    private void writeCourseDetails(Document document, CourseDto course, List<UserCourseDto> userCourses) throws DocumentException {
         Font font = FontFactory.getFont(FontFactory.HELVETICA);
         font.setSize(12);
 
         // Date formatter
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        for (CourseDto course : courses) {
-            String instructorName = course.getUser().getName();
+        // Course details
+        Paragraph courseName = new Paragraph("Course Name: " + course.getName(), font);
+        document.add(courseName);
 
-            Paragraph instructorParagraph = new Paragraph("Instructor: " + instructorName, font);
-            instructorParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(instructorParagraph);
+        Paragraph courseDuration = new Paragraph("Course Duration: " + course.getDuration(), font);
+        document.add(courseDuration);
 
-            Paragraph courseInfo = new Paragraph("Course Name: " + course.getName(), font);
-            courseInfo.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(courseInfo);
+        Paragraph courseDescription = new Paragraph("Course Description: " + course.getDescription(), font);
+        document.add(courseDescription);
 
-            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
-            Paragraph createdAtParagraph = new Paragraph("Created At: " + createdAt.format(formatter), font);
-            createdAtParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(createdAtParagraph);
+        // Iterate over user courses for the current course
+        for (UserCourseDto userCourse : userCourses) {
+            if (userCourse.getCourse().getId().equals(course.getId())) {
+                // Student details
+                UserDto userDto = new UserDto(userCourse.getUser());
 
-            Paragraph courseLevel = new Paragraph("Course Level: " + course.getLevel(), font);
-            courseLevel.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(courseLevel);
+                Paragraph studentName = new Paragraph("Student Name: " + userDto.getName(), font);
+                document.add(studentName);
 
-            Paragraph courseDuration = new Paragraph("Course Duration: " + course.getDuration(), font);
-            courseDuration.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(courseDuration);
+                Paragraph studentEmail = new Paragraph("Student Email: " + userDto.getEmail(), font);
+                document.add(studentEmail);
 
-            Paragraph courseDescription = new Paragraph("Course Description: " + course.getDescription(), font);
-            courseDescription.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(courseDescription);
+                Paragraph studentTeam = new Paragraph("Student Team: " + userDto.getTeam(), font);
+                document.add(studentTeam);
 
-            // Calculate student count for the course
-            long studentCount = userCourses.stream()
-                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
-                    .count();
+                Paragraph studentDivision = new Paragraph("Student Division: " + userDto.getDivision(), font);
+                document.add(studentDivision);
 
-            Paragraph studentCountParagraph = new Paragraph("Student Count: " + studentCount, font);
-            studentCountParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(studentCountParagraph);
+                Paragraph studentDepartment = new Paragraph("Student Department: " + userDto.getDepartment(), font);
+                document.add(studentDepartment);
 
-            document.add(new Paragraph(" "));
+                // Completion progress
+                Double completionPercentage = courseModuleService.calculateCompletionPercentage(userDto.getId(), course.getId());
+                Paragraph completionProgress;
+                if (completionPercentage != null) {
+                    completionProgress = new Paragraph("Completion Progress: " + String.format("%.2f%%", completionPercentage), font);
+                } else {
+                    completionProgress = new Paragraph("Completion Progress: N/A", font);
+                }
+                document.add(completionProgress);
+
+                // Add space between students
+                document.add(Chunk.NEWLINE);
+            }
         }
     }
 }

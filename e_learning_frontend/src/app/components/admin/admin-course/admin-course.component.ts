@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { Category } from '../../models/category.model';
-
 import { CategoryService } from '../../services/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
 
+declare var Swal: any;
+
 @Component({
   selector: 'app-admin-course',
   templateUrl: './admin-course.component.html',
-  styleUrl: './admin-course.component.css'
+  styleUrls: ['./admin-course.component.css']
 })
-export class AdminCourseComponent implements OnInit{
+export class AdminCourseComponent implements OnInit {
 
   isSidebarOpen = true;
   activeTab: string = 'createCourse';
@@ -22,20 +23,24 @@ export class AdminCourseComponent implements OnInit{
   nameDuplicateError = false;
   
   course: Course = new Course();
+  courses: Course[] = [];
   categoryList: number[] = [];
   submitted = false;
 
-  loggedUser: any = '';
+  loggedUser: any = null;
   userId: any;
 
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
+
     private router:Router,
     private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.getCategories();
+    this.getCourses(); // Fetch courses on init
+
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
       this.loggedUser = JSON.parse(storedUser);
@@ -44,7 +49,6 @@ export class AdminCourseComponent implements OnInit{
       if (this.loggedUser) {
     
         this.userId = this.loggedUser.id;
-       
         
       }
     }
@@ -62,6 +66,17 @@ export class AdminCourseComponent implements OnInit{
       },
       (error) => {
         this.errorMessage = `Error fetching categories: ${error}`;
+      }
+    );
+  }
+
+  getCourses(): void {
+    this.courseService.getCourseList().subscribe(
+      (data: Course[]) => {
+        this.courses = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      },
+      (error) => {
+        this.errorMessage = `Error fetching courses: ${error}`;
       }
     );
   }
@@ -85,7 +100,6 @@ export class AdminCourseComponent implements OnInit{
       this.submitted = true;
       console.log('invalid form');
     }
-    
   }
 
   createCategory(): void {
@@ -93,7 +107,6 @@ export class AdminCourseComponent implements OnInit{
       () => {
         console.log('Category created successfully');
         this.goToCategoryList();
-
         this.getCategories(); // Refresh the list after creation
         this.category = new Category(); // Clear the form
       },
@@ -102,6 +115,7 @@ export class AdminCourseComponent implements OnInit{
       }
     );
   }
+
   goToCategoryList(): void {
     this.router.navigate(['/categories']);
   }
@@ -110,9 +124,11 @@ export class AdminCourseComponent implements OnInit{
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-
   setActiveTab(tab: string) {
     this.activeTab = tab;
+    if (tab === 'courseList') {
+      this.getCourses(); // Refresh courses list when switching to course list tab
+    }
   }
 
   loadCategories(): void {
@@ -137,24 +153,32 @@ export class AdminCourseComponent implements OnInit{
 
   saveCourse(): void {
     this.course.userId = this.userId;
-    this.course.status = 'Pending';
+    this.course.status = 'Accept';
     const formData = new FormData();
-    
     formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
     if (this.course.photoFile) {
       formData.append('photo', this.course.photoFile, this.course.photoFile.name);
     }
-
+  
     this.courseService.addCourseWithFormData(formData).subscribe(
-      (data) => {
+      (data: Course) => {
         console.log('Course created successfully:', data);
-        this.router.navigate(['/courses']);
+
+        this.getCourses(); // Refresh the course list after creation
+        this.course = new Course(); // Clear the form
+        this.course.status = data.status; // Update local status with returned status
+        this.course.photoFile = undefined; // Clear the photo input
+        this.course.categories = []; // Clear selected categories
+        this.showSuccessAlert();
+        
       },
       (error) => {
         console.error('Error creating course:', error);
+       
       }
     );
   }
+  
 
   onFileChange(event: any): void {
     const file = event.target.files[0];
@@ -176,9 +200,7 @@ export class AdminCourseComponent implements OnInit{
   }
 
   toggleCategories(event: any, category: Category) {
-
     if (event.target.checked) {
-
       this.course.categories.push(category);
     } else {
       const index = this.course.categories.findIndex(cat => cat.id === category.id);
@@ -186,15 +208,27 @@ export class AdminCourseComponent implements OnInit{
         this.course.categories.splice(index, 1);
       }
     }
-
     console.log(this.course.categories);
     console.log(this.course);
-    
-    
+  }
+
+  navigateToCourse(courseId: number) {
+    this.router.navigate([`admin/lesson/${courseId}`]);
   }
 
 
-
+  showSuccessAlert(): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'Successful',
+      text: 'Course has been created Successfully.',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        // Navigate to createLesson tab
+        this.setActiveTab('createLesson');
+      }
+    });
+  }
   
-
 }

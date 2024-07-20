@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CourseService } from '../services/course.service';
 import { ChatRoomService } from '../services/chat-room.service';
 import { AuthService } from '../auth/auth.service';
@@ -50,7 +50,7 @@ export class CourseDetailsComponent implements OnInit {
     private courseService: CourseService,
     private courseModuleService: CourseModuleService,
     private userCourseModuleService:UserCourseModuleService,
-
+    private cdr: ChangeDetectorRef,
     private examService: ExamService
   ) {}
 
@@ -97,7 +97,8 @@ export class CourseDetailsComponent implements OnInit {
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    }    
+    } 
+    
   }
 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
@@ -124,7 +125,7 @@ export class CourseDetailsComponent implements OnInit {
   fetchLessons(): void {
     console.log('Fetching lessons for course ID:', this.courseId);
     if (this.courseId) {
-      this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+      this.lessonService.getLessonsByCourseId(this.courseId,this.loggedUser.id).subscribe(
         (data) => {
           console.log('Fetched lessons:', data);
 
@@ -174,19 +175,25 @@ viewQuestionFormClick(examId: number): void {
   // }
 }
 
-markAsDone(moduleId: number, index: number) {
+markAsDone(moduleId: number, lessonIndex: number): void {
+  if (!this.userId || !this.courseId) {
+    console.error('User ID or Course ID not available.');
+    return;
+  }
+
+  const lesson = this.lessons[lessonIndex];
+  const module = lesson.modules.find(m => m.id === moduleId);
+
+  if (!module || module.done) {
+    console.log(`Module ${moduleId} is already marked as done or not found.`);
+    return;
+  }
+
   this.userCourseModuleService.markModuleAsDone(this.userId, moduleId).subscribe(
-    (response) => {
-      console.log('Module marked as done:', response);
-      this.lessons.forEach((lesson, lessonIndex) => {
-        if (lessonIndex === index) {
-          lesson.modules.forEach((module: { id: number; done: boolean; }) => {
-            if (module.id === moduleId) {
-              module.done = true;
-            }
-          });
-        }
-      });
+    () => {
+      module.done = true;
+      localStorage.setItem(`module_${moduleId}_done`, 'true');
+      this.cdr.detectChanges();
     },
     (error: HttpErrorResponse) => {
       console.error('Error marking module as done:', error);

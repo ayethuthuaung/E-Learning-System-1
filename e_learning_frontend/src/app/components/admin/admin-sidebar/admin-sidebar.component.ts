@@ -15,7 +15,7 @@ export class AdminSidebarComponent {
     { label: 'Excel Upload', link: 'admin/upload-user-data', icon: 'fas fa-book', isActive: false },
     { label: 'Course', link: 'admin/course', icon: 'fas fa-book', isActive: false },
     { label: 'Category', link: 'admin/category', icon: 'fas fa-folder', isActive: false },
-    { label: 'Students', link: '#', icon: 'fas fa-user-graduate', isActive: false },
+    { label: 'Student', link: 'admin/student', icon: 'fas fa-user-graduate', isActive: false },
     { label: 'Report', link: '#', icon: 'fas fa-file-alt', isActive: false },
     { label: 'Log out', link: '#', icon: 'fas fa-sign-out-alt', isActive: false },
   ];

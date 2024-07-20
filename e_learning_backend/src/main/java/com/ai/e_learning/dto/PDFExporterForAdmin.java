@@ -1,6 +1,7 @@
 package com.ai.e_learning.dto;
 
 import com.ai.e_learning.service.CourseService;
+import com.ai.e_learning.service.UserCourseService;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -22,9 +23,15 @@ public class PDFExporterForAdmin {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private UserCourseService userCourseService;
+
     public void exportAllCourses(HttpServletResponse response) throws IOException {
         // Fetch all courses
         List<CourseDto> courses = courseService.getAllCourseList();
+
+        // Fetch all user courses
+        List<UserCourseDto> userCourses = userCourseService.getAllUserCourses();
 
         // Create a PDF document
         Document document = new Document(PageSize.A4);
@@ -39,8 +46,8 @@ public class PDFExporterForAdmin {
 
         document.add(title);
 
-        // Create a table with 7 columns
-        PdfPTable table = new PdfPTable(7);
+        // Create a table with 8 columns
+        PdfPTable table = new PdfPTable(8);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
 
@@ -63,6 +70,13 @@ public class PDFExporterForAdmin {
             table.addCell(createdAt.format(formatter));
 
             table.addCell(course.getStatus()); // Assuming CourseDto contains course status
+
+            // Calculate student count for the course
+            long studentCount = userCourses.stream()
+                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
+                    .count();
+
+            table.addCell(String.valueOf(studentCount));
         }
 
         document.add(table);
@@ -99,6 +113,9 @@ public class PDFExporterForAdmin {
         table.addCell(cell);
 
         cell.setPhrase(new Phrase("Course Status", font));
+        table.addCell(cell);
+
+        cell.setPhrase(new Phrase("Student Count", font));
         table.addCell(cell);
     }
 }

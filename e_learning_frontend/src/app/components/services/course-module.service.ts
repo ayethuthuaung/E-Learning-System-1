@@ -54,4 +54,7 @@ export class CourseModuleService {
   getAllModules(): Observable<Module[]> {
     return this.http.get<Module[]>(this.baseUrl);
   }
+  getCompletionPercentage(userId: number, courseId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/completion-percentage?userId=${userId}&courseId=${courseId}`);
+  }
 }

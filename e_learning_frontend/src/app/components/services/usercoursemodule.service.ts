@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
+import { UserCourseModule } from '../models/usercoursemodule.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,10 @@ export class UserCourseModuleService {
 
   constructor(private http: HttpClient) {}
 
-  markModuleAsDone(userId: number, moduleId: number): Observable<any> {
+  markModuleAsDone(userId: number, moduleId: number): Observable<UserCourseModule> {
     const body = { userId, moduleId };
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<any>(`${this.baseUrl}/markAsDone`, body, { headers }).pipe(
+    return this.http.post<UserCourseModule>(`${this.baseUrl}/markAsDone`, body, { headers }).pipe(
       catchError(this.handleError)
     );
   }
@@ -23,4 +24,3 @@ export class UserCourseModuleService {
     return throwError(error.message || 'Server error');
   }
 }
-
