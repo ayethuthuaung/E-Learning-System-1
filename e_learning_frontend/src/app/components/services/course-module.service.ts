@@ -57,4 +57,12 @@ export class CourseModuleService {
   getCompletionPercentage(userId: number, courseId: number): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/completion-percentage?userId=${userId}&courseId=${courseId}`);
   }
+  getAllStudentsProgress(): Observable<{ [studentName: string]: { [courseName: string]: number } }> {
+    return this.http.get<{ [studentName: string]: { [courseName: string]: number } }>(`${this.baseUrl}/all-students-progress`);
+  }
+
+  getAllCoursesProgress(): Observable<{ [courseName: string]: { [studentName: string]: number } }> {
+    return this.http.get<{ [courseName: string]: { [studentName: string]: number } }>(`${this.baseUrl}/all-courses-progress`);
+  }
+  
 }

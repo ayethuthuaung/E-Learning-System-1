@@ -33,16 +33,11 @@ export class InstructorNavbarComponent implements OnInit {
   gohome():void{
     this.router.navigate(['home']);
   }
-  toggleNotifications() {
-    this.showNotifications = !this.showNotifications;
-    if (this.showNotifications) {
-      this.unreadCount = 0; // Reset unread count when opening notifications
-    }
+  handleUnreadCountChange(count: number) {
+    this.unreadCount = count;
   }
 
-  handleNewNotification(): void {
-    if (!this.showNotifications) {
-      this.unreadCount += 1; // Increment unread count only if notifications panel is not open
-    }
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
   }
 }

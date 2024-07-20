@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Map;
 
 public interface CourseModuleService {
     CourseModuleDto getModuleById(Long id);
@@ -18,4 +19,6 @@ public interface CourseModuleService {
   Long countTotalModulesByCourse(Long courseId);
 
   Double calculateCompletionPercentage(Long userId, Long courseId);
+    Map<String, Map<String, Double>> getAllStudentsProgress();
+    Map<String, Map<String, Double>> getAllCoursesProgress();
 }

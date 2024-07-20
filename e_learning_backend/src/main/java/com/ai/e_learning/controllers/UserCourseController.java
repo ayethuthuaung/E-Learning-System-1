@@ -112,4 +112,11 @@ public class UserCourseController {
       .collect(Collectors.toList());
     return ResponseEntity.ok(courseDtos);
   }
+  @GetMapping("/course-attendance/{userId}")
+  public ResponseEntity<Map<String, Double>> getCourseAttendanceByInstructor(@PathVariable Long userId){
+    Map<String, Double> courseAttendance = userCourseService.getCourseAttendanceByInstructor(userId);
+    return ResponseEntity.ok(courseAttendance);
+  }
+
+
 }

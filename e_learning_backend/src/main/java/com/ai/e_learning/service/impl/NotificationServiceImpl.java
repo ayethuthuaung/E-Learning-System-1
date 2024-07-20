@@ -74,8 +74,6 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setUser(user);
         processNotification(notification);
 
-        // Send notification to user using WebSocket
-        messagingTemplate.convertAndSendToUser(String.valueOf(user.getId()), "/topic/notifications", notification);
     }
     public Notification markAsRead(Long id) {
         Optional<Notification> notificationOptional = notificationRepository.findById(id);

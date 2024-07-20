@@ -191,6 +191,21 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
     return acceptedUserCounts;
   }
+  @Override
+  public Map<String, Double> getCourseAttendanceByInstructor(Long userId) {
+    List<Course> courses = courseRepository.findByUserId(userId);
+    Map<String, Double> courseAttendance = new HashMap<>();
+
+    for (Course course : courses) {
+      Long totalStudents = userCourseRepository.countByCourseId(course.getId());
+      Long acceptedStudents = userCourseRepository.countByCourseIdAndStatus(course.getId(), "Accept");
+      double percentage = (acceptedStudents / (double) totalStudents) * 100;
+      courseAttendance.put(course.getName(), percentage);
+    }
+
+    return courseAttendance;
+  }
+
 
 }
 
