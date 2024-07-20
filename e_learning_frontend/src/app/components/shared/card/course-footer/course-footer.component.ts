@@ -158,10 +158,10 @@ export class CourseFooterComponent implements OnInit {
     console.log('Roles:', this.roles);
 
 
-    if (!this.isAccepted && !this.isOwner && ! this.hasRole ) {
+
+    if (!this.isAccepted && !this.isOwner && !this.hasRole(2)) {
+
       console.log("Hi");
-
-
       Swal.fire({
         title: 'Enrollment Not Accepted',
         text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',

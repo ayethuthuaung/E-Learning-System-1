@@ -18,4 +18,6 @@ public interface CourseModuleService {
   Long countTotalModulesByCourse(Long courseId);
 
   Double calculateCompletionPercentage(Long userId, Long courseId);
+
+    List<CourseModuleDto> getModulesByLessonId(Long lessonId);
 }

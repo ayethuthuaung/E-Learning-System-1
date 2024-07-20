@@ -84,14 +84,49 @@ public class CourseModuleServiceImpl implements CourseModuleService {
   @Override
   public CourseModuleDto updateModule(Long id, CourseModuleDto courseModuleDto) {
     CourseModule existingModule = EntityUtil.getEntityById(courseModuleRepository, id, "CourseModule");
-//        modelMapper.map(courseModuleDto, existingModule);
+//    System.out.println(existingModule);
+    if(courseModuleDto.getFileInput() == null){
+      courseModuleDto.setFile(existingModule.getFile());
+    }else{
+      MultipartFile fileInput = courseModuleDto.getFileInput();
+      String fileType = fileInput.getContentType();
+      String fileId = null;
+      String fileUrl = null;
+
+      if (!"video/mp4".equals(fileType)) {
+        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+        try {
+          fileId = driveConnector.uploadImageToDrive2(fileInput, "Module");
+          fileUrl = "https://drive.google.com/file/d/" + fileId + "/view";
+        } catch (IOException | GeneralSecurityException e) {
+          throw new RuntimeException("Failed to upload file to Google Drive", e);
+        }
+      } else {
+        try {
+          fileUrl = cloudinaryService.uploadVideo(fileInput);
+        } catch (IOException e) {
+          throw new RuntimeException("Fail to upload file to Cloudinary", e);
+        }
+      }
+
+      courseModuleDto.setFile(fileUrl);
+
+
+    }
+    courseModuleDto.setLesson(existingModule.getLesson());
+    courseModuleDto.setId(id);
+//    courseModuleDto.setName(existingModule.getName());
+    System.out.println(courseModuleDto.getName()+courseModuleDto.getLesson().getTitle()+courseModuleDto.getFile());
+    modelMapper.map(courseModuleDto, existingModule);
+    System.out.println(existingModule.getName()+existingModule.getLesson().getTitle()+existingModule.getFile());
+
     CourseModule updatedModule = EntityUtil.saveEntity(courseModuleRepository, existingModule, "CourseModule");
     return DtoUtil.map(updatedModule, CourseModuleDto.class, modelMapper);
   }
 
   @Override
   public void deleteModule(Long id) {
-    courseModuleRepository.deleteById(id);
+    EntityUtil.deleteEntity(courseModuleRepository, id, "CourseModule");
   }
 
   @Override
@@ -122,4 +157,21 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
     return (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
   }
+
+  @Override
+  public List<CourseModuleDto> getModulesByLessonId(Long lessonId) {
+    // Retrieve Lesson entity
+    Lesson lesson = EntityUtil.getEntityById(lessonRepository, lessonId, "Lesson");
+
+    // Retrieve CourseModule entities for the lesson
+    List<CourseModule> modules = courseModuleRepository.findByLesson(lesson);
+
+    // Convert entities to DTOs
+    List<CourseModuleDto> moduleDtos = modules.stream()
+            .map(module -> DtoUtil.map(module, CourseModuleDto.class, modelMapper))
+            .collect(Collectors.toList());
+
+    return moduleDtos;
+  }
+
 }

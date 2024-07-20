@@ -2,6 +2,8 @@ package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.dto.LessonDto;
 import com.ai.e_learning.service.LessonService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +33,9 @@ public class LessonController {
         return ResponseEntity.ok(lessons);
     }
 
-    @GetMapping("/getLesonsByCourse/{courseId}/user/{userId}")
+    @GetMapping("/getLessonsByCourse/{courseId}/user/{userId}")
     public ResponseEntity<List<LessonDto>> getLessonsByCourseId(@PathVariable Long courseId,@PathVariable Long userId) {
+        System.out.println("Hi");
         List<LessonDto> lessons = lessonService.getLessonsByCourseId(courseId,userId);
         return ResponseEntity.ok(lessons);
     }
@@ -45,7 +48,7 @@ public class LessonController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LessonDto> updateLesson(@PathVariable Long id, @RequestBody LessonDto lessonDto) {
+    public ResponseEntity<LessonDto> updateLesson(@PathVariable Long id, @RequestBody  LessonDto lessonDto) {
         LessonDto updatedLesson = lessonService.updateLesson(id, lessonDto);
         return ResponseEntity.ok(updatedLesson);
     }

@@ -133,7 +133,9 @@ export class InstructorCourseComponent implements OnInit {
 
   saveCourse(): void {
     this.course.userId = this.userId;
-    this.course.status = 'Pending';
+    this.course.status = 'In Progress';
+    console.log(this.course.status);
+    
     const formData = new FormData();
     
     formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
@@ -199,6 +201,8 @@ export class InstructorCourseComponent implements OnInit {
   getInstructorCourses(): void {
     this.courseService.getInstructorCourses(this.userId).subscribe(
       (data: Course[]) => {
+        console.log(data);
+        
         this.courses = data;
         this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
         this.updatePaginatedInstructorCourses();
@@ -209,6 +213,30 @@ export class InstructorCourseComponent implements OnInit {
         console.error('Error fetching courses', error);
       }
     );
+  }
+
+  pendingCourse(course: Course) {
+    Swal.fire({
+      title: 'Request to Admin?',
+      text: 'Are you sure request to admin?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        course.status = 'Pending';
+        this.courseService.changeStatus(course.id, 'Pending').subscribe({
+          next: () => {
+            this.getInstructorCourses();
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+      }
+    });
   }
 
   navigateToCourse(courseId: number) {

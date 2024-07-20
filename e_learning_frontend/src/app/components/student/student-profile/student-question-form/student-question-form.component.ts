@@ -94,22 +94,16 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    clearInterval(this.timerInterval); // Clear interval when component is destroyed
+  parseDuration(duration: string): number {
+    const parts = duration.split(':');
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[1], 10);
+    const seconds = parseInt(parts[2], 10);
+    return (hours * 3600) + (minutes * 60) + seconds;
   }
 
-  parseDuration(durationString: string): number {
-    const parts = durationString.split(' ');
-    const value = parseInt(parts[0]);
-    const unit = parts[1].toLowerCase();
-
-    switch (unit) {
-      case 'mins':
-      case 'min':
-        return value * 60; // Convert minutes to seconds
-      default:
-        return 0;
-    }
+  ngOnDestroy(): void {
+    clearInterval(this.timerInterval); // Clear interval when component is destroyed
   }
 
   startTimer(durationSeconds: number): void {
@@ -125,14 +119,16 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   }
 
   formatTime(seconds: number): string {
-    const minutes: number = Math.floor(seconds / 60);
-    const remainingSeconds: number = seconds % 60;
-
-    const minutesStr: string = ('0' + minutes).slice(-2); // Ensure two digits
-    const secondsStr: string = ('0' + remainingSeconds).slice(-2); // Ensure two digits
-
-    return `${minutesStr}:${secondsStr}`;
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${this.pad(hrs)}:${this.pad(mins)}:${this.pad(secs)}`;
   }
+  
+  pad(value: number): string {
+    return value.toString().padStart(2, '0');
+  }
+
 
   hasRole(roleId: number): boolean {
     return this.roles.some(role => role.id === roleId);
