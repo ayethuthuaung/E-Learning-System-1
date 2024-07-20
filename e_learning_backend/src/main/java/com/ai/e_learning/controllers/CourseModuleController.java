@@ -35,7 +35,7 @@ public class CourseModuleController {
     try {
       courseModuleService.createModules(courseModuleDtos, fileInputs);
       Map<String, String> response = new HashMap<>();
-      response.put("message", "Modules created successfully");
+      response.put("message", "CourseModules created successfully");
       return ResponseEntity.ok(response);
     } catch (IOException | GeneralSecurityException e) {
       Map<String, String> response = new HashMap<>();
@@ -46,7 +46,10 @@ public class CourseModuleController {
 
 
   @PutMapping("/{id}")
-  public ResponseEntity<CourseModuleDto> updateModule(@PathVariable Long id, @RequestBody CourseModuleDto courseModuleDto) {
+  public ResponseEntity<CourseModuleDto> updateModule(@PathVariable Long id,
+                                                      @RequestPart("module") CourseModuleDto courseModuleDto,
+                                                      @RequestPart("file") MultipartFile fileInput) {
+    courseModuleDto.setFileInput(fileInput);
     CourseModuleDto updatedModule = courseModuleService.updateModule(id, courseModuleDto);
     return ResponseEntity.ok(updatedModule);
   }
@@ -67,4 +70,23 @@ public class CourseModuleController {
   public Double getCompletionPercentage(@RequestParam Long userId, @RequestParam Long courseId) {
     return courseModuleService.calculateCompletionPercentage(userId, courseId);
   }
+
+  @GetMapping("/all-students-progress")
+  public Map<String, Map<String, Double>> getAllStudentsProgress() {
+    return courseModuleService.getAllStudentsProgress();
+  }
+
+  @GetMapping("/all-courses-progress")
+  public Map<String, Map<String, Double>> getAllCoursesProgress() {
+    return courseModuleService.getAllCoursesProgress();
+  }
+
+  @GetMapping("/byLesson/{lessonId}")
+  public ResponseEntity<List<CourseModuleDto>> getModulesByLessonId(@PathVariable Long lessonId) {
+    List<CourseModuleDto> modules = courseModuleService.getModulesByLessonId(lessonId);
+    return ResponseEntity.ok(modules);
+  }
+
+
+
 }

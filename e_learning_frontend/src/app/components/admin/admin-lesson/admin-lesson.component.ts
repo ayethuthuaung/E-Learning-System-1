@@ -57,7 +57,7 @@ export class AdminLessonComponent implements OnInit {
     }
   
     addModule() {
-      this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done: true }); // Initialize File as null
+      this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done: true , createdAt: Date.now()}); // Initialize File as null
       console.log(this.modules);
       
     }

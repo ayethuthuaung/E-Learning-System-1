@@ -1,4 +1,4 @@
-import {  NgModule } from '@angular/core';
+import {  CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -112,6 +112,8 @@ import { ClickOutsideDirective } from './components/click-outside.directive';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 import { UserCourseModuleService } from './components/services/usercoursemodule.service';
 import { TimerComponent } from './components/shared/timer/timer.component';
+import { AdminCourseCompletionComponent } from './components/admin/admin-course-completion/admin-course-completion.component';
+import { InstructorCourseCompletionComponent } from './components/instructor/instructor-course-completion/instructor-course-completion.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -217,7 +219,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     FilterSortDropdownComponent,
     ClickOutsideDirective,
     StudentQuestionFormComponent,
-    TimerComponent
+    TimerComponent,
+    AdminCourseCompletionComponent,
+    InstructorCourseCompletionComponent
   ],
   imports: [
     BrowserModule,
@@ -249,6 +253,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
 
   ],
 
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })
 export class AppModule { }

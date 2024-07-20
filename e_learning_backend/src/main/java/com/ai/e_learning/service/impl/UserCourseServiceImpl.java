@@ -100,6 +100,24 @@ public class UserCourseServiceImpl implements UserCourseService {
       .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
     userCourse.setStatus(status);
     userCourseRepository.save(userCourse);
+
+    sendStudentNotification(userCourse);
+  }
+  private void sendStudentNotification(UserCourse userCourse) {
+    User student = userCourse.getUser();
+    Course course = userCourse.getCourse();
+    Optional<Role> studentRoleOptional = roleService.getRoleByName("Student");
+    if(studentRoleOptional.isPresent()) {
+      Role instructorRole = studentRoleOptional.get();
+      Notification studentNotification = new Notification();
+      studentNotification.setMessage("Your enrollment status for the course " + course.getName() + " has been changed to " + userCourse.getStatus());
+      studentNotification.setRole(instructorRole);
+      studentNotification.setUser(student);
+
+      notificationController.sendNotificationToUser(studentNotification, student);
+    }else {
+      System.out.println("Student role is not found");
+    }
   }
   //AT
 
@@ -173,6 +191,21 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
     return acceptedUserCounts;
   }
+  @Override
+  public Map<String, Double> getCourseAttendanceByInstructor(Long userId) {
+    List<Course> courses = courseRepository.findByUserId(userId);
+    Map<String, Double> courseAttendance = new HashMap<>();
+
+    for (Course course : courses) {
+      Long totalStudents = userCourseRepository.countByCourseId(course.getId());
+      Long acceptedStudents = userCourseRepository.countByCourseIdAndStatus(course.getId(), "Accept");
+      double percentage = (acceptedStudents / (double) totalStudents) * 100;
+      courseAttendance.put(course.getName(), percentage);
+    }
+
+    return courseAttendance;
+  }
+
 
 }
 

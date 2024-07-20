@@ -9,11 +9,9 @@
     <ul class="notification-list">
       <li *ngFor="let notification of notifications" (click)="handleNotificationClick(notification)"
       [class.unread]="!notification.read"
-          [ngClass]="getNotificationClass(notification)"
           class="notification-item flex justify-between p-3 cursor-pointer border-b" (click)="markAsRead(notification)">
         <div class="notification-content">
-          <div class="notification-message font-bold">
-            {{ notification.message }}
+          <div class="notification-message font-bold" [innerHTML]="highlightMessage(notification)">
           </div>
           <div class="notification-time text-gray-500 text-sm">
             {{ notification.createdAt | date:'short' }}

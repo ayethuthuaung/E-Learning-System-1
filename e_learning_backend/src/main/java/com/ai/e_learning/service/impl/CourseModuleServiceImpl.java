@@ -3,8 +3,10 @@ package com.ai.e_learning.service.impl;
 import com.ai.e_learning.dto.CourseModuleDto;
 import com.ai.e_learning.model.CourseModule;
 import com.ai.e_learning.model.Lesson;
+import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.repository.CourseModuleRepository;
 import com.ai.e_learning.repository.LessonRepository;
+import com.ai.e_learning.repository.UserCourseRepository;
 import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.util.CloudinaryService;
 import com.ai.e_learning.util.DtoUtil;
@@ -30,6 +32,9 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
   @Autowired
   private CloudinaryService cloudinaryService;
+
+  @Autowired
+  private UserCourseRepository userCourseRepository;
 
   private final ModelMapper modelMapper;
 
@@ -84,14 +89,49 @@ public class CourseModuleServiceImpl implements CourseModuleService {
   @Override
   public CourseModuleDto updateModule(Long id, CourseModuleDto courseModuleDto) {
     CourseModule existingModule = EntityUtil.getEntityById(courseModuleRepository, id, "CourseModule");
-//        modelMapper.map(courseModuleDto, existingModule);
+//    System.out.println(existingModule);
+    if(courseModuleDto.getFileInput() == null){
+      courseModuleDto.setFile(existingModule.getFile());
+    }else{
+      MultipartFile fileInput = courseModuleDto.getFileInput();
+      String fileType = fileInput.getContentType();
+      String fileId = null;
+      String fileUrl = null;
+
+      if (!"video/mp4".equals(fileType)) {
+        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+        try {
+          fileId = driveConnector.uploadImageToDrive2(fileInput, "Module");
+          fileUrl = "https://drive.google.com/file/d/" + fileId + "/view";
+        } catch (IOException | GeneralSecurityException e) {
+          throw new RuntimeException("Failed to upload file to Google Drive", e);
+        }
+      } else {
+        try {
+          fileUrl = cloudinaryService.uploadVideo(fileInput);
+        } catch (IOException e) {
+          throw new RuntimeException("Fail to upload file to Cloudinary", e);
+        }
+      }
+
+      courseModuleDto.setFile(fileUrl);
+
+
+    }
+    courseModuleDto.setLesson(existingModule.getLesson());
+    courseModuleDto.setId(id);
+//    courseModuleDto.setName(existingModule.getName());
+    System.out.println(courseModuleDto.getName()+courseModuleDto.getLesson().getTitle()+courseModuleDto.getFile());
+    modelMapper.map(courseModuleDto, existingModule);
+    System.out.println(existingModule.getName()+existingModule.getLesson().getTitle()+existingModule.getFile());
+
     CourseModule updatedModule = EntityUtil.saveEntity(courseModuleRepository, existingModule, "CourseModule");
     return DtoUtil.map(updatedModule, CourseModuleDto.class, modelMapper);
   }
 
   @Override
   public void deleteModule(Long id) {
-    courseModuleRepository.deleteById(id);
+    EntityUtil.deleteEntity(courseModuleRepository, id, "CourseModule");
   }
 
   @Override
@@ -136,9 +176,68 @@ public Double calculateCompletionPercentage(Long userId, Long courseId) {
     return 0.0;
   }
 
+
   Double completionPercentage = (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
   System.out.println("Completion Percentage: " + completionPercentage);
 
   return completionPercentage;
 }
+  @Override
+  public Map<String, Map<String, Double>> getAllStudentsProgress() {
+    List<UserCourse> userCourses = userCourseRepository.findAll();
+    Map<String, Map<String, Double>> allStudentsProgress = new HashMap<>();
+
+    for (UserCourse userCourse : userCourses) {
+      Long studentId = userCourse.getUser().getId();
+      String studentName = userCourse.getUser().getName();  // Assuming 'getName' returns the student's name
+      String courseName = userCourse.getCourse().getName();
+      Double completionPercentage = calculateCompletionPercentage(studentId, userCourse.getCourse().getId());
+
+
+
+      allStudentsProgress
+              .computeIfAbsent(studentName, k -> new HashMap<>())
+              .put(courseName, completionPercentage);
+    }
+
+    return allStudentsProgress;
+  }
+
+  @Override
+  public Map<String, Map<String, Double>> getAllCoursesProgress() {
+    List<UserCourse> userCourses = userCourseRepository.findAll();
+    Map<String, Map<String, Double>> allCoursesProgress = new HashMap<>();
+
+    for (UserCourse userCourse : userCourses) {
+      Long studentId = userCourse.getUser().getId();
+      String studentName = userCourse.getUser().getName();  // Assuming 'getName' returns the student's name
+      String courseName = userCourse.getCourse().getName();
+      Double completionPercentage = calculateCompletionPercentage(studentId, userCourse.getCourse().getId());
+
+      allCoursesProgress
+              .computeIfAbsent(courseName, k -> new HashMap<>())
+              .put(studentName, completionPercentage);
+    }
+
+    return allCoursesProgress;
+  }
+
+
+
+  @Override
+  public List<CourseModuleDto> getModulesByLessonId(Long lessonId) {
+    // Retrieve Lesson entity
+    Lesson lesson = EntityUtil.getEntityById(lessonRepository, lessonId, "Lesson");
+
+    // Retrieve CourseModule entities for the lesson
+    List<CourseModule> modules = courseModuleRepository.findByLesson(lesson);
+
+    // Convert entities to DTOs
+    List<CourseModuleDto> moduleDtos = modules.stream()
+            .map(module -> DtoUtil.map(module, CourseModuleDto.class, modelMapper))
+            .collect(Collectors.toList());
+
+    return moduleDtos;
+  }
+
 }
