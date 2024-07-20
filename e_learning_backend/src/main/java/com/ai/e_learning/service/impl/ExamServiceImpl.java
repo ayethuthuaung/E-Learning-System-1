@@ -167,7 +167,7 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List<ExamListDto> getExamByLessonId(Long lessonId) {
         Lesson lesson = EntityUtil.getEntityById(lessonRepository, lessonId, "Lesson");
-        List<Exam> exams= examRepository.findByLesson(lesson);
+        List<Exam> exams= examRepository.findByLessonAndIsDeletedFalse(lesson);
         return DtoUtil.mapList(exams, ExamListDto.class,modelMapper);
 
     }
