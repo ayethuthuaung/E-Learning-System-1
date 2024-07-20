@@ -1,0 +1,51 @@
+
+
+<div class="form-container">
+  <div *ngFor="let question of questions; let qIndex = index" class="question">
+    <p>{{ question.text }}</p>
+    
+    <div class="options-container">
+      <div *ngFor="let option of question.options; let oIndex = index" class="option">
+        <label>
+          <input *ngIf="question.type === 'multiple-choice'" 
+                 type="radio" 
+                 [name]="'question' + qIndex" 
+                 [checked]="option.isAnswered" 
+                 (change)="selectOption(qIndex, oIndex)">
+          <input *ngIf="question.type === 'checkbox'" 
+                 type="checkbox" 
+                 [(ngModel)]="option.isAnswered">
+          {{ option.label }}
+        </label>
+        <div *ngIf="showResults">
+          <span *ngIf="option.isCorrect && option.isSelected" style="color: green;">Correct</span>
+          <span *ngIf="!option.isCorrect && option.isSelected" style="color: red;">Incorrect</span>
+          <span *ngIf="option.isCorrect && !option.isSelected" style="color: green;">Correct Answer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <button (click)="submitAnswers()">Submit Answers</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

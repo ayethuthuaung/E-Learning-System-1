@@ -1,0 +1,14 @@
+<!-- create-question-type.component.html -->
+<div>
+  <h2>Create Question Type</h2>
+  <form (ngSubmit)="onSubmit(questionTypeForm)" #questionTypeForm="ngForm">
+    <div>
+      <label for="type">Type:</label>
+      <input type="text" id="type" name="type" [(ngModel)]="questionType.type" required>
+    </div>
+    <div>
+      <!-- You can add more fields for description or other properties as needed -->
+    </div>
+    <button type="submit">Save Question Type</button>
+  </form>
+</div>

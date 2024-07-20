@@ -1,0 +1,151 @@
+
+
+<!-- <div class="form-container">
+  <input type="number" [(ngModel)]="examId" placeholder="Exam Id" class="form-title-input">
+  <textarea [(ngModel)]="formDescription" placeholder="Form Description" class="form-description-input"></textarea>
+
+  <div *ngFor="let question of questions; let qIndex = index" class="question">
+    <input type="text" [(ngModel)]="question.text" placeholder="Question Text" class="question-text-input">
+    
+    <select [(ngModel)]="question.type" class="question-type-select">
+      <option value="multiple-choice">Multiple Choice</option>
+      <option value="checkbox">Checkbox</option>
+    </select>
+
+    <div class="options-container">
+      <div *ngFor="let option of question.options; let oIndex = index" class="option">
+        <div class="option-label">
+          <input type="text" [(ngModel)]="option.label" placeholder="Option Label" class="option-label-input">
+        </div>
+        <div class="option-input">
+          <input *ngIf="question.type === 'multiple-choice'" 
+                 type="radio" 
+                 [id]="'q' + qIndex + 'o' + oIndex" 
+                 [name]="'question' + qIndex" 
+                 [checked]="option.isAnswered" 
+                 (change)="selectOption(qIndex, oIndex)">
+          <input *ngIf="question.type === 'checkbox'" 
+                 type="checkbox" 
+                 [id]="'q' + qIndex + 'o' + oIndex" 
+                 [(ngModel)]="option.isAnswered">
+        </div>
+        <div *ngIf="showResults" class="result">
+          <span *ngIf="option.isCorrect">Correct</span>
+          <span *ngIf="!option.isCorrect && option.isAnswered">Incorrect - Correct answer: {{ question.correctAnswer }}</span>
+        </div>
+      </div>
+    </div>
+
+    <button (click)="addOption(qIndex)">Add option</button>
+  </div>
+  
+  <button (click)="addQuestion()">Add Question</button>
+  <button (click)="submitForm()">Submit Form</button>
+</div> -->
+  
+<!-- ------------------------------------------------------------------------------------------ -->
+  <!-- with marks -->
+
+  <!-- <div class="form-container">
+    <form (ngSubmit)="submitForm()">
+      <div class="form-group">
+        <label for="examId">Exam ID:</label>
+        <input id="examId" [(ngModel)]="examId" name="examId" type="number" placeholder="Exam ID" class="form-control" />
+      </div>
+  
+      <div *ngFor="let question of questions; let qIndex = index" class="question">
+        <div class="form-group">
+          <label for="questionText">Question Text:</label>
+          <input id="questionText" [(ngModel)]="question.text" name="questionText" type="text" placeholder="Question Text" class="form-control question-text-input" />
+          <div class="marks-input">
+            <label for="marks">Marks:</label>
+            <input [(ngModel)]="question.marks" name="marks" type="number" placeholder="Marks" class="form-control mark-input" />
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="questionType">Question Type:</label>
+          <select id="questionType" [(ngModel)]="question.type" name="questionType" class="form-control question-type-select">
+            <option value="multiple-choice">Multiple Choice</option>
+            <option value="checkbox">Checkbox</option>
+          </select>
+        </div>
+  
+        <div class="options-container">
+          <div *ngFor="let option of question.options; let oIndex = index" class="option">
+            <div class="option-label">
+              <input [(ngModel)]="option.label" name="optionLabel" type="text" placeholder="Option Label" class="form-control option-label-input" />
+            </div>
+            <div class="option-input">
+              <input *ngIf="question.type === 'multiple-choice'" 
+                     type="radio" 
+                     [id]="'q' + qIndex + 'o' + oIndex" 
+                     [name]="'question' + qIndex" 
+                     [checked]="option.isAnswered" 
+                     (change)="selectOption(qIndex, oIndex)">
+              <input *ngIf="question.type === 'checkbox'" 
+                     type="checkbox" 
+                     [id]="'q' + qIndex + 'o' + oIndex" 
+                     [(ngModel)]="option.isAnswered">
+            </div>
+            <div *ngIf="showResults" class="result">
+              <span *ngIf="option.isCorrect">Correct</span>
+              <span *ngIf="!option.isCorrect && option.isAnswered">Incorrect - Correct answer: {{ question.correctAnswer }}</span>
+            </div>
+          </div>
+        </div>
+  
+        <button type="button" (click)="addOption(qIndex)" class="btn btn-secondary">Add Option</button>
+        <button type="button" (click)="addQuestion()" class="btn btn-primary">Add Question</button>
+      </div>
+  
+      <button type="submit" class="btn btn-success">Submit Form</button>
+    </form>
+  </div> -->
+  
+
+
+  <div class="form-container">
+    <input type="number" [(ngModel)]="examId" placeholder="Exam Id" class="form-title-input">
+    <textarea [(ngModel)]="formDescription" placeholder="Form Description" class="form-description-input"></textarea>
+  
+    <div *ngFor="let question of questions; let qIndex = index" class="question">
+      <input type="text" [(ngModel)]="question.text" placeholder="Question Text" class="question-text-input">
+      
+      <select [(ngModel)]="question.type" class="question-type-select">
+        <option value="multiple-choice">Multiple Choice</option>
+        <option value="checkbox">Checkbox</option>
+      </select>
+  
+      <div class="options-container">
+        <div *ngFor="let option of question.options; let oIndex = index" class="option">
+          <div class="option-label">
+            <input type="text" [(ngModel)]="option.label" placeholder="Option Label" class="option-label-input">
+          </div>
+          <div class="option-input">
+            <input *ngIf="question.type === 'multiple-choice'" 
+                   type="radio" 
+                   [id]="'q' + qIndex + 'o' + oIndex" 
+                   [name]="'question' + qIndex" 
+                   [checked]="option.isAnswered" 
+                   (change)="selectOption(qIndex, oIndex)">
+            <input *ngIf="question.type === 'checkbox'" 
+                   type="checkbox" 
+                   [id]="'q' + qIndex + 'o' + oIndex" 
+                   [(ngModel)]="option.isAnswered">
+          </div>
+          <div *ngIf="showResults" class="result">
+            <span *ngIf="option.isCorrect">Correct</span>
+            <span *ngIf="!option.isCorrect && option.isAnswered">Incorrect - Correct answer: {{ question.correctAnswer }}</span>
+          </div>
+        </div>
+      </div>
+  
+      <button *ngIf="question.isNew" (click)="deleteNewQuestion(qIndex)">Delete Question</button> <!-- Add this button for new questions -->
+      <button (click)="addOption(qIndex)">Add option</button>
+    </div>
+    
+    <button (click)="addQuestion()">Add Question</button>
+    <button (click)="submitForm()">Submit Form</button>
+  </div>
+  
