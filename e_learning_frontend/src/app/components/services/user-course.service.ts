@@ -61,6 +61,9 @@ export class UserCourseService {
   getTrendingCourses(): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/trending-courses`);
   }
-  
+  getCourseAttendanceByInstructor(userId: number): Observable<{ [courseName: string]: number }> {
+    return this.httpClient.get<{ [courseName: string]: number }>(`${this.baseURL}/course-attendance/${userId}`);
+  }
+
 
 }

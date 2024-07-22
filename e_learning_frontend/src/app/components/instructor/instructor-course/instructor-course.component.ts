@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
-declare var Swal: any;
+import Swal from 'sweetalert2';
 import { orderBy } from 'lodash';
 
 @Component({
@@ -30,6 +30,7 @@ export class InstructorCourseComponent implements OnInit {
   userId: any;
 
   loading = false;
+  isEditing : boolean =  false;
 
   courses: Course[] = [];
   status: string = 'Accept,Pending'; 
@@ -67,17 +68,6 @@ export class InstructorCourseComponent implements OnInit {
     );
   }
 
-  validateCategoryName(name: string): void {
-    this.categoryService.isCategoryNameAlreadyExists(name).subscribe(
-      (exists: boolean) => {
-        this.nameDuplicateError = exists;
-      },
-      (error) => {
-        console.error('Error checking category name:', error);
-      }
-    );
-  }
-
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.submitted = false;
@@ -91,24 +81,6 @@ export class InstructorCourseComponent implements OnInit {
       this.errorMessage = 'Please fill the required fields';
     }
     
-  }
-
-  createCategory(): void {
-    this.categoryService.createCategory(this.category).subscribe(
-      () => {
-        console.log('Category created successfully');
-        this.goToCategoryList();
-
-        this.getCategories(); // Refresh the list after creation
-        this.category = new Category(); // Clear the form
-      },
-      (error) => {
-        this.errorMessage = `Error creating category: ${error}`;
-      }
-    );
-  }
-  goToCategoryList(): void {
-    this.router.navigate(['/categories']);
   }
 
   toggleSidebar() {
@@ -160,12 +132,99 @@ export class InstructorCourseComponent implements OnInit {
         this.course.photoFile = undefined; // Clear the photo input
         this.course.categories = []; // Clear selected categories
         this.showSuccessAlert();
+        this.setActiveTab("createCourse")
       },
       (error) => {
         console.error('Error creating course:', error);
         this.loading = false;
       }
     );
+  }
+
+  editCourse(course: Course): void {
+
+    this.isEditing = true;
+    console.log(this.isEditing);
+    
+    console.log(course);
+    
+    this.course = { ...course }; 
+    this.course.categorylist = course.categories.map(cat => cat.id);
+
+   
+  }
+
+  confirmUpdateCourse(): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to update this course?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.updateCourse();
+      }
+    });
+  }
+  
+  updateCourse(): void {
+    console.log("Update Course");
+    
+    const formData = new FormData();
+    formData.append('courseDto', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
+    if (this.course.photoFile) {
+      formData.append('photo', this.course.photoFile);
+    }
+    console.log("Hi");
+    this.courseService.updateCourse(this.course.id, formData).subscribe(
+      (updatedCourse: Course) => {
+        console.log('Course updated successfully:', updatedCourse);
+        this.loading = false;
+        this.getInstructorCourses(); // Refresh courses list after updating the course
+        this.course = new Course(); // Clear the form
+        this.isEditing = false; // Exit editing mode
+        this.showSuccessAlert1();
+      },
+      (error) => {
+        console.error('Error updating course:', error);
+        this.loading = false;
+      }
+    );
+  }
+  
+  showSuccessAlert1(): void {
+    Swal.fire({
+      title: 'Updated!',
+      text: 'Course updated successfully.',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
+ 
+  deleteCourse(courseId: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this Course?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.courseService.softDeleteCourse(courseId).subscribe(
+          () => {
+            this.courses = this.courses.filter(course => course.id !== courseId);
+            Swal.fire('Deleted!', 'The module has been deleted.', 'success');
+          },
+          error => {
+            console.error('Error deleting module:', error);
+            Swal.fire('Error!', 'Failed to delete the module.', 'error');
+          }
+        );
+      }
+    });
   }
 
   onFileChange(event: any): void {

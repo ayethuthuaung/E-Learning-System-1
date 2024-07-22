@@ -3,8 +3,10 @@ package com.ai.e_learning.service.impl;
 import com.ai.e_learning.dto.CourseModuleDto;
 import com.ai.e_learning.model.CourseModule;
 import com.ai.e_learning.model.Lesson;
+import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.repository.CourseModuleRepository;
 import com.ai.e_learning.repository.LessonRepository;
+import com.ai.e_learning.repository.UserCourseRepository;
 import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.util.CloudinaryService;
 import com.ai.e_learning.util.DtoUtil;
@@ -30,6 +32,9 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
   @Autowired
   private CloudinaryService cloudinaryService;
+
+  @Autowired
+  private UserCourseRepository userCourseRepository;
 
   private final ModelMapper modelMapper;
 
@@ -86,6 +91,8 @@ public class CourseModuleServiceImpl implements CourseModuleService {
     CourseModule existingModule = EntityUtil.getEntityById(courseModuleRepository, id, "CourseModule");
 //    System.out.println(existingModule);
     if(courseModuleDto.getFileInput() == null){
+      System.out.println("Hi");
+      System.out.println(existingModule.getFile());
       courseModuleDto.setFile(existingModule.getFile());
     }else{
       MultipartFile fileInput = courseModuleDto.getFileInput();
@@ -111,8 +118,8 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
       courseModuleDto.setFile(fileUrl);
 
-
     }
+    courseModuleDto.setCreatedAt(existingModule.getCreatedAt());
     courseModuleDto.setLesson(existingModule.getLesson());
     courseModuleDto.setId(id);
 //    courseModuleDto.setName(existingModule.getName());
@@ -157,6 +164,48 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
     return (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
   }
+
+  @Override
+  public Map<String, Map<String, Double>> getAllStudentsProgress() {
+    List<UserCourse> userCourses = userCourseRepository.findAll();
+    Map<String, Map<String, Double>> allStudentsProgress = new HashMap<>();
+
+    for (UserCourse userCourse : userCourses) {
+      Long studentId = userCourse.getUser().getId();
+      String studentName = userCourse.getUser().getName();  // Assuming 'getName' returns the student's name
+      String courseName = userCourse.getCourse().getName();
+      Double completionPercentage = calculateCompletionPercentage(studentId, userCourse.getCourse().getId());
+
+
+
+      allStudentsProgress
+              .computeIfAbsent(studentName, k -> new HashMap<>())
+              .put(courseName, completionPercentage);
+    }
+
+    return allStudentsProgress;
+  }
+
+  @Override
+  public Map<String, Map<String, Double>> getAllCoursesProgress() {
+    List<UserCourse> userCourses = userCourseRepository.findAll();
+    Map<String, Map<String, Double>> allCoursesProgress = new HashMap<>();
+
+    for (UserCourse userCourse : userCourses) {
+      Long studentId = userCourse.getUser().getId();
+      String studentName = userCourse.getUser().getName();  // Assuming 'getName' returns the student's name
+      String courseName = userCourse.getCourse().getName();
+      Double completionPercentage = calculateCompletionPercentage(studentId, userCourse.getCourse().getId());
+
+      allCoursesProgress
+              .computeIfAbsent(courseName, k -> new HashMap<>())
+              .put(studentName, completionPercentage);
+    }
+
+    return allCoursesProgress;
+  }
+
+
 
   @Override
   public List<CourseModuleDto> getModulesByLessonId(Long lessonId) {

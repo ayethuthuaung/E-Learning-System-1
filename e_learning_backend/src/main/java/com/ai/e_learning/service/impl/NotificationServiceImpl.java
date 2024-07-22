@@ -7,6 +7,7 @@ import com.ai.e_learning.model.User;
 import com.ai.e_learning.repository.NotificationRepository;
 import com.ai.e_learning.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Autowired
   private NotificationRepository notificationRepository;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public Notification processNotification(Notification notification) {
         notification.setCreatedAt(new Date());
@@ -69,6 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendNotificationToUser(Notification notification, User user) {
         notification.setUser(user);
         processNotification(notification);
+
     }
     public Notification markAsRead(Long id) {
         Optional<Notification> notificationOptional = notificationRepository.findById(id);

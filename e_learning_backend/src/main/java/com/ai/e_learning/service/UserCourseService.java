@@ -27,5 +27,7 @@ public interface UserCourseService {
   //PK
   Map<String, Long> getAcceptedUserCountsByCourse();
   List<Course> getTrendingCourses();
+  Map<String, Double> getCourseAttendanceByInstructor(Long userId);
+
 
 }

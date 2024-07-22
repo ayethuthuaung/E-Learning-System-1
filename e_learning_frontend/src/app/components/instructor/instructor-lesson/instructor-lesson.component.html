@@ -3,7 +3,7 @@
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
 
-    <main class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
+    <main id="lessonTop" class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
       <section>
         <div class="flex border-b">
 
@@ -27,24 +27,32 @@
     <!-- Lesson form container -->
     <div class="w-full lg:w-7/12 xl:w-6/12 p-2">
       <div class="bg-white rounded-lg shadow-md p-6">
-        <form class="flex flex-col" #courseForm="ngForm" (ngSubmit)="onSubmit(courseForm)" method="post">
+        <form class="flex flex-col" #lessonForm="ngForm" (ngSubmit)="onSubmit(lessonForm)" method="post">
           <input
             type="text"
             class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
             id="name"
             name="name"
-            [(ngModel)]="course.name"
+            [(ngModel)]="lesson.title"
             required
-            (input)="validateCourseName(course.name)"
+            (input)="validateCourseName(lesson.title)"
             placeholder="Lesson Title"
           />
           <button
+           *ngIf="!isEditing"
             type="submit"
             class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-dark-blue hover:to-logo-blue transition ease-in-out duration-150"
             [disabled]="nameDuplicateError"
           >
             Submit
           </button>
+          <button
+              *ngIf="isEditing"
+              type="submit"
+              class="bg-green-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-green-700 transition ease-in-out duration-150"
+            >
+              Save Changes
+            </button>
         </form>
       </div>
     </div>
@@ -57,15 +65,16 @@
               class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue bg-white font-bold relative">
               <span>{{ lesson.title }}</span>
               <div class="flex space-x-2">
-                <button class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400" >
+                <button (click)="editLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-green-100 hover:bg-green-300 text-green-800">
                   <i class="fa-solid fa-edit"></i>
                 </button>
-                <button (click)="deleteLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400">
+                <button (click)="deleteLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-red-100 hover:bg-red-300 text-red-800">
                   <i class="fa-solid fa-trash"></i>
                 </button>
-                <button class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400" (click)="navigateToLesson(lesson.id)">
+                <button class="flex justify-center items-center w-8 h-8 rounded-full bg-purple-100 hover:bg-purple-300 text-purple-800" (click)="navigateToLesson(lesson.id)">
                   <i class="fa-solid fa-arrow-right"></i>
                 </button>
+                
               </div>
             </div>
           </li>

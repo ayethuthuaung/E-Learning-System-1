@@ -141,9 +141,10 @@ public class LessonServiceImpl implements LessonService {
 
   @Override
   public LessonDto updateLesson(Long id, LessonDto lessonDto) {
+    System.out.println(id+ lessonDto.toString());
     Lesson lesson = EntityUtil.getEntityById(lessonRepository, id, "Lesson");
     lesson.setTitle(lessonDto.getTitle());
-    lesson.setCourse(lessonDto.getCourse());
+    lesson.setCourse(lesson.getCourse());
 //        lesson.setModules(lessonDto.getModules());
     Lesson savedLesson = EntityUtil.saveEntity(lessonRepository, lesson, "Lesson");
 

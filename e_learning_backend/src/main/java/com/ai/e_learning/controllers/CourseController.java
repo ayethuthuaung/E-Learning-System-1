@@ -91,9 +91,12 @@ public class CourseController {
         }
     }
 
-    @PutMapping(value = "/updatecourse/{id}", produces = "application/json")
-    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
-        handlePhotoConversion(courseDto);
+    @PutMapping(value = "/updatecourse/{id}", produces = "application/json", consumes = "multipart/form-data")
+    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id,
+                                                  @RequestPart CourseDto courseDto,
+                                                  @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        courseDto.setPhotoInput(photo);
+        System.out.println(courseDto.toString());
         CourseDto updatedCourse = courseService.updateCourse(id, courseDto);
 
         if (updatedCourse == null) {
@@ -128,13 +131,6 @@ public class CourseController {
     }
 
 
-
-    private void handlePhotoConversion(CourseDto courseDto) {
-        if (courseDto.getPhoto() != null) {
-            byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-            courseDto.setPhoto(Arrays.toString(photoBytes));
-        }
-    }
   @GetMapping(value = "/latestAccepted", produces = "application/json")
   public ResponseEntity<List<CourseDto>> getLatestAcceptedCourses() {
     List<CourseDto> courses = courseService.getLatestAcceptedCourses();
@@ -144,29 +140,8 @@ public class CourseController {
     return new ResponseEntity<>(courses, HttpStatus.OK);
   }
 
-
-
-  /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
-  public ResponseEntity<CourseDto> addCourse(@RequestParam("course") String courseDtoString,
-                                             @RequestParam(value = "photo", required = false) MultipartFile photoFile) {
-    try {
-      CourseDto courseDto = new ObjectMapper().readValue(courseDtoString, CourseDto.class);
-
-      // Handle photo conversion if needed
-      if (photoFile != null) {
-        byte[] photoBytes = photoFile.getBytes();
-        // Convert photoBytes to necessary format and set it to courseDto
-        courseDto.setPhoto(Arrays.toString(photoBytes)); // Example: Convert to base64 or store as byte array
-      }
-
-      CourseDto savedCourse = courseService.saveCourse(courseDto);
-      if (savedCourse != null) {
-        return ResponseEntity.ok(savedCourse); // Return HTTP 200 OK with saved course details
-      } else {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Or handle error as needed
-      }
-    } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Handle JSON parsing or file reading errors
+    @GetMapping("/lessons/{lessonId}/courseId")
+    public Long getCourseIdByLessonId(@PathVariable Long lessonId) {
+        return courseService.getCourseId(lessonId);
     }
-  }*/
 }

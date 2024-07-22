@@ -1,3 +1,5 @@
+import { Course } from './../../models/course.model';
+import { Message } from '@stomp/stompjs';
 import { ExamList } from './../../models/examList.model';
 import { CourseModuleService } from '../../services/course-module.service';
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
@@ -11,6 +13,7 @@ import Swal from 'sweetalert2';
 import { ExamCreationDto } from '../../models/examCreationDto.model';
 import { AnswerOptionDTO } from '../../models/answeroptiondto.model';
 import { Location } from '@angular/common';
+import { CourseService } from '../../services/course.service';
 
 interface Option {
   label: string;
@@ -35,12 +38,13 @@ interface Question {
   styleUrl: './create-module-exam.component.css'
 })
 export class CreateModuleExamComponent implements OnInit{
+
   lessonId: number = -1;
   lessons :Lesson[] =[];
   lesson!: { title: ''; };
   modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   moduleList: Module[]=[];
-
+  courseId: number = 0;
 
   isSidebarOpen = true;
   activeTab: string = 'createModule';
@@ -81,6 +85,7 @@ isEditing: boolean = false;
     private route: ActivatedRoute,
     private lessonService: LessonService,
     private examService: ExamService,
+    private courseService: CourseService,
     private courseModuleService:CourseModuleService,
     private location: Location,
     private router:Router,
@@ -95,6 +100,7 @@ isEditing: boolean = false;
       this.lessonId = +lessonIdParam; // Convert courseIdParam to number if not null
       this.loadModulesByLessonId(this.lessonId);
       this.loadExamByLessonId(this.lessonId);
+       this.getCourseId(this.lessonId);
     }
   }
 
@@ -141,7 +147,7 @@ isEditing: boolean = false;
     }
   }
 
-  onSubmit(lessonForm: any) {
+  onSubmit(moduleForm: any) {
     if (this.currentModuleIndex !== -1) {      
       const updatedModule = this.modules[0];
       Swal.fire({
@@ -153,6 +159,8 @@ isEditing: boolean = false;
       cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
+        if (this.loading) return;
+        this.loading = true;
         const formData = new FormData();
         const moduleData = {
           name: updatedModule.name,
@@ -162,21 +170,32 @@ isEditing: boolean = false;
         if (updatedModule.fileInput) {
           formData.append('file', updatedModule.fileInput);
         }
-        formData.append('module', new Blob([JSON.stringify(moduleData)], { type: 'application/json' }));
+        
+        formData.append('module', new Blob([JSON.stringify(moduleData)], { type: 'application/json' })); 
+        console.log(formData.get('file'));
+        console.log(formData.get('module'));
 
       this.courseModuleService.updateModule(this.moduleList[this.currentModuleIndex].id, formData).subscribe(
-        updated => {
-          this.moduleList[this.currentModuleIndex] = updated;
-          Swal.fire('Updated!', 'The module has been updated.', 'success');
+        (response) => {
+          console.log(response);
+          
+          this.loading = true;
+          // this.moduleList[this.currentModuleIndex] = response;
+          if (response.message === 'CourseModules updated successfully') {                  
+            this.loading = false;
+            Swal.fire('Updated!', 'The module has been updated.', 'success');
+          }
+          
           this.currentModuleIndex = -1;
           this.isEditing = false;
-          lessonForm.resetForm();
+          moduleForm.resetForm();
           this.modules = [];
           this.modules = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
 
           this.loadModulesByLessonId(this.lessonId);
         },
         error => {
+          this.loading = false;
           console.error('Error updating module:', error);
           Swal.fire('Error!', 'Failed to update the module.', 'error');
         }
@@ -184,7 +203,7 @@ isEditing: boolean = false;
     }
   });
     } else {
-      if (lessonForm.valid) {
+      if (moduleForm.valid) {
         Swal.fire({
           title: 'Are you sure?',
           text: 'Do you want to submit these modules?',
@@ -218,14 +237,12 @@ isEditing: boolean = false;
               (response) => {
                 this.loading = true; // Reset loading state
                 console.log('Modules Created:', response);
-                if (response.body.message === 'CourseModules created successfully') {
-                  console.log("Hi");
-                  
+                if (response.message === 'CourseModules created successfully') {                  
                   this.loading = false;
                   Swal.fire('Success!', response.message, 'success');
   
                 }
-                lessonForm.resetForm();
+                moduleForm.resetForm();
                 this.modules = [];
                 this.modules = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   
@@ -433,6 +450,21 @@ isEditing: boolean = false;
     this.examDuration = duration;
   }
 
+  goToCourseDetails():void {
+    this.router.navigate(['/course-detail', this.courseId]);
+  }
+
+  getCourseId(lessonId: number): void {
+    this.courseService.getCourseIdByLessonId(lessonId).subscribe(
+      courseId => {
+        console.log('Course ID:', courseId);
+        this.courseId= courseId;
+      },
+      error => {
+        console.error('Error fetching course ID:', error);
+      }
+    );
+  }
 
 
  }
