@@ -1,0 +1,29 @@
+<div class="timer">
+  <p>Exam Duration :</p>
+  <input 
+    type="number" 
+    [(ngModel)]="hours" 
+    min="0" 
+    max="23" 
+    placeholder="hr" 
+    (ngModelChange)="updateDuration()"
+  >
+  <span>:</span>
+  <input 
+    type="number" 
+    [(ngModel)]="minutes" 
+    min="0" 
+    max="59" 
+    placeholder="min" 
+    (ngModelChange)="updateDuration()"
+  >
+  <span>:</span>
+  <input 
+    type="number" 
+    [(ngModel)]="seconds" 
+    min="0" 
+    max="59" 
+    placeholder="sec" 
+    (ngModelChange)="updateDuration()"
+  >
+</div>

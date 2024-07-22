@@ -1,4 +1,4 @@
-
+<div class="mt-12 container mx-auto"></div>
 <nav class="absolute w-full top-0 left-0 h-screen z-50 {{isSidebarShowing?'flex':'hidden'}}">
   <div class="bg-white w-full md:max-w-sm shadow-2xl">
       <div class="flex justify-end p-5">
@@ -95,11 +95,18 @@
 
   
   
-    <!-- Card Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <app-card *ngFor="let course of paginatedCourses" class="w-full" type="C" [input]="course"></app-card>
+    <div class="mt-12 container mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <ng-container *ngFor="let course of paginatedCourses">
+          <div class="col">
+            <app-card class="w-full" type="C" [input]="course"></app-card>
+            <!-- Replace 'app-card' with your actual component for displaying course details -->
+          </div>
+        </ng-container>
+      </div>
     </div>
-    
+
+   
     <div *ngIf="totalPages > 1" class="flex justify-center mt-8">
       <nav class="relative z-0 inline-flex shadow-sm rounded-md">
         <div class="-space-x-px bg-white py-3 px-6 flex items-center">
@@ -142,4 +149,6 @@
         </div>
       </nav>
     </div>
+
+  
     

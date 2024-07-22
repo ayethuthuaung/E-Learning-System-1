@@ -16,5 +16,6 @@ public class CourseModuleDto {
     private Lesson lesson;
     private String file;
     private MultipartFile fileInput;
+    private boolean done;
 
 }

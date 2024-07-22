@@ -17,6 +17,7 @@ export class AdminProfileComponent implements OnInit {
   email : string= '';
   loggedUser: any = '';
   id: number = 0;
+  isChangePasswordModalOpen = false;
   selectedFile: File | null = null;
 
   constructor(private userService: UserService, private location: Location) {}
@@ -93,7 +94,8 @@ export class AdminProfileComponent implements OnInit {
     this.location.back();
   }
 
-  changePassword(){
-    
+  openChangePasswordModal(): void {
+    this.isChangePasswordModalOpen = true;
   }
+  
 }

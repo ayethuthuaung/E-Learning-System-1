@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CourseService } from '../services/course.service';
 import { ChatRoomService } from '../services/chat-room.service';
 import { AuthService } from '../auth/auth.service';
@@ -7,12 +7,13 @@ import { Lesson } from '../models/lesson.model';
 import { Course } from '../models/course.model';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { log } from 'console';
 import { CourseModuleService } from '../services/course-module.service';
 import { UserCourseModuleService } from '../services/usercoursemodule.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExamList } from '../models/examList.model';
 import { ExamService } from '../services/exam.service';
+import { Location } from '@angular/common';
+
 
 @Component({
   selector: 'app-course-details',
@@ -50,8 +51,9 @@ export class CourseDetailsComponent implements OnInit {
     private courseService: CourseService,
     private courseModuleService: CourseModuleService,
     private userCourseModuleService:UserCourseModuleService,
-
-    private examService: ExamService
+    private cdr: ChangeDetectorRef,
+    private examService: ExamService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -97,7 +99,8 @@ export class CourseDetailsComponent implements OnInit {
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    }    
+    } 
+    
   }
 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
@@ -124,11 +127,15 @@ export class CourseDetailsComponent implements OnInit {
   fetchLessons(): void {
     console.log('Fetching lessons for course ID:', this.courseId);
     if (this.courseId) {
-      this.lessonService.getLessonsByCourseId(this.courseId).subscribe(
+      this.lessonService.getLessonsByCourseId(this.courseId,this.loggedUser.id).subscribe(
         (data) => {
           console.log('Fetched lessons:', data);
 
-          this.lessons = data;
+          this.lessons = data.map(lesson => ({
+            ...lesson,
+            modules: lesson.modules.sort((a, b) => a.id - b.id) // Sort modules by moduleId
+          }));
+  
           console.log(this.lessons);
           
           this.isDropdownOpen = new Array(this.lessons.length).fill(false);
@@ -143,6 +150,12 @@ export class CourseDetailsComponent implements OnInit {
   toggleDropdown(index: number) {
     this.isDropdownOpen[index] = !this.isDropdownOpen[index];
   }
+
+  expandAllLessons(): void {
+    const shouldExpand = this.isDropdownOpen.some(open => !open);
+    this.isDropdownOpen.fill(shouldExpand);
+  }
+
 
   viewVideoDetailClick(moduleId: number): void {
     if (this.course) {
@@ -174,19 +187,25 @@ viewQuestionFormClick(examId: number): void {
   // }
 }
 
-markAsDone(moduleId: number, index: number) {
+markAsDone(moduleId: number, lessonIndex: number): void {
+  if (!this.userId || !this.courseId) {
+    console.error('User ID or Course ID not available.');
+    return;
+  }
+
+  const lesson = this.lessons[lessonIndex];
+  const module = lesson.modules.find(m => m.id === moduleId);
+
+  if (!module || module.done) {
+    console.log(`Module ${moduleId} is already marked as done or not found.`);
+    return;
+  }
+
   this.userCourseModuleService.markModuleAsDone(this.userId, moduleId).subscribe(
-    (response) => {
-      console.log('Module marked as done:', response);
-      this.lessons.forEach((lesson, lessonIndex) => {
-        if (lessonIndex === index) {
-          lesson.modules.forEach((module: { id: number; done: boolean; }) => {
-            if (module.id === moduleId) {
-              module.done = true;
-            }
-          });
-        }
-      });
+    () => {
+      module.done = true;
+      localStorage.setItem(`module_${moduleId}_done`, 'true');
+      this.cdr.detectChanges();
     },
     (error: HttpErrorResponse) => {
       console.error('Error marking module as done:', error);
@@ -197,5 +216,9 @@ markAsDone(moduleId: number, index: number) {
       }
     }
   );
+}
+
+goBack() {
+  this.location.back();
 }
 }

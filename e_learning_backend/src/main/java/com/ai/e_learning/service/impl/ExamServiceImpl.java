@@ -164,6 +164,14 @@ public class ExamServiceImpl implements ExamService {
         return convertToDto(exam);
     }
 
+    @Override
+    public List<ExamListDto> getExamByLessonId(Long lessonId) {
+        Lesson lesson = EntityUtil.getEntityById(lessonRepository, lessonId, "Lesson");
+        List<Exam> exams= examRepository.findByLesson(lesson);
+        return DtoUtil.mapList(exams, ExamListDto.class,modelMapper);
+
+    }
+
 
     private Exam convertToEntity(ExamDto examDTO) {
         return modelMapper.map(examDTO, Exam.class);

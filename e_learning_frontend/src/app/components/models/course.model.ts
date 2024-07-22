@@ -17,11 +17,13 @@ export class Course {
   userId: number;
   status: string;
   user: User | undefined;
-
+  instructorName: string;
   instructorId: number; // Added property
   chatRoomId: number; // Added property
-  
-  createdAt:number;
+
+  acceptedAt: number;
+  createdAt: number;
+
   createdDate: string;
   completion: any;
   showDetails: any;
@@ -44,9 +46,12 @@ export class Course {
     this.status ='';
     this.instructorId = 1; // Initialized property
     this.chatRoomId = 1; // Initialized property
-    this.createdAt=1;
+
+    this.instructorName='';
+
     this.createdDate = '';
     this.createdAt = 0;
+    this.acceptedAt = 0;
 
   }
 }

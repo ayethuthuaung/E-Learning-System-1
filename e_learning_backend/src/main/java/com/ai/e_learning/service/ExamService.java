@@ -1,9 +1,6 @@
 package com.ai.e_learning.service;
 
-import com.ai.e_learning.dto.AnswerOptionDto;
-import com.ai.e_learning.dto.ExamCreationDto;
-import com.ai.e_learning.dto.ExamDto;
-import com.ai.e_learning.dto.QuestionDto;
+import com.ai.e_learning.dto.*;
 import com.ai.e_learning.model.AnswerOption;
 import com.ai.e_learning.model.Exam;
 import com.ai.e_learning.model.Question;
@@ -40,4 +37,5 @@ public interface ExamService {
      ExamDto getExamWithQuestions(Long examId);
 
 
+    List<ExamListDto> getExamByLessonId(Long lessonId);
 }

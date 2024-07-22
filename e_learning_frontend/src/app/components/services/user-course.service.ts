@@ -10,6 +10,7 @@ import { Course } from '../models/course.model';
 })
 export class UserCourseService {
   private baseURL = 'http://localhost:8080/api/user-course';
+  http: any;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -60,5 +61,6 @@ export class UserCourseService {
   getTrendingCourses(): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/trending-courses`);
   }
+  
 
 }

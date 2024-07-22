@@ -44,6 +44,7 @@ import { CreateModuleExamComponent } from './components/instructor/create-module
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
 import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
+import { FooterComponent } from './components/shared/footer/footer.component';
 
 
 
@@ -93,6 +94,7 @@ const routes: Routes = [
    {path:'course-detail/:id', component: CourseDetailsComponent},
 
    {path:'course-video-view/:moduleId', component: CourseVideoViewComponent},
+   //{ path: 'course/:courseId/module/:id', component: CourseVideoViewComponent },
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
    {path:'instructor/student', component: InstructorStudentComponent},
@@ -100,6 +102,7 @@ const routes: Routes = [
 
    {path:'question-form/:examId', component: StudentQuestionFormComponent},
    {path:'all-courses', component: AllCoursesComponent},
+
 ];
 
 

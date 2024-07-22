@@ -22,6 +22,7 @@ export class NavProfileComponent implements OnInit{
       console.log(this.loggedUser);
 
       if (this.loggedUser) {
+        this.photo = this.loggedUser.photo;
         this.roles = this.loggedUser.roles;
 
         // Access role IDs

@@ -36,7 +36,7 @@ export class AdminCreateModuleExamComponent implements OnInit{
   lessonId: number = -1;
   lessons :Lesson[] =[];
   lesson!: { title: ''; };
-  modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false}];
+  modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
 
 
   isSidebarOpen = true;
@@ -83,7 +83,7 @@ examForm: any;
   }
 
   addModule() {
-    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done:false }); // Initialize File as null
+    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done:false, createdAt: Date.now()}); // Initialize File as null
     console.log(this.modules);
     
   }

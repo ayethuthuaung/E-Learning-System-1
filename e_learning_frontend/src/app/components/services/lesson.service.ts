@@ -25,13 +25,17 @@ getAllLessons(): Observable<Lesson[]> {
   return this.http.get<Lesson[]>(`${this.baseUrl}/getAllLessons`);
 }
 
-getLessonsByCourseId(courseId: number): Observable<Lesson[]> {
+getLessonsByCourseId(courseId: number,userId:number): Observable<Lesson[]> {
   console.log(`Fetching lessons for course ID: ${courseId}`);
-  return this.http.get<Lesson[]>(`${this.baseUrl}/getLesonsByCourse/${courseId}`);
+  return this.http.get<Lesson[]>(`${this.baseUrl}/getLessonsByCourse/${courseId}/user/${userId}`);
 }
 
 getLessonById(lessonId: number): Observable<Lesson> {
   return this.http.get<Lesson>(`${this.baseUrl}/${lessonId}`);
+}
+
+deleteLesson(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.baseUrl}/${id}`);
 }
 
 }

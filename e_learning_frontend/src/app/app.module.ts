@@ -113,6 +113,8 @@ import { StudentQuestionFormComponent } from './components/student/student-profi
 import { UserCourseModuleService } from './components/services/usercoursemodule.service';
 import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
 import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
+import { TimerComponent } from './components/shared/timer/timer.component';
+import { ChangePasswordModalComponent } from './components/change-password-modal/change-password-modal.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
@@ -219,7 +221,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     ClickOutsideDirective,
     StudentQuestionFormComponent,
     AdminProfileComponent,
-    AdminCreateModuleExamComponent
+    AdminCreateModuleExamComponent,
+    TimerComponent,
+    ChangePasswordModalComponent
   ],
   imports: [
     BrowserModule,

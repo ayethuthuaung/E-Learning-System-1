@@ -19,49 +19,63 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class CourseModuleController {
-    private final CourseModuleService courseModuleService;
+  private final CourseModuleService courseModuleService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CourseModuleDto> getModuleById(@PathVariable Long id) {
-        CourseModuleDto courseModuleDto = courseModuleService.getModuleById(id);
-        return ResponseEntity.ok(courseModuleDto);
+  @GetMapping("/{id}")
+  public ResponseEntity<CourseModuleDto> getModuleById(@PathVariable Long id) {
+    CourseModuleDto courseModuleDto = courseModuleService.getModuleById(id);
+    return ResponseEntity.ok(courseModuleDto);
+  }
+
+  @PostMapping("/createModules")
+  public ResponseEntity<Map<String, String>> createModules(
+    @RequestPart("modules") List<CourseModuleDto> courseModuleDtos,
+    @RequestPart("files") List<MultipartFile> fileInputs) {
+
+    try {
+      courseModuleService.createModules(courseModuleDtos, fileInputs);
+      Map<String, String> response = new HashMap<>();
+      response.put("message", "CourseModules created successfully");
+      return ResponseEntity.ok(response);
+    } catch (IOException | GeneralSecurityException e) {
+      Map<String, String> response = new HashMap<>();
+      response.put("error", "Failed to create modules");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-
-    @PostMapping("/createModules")
-    public ResponseEntity<Map<String, String>> createModules(
-            @RequestPart("modules") List<CourseModuleDto> courseModuleDtos,
-            @RequestPart("files") List<MultipartFile> fileInputs) {
-
-        try {
-            courseModuleService.createModules(courseModuleDtos, fileInputs);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Modules created successfully");
-            return ResponseEntity.ok(response);
-        } catch (IOException | GeneralSecurityException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Failed to create modules");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
+  }
 
 
+  @PutMapping("/{id}")
+  public ResponseEntity<CourseModuleDto> updateModule(@PathVariable Long id,
+                                                      @RequestPart("module") CourseModuleDto courseModuleDto,
+                                                      @RequestPart("file") MultipartFile fileInput) {
+    courseModuleDto.setFileInput(fileInput);
+    CourseModuleDto updatedModule = courseModuleService.updateModule(id, courseModuleDto);
+    return ResponseEntity.ok(updatedModule);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteModule(@PathVariable Long id) {
+    courseModuleService.deleteModule(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping
+  public ResponseEntity<List<CourseModuleDto>> getAllModules() {
+    List<CourseModuleDto> modules = courseModuleService.getAllModules();
+    return ResponseEntity.ok(modules);
+  }
+
+  @GetMapping("/completion-percentage")
+  public Double getCompletionPercentage(@RequestParam Long userId, @RequestParam Long courseId) {
+    return courseModuleService.calculateCompletionPercentage(userId, courseId);
+  }
+
+  @GetMapping("/byLesson/{lessonId}")
+  public ResponseEntity<List<CourseModuleDto>> getModulesByLessonId(@PathVariable Long lessonId) {
+    List<CourseModuleDto> modules = courseModuleService.getModulesByLessonId(lessonId);
+    return ResponseEntity.ok(modules);
+  }
 
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CourseModuleDto> updateModule(@PathVariable Long id, @RequestBody CourseModuleDto courseModuleDto) {
-        CourseModuleDto updatedModule = courseModuleService.updateModule(id, courseModuleDto);
-        return ResponseEntity.ok(updatedModule);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteModule(@PathVariable Long id) {
-        courseModuleService.deleteModule(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<CourseModuleDto>> getAllModules() {
-        List<CourseModuleDto> modules = courseModuleService.getAllModules();
-        return ResponseEntity.ok(modules);
-    }
 }

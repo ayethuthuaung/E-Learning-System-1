@@ -4,7 +4,7 @@ import { Course } from '../../models/course.model';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 import { WebSocketService } from '../../services/websocket.service';
-
+import { orderBy } from 'lodash';
 
 @Component({
   selector: 'app-admin-course-list',
@@ -18,6 +18,11 @@ export class AdminCourseListComponent implements OnInit {
   statusFilter = 'all';
   selectedCourse: Course | null = null;
   activeTab: string = 'courseList';
+
+  sortKey: string = '';
+  sortDirection: string = 'asc';
+  filterTerm = '';
+  filterKey = '';
 
   itemsPerPage = 10;
   currentPage = 1;
@@ -121,14 +126,36 @@ export class AdminCourseListComponent implements OnInit {
     }
   }
 
+  onSortChange(key: string, direction: string) {
+    this.sortKey = key;
+    this.sortDirection = direction;
+    this.updatePaginatedCourses();
+  }
+
+  onFilterChange(event: { key: string, term: string }) {
+    this.filterKey = event.key;
+    this.filterTerm = event.term;
+    this.updatePaginatedCourses();
+  }
+
   updatePaginatedCourses() {
-    const filteredCourses = this.courses.filter(course =>
+    let filteredCourses = this.courses.filter(course =>
       course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       course.level.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       course.duration.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       (course.user && course.user.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
     );
+
+    if (this.sortKey && (this.sortDirection === 'asc' || this.sortDirection === 'desc')) {
+      filteredCourses = orderBy(filteredCourses, [this.sortKey], [this.sortDirection as 'asc' | 'desc']);
+    }
+    if (this.filterKey && this.filterTerm) {
+      filteredCourses = filteredCourses.filter(course =>
+        (course as any)[this.filterKey].toLowerCase().includes(this.filterTerm.toLowerCase())
+      );
+    }
+
 
     this.totalPages = Math.ceil(filteredCourses.length / this.itemsPerPage);
     const start = (this.currentPage - 1) * this.itemsPerPage;

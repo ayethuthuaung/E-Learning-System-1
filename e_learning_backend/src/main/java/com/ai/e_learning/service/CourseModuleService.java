@@ -13,4 +13,11 @@ public interface CourseModuleService {
     CourseModuleDto updateModule(Long id, CourseModuleDto courseModuleDto);
     void deleteModule(Long id);
     List<CourseModuleDto> getAllModules();
+  Long countDoneModulesByUserAndCourse(Long userId, Long courseId);
+
+  Long countTotalModulesByCourse(Long courseId);
+
+  Double calculateCompletionPercentage(Long userId, Long courseId);
+
+    List<CourseModuleDto> getModulesByLessonId(Long lessonId);
 }

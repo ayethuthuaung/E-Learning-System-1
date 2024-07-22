@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Course } from '../../models/course.model';
+import { Course } from '../../models/course.model'; // Ensure Course model includes instructorName
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
 import { UserCourseService } from '../../services/user-course.service';
+import { CourseModuleService } from '../../services/course-module.service';
 
 @Component({
   selector: 'app-student-profile',
@@ -21,12 +22,14 @@ export class StudentProfileComponent implements OnInit {
   selectedFile: File | null = null;
   selectedCourse?: Course;
   enrolledCourses: Course[] = [];
+  coursePercentages: { [courseId: number]: number } = {};
 
   constructor(
     private router: Router,
     private courseService: CourseService,
     private userService: UserService,
-    private userCourseService: UserCourseService
+    private userCourseService: UserCourseService,
+    private courseModuleService: CourseModuleService
   ) { }
 
   ngOnInit(): void {
@@ -39,7 +42,6 @@ export class StudentProfileComponent implements OnInit {
         this.department = this.loggedUser.department;
         this.division = this.loggedUser.division;
         this.id = this.loggedUser.id;
-        console.log(this.id);
         this.fetchEnrolledCourses();
       }
     }
@@ -50,20 +52,27 @@ export class StudentProfileComponent implements OnInit {
       this.userCourseService.getCoursesByUserId(this.id).subscribe({
         next: (courses) => {
           this.enrolledCourses = courses;
+          this.fetchCoursePercentages(); // Call this method after fetching courses
         },
         error: (e) => console.log(e)
       });
     }
   }
 
+  fetchCoursePercentages(): void {
+    this.enrolledCourses.forEach(course => {
+      this.courseModuleService.getCompletionPercentage(this.loggedUser.id, course.id).subscribe({
+        next: (percentage) => {
+          console.log(`Fetched percentage for course ${course.id}: ${percentage}`);
+          this.coursePercentages[course.id] = percentage;
+        },
+        error: (e) => console.log(e)
+      });
+    });
+  }
   onFileSelected(event: any): void {
-    console.log("Hi");
-
     const file: File = event.target.files[0];
-    console.log(file);
-
     if (file) {
-      console.log("Hi");
       this.selectedFile = file;
       this.updateProfile();
     }
@@ -80,7 +89,6 @@ export class StudentProfileComponent implements OnInit {
         },
         error => {
           console.error('Error updating profile:', error);
-          // Handle error response
         }
       );
     }
@@ -106,9 +114,9 @@ export class StudentProfileComponent implements OnInit {
   }
 
   viewCourse(course: Course): void {
-    this.selectedCourse = course; // Assign the selected course to selectedCourse property
+    this.selectedCourse = course;
     if (this.selectedCourse) {
       this.router.navigate(['/course-detail', this.selectedCourse.id]);
     }
-}
+  }
 }

@@ -1,8 +1,6 @@
 package com.ai.e_learning.controllers;
 
-import com.ai.e_learning.dto.ExamCreationDto;
-import com.ai.e_learning.dto.ExamDto;
-import com.ai.e_learning.dto.QuestionCreationDto;
+import com.ai.e_learning.dto.*;
 import com.ai.e_learning.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -80,4 +78,10 @@ public ResponseEntity<ExamDto> getExamWithQuestions(@PathVariable("examId") Long
     ExamDto examDTO = examService.getExamWithQuestions(examId);
     return ResponseEntity.ok(examDTO);
 }
+
+    @GetMapping("/byLesson/{lessonId}")
+    public ResponseEntity<List<ExamListDto>> getExamByLessonId(@PathVariable Long lessonId) {
+        List<ExamListDto> exams = examService.getExamByLessonId(lessonId);
+        return ResponseEntity.ok(exams);
+    }
 }

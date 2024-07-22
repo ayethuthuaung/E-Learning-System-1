@@ -1,5 +1,6 @@
+import { ExamList } from './../../models/examList.model';
 import { CourseModuleService } from '../../services/course-module.service';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LessonService } from '../../services/lesson.service';
 import { ExamService } from '../../services/exam.service';
@@ -37,12 +38,20 @@ export class CreateModuleExamComponent implements OnInit{
   lessonId: number = -1;
   lessons :Lesson[] =[];
   lesson!: { title: ''; };
-  modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false}];
+  modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+  moduleList: Module[]=[];
 
 
   isSidebarOpen = true;
   activeTab: string = 'createModule';
 examForm: any;
+
+loading = false;
+currentModuleIndex: number = -1;
+isEditing: boolean = false;
+
+@ViewChild('formRef') formRef!: ElementRef;
+
 
  //Create Exam
  examId: number = 1; // Example exam ID
@@ -50,6 +59,8 @@ examForm: any;
  examDescription: string= '';
  examDuration: string= '';
  formDescription: string = 'Please fill out this form';
+ examList: ExamList[]=[];
+
 
  questions: Question[] = [
    {
@@ -66,12 +77,14 @@ examForm: any;
 
 
 
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
     private lessonService: LessonService,
     private examService: ExamService,
     private courseModuleService:CourseModuleService,
     private location: Location,
-    private router:Router
+    private router:Router,
+    private cdr: ChangeDetectorRef
    ) {}
 
    ngOnInit(): void {
@@ -80,11 +93,27 @@ examForm: any;
 
     if (lessonIdParam !== null) {
       this.lessonId = +lessonIdParam; // Convert courseIdParam to number if not null
+      this.loadModulesByLessonId(this.lessonId);
+      this.loadExamByLessonId(this.lessonId);
     }
   }
 
+  loadModulesByLessonId(lessonId: number) {
+    this.courseModuleService.getModulesByLessonId(lessonId).subscribe(
+      modules => {
+        this.moduleList = modules;
+        
+      },
+      error => {
+        console.error('Error fetching modules:', error);
+        // Handle error
+      }
+    );
+  }
+
+
   addModule() {
-    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done:false }); // Initialize File as null
+    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done:false, createdAt: Date.now()}); // Initialize File as null
     console.log(this.modules);
     
   }
@@ -95,56 +124,149 @@ examForm: any;
     
   }
 
+  editModule(index: number) {
+    this.currentModuleIndex = index;
+    const module = this.moduleList[index];
+    this.modules[0].name = module.name;
+    this.modules[0].id = module.id;
+    this.isEditing = true;
+    this.cdr.detectChanges(); // Ensure the view is updated before scrolling
+    this.scrollToTop();  
+  }
 
-  onSubmit(lessonForm: any) {
-    if (lessonForm.valid) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'Do you want to submit these modules?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, submit!',
-        cancelButtonText: 'No, cancel',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const formData = new FormData();
-        const modulesData: any[] = [];
-
-        this.modules.forEach((module, index) => {
-          const moduleData = {
-            name: module.name,
-            lessonId: this.lessonId.toString(),
-          };
-          modulesData.push(moduleData);
-          if (module.fileInput) {
-            formData.append('files', module.fileInput);
-          }
-        });
-
-        formData.append('modules', new Blob([JSON.stringify(modulesData)], { type: 'application/json' }));
-        console.log("FormData content before sending:", formData);
-
-
-          this.courseModuleService.createModules(formData).subscribe(
-            (response) => {
-              console.log('Modules Created:', response);
-              Swal.fire('Success!', response.message, 'success');
-            },
-            (error) => {
-              console.error('Error creating modules:', error);
-              Swal.fire('Error!', error.error.error, 'error');
-            }
-          );
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          Swal.fire('Cancelled', 'Module creation cancelled.', 'info');
-        }
-      });
+  scrollToTop(): void {
+    const formElement = document.querySelector('#moduleExamTop');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
-  
-  
 
+  onSubmit(lessonForm: any) {
+    if (this.currentModuleIndex !== -1) {      
+      const updatedModule = this.modules[0];
+      Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to update this module?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const formData = new FormData();
+        const moduleData = {
+          name: updatedModule.name,
+          lessonId: this.lessonId.toString(),
+        };
 
+        if (updatedModule.fileInput) {
+          formData.append('file', updatedModule.fileInput);
+        }
+        formData.append('module', new Blob([JSON.stringify(moduleData)], { type: 'application/json' }));
+
+      this.courseModuleService.updateModule(this.moduleList[this.currentModuleIndex].id, formData).subscribe(
+        updated => {
+          this.moduleList[this.currentModuleIndex] = updated;
+          Swal.fire('Updated!', 'The module has been updated.', 'success');
+          this.currentModuleIndex = -1;
+          this.isEditing = false;
+          lessonForm.resetForm();
+          this.modules = [];
+          this.modules = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+
+          this.loadModulesByLessonId(this.lessonId);
+        },
+        error => {
+          console.error('Error updating module:', error);
+          Swal.fire('Error!', 'Failed to update the module.', 'error');
+        }
+      );
+    }
+  });
+    } else {
+      if (lessonForm.valid) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'Do you want to submit these modules?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, submit!',
+          cancelButtonText: 'No, cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (this.loading) return; // Prevent multiple submissions
+            this.loading = true;
+    
+            const formData = new FormData();
+            const modulesData: any[] = [];
+    
+            this.modules.forEach((module, index) => {
+              const moduleData = {
+                name: module.name,
+                lessonId: this.lessonId.toString(),
+              };
+              modulesData.push(moduleData);
+              if (module.fileInput) {
+                formData.append('files', module.fileInput);
+              }
+            });
+    
+            formData.append('modules', new Blob([JSON.stringify(modulesData)], { type: 'application/json' }));
+            console.log("FormData content before sending:", formData);
+    
+            this.courseModuleService.createModules(formData).subscribe(
+              (response) => {
+                this.loading = true; // Reset loading state
+                console.log('Modules Created:', response);
+                if (response.body.message === 'CourseModules created successfully') {
+                  console.log("Hi");
+                  
+                  this.loading = false;
+                  Swal.fire('Success!', response.message, 'success');
+  
+                }
+                lessonForm.resetForm();
+                this.modules = [];
+                this.modules = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+  
+                this.loadModulesByLessonId(this.lessonId);
+              },
+              (error) => {
+                this.loading = false; // Reset loading state
+                console.error('Error creating modules:', error);
+                Swal.fire('Error!', error.error.error, 'error');
+              }
+            );
+          }
+        });
+      }    
+    }
+   
+  }
+  
+  deleteModule(moduleId: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this module?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.courseModuleService.deleteModule(moduleId).subscribe(
+          () => {
+            this.moduleList = this.moduleList.filter(module => module.id !== moduleId);
+            Swal.fire('Deleted!', 'The module has been deleted.', 'success');
+          },
+          error => {
+            console.error('Error deleting module:', error);
+            Swal.fire('Error!', 'Failed to delete the module.', 'error');
+          }
+        );
+      }
+    });
+  }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
@@ -208,46 +330,109 @@ examForm: any;
     });
   }
 
-  onSubmitExam(examForm: any) {
-    const examCreationDto: ExamCreationDto = {
-      lessonId: this.lessonId,
-
-      title: this.examTitle,
-      description: this.examDescription,
-      duration: this.examDuration,
-      questionList: this.questions.map(question => ({
-        content: question.text,
-        questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
-        answerList: question.options.map(option => ({
-          answer: option.label,
-          isAnswered: option.isAnswered
-        } as AnswerOptionDTO)),
-        marks: question.marks
-      } as QuestionDto))
-    };
-
-    this.examService.createExam(examCreationDto)
-      .subscribe(response => {
-        console.log('Form submitted successfully', response);
-        // this.checkAnswers(response);
-        // this.showResults = true; // Show the results
-      }, error => {
-        console.error('Error submitting form', error);
-      });
+  loadExamByLessonId(lessonId: number) {
+    this.examService.getExamByLessonId(lessonId).subscribe(
+      exams => {
+        this.examList = exams;
+        
+      },
+      error => {
+        console.error('Error fetching modules:', error);
+        // Handle error
+      }
+    );
   }
 
-  // checkAnswers(response: any) {
-  //   this.questions.forEach((question, qIndex) => {
-  //     question.correctAnswer = response.questionList[qIndex].correctAnswer; // Assuming the correct answer is provided in the response
-  //     question.options.forEach(option => {
-  //       option.isCorrect = option.isAnswered && (option.label === question.correctAnswer);
-  //     });
-  //   });
-  // }
+  onSubmitExam(examForm: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to submit this exam?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, submit!',
+      cancelButtonText: 'No, cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const examCreationDto: ExamCreationDto = {
+          lessonId: this.lessonId,
+          title: this.examTitle,
+          description: this.examDescription,
+          duration: this.examDuration,
+          questionList: this.questions.map(question => ({
+            content: question.text,
+            questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
+            answerList: question.options.map(option => ({
+              answer: option.label,
+              isAnswered: option.isAnswered
+            } as AnswerOptionDTO)),
+            marks: question.marks
+          } as QuestionDto))
+        };
+
+        this.examService.createExam(examCreationDto).subscribe(
+          (response) => {
+            console.log('Exam submitted successfully', response);
+            Swal.fire('Success!', 'The exam has been submitted successfully.', 'success');
+                this.examTitle= '';  
+                this.examDescription='';
+                this.examDuration = '';
+                 this.questions = [];
+                this.questions = [
+                  {
+                    text: '',
+                    type: 'multiple-choice',
+                    options: [
+                      { label: 'Option 1', value: 'option1', isAnswered: false }
+                    ],
+                    marks:0
+                  }
+                ];
+                this.loadExamByLessonId(this.lessonId);
+                 
+          },
+          (error) => {
+            console.error('Error submitting exam', error);
+            Swal.fire('Error!', 'There was an error submitting the exam.', 'error');
+          }
+        );
+      } 
+    });
+  }
+
+  deleteExam(examId: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this exam?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.examService.deleteExam(examId).subscribe(
+          () => {
+            this.examList = this.examList.filter(exam => exam.id !== examId);
+            Swal.fire('Deleted!', 'The exam has been deleted.', 'success');
+          },
+          error => {
+            console.error('Error deleting exam:', error);
+            Swal.fire('Error!', 'Failed to delete the exam.', 'error');
+          }
+        );
+      }
+    });
+  }
 
   goBack() {
     this.location.back();
   }
+
+  onDurationChange(duration: string) {
+    console.log(duration);
+    
+    this.examDuration = duration;
+  }
+
 
 
  }
