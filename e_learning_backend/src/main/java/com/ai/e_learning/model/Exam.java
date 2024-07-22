@@ -27,6 +27,10 @@ public class Exam {
 
     private String duration;
 
+    private boolean finalExam;
+
+    private double passScore;
+
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Question> questions = new LinkedHashSet<>();

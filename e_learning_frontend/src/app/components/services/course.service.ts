@@ -44,8 +44,8 @@ export class CourseService {
     return this.http.put<Course>(`${this.baseUrl}/updatecourse/${id}`, formData);
   }
 
-  softDeleteCourse(id: number): Observable<Object> {
-    return this.http.delete(`${this.baseUrl}/delete/${id}`);
+  softDeleteCourse(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
   getCoursesByCategory(categoryId: number): Observable<Course[]> {
@@ -63,6 +63,10 @@ export class CourseService {
   }
   getLatestAcceptedCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/latestAccepted`);
+  }
+
+  getCourseIdByLessonId(lessonId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/lessons/${lessonId}/courseId`);
   }
   
  

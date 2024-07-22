@@ -91,6 +91,8 @@ public class CourseModuleServiceImpl implements CourseModuleService {
     CourseModule existingModule = EntityUtil.getEntityById(courseModuleRepository, id, "CourseModule");
 //    System.out.println(existingModule);
     if(courseModuleDto.getFileInput() == null){
+      System.out.println("Hi");
+      System.out.println(existingModule.getFile());
       courseModuleDto.setFile(existingModule.getFile());
     }else{
       MultipartFile fileInput = courseModuleDto.getFileInput();
@@ -116,8 +118,8 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
       courseModuleDto.setFile(fileUrl);
 
-
     }
+    courseModuleDto.setCreatedAt(existingModule.getCreatedAt());
     courseModuleDto.setLesson(existingModule.getLesson());
     courseModuleDto.setId(id);
 //    courseModuleDto.setName(existingModule.getName());

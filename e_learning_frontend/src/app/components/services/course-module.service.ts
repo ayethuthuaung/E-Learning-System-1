@@ -43,8 +43,8 @@ export class CourseModuleService {
     // });
 // }
 
-  updateModule(moduleId: number, formData : FormData): Observable<Module> {
-    return this.http.put<Module>(`${this.baseUrl}/${moduleId}`, formData);
+  updateModule(moduleId: number, formData : FormData): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${moduleId}`, formData);
   }
 
   deleteModule(moduleId: number): Observable<void> {

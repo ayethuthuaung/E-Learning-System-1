@@ -65,15 +65,16 @@
               class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue bg-white font-bold relative">
               <span>{{ lesson.title }}</span>
               <div class="flex space-x-2">
-                <button (click)="editLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400" >
+                <button (click)="editLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-green-100 hover:bg-green-300 text-green-800">
                   <i class="fa-solid fa-edit"></i>
                 </button>
-                <button (click)="deleteLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400">
+                <button (click)="deleteLesson(lesson.id)" class="flex justify-center items-center w-8 h-8 rounded-full bg-red-100 hover:bg-red-300 text-red-800">
                   <i class="fa-solid fa-trash"></i>
                 </button>
-                <button class="flex justify-center items-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-400" (click)="navigateToLesson(lesson.id)">
+                <button class="flex justify-center items-center w-8 h-8 rounded-full bg-purple-100 hover:bg-purple-300 text-purple-800" (click)="navigateToLesson(lesson.id)">
                   <i class="fa-solid fa-arrow-right"></i>
                 </button>
+                
               </div>
             </div>
           </li>

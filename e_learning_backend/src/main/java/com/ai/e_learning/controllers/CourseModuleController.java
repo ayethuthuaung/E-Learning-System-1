@@ -46,12 +46,23 @@ public class CourseModuleController {
 
 
   @PutMapping("/{id}")
-  public ResponseEntity<CourseModuleDto> updateModule(@PathVariable Long id,
+  public ResponseEntity<Map<String, String>> updateModule(@PathVariable Long id,
                                                       @RequestPart("module") CourseModuleDto courseModuleDto,
-                                                      @RequestPart("file") MultipartFile fileInput) {
-    courseModuleDto.setFileInput(fileInput);
-    CourseModuleDto updatedModule = courseModuleService.updateModule(id, courseModuleDto);
-    return ResponseEntity.ok(updatedModule);
+                                                      @RequestPart(value = "file",required = false) MultipartFile fileInput) {
+      courseModuleDto.setFileInput(fileInput);
+      CourseModuleDto updatedModule = courseModuleService.updateModule(id, courseModuleDto);
+    Map<String, String> response = new HashMap<>();
+
+    if(updatedModule != null) {
+
+        response.put("message", "CourseModules updated successfully");
+      System.out.println(response);
+      return ResponseEntity.ok(response);
+      }else {
+        response.put("message", "Failed to update CourseModule");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+      }
   }
 
   @DeleteMapping("/{id}")

@@ -4,6 +4,7 @@ import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,4 +35,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   @Query("SELECT c FROM Course c WHERE c.status = 'Accept' ORDER BY c.acceptedAt DESC ")
   List<Course> findLatestAcceptedCourses();
 
+  @Query("SELECT l.course.id FROM Lesson l WHERE l.id = :lessonId")
+  Long findCourseIdByLessonId(@Param("lessonId") Long lessonId);
+
+  List<Course> findByUserIdAndIsDeletedFalse(Long userId);
 }
