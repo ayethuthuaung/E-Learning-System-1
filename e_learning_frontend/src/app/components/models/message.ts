@@ -12,6 +12,7 @@ export class ChatMessage {
   messageType?: string; 
   file?: File;
   editMode?: boolean;
+  read?: boolean;
   
 
   constructor(chatRoomId: number, senderId: number, content: String,id:number,file?:File) {

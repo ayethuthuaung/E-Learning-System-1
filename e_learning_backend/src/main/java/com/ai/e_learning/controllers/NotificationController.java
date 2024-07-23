@@ -3,6 +3,7 @@ package com.ai.e_learning.controllers;
 import com.ai.e_learning.model.Notification;
 import com.ai.e_learning.model.Role;
 import com.ai.e_learning.model.User;
+import com.ai.e_learning.service.NotificationService;
 import com.ai.e_learning.service.impl.NotificationServiceImpl;
 import com.ai.e_learning.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class NotificationController {
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private NotificationServiceImpl notificationServiceImpl;
+    private NotificationService notificationServiceImpl;
 
     @Autowired
     private RoleService roleService;

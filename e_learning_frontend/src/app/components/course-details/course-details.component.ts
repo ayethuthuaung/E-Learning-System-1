@@ -13,6 +13,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ExamList } from '../models/examList.model';
 import { ExamService } from '../services/exam.service';
 import { Location } from '@angular/common';
+import { UnreadMessageService } from '../services/unread-message.service';
+import { WebSocketService } from '../services/websocket.service';
 
 
 @Component({
@@ -40,6 +42,7 @@ export class CourseDetailsComponent implements OnInit {
   exam: ExamList | undefined;
 
   isOwner: boolean = false;
+  unreadMessageCount: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,10 +56,15 @@ export class CourseDetailsComponent implements OnInit {
     private userCourseModuleService:UserCourseModuleService,
     private cdr: ChangeDetectorRef,
     private examService: ExamService,
-    private location: Location
+    private location: Location,
+    private unreadMessageService: UnreadMessageService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
+    this.unreadMessageService.unreadMessageCount$.subscribe(count => {
+      this.unreadMessageCount = count;
+    });
     this.route.paramMap.subscribe(params => {
       this.courseId = +params.get('id')!;
 
@@ -107,9 +115,28 @@ export class CourseDetailsComponent implements OnInit {
 
   toggleChatRoom(): void {
     if (!this.chatRoomVisible) {
-      this.createChatRoom();
+      // Check if the chat room already exists
+      if (!this.chatRoomId) {
+        this.createChatRoom();
+      }
     }
     this.chatRoomVisible = !this.chatRoomVisible;
+
+    if (this.chatRoomVisible) {
+      // Mark all messages as read when the chat room is opened
+      if (this.chatRoomId) {
+        this.webSocketService.updateAllMessagesReadStatus(this.chatRoomId).subscribe(
+          () => {
+            // Successfully marked all messages as read
+            this.unreadMessageCount = 0; // Reset unread message count
+            this.unreadMessageService.setUnreadMessageCount(this.unreadMessageCount);
+          },
+          (error) => {
+            console.error('Error marking all messages as read:', error);
+          }
+        );
+      }
+    }
   }
 
   createChatRoom(): void {
@@ -221,4 +248,6 @@ markAsDone(moduleId: number, lessonIndex: number): void {
 goBack() {
   this.location.back();
 }
+
+
 }
