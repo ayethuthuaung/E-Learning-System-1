@@ -14,6 +14,7 @@ public class LessonDto {
     private  Long id, courseId;
     private String title;
     private Course course;
+    private boolean userComplete;
     private List<CourseModuleDto> modules;
     private List<ExamListDto> examListDto;
 }

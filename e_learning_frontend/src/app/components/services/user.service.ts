@@ -76,8 +76,9 @@ checkExamOwner(userId: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.baseURL}/checkExamOwner`, {
     params: { userId: userId.toString() }
   });
+  console.log(userId);
+  
 }
 
- 
 }
 

@@ -1,3 +1,4 @@
+import { CourseService } from '../../services/course.service';
 import { UserCourse } from './../../models/usercourse.model';
 import { UserCourseService } from './../../services/user-course.service';
 import { Component, OnInit } from '@angular/core';
@@ -24,12 +25,14 @@ export class InstructorStudentComponent implements OnInit {
 
   loggedUser: any = '';
   userId: any;
-
   sortKey: string = '';
 sortDirection: string = 'asc';
 
+  constructor(private userCourseService: UserCourseService,private courseService: CourseService) {}
+  
 
-  constructor(private userCourseService: UserCourseService) {}
+
+  
 
   ngOnInit() {
  
@@ -48,7 +51,28 @@ sortDirection: string = 'asc';
     }
     this.fetchAllStudentByCourse();
   }
+  exportCoursesByInstructorToPdf(instructorId: number): void {
+    this.courseService.exportCoursesByInstructorToPdf(instructorId).subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `courses_${instructorId}.pdf`;
+      link.click();
+    }, error => {
+      console.error('Error exporting courses to PDF:', error);
+    });
+  }
 
+  exportCoursesByInstructor(instructorId: number): void {
+    this.courseService.exportCoursesByInstructor(instructorId).subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `courses_${instructorId}.xls`;
+      link.click();
+    }, error => {
+      console.error('Error exporting courses:', error);
+    });
+  }
+  
   fetchAllStudentByCourse() {
     console.log(this.userId);
     console.log(this.loggedUser.id);

@@ -43,6 +43,8 @@ public class ExamServiceImpl implements ExamService {
             exam.setTitle(examCreationDto.getTitle());
             exam.setDescription(examCreationDto.getDescription());
             exam.setDuration(examCreationDto.getDuration());
+            exam.setFinalExam(examCreationDto.isFinalExam());
+            exam.setPassScore(examCreationDto.getPassScore());
             exam.setDeleted(false);
             exam.setLesson(lesson);
             Exam savedExam = EntityUtil.saveEntity(examRepository, exam, "Exam");

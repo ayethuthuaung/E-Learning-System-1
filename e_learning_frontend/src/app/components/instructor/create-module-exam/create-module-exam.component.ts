@@ -54,6 +54,9 @@ loading = false;
 currentModuleIndex: number = -1;
 isEditing: boolean = false;
 
+course: Course | undefined;
+
+
 @ViewChild('formRef') formRef!: ElementRef;
 
 
@@ -62,6 +65,8 @@ isEditing: boolean = false;
  examTitle: string='';
  examDescription: string= '';
  examDuration: string= '';
+ examFinal: boolean = false;
+ examPassScore: number = 0;
  formDescription: string = 'Please fill out this form';
  examList: ExamList[]=[];
 
@@ -101,7 +106,9 @@ isEditing: boolean = false;
       this.loadModulesByLessonId(this.lessonId);
       this.loadExamByLessonId(this.lessonId);
        this.getCourseId(this.lessonId);
+       
     }
+
   }
 
   loadModulesByLessonId(lessonId: number) {
@@ -180,6 +187,7 @@ isEditing: boolean = false;
           console.log(response);
           
           this.loading = true;
+          
           // this.moduleList[this.currentModuleIndex] = response;
           if (response.message === 'CourseModules updated successfully') {                  
             this.loading = false;
@@ -235,13 +243,15 @@ isEditing: boolean = false;
     
             this.courseModuleService.createModules(formData).subscribe(
               (response) => {
-                this.loading = true; // Reset loading state
+                this.loading = true;
+                console.log(this.loading);
+
                 console.log('Modules Created:', response);
-                if (response.message === 'CourseModules created successfully') {                  
+                if (response.body.message === 'CourseModules created successfully') {                
                   this.loading = false;
                   Swal.fire('Success!', response.message, 'success');
-  
                 }
+
                 moduleForm.resetForm();
                 this.modules = [];
                 this.modules = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
@@ -375,6 +385,8 @@ isEditing: boolean = false;
           title: this.examTitle,
           description: this.examDescription,
           duration: this.examDuration,
+          finalExam: this.examFinal,
+          passScore: this.examPassScore,
           questionList: this.questions.map(question => ({
             content: question.text,
             questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
@@ -454,11 +466,27 @@ isEditing: boolean = false;
     this.router.navigate(['/course-detail', this.courseId]);
   }
 
+  viewQuestionFormClick(examId: number): void {
+    // if (this.lesson?.examListDto.id) {
+      this.examService.getExamById(examId).subscribe(
+        (exam) => {
+          console.log("exam:", exam);
+          
+          this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+        },
+        (error) => {
+          console.error('Error fetching course video view', error);
+        }
+      );
+    // }
+  }
+
   getCourseId(lessonId: number): void {
     this.courseService.getCourseIdByLessonId(lessonId).subscribe(
       courseId => {
         console.log('Course ID:', courseId);
         this.courseId= courseId;
+        this.getCourseById(this.courseId);
       },
       error => {
         console.error('Error fetching course ID:', error);
@@ -466,5 +494,19 @@ isEditing: boolean = false;
     );
   }
 
+  getCourseById(courseId: number): void {
+    this.courseService.getCourseById(courseId).subscribe(
+      (data: Course) => {
+        this.course = data;
+        console.log(this.course.name);
+        
+      },
+      error => {
+        console.error('Error fetching course', error);
+      }
+    );
+  }
+
+ 
 
  }

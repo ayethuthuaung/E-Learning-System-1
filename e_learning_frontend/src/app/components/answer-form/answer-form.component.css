@@ -1,0 +1,13 @@
+.form-container {
+    margin: 20px;
+  }
+  .question {
+    margin-bottom: 20px;
+  }
+  .options-container {
+    margin-left: 20px;
+  }
+  .option {
+    margin-bottom: 10px;
+  }
+  

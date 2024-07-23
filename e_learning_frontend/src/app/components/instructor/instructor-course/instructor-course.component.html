@@ -118,7 +118,9 @@
                   <ng-container *ngIf="course.status === 'In Progress'">
                     <div
                       class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue bg-white font-bold relative">
-                      <span class="text-logo-blue font-bold">{{ course.name }} ({{ course.level }})</span>
+                      <span (click)="goToCourseDetails(course.id)" class="text-logo-blue font-bold cursor-pointer">
+                        {{ course.name }} ({{ course.level }})
+                      </span>                      
                       <span class="text-blue-400">{{ course.status }}</span>
                       <div class="flex space-x-2">
                         <button title="Request Admin" (click)="pendingCourse(course)"
@@ -133,9 +135,9 @@
                           class="flex justify-center items-center w-8 h-8 rounded-full bg-red-100 hover:bg-red-300 text-red-800">
                           <i class="fa-solid fa-trash"></i>
                         </button>
-                        <button (click)="navigateToCourse(course.id)"
+                        <button title="Go to Lesson" (click)="navigateToCourse(course.id)"
                           class="flex justify-center items-center w-8 h-8 rounded-full bg-purple-100 hover:bg-purple-300 text-purple-800">
-                          <i class="fa-solid fa-plus"></i>
+                          <i class="fa-solid fa-arrow-right"></i>
                         </button>
                       </div>
                     </div>

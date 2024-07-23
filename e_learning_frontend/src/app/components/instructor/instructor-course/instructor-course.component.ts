@@ -130,9 +130,29 @@ export class InstructorCourseComponent implements OnInit {
         this.course = new Course(); // Clear the form
         this.course.status = data.status; // Update local status with returned status
         this.course.photoFile = undefined; // Clear the photo input
-        this.course.categories = []; // Clear selected categories
-        this.showSuccessAlert();
-        this.setActiveTab("createCourse")
+        this.categoryList = []; // Clear selected categories
+        this.course.categories = []; // Clear selected categories in the course object
+        
+        // Clear checkboxes
+        this.categories.forEach(category => {
+          const checkbox = document.getElementById(`category_${category.id}`) as HTMLInputElement;
+          if (checkbox) {
+            checkbox.checked = false;
+          }
+        });
+  
+        // Clear file input
+        const photo = document.getElementById('photo') as HTMLInputElement;
+        if (photo) {
+          photo.value = '';
+        }
+
+        Swal.fire({
+          title: 'Success!',
+          text: 'Course created successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
       },
       (error) => {
         console.error('Error creating course:', error);
@@ -343,6 +363,7 @@ export class InstructorCourseComponent implements OnInit {
       }
     });
   }
+ 
 
   // Course List
   searchTerm = '';
@@ -429,5 +450,10 @@ filterTerm = '';
       this.updatePaginatedInstructorCourses();
     }
   }
+
+  goToCourseDetails(courseId: number): void {
+    this.router.navigate(['/course-detail', courseId]);
+  }
+
 
 }

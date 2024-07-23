@@ -48,6 +48,8 @@ examForm: any;
  examTitle: string='';
  examDescription: string= '';
  examDuration: string= '';
+ examFinal: boolean = false;
+ examPassScore: number = 0;
  formDescription: string = 'Please fill out this form';
 
  questions: Question[] = [
@@ -213,6 +215,8 @@ examForm: any;
       title: this.examTitle,
       description: this.examDescription,
       duration: this.examDuration,
+      finalExam: this.examFinal,
+      passScore: this.examPassScore,
       questionList: this.questions.map(question => ({
         content: question.text,
         questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
