@@ -43,7 +43,7 @@
             type="button"
             (click)="expandAllLessons()"            
             class="bg-gray-100 hover:bg-gray-400 text-logo-blue font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-            Expand All
+            {{ expandAllText }}
           </button>
       <!-- <button (click)="expandAllLessons()" class="text-md font-bold text-logo-blue">Expand All Lessons</button> -->
     </div>
@@ -65,7 +65,7 @@
             <a [href]="module.file"  target="_blank" class=" hover:text-logo-blue">{{ module.name }}</a>
           </ng-container>  
         <div class="flex justify-end">
-            <button *ngIf="!isOwner"
+            <button *ngIf="!isOwner && !hasRole(2)"
                 id="mark-as-done-{{i}}"
                 (click)="markAsDone(module.id, i)"
                 class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700"
@@ -75,15 +75,21 @@
           </div>
         </div>
         
-          <div  *ngFor="let exam of lesson.examListDto" class="p-4 bg-gray-50 rounded-lg shadow flex items-center justify-between">
+          <div  *ngFor="let exam of lesson.examListDto" 
+          class="p-4 bg-gray-50 rounded-lg shadow flex items-center justify-between">
             <button (click)="viewQuestionFormClick(exam.id)" class=" hover:text-logo-blue">{{ exam.title }}</button>
-        <div class="flex justify-end">
-          </div>
           </div>
           
-        
+          
       </div>
     </div>
+    <br>
+    <ng-container *ngIf="showFinalExam">
+    <div  *ngFor="let exam of filteredExamList" 
+          class="p-4 bg-gray-300 rounded-lg shadow flex items-center justify-between">
+            <button (click)="viewQuestionFormClick(exam.id)" class="text-xl font-bold text-logo-blue hover:text-white">{{ exam.title }}</button>
+      </div>
+    </ng-container>
   </div>
 </div> 
 

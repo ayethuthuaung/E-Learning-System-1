@@ -8,6 +8,7 @@ export interface Lesson {
  courseId:number;
   title:string;
   file:string;
+  userComplete: boolean;
  modules:Module[];
  fileType: string; 
  examListDto: ExamList[];

@@ -15,6 +15,7 @@ public class LessonDto {
     private String title;
 
     private Course course;
+    private boolean userComplete;
     private List<CourseModuleDto> modules;
     private List<ExamListDto> examListDto;
 }

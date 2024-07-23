@@ -1,0 +1,30 @@
+<!-- form.component.html -->
+<div class="form-container">
+  <input type="text" [(ngModel)]="formTitle" placeholder="Form Title" class="form-title-input">
+  <textarea [(ngModel)]="formDescription" placeholder="Form Description" class="form-description-input"></textarea>
+
+  <div *ngFor="let question of questions; let qIndex = index" class="question">
+    <input type="text" [(ngModel)]="question.text" placeholder="Question Text" class="question-text-input">
+    
+    <select [(ngModel)]="question.type" class="question-type-select">
+      <option value="multiple-choice">Multiple Choice</option>
+      <option value="checkbox">Checkbox</option>
+    </select>
+
+    <div class="options-container">
+      <div *ngFor="let option of question.options; let oIndex = index" class="option">
+        <div class="option-label">
+          <input type="text" [(ngModel)]="option.label" placeholder="Option Label" class="option-label-input">
+        </div>
+        <div class="option-input">
+          <input *ngIf="question.type === 'multiple-choice'" type="radio" [id]="'q' + qIndex + 'o' + oIndex" [name]="'question' + qIndex" [value]="option.value">
+          <input *ngIf="question.type === 'checkbox'" type="checkbox" [id]="'q' + qIndex + 'o' + oIndex" [name]="'question' + qIndex" [value]="option.value">
+        </div>
+      </div>
+    </div>
+
+    <button (click)="addOption(qIndex)">Add option</button>
+  </div>
+  
+  <button (click)="addQuestion()">Add Question</button>
+</div>

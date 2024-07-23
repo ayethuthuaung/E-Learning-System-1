@@ -92,7 +92,10 @@ public class CourseModuleServiceImpl implements CourseModuleService {
   public CourseModuleDto updateModule(Long id, CourseModuleDto courseModuleDto) {
     CourseModule existingModule = EntityUtil.getEntityById(courseModuleRepository, id, "CourseModule");
 //    System.out.println(existingModule);
-    if (courseModuleDto.getFileInput() == null) {
+
+    if(courseModuleDto.getFileInput() == null){
+      System.out.println("Hi");
+      System.out.println(existingModule.getFile());
       courseModuleDto.setFile(existingModule.getFile());
     } else {
       MultipartFile fileInput = courseModuleDto.getFileInput();
@@ -118,8 +121,8 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
       courseModuleDto.setFile(fileUrl);
 
-
     }
+    courseModuleDto.setCreatedAt(existingModule.getCreatedAt());
     courseModuleDto.setLesson(existingModule.getLesson());
     courseModuleDto.setId(id);
 //    courseModuleDto.setName(existingModule.getName());
@@ -154,18 +157,37 @@ public class CourseModuleServiceImpl implements CourseModuleService {
     return courseModuleRepository.countTotalModulesByCourse(courseId);
   }
 
-  @Override
-  public Double calculateCompletionPercentage(Long userId, Long courseId) {
-    Long doneModules = countDoneModulesByUserAndCourse(userId, courseId);
-    Long totalModules = countTotalModulesByCourse(courseId);
+//  @Override
+//  public Double calculateCompletionPercentage(Long userId, Long courseId) {
+//    Long doneModules = countDoneModulesByUserAndCourse(userId, courseId);
+//    Long totalModules = countTotalModulesByCourse(courseId);
+//
+//    if (totalModules == 0) {
+//      return 0.0;
+//    }
+//
+//    return (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
+//  }
+@Override
+public Double calculateCompletionPercentage(Long userId, Long courseId) {
+  Long doneModules = courseModuleRepository.countDoneModulesByUserAndCourse(userId, courseId);
+  Long totalModules = courseModuleRepository.countTotalModulesByCourse(courseId);
 
-    if (totalModules == 0) {
-      return 0.0;
-    }
+  System.out.println("User ID: " + userId);
+  System.out.println("Course ID: " + courseId);
+  System.out.println("Done Modules: " + doneModules);
+  System.out.println("Total Modules: " + totalModules);
 
-    return (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
+  if (totalModules == 0) {
+    return 0.0;
   }
 
+
+  Double completionPercentage = (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
+  System.out.println("Completion Percentage: " + completionPercentage);
+
+  return completionPercentage;
+}
   @Override
   public Map<String, Map<String, Double>> getAllStudentsProgress() {
     List<UserCourse> userCourses = userCourseRepository.findAll();

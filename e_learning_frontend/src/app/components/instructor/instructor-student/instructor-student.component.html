@@ -13,6 +13,20 @@
             (ngModelChange)="onSearchChange()" 
           />
 
+          <!-- Export Courses Button -->
+          <button 
+            class="btn btn-primary ml-4"
+            (click)="exportCoursesByInstructor(userId)"
+          >
+            Excel
+          </button>
+          <button 
+            class="btn btn-primary ml-4"
+            (click)="exportCoursesByInstructorToPdf(userId)"
+          >
+           PDF
+          </button>
+
           <div class="pagination-controls flex items-center space-x-2">
             <button 
               (click)="firstPage()" 

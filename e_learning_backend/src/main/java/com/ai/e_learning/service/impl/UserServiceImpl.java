@@ -44,109 +44,119 @@ public class UserServiceImpl implements UserService {
 
 
     public void updateExcel(MultipartFile file) {
-      if (ExcelUploadService.isValidExcelFile(file)) {
-        try {
-          List<User> insert_user = new ArrayList<>();
-            ExcelUploadDto excelUploadDto = ExcelUploadService.getUserDataFromExcel(file.getInputStream());
-          List<User> users = excelUploadDto.getUserList();
-            List<String> roleList = excelUploadDto.getRoles();
+        if (ExcelUploadService.isValidExcelFile(file)) {
+            try {
+                List<User> insert_user = new ArrayList<>();
+                ExcelUploadDto excelUploadDto = ExcelUploadService.getUserDataFromExcel(file.getInputStream());
+                List<User> users = excelUploadDto.getUserList();
+                List<String> roleList = excelUploadDto.getRoles();
 
-          // Fetch all users from the database
-          List<User> allUsers = userRepository.findAll();
-
-
-            // Convert the list of users from the Excel file to a set of staff IDs
-          Set<String> uploadedStaffIds = users.stream()
-            .map(User::getStaffId)
-            .collect(Collectors.toSet());
-            int index = 0;
-          for (User user : users) {
-
-            User update_user = userRepository.findUserByStaffId(user.getStaffId());
-            if (update_user != null) {
-              if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
-                update_user.setDivision(user.getDivision());
-              } else {
-                update_user.setDivision(update_user.getDivision());
-              }
-
-              if (!update_user.getName().equalsIgnoreCase(user.getName())) {
-                update_user.setName(user.getName());
-              } else {
-                update_user.setName(update_user.getName());
-              }
-
-              if (update_user.getDoorLogNo() != user.getDoorLogNo()) {
-                update_user.setDoorLogNo(user.getDoorLogNo());
-              } else {
-                update_user.setDoorLogNo(update_user.getDoorLogNo());
-              }
-
-              if (!update_user.getDepartment().equalsIgnoreCase(user.getDepartment())) {
-                update_user.setDepartment(user.getDepartment());
-              } else {
-                update_user.setDepartment(update_user.getDepartment());
-              }
-
-              if (!update_user.getTeam().equalsIgnoreCase(user.getTeam())) {
-                update_user.setTeam(user.getTeam());
-              } else {
-                update_user.setTeam(update_user.getTeam());
-              }
-
-              if (!update_user.getStatus().equalsIgnoreCase(user.getStatus())) {
-                update_user.setStatus(user.getStatus());
-              } else {
-                update_user.setStatus(update_user.getStatus());
-              }
-
-              if (!update_user.getEmail().equalsIgnoreCase(user.getEmail())) {
-                update_user.setEmail(user.getEmail());
-              } else {
-                update_user.setEmail(update_user.getEmail());
-              }
+                // Fetch all users from the database
+                List<User> allUsers = userRepository.findAll();
 
 
-              if(update_user.getPassword().equalsIgnoreCase("")) {
-                update_user.setPassword(passwordEncoder.encode("123@dirace"));
-              }
-                System.out.println(roleList.get(index));
-                Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
+                // Convert the list of users from the Excel file to a set of staff IDs
+                Set<String> uploadedStaffIds = users.stream()
+                        .map(User::getStaffId)
+                        .collect(Collectors.toSet());
+                int index = 0;
+                for (User user : users) {
+                    System.out.println("User -> " + user.getName());
+
+                    User update_user = userRepository.findUserByStaffId(user.getStaffId());
+                    if (update_user != null) {
+                        System.out.println("<1> <1>");
+
+                        if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
+                            System.out.println("In null");
+                            update_user.setDivision(user.getDivision());
+                        } else {
+                            System.out.println("null In");
+                            update_user.setDivision(update_user.getDivision());
+                        }
+
+                        if (!update_user.getName().equalsIgnoreCase(user.getName())) {
+                            update_user.setName(user.getName());
+                        } else {
+                            update_user.setName(update_user.getName());
+                        }
+
+                        if (update_user.getDoorLogNo() != user.getDoorLogNo()) {
+                            update_user.setDoorLogNo(user.getDoorLogNo());
+                        } else {
+                            update_user.setDoorLogNo(update_user.getDoorLogNo());
+                        }
+
+                        if (!update_user.getDepartment().equalsIgnoreCase(user.getDepartment())) {
+                            update_user.setDepartment(user.getDepartment());
+                        } else {
+                            update_user.setDepartment(update_user.getDepartment());
+                        }
+
+                        if (!update_user.getTeam().equalsIgnoreCase(user.getTeam())) {
+                            update_user.setTeam(user.getTeam());
+                        } else {
+                            update_user.setTeam(update_user.getTeam());
+                        }
+
+                        if (!update_user.getStatus().equalsIgnoreCase(user.getStatus())) {
+                            update_user.setStatus(user.getStatus());
+                        } else {
+                            update_user.setStatus(update_user.getStatus());
+                        }
+
+                        if (!update_user.getEmail().equalsIgnoreCase(user.getEmail())) {
+                            update_user.setEmail(user.getEmail());
+                        } else {
+                            update_user.setEmail(update_user.getEmail());
+                        }
 
 
-                Set<Role> roles = new HashSet<>();
-                roles.add(role);
-                update_user.setRoles(roles);
+                        if(update_user.getPassword().equalsIgnoreCase("")) {
+                            update_user.setPassword(passwordEncoder.encode("123@dirace"));
+                        } else {
+                            update_user.setPassword(update_user.getPassword());
+                        }
+                        System.out.println(roleList.get(index) + "<>");
+                        update_user.setCreatedAt(System.currentTimeMillis());
+                        user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
+
+
+                        Role role = roleRepository.findByName(roleList.get(index)).orElse(null);
+                        Set<Role> roles = new HashSet<>();
+                        roles.add(role);
+                        update_user.setRoles(roles);
                         insert_user.add(update_user);
                     } else {
+                        user.setCreatedAt(System.currentTimeMillis());
                         user.setPassword(passwordEncoder.encode("123@dirace"));
-
-                user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
-                        Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
+                        user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
+                        Role role = roleRepository.findByName(roleList.get(index)).orElse(null);
 
                         Set<Role> roles = new HashSet<>();
                         roles.add(role);
                         user.setRoles(roles);
                         insert_user.add(user);
+
                     }
                     index++;
-              System.out.println(index);
+                    System.out.println(index);
                 }
 
 
-          // Set the status of users not present in the uploaded file to "Inactive"
-          for (User dbUser : allUsers) {
-            if (!uploadedStaffIds.contains(dbUser.getStaffId()) && dbUser.getStatus().equalsIgnoreCase("Active")) {
-              dbUser.setStatus("Inactive");
-              insert_user.add(dbUser);
-            }
-          }
+                // Set the status of users not present in the uploaded file to "Inactive"
+                for (User dbUser : allUsers) {
+                    if (!uploadedStaffIds.contains(dbUser.getStaffId()) && dbUser.getStatus().equalsIgnoreCase("Active")) {
+                        dbUser.setStatus("Inactive");
+                        insert_user.add(dbUser);
+                    }
+                }
 
-          this.userRepository.saveAll(insert_user);
-        } catch (IOException e) {
-          throw new IllegalArgumentException("This file is not a valid excel file");
+                this.userRepository.saveAll(insert_user);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("This file is not a valid excel file");
+            }
         }
-      }
     }
 
     @Override
@@ -199,6 +209,7 @@ public class UserServiceImpl implements UserService {
                     Set<Role> roles = new HashSet<>();
                     for (Long roleId : userDto.getRoleIdList()) {
                         Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
+                        System.out.println("Role -> " + role.getName());
                         roles.add(role);
                     }
                     existingUser.setRoles(roles);
@@ -219,45 +230,59 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public UserDto getUserByStaffId(String staff_id){
-      User user = userRepository.findUserByStaffId(staff_id);
-      if (user == null)
-        return null;
+        User user = userRepository.findUserByStaffId(staff_id);
+        if (user == null)
+            return null;
 
-      return DtoUtil.map(user,UserDto.class,modelMapper);
+        return DtoUtil.map(user,UserDto.class,modelMapper);
     }
 
 
 
     @Override
     public UserDto getUserByEmail(String email) {
-      User user = userRepository.findUserByEmail(email);
-      return user != null ? new UserDto(user) : null;
+        User user = userRepository.findUserByEmail(email);
+        return user != null ? new UserDto(user) : null;
     }
 
     @Override
     public int updatePassword(String email, String newPassword) {
-    User user = userRepository.findUserByEmail(email);
-    if (user == null) {
-      return 0; // User not found
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            return 0; // User not found
+        }
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            return 2; // New password is the same as the old password
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return 1; // Password updated successfully
     }
-    if (passwordEncoder.matches(newPassword, user.getPassword())) {
-      return 2; // New password is the same as the old password
+
+    @Override
+    public int updatePasswordByStaffId(String staffId, String newPassword) {
+        User user = userRepository.findUserByStaffId(staffId);
+        if (user == null) {
+            return 0;  // User not found
+        }
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            return 2; // New password is the same as the old password
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return 1;
     }
-    user.setPassword(passwordEncoder.encode(newPassword));
-    userRepository.save(user);
-    return 1; // Password updated successfully
-  }
 
-  @Override
-  public boolean checkPassword(String oldPassword, String inputPassword) {
-    if (oldPassword != inputPassword) {
-      return false;
-    } else
-      return true;
-  }
+    @Override
+    public boolean checkPassword(String oldPassword, String inputPassword) {
+        if (oldPassword != inputPassword) {
+            return false;
+        } else
+            return true;
+    }
 
 
-  private UserDto convertToDto(User user) {
+    private UserDto convertToDto(User user) {
         UserDto userDto = modelMapper.map(user, UserDto.class);
         return userDto;
     }
@@ -303,7 +328,7 @@ public class UserServiceImpl implements UserService {
         file.transferTo(tempFile);
         String imageUrl = helper.uploadImageToDrive(tempFile, "user");
         //boolean isUploaded = helper.uploadImageToDrive(tempFile);
-       // return new GoogleDriveJSONConnector().uploadFileToDrive(file, contentType);
+        // return new GoogleDriveJSONConnector().uploadFileToDrive(file, contentType);
         user.setPhoto(tempFile.getName());
         userRepository.save(user);
         ImageResponse imageResponse = new ImageResponse();

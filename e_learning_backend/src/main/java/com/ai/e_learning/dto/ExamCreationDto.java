@@ -13,5 +13,8 @@ public class ExamCreationDto {
     private Long lessonId;
     private String title;
     private String description,duration;
+    private boolean finalExam;
+
+    private double passScore;
     private List<QuestionDto> questionList;
 }

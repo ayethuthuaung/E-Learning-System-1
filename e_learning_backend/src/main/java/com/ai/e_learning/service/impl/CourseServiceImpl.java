@@ -199,14 +199,56 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public CourseDto updateCourse(Long id, CourseDto courseDto) {
     return courseRepository.findById(id)
-      .map(existingCourse -> {
-        courseDto.setId(existingCourse.getId());
-        modelMapper.map(courseDto, existingCourse);
-        Course updatedCourse = courseRepository.save(existingCourse);
-        return convertToDto(updatedCourse);
-      })
-      .orElse(null);
+            .map(existingCourse -> {
+              courseDto.setId(existingCourse.getId());
+
+              if (courseDto.getPhotoInput() == null || courseDto.getPhotoInput().isEmpty()) {
+                courseDto.setPhoto(existingCourse.getPhoto());
+              } else {
+                String imageUrl;
+                GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+
+                try {
+                  imageUrl = driveConnector.uploadImageToDrive2(courseDto.getPhotoInput(), "Course");
+                } catch (IOException | GeneralSecurityException e) {
+                  throw new RuntimeException("Failed to upload file to Google Drive", e);
+                }
+                courseDto.setPhoto("https://lh3.google.com/u/0/d/" + imageUrl);
+              }
+              List<Long> categoryIdList = new ArrayList<>();
+              for(Category category : courseDto.getCategories()){
+                Long categoryId = category.getId();
+                categoryIdList.add(categoryId);
+              }
+              Set<Category> updatedCategories = new HashSet<>(categoryRepository.findAllById(categoryIdList));
+              courseDto.setCategories(updatedCategories);
+              // Clear existing categories
+//              for(Category category : existingCourse.getCategories()){
+//                System.out.println(category.toString());
+//              }
+//              existingCourse.getCategories().clear();
+//
+//              courseRepository.saveAndFlush(existingCourse); // Save to ensure categories are cleared
+
+              // Add updated categories
+//              Set<Category> updatedCategories = new HashSet<>();
+//              for (Long categoryId : courseDto.getCategorylist()) {
+//                Category category = categoryRepository.findById(categoryId)
+//                        .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId));
+//                updatedCategories.add(category);
+//              }
+//              existingCourse.getCategories().addAll(updatedCategories);
+
+              // Map other fields
+              modelMapper.map(courseDto, existingCourse);
+
+              Course updatedCourse = courseRepository.saveAndFlush(existingCourse); // Save to ensure changes are persisted
+              return convertToDto(updatedCourse);
+            })
+            .orElse(null);
   }
+
+
 
   @Override
   public void softDeleteCourse(Long id) {
@@ -245,7 +287,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public List<CourseDto> getCoursesByUserId(Long userId) {
-    List<Course> courses = courseRepository.findByUserId(userId);
+    List<Course> courses = courseRepository.findByUserIdAndIsDeletedFalse(userId);
     return DtoUtil.mapList(courses,CourseDto.class,modelMapper);
   }
 
@@ -275,6 +317,12 @@ public class CourseServiceImpl implements CourseService {
       .map(this::convertToDto)
       .collect(Collectors.toList());
   }
+
+  @Override
+  public Long getCourseId(Long lessonId) {
+    return courseRepository.findCourseIdByLessonId(lessonId);
+  }
+
 
 
 

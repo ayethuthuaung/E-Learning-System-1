@@ -38,6 +38,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
         double totalMarks = 0.0;
 
         for (StudentAnswerDto requestDTO : studentAnswerDTOList) {
+
             Map<String, Object> answerResult = new HashMap<>();
             answerResult.put("questionId", requestDTO.getQuestionId());
 
@@ -100,7 +101,6 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             studentAnswer.setUser(user);
             studentAnswer.setTotalMarks(totalMarks);
             studentAnswerRepository.save(studentAnswer);
-
             result.add(answerResult);
         }
 

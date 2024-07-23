@@ -111,7 +111,11 @@ import { FilterSortDropdownComponent } from './components/filter-sort-dropdown/f
 import { ClickOutsideDirective } from './components/click-outside.directive';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 import { UserCourseModuleService } from './components/services/usercoursemodule.service';
+import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
+import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
 import { TimerComponent } from './components/shared/timer/timer.component';
+import { ChangePasswordModalComponent } from './components/change-password-modal/change-password-modal.component';
+
 import { AdminCourseCompletionComponent } from './components/admin/admin-course-completion/admin-course-completion.component';
 import { InstructorCourseCompletionComponent } from './components/instructor/instructor-course-completion/instructor-course-completion.component';
 
@@ -220,6 +224,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     FilterSortDropdownComponent,
     ClickOutsideDirective,
     StudentQuestionFormComponent,
+    AdminProfileComponent,
+    AdminCreateModuleExamComponent,
+    TimerComponent,
+    ChangePasswordModalComponent,
     TimerComponent,
     AdminCourseCompletionComponent,
     InstructorCourseCompletionComponent
