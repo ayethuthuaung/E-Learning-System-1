@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CourseService } from './../../services/course.service';
 import { Course } from './../../models/course.model';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
 import { UserCourseService } from '../../services/user-course.service';
+import { SlideConfig } from '../../models/slide-config.model';
 
 @Component({
   selector: 'app-courses',
@@ -18,6 +19,7 @@ export class CoursesComponent implements OnInit {
   latestCourses: Course[] = [];
   categories: Category[] = [];
   selectedCategory: string = '';
+  
 
   constructor(
     private categoryService: CategoryService,
@@ -31,6 +33,7 @@ export class CoursesComponent implements OnInit {
     this.getLatestAcceptedCourses();
     this.getAllCourses();
     this.getCategories();
+    
   }
 
   private getAllCourses() {
@@ -69,21 +72,25 @@ export class CoursesComponent implements OnInit {
     this.courseService.getLatestAcceptedCourses()
       .subscribe({
         next: (data) => {
-          this.latestCourses = data.slice(0, 3); // Only take the latest three
+          this.latestCourses = data;
+          
         },
         error: (e) => console.error('Error fetching latest accepted courses:', e)
       });
   }
+
   fetchTrendingCourses(): void {
     this.userCourseService.getTrendingCourses()
       .subscribe(
         (courses: Course[]) => {
-          this.trendingCourses = courses.slice(0, 3); // Limit to top 3 trending courses
+          this.trendingCourses = courses;
+          
         },
         (error) => {
           console.error('Error fetching trending courses:', error);
-          // Handle error as needed
         }
       );
   }
+
+ 
 }

@@ -35,6 +35,12 @@ public interface UserService {
 
 
     void addAdmin();
+//    long countStudents();
+
+//    List<UserDto> findByRoleId(Long roleId);
+
+//    long countStudentsByRoleId(Long instructorRoleId);
+
 
       ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException;
     boolean isExamOwner(Long userId);

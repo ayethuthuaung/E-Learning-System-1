@@ -1,23 +1,23 @@
 package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.dto.UserCourseModuleDto;
-import com.ai.e_learning.model.CourseModule;
-import com.ai.e_learning.model.User;
-import com.ai.e_learning.model.UserCourseModule;
-import com.ai.e_learning.repository.CourseModuleRepository;
-import com.ai.e_learning.repository.UserCourseModuleRepository;
-import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.model.*;
+import com.ai.e_learning.repository.*;
+import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.service.UserCourseModuleService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserCourseModuleServiceImpl implements UserCourseModuleService {
 
   private static final Logger logger = LoggerFactory.getLogger(UserCourseModuleServiceImpl.class);
@@ -25,15 +25,11 @@ public class UserCourseModuleServiceImpl implements UserCourseModuleService {
   private final UserCourseModuleRepository userCourseModuleRepository;
   private final UserRepository userRepository;
   private final CourseModuleRepository courseModuleRepository;
+  private final CourseModuleService courseModuleService;
+  private final CourseRepository courseRepository;
+  private final UserCourseRepository userCourseRepository;
 
-  @Autowired
-  public UserCourseModuleServiceImpl(UserCourseModuleRepository userCourseModuleRepository,
-                                     UserRepository userRepository,
-                                     CourseModuleRepository courseModuleRepository) {
-    this.userCourseModuleRepository = userCourseModuleRepository;
-    this.userRepository = userRepository;
-    this.courseModuleRepository = courseModuleRepository;
-  }
+
 
   @Override
   public UserCourseModuleDto markModuleAsDone(Long userId, Long moduleId) {
@@ -55,6 +51,22 @@ public class UserCourseModuleServiceImpl implements UserCourseModuleService {
       newUserCourseModule.setDone(true);
 
       UserCourseModule savedUserCourseModule = userCourseModuleRepository.save(newUserCourseModule);
+      Course course = courseRepository.findByModuleId(moduleId);
+      System.out.println(course.getName());
+      Long courseId = course.getId();
+      Optional<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId,courseId);
+      UserCourse userCourse = null;
+      if(userCourseOptional.isPresent()){
+        userCourse = userCourseOptional.get();
+      }
+      Double userCompletionPercentage = courseModuleService.calculateCompletionPercentage(userId,courseId);
+
+      if(userCompletionPercentage == 100){
+        if(userCourse != null){
+          userCourse.setCompleted(true);
+          userCourseRepository.save(userCourse);
+        }
+      }
       return mapToDto(savedUserCourseModule);
     }
   }
@@ -67,4 +79,11 @@ public class UserCourseModuleServiceImpl implements UserCourseModuleService {
     dto.setDone(userCourseModule.isDone());
     return dto;
   }
+  @Override
+  public boolean getModuleCompletionStatus(Long userId, Long moduleId) {
+    Optional<UserCourseModule> optionalUserCourseModule = userCourseModuleRepository.findByUserIdAndCourseModuleId(userId, moduleId);
+    return optionalUserCourseModule.map(UserCourseModule::isDone).orElse(false);
+  }
+
+
 }

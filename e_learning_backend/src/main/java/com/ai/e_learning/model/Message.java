@@ -38,4 +38,7 @@ public class Message {
 
     @Column(nullable = false)
     private String messageType; // text, image, voice
+
+    @Column(nullable = true)
+    private boolean isRead;
 }

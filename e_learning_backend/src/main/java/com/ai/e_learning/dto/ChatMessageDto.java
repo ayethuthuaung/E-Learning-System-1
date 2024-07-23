@@ -23,6 +23,7 @@ public class ChatMessageDto {
 //    private MultipartFile file;
     private String fileUrl;
     private String messageType;
+    private  boolean isRead;
 
     // Getters and setters
 }

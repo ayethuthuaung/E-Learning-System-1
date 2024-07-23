@@ -18,7 +18,7 @@ export class CourseService {
 
   getInstructorCourses(userId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
-      params: { userId: userId.toString() }
+      params: { userId: userId.toString()}
     });
   }
 
@@ -60,6 +60,7 @@ export class CourseService {
       params: { name }
     });
   }
+
   getLatestAcceptedCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/latestAccepted`);
   }
@@ -67,6 +68,26 @@ export class CourseService {
   getCourseIdByLessonId(lessonId: number): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/lessons/${lessonId}/courseId`);
   }
+  
+  getCoursesByUserId(userId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
+      params: { userId: userId.toString() }
+    });
+  }
+  exportCoursesByInstructor(instructorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/instructor/excel?instructorId=${instructorId}`, { responseType: 'blob' });
+  }
+
+  exportAllCourses(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/admin/excel`, { responseType: 'blob' });
+  }
+  exportCoursesByInstructorToPdf(instructorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/instructor/pdf?instructorId=${instructorId}`, { responseType: 'blob' });
+  }
+  exportAllCoursesPDF(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
+  }
+  
   
  
 }

@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { UnreadMessageService } from '../../services/unread-message.service';
 
 
 @Component({
@@ -12,13 +13,15 @@ import { AuthService } from '../../auth/auth.service';
 export class InstructorNavbarComponent implements OnInit {
   @Output() toggleSidebarEvent = new EventEmitter<void>();
   dropdownOpen = false;
-  unreadCount: number = 0;
+  unreadNotiCount: number = 0;
   showNotifications: boolean = false;
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+  constructor( private router: Router, private unreadMessageService: UnreadMessageService) {}
 
   ngOnInit(): void {
-    
+    this.unreadMessageService.unreadNotiCount$.subscribe(count => {
+      this.unreadNotiCount = count;
+    });
   }
 
   toggleSidebar() {
@@ -33,8 +36,8 @@ export class InstructorNavbarComponent implements OnInit {
   gohome():void{
     this.router.navigate(['home']);
   }
-  handleUnreadCountChange(count: number) {
-    this.unreadCount = count;
+  updateUnreadCount(count: number): void {
+    this.unreadNotiCount = count;
   }
 
   toggleNotifications() {

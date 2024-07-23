@@ -16,8 +16,8 @@
         <div *ngIf="showResults" class="text-center text-logo-blue font-semibold mb-4">
           Total Points: {{totalMarks}} / {{questionTotalMarks}}
         </div>
-        <div *ngIf="remainingTime > 0" class="font-semibold text-xl mb-4 text-center text-logo-blue">{{ formatTime(remainingTime) }}</div>
-        <div *ngIf="remainingTime <= 0" class="font-semibold text-xl mb-4 text-center text-red-600">Time's up!</div>
+        <div *ngIf="remainingTime > 0 && !isOwner && !hasRole(2) " class="font-semibold text-xl mb-4 text-center text-logo-blue">{{ formatTime(remainingTime) }}</div>
+        <div *ngIf="remainingTime <= 0 && !isOwner && !hasRole(2) " class="font-semibold text-xl mb-4 text-center text-red-600">Time's up!</div>
         
 
         <form class="space-y-6 text-lg">

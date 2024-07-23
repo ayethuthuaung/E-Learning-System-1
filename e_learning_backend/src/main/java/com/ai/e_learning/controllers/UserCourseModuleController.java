@@ -33,4 +33,13 @@ public class UserCourseModuleController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
   }
+  @GetMapping("/status/{userId}/{moduleId}")
+  public ResponseEntity<?> getModuleCompletionStatus(@PathVariable Long userId, @PathVariable Long moduleId) {
+    try {
+      boolean status = userCourseModuleService.getModuleCompletionStatus(userId, moduleId);
+      return ResponseEntity.ok(status);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+  }
 }

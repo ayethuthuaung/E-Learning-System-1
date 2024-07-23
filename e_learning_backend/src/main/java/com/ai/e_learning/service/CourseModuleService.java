@@ -1,6 +1,8 @@
 package com.ai.e_learning.service;
 
 import com.ai.e_learning.dto.CourseModuleDto;
+import com.ai.e_learning.dto.LessonDto;
+import com.ai.e_learning.model.Lesson;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,5 +26,8 @@ public interface CourseModuleService {
     Map<String, Map<String, Double>> getAllCoursesProgress();
 
     List<CourseModuleDto> getModulesByLessonId(Long lessonId);
+//NN
+  List<LessonDto> getLessonsByModuleId(Long moduleId);
+  List<CourseModuleDto> getModulesByCourseId(Long courseId);
 
 }

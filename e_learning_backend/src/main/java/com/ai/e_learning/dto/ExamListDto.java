@@ -8,4 +8,5 @@ import lombok.Setter;
 public class ExamListDto {
     private Long id;
     private String title;
+    private boolean finalExam;
 }

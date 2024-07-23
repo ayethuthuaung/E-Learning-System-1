@@ -83,8 +83,9 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
       if (this.loggedUser) {
         this.userId = this.loggedUser.id;
         this.roles = this.loggedUser.roles;
-
+        this.checkOwner();
         // Access role IDs
+
         if (this.roles.length > 0) {
           this.roles.forEach(role => {
             console.log(role.id); // Print each role ID
@@ -135,11 +136,22 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   }
 
   checkOwner() {
-    this.userService.checkExamOwner(this.userId).subscribe((response) => {
-      this.isOwner = response;
+    console.log('Checking owner for userId:', this.userId);
+    this.userService.checkExamOwner(this.userId).subscribe({
+      next: (response) => {
+        console.log("Hi");
+        this.isOwner = response;
+        console.log(this.isOwner);
+      },
+      error: (error) => {
+        console.error('Error checking exam owner:', error);
+      }
     });
   }
+  
 
+  
+  
   loadQuestions(examId: number) {
     this.examService.getExamById(examId).subscribe((data: ExamDTO) => {
       this.questions = data.questions.map(question => ({

@@ -7,10 +7,11 @@
   </li>
   <li *ngIf="hasRole(1)" class="p-3 border-t lg:border-0 relative">
     <a (click)="toggleNotifications()">Notification</a>
-    <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded shadow-lg">
-        <app-notification></app-notification>
+    <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-96 bg-white shadow-lg rounded-lg z-50">
+      <app-notification></app-notification>
     </div>
-    </li>
+  </li>
+  
   <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
     <a [routerLink]="['/admin/dashboard']">Dashboard</a>
   </li>

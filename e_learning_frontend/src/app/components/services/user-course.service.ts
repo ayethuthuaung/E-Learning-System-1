@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 import { UserCourse } from '../models/usercourse.model';
 import { User } from '../models/user.model';
 import { Course } from '../models/course.model';
@@ -62,9 +62,22 @@ export class UserCourseService {
   getTrendingCourses(): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/trending-courses`);
   }
+
+  getAcceptedStudentCounts(): Observable<{ [key: string]: number }> {
+    return this.httpClient.get<{ [key: string]: number }>(`${this.baseURL}/accepted-student-counts`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error fetching accepted student counts:', error);
+          return throwError('Something went wrong while fetching accepted student counts.');
+        })
+      );
+  }
+  
+
   getCourseAttendanceByInstructor(userId: number): Observable<{ [courseName: string]: number }> {
     return this.httpClient.get<{ [courseName: string]: number }>(`${this.baseURL}/course-attendance/${userId}`);
   }
+
 
 
 }

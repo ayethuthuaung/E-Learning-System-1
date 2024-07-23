@@ -119,6 +119,7 @@ import { ChangePasswordModalComponent } from './components/change-password-modal
 import { AdminCourseCompletionComponent } from './components/admin/admin-course-completion/admin-course-completion.component';
 import { InstructorCourseCompletionComponent } from './components/instructor/instructor-course-completion/instructor-course-completion.component';
 
+
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
 
 @NgModule({
@@ -246,7 +247,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
-
+   
     SocketIoModule.forRoot(config)
     
   ],

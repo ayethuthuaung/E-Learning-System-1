@@ -3,6 +3,7 @@ import { WebSocketService } from '../services/websocket.service';
 import { Notification } from '../models/notification.model';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
+import { UnreadMessageService } from '../services/unread-message.service';
 
 @Component({
   selector: 'app-notification',
@@ -17,7 +18,12 @@ export class NotificationComponent implements OnInit {
   @Output() unreadCountChange = new EventEmitter<number>();
   @ViewChild('audio', { static: false }) audio!: ElementRef<HTMLAudioElement>;
 
-  constructor(private webSocketService: WebSocketService, private authService: AuthService, private router: Router) {}
+  constructor(
+    private webSocketService: WebSocketService,
+    private authService: AuthService,
+    private router: Router,
+    private unreadMessageService: UnreadMessageService
+  ) {}
 
   ngOnInit(): void {
     this.userRole = this.authService.getLoggedInUserRole() as 'Admin' | 'Instructor' | 'Student';
@@ -42,10 +48,10 @@ export class NotificationComponent implements OnInit {
         // Add new notification to the beginning of the array
         this.notifications.unshift({ ...notification, createdAt: new Date(notification.createdAt) });
         this.playNotificationSound();
-        this.updateUnreadCount();
         if (!notification.read) {
           this.newNotification.emit(); // Emit event only if notification is unread
         }
+        this.updateUnreadCount();
       });
     }
   }
@@ -66,6 +72,16 @@ export class NotificationComponent implements OnInit {
         }
       );
     }
+    if (this.userRole === 'Admin') {
+      this.router.navigate(['/admin/course'], { queryParams: { tab: 'courseList' } });
+    } else if (this.userRole === 'Instructor') {
+      if (notification.message.includes('Student')) {
+        // If the message includes "student", navigate to InstructorStudentComponent
+        this.router.navigate(['/instructor/student']);
+      } else {
+        this.router.navigate(['/instructor/course'], { queryParams: { tab: 'courseList' } });
+      }
+    }
   }
 
   softDeleteNotification(notification: Notification): void {
@@ -80,13 +96,18 @@ export class NotificationComponent implements OnInit {
     );
   }
 
-  handleNotificationClick(notification: Notification): void {
-    if (this.userRole === 'Admin') {
-      this.router.navigate(['/admin/course'], { queryParams: { tab: 'courseList' } });
-    } else if (this.userRole === 'Instructor') {
-      this.router.navigate(['/instructor/course'], { queryParams: { tab: 'courseList' } });
-    }
-  }
+  // handleNotificationClick(notification: Notification): void {
+  //   if (this.userRole === 'Admin') {
+  //     this.router.navigate(['/admin/course'], { queryParams: { tab: 'courseList' } });
+  //   } else if (this.userRole === 'Instructor') {
+  //     if (notification.message.includes('Student')) {
+  //       // If the message includes "student", navigate to InstructorStudentComponent
+  //       this.router.navigate(['/instructor/student']);
+  //     } else {
+  //       this.router.navigate(['/instructor/course'], { queryParams: { tab: 'courseList' } });
+  //     }
+  //   }
+  // }
 
   closeNotifications(): void {
     this.notifications = [];
@@ -101,6 +122,7 @@ export class NotificationComponent implements OnInit {
 
   private updateUnreadCount(): void {
     const unreadCount = this.notifications.filter(notification => !notification.read).length;
+    this.unreadMessageService.setUnreadNotiCount(unreadCount);
     this.unreadCountChange.emit(unreadCount);
   }
 }

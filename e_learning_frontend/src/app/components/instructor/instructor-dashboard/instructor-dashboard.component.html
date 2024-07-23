@@ -1,22 +1,26 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
+
+  <!-- Navbar and Sidebar -->
+
   <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
-    
     <div class="flex-1 p-6">
-      <!-- Container for Course Count and Student Counts in the Same Row -->
-      <div class="flex space-x-4 mb-6">
-        <!-- Course Count -->
-        <div class="bg-purple-200 rounded-lg shadow-lg p-4 flex-1">
+
+      <!-- Flex container for course and student count cards -->
+      <div class="flex flex-wrap mb-6 space-x-4">
+        <!-- Courses Count Card -->
+        <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6">
           <i class="fas fa-book text-4xl text-purple-500 mr-4"></i>
           <div>
-            <h3 class="text-xl font-semibold mb-2">Course</h3>
-            <p>{{ acceptedCoursesCount }} courses accepted</p>
+            <h3 class="text-xl font-semibold mb-2">Courses</h3>
+            <p class="text-lg">{{ courseCount }} courses accepted</p>
           </div>
         </div>
 
-        <!-- Student Counts -->
-        <div class="bg-purple-200 rounded-lg shadow-lg p-4 flex-1" *ngFor="let count of studentCounts">
+        <!-- Students Count Cards -->
+        <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6" *ngFor="let count of studentCounts">
+
           <i class="fas fa-user-graduate text-4xl text-purple-500 mr-4"></i>
           <div>
             <h3 class="text-xl font-semibold mb-2">Student</h3>
@@ -25,6 +29,11 @@
         </div>
       </div>
 
+ 
+      <!-- Chart Section -->
+      <div class="w-full h-80 mt-12">
+        <canvas id="myChart" class="rounded-lg shadow-lg"></canvas>
+      </div>
       <!-- Line Chart for Student Progress -->
       <div>
         <mat-card class="w-full max-w-[600px] mx-auto">
@@ -37,6 +46,7 @@
             </div>
           </mat-card-content>
         </mat-card>
+
       </div>
     </div>
   </div>
