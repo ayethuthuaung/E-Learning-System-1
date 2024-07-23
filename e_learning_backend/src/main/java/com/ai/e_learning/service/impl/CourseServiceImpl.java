@@ -98,6 +98,7 @@ public class CourseServiceImpl implements CourseService {
   }
   //AT
 
+  //PK
   @Override
   public List<CourseDto> getAllCourseList() {
     List<Course> courses = courseRepository.findAll();
@@ -112,15 +113,12 @@ public class CourseServiceImpl implements CourseService {
     Course course = convertToEntity(courseDto);
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-    boolean isAdmin = user.getRoles().stream()
-      .anyMatch(role -> role.getName().equals("Admin"));
-    if (isAdmin) {
-      course.setStatus("Accept");
-    }
-//    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
-//    courseDto.getPhotoInput().transferTo(tempFile);
-//    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
-//    course.setPhoto(tempFile.getName());
+//    boolean isAdmin = user.getRoles().stream()
+//      .anyMatch(role -> role.getName().equals("Admin"));
+//    if (isAdmin) {
+      course.setStatus("In Progress");
+
+
     String imageUrl;
     GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
 
@@ -148,6 +146,8 @@ public class CourseServiceImpl implements CourseService {
     sendAdminNotifications(savedCourse);
     return convertToDto(savedCourse);
   }
+
+
   private void sendAdminNotifications(Course course) {
     Optional<Role> adminRoleOptional = roleService.getRoleByName("Admin");
     if (adminRoleOptional.isPresent()) {

@@ -23,7 +23,12 @@ export class AdminCategoryComponent implements OnInit {
   nameRequiredError = false;
   createdCategoryName: string = '';
   selectedCategory: Category = new Category();
-  currentUserId: string = ''; // Change to string type
+  currentUserId: string = '';
+  paginatedCategories: Category[] = [];
+  searchQuery: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
+  totalPages: number = 1;
 
   @ViewChild('updateCategoryDialog') updateCategoryDialog!: TemplateRef<any>;
 
@@ -46,7 +51,8 @@ export class AdminCategoryComponent implements OnInit {
   getCategories(): void {
     this.categoryService.getCategoryList().subscribe(
       (data: Category[]) => {
-        this.categories = data;
+        this.categories = data.filter(category => !category.deleted);
+        this.updatePagination();
       },
       (error) => {
         this.errorMessage = `Error fetching categories: ${error}`;
@@ -84,7 +90,6 @@ export class AdminCategoryComponent implements OnInit {
   }
 
   createCategory(): void {
-    //this.category.createdBy = this.currentUserId; // Assign the currentUserId as createdBy
     this.categoryService.createCategory(this.category).subscribe(
       () => {
         console.log('Category created successfully');
@@ -147,6 +152,9 @@ export class AdminCategoryComponent implements OnInit {
 
   setActiveTab(tab: 'createCategory' | 'categoryList'): void {
     this.activeTab = tab;
+    if (tab === 'categoryList') {
+      this.updatePagination();
+    }
   }
 
   showSuccessAlert(message: string): void {
@@ -163,4 +171,53 @@ export class AdminCategoryComponent implements OnInit {
   closeUpdateDialog(): void {
     this.dialog.closeAll();
   }
+
+  onSearch(): void {
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  updatePagination(): void {
+    const filteredCategories = this.categories.filter(category =>
+      category.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+    this.totalPages = Math.ceil(filteredCategories.length / this.itemsPerPage);
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedCategories = filteredCategories.slice(startIndex, endIndex);
+    console.log('Filtered Categories:', filteredCategories); // Debugging line
+    console.log('Paginated Categories:', this.paginatedCategories); // Debugging line
+  }
+
+  firstPage() {
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  lastPage() {
+    this.currentPage = this.totalPages;
+    this.updatePagination();
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
+  }
+
 }

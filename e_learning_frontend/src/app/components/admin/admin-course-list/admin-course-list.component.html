@@ -40,13 +40,34 @@
             <app-filter-sort-dropdown
                         (sortChanged)="onSortChange('name', $event)"
                         (filterChanged)="onFilterChange($event)">
-                      </app-filter-sort-dropdown>
+            </app-filter-sort-dropdown>
 
           </th>
           
-          <th>Level</th>
-          <th>Duration</th>
-          <th>Instructor</th>
+          <th>Level
+
+            <app-filter-sort-dropdown
+                        (sortChanged)="onSortChange('level', $event)"
+                        (filterChanged)="onFilterChange($event)">
+            </app-filter-sort-dropdown>
+
+          </th>
+          <th>Duration
+
+            <app-filter-sort-dropdown
+                        (sortChanged)="onSortChange('duration', $event)"
+                        (filterChanged)="onFilterChange($event)">
+            </app-filter-sort-dropdown>
+
+          </th>
+          <th>Instructor
+
+            <app-filter-sort-dropdown
+                        (sortChanged)="onSortChange('name', $event)"
+                        (filterChanged)="onFilterChange($event)">
+            </app-filter-sort-dropdown>
+
+          </th>
           <th>Status</th>
           <th>Details</th>
         </tr>
@@ -60,6 +81,7 @@
           <td>{{ course.user?.name }}</td>
           <td>
             <div class="icon-container status-cell">
+              <i *ngIf="course.status === 'In Progress'" class="fa-solid fa-bars-progress" style="color: rgb(0, 90, 128); font-size: 24px;"></i>
               <i *ngIf="course.status === 'Accept'" class="fa-solid fa-circle-check" style="color: green; font-size: 24px;"></i>
               <i *ngIf="course.status === 'Reject'" class="fa-solid fa-circle-xmark" style="color: red; font-size: 24px;"></i>
 

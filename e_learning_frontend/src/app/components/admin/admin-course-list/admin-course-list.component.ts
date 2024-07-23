@@ -38,10 +38,13 @@ export class AdminCourseListComponent implements OnInit {
     this.fetchCourses();
   }
 
+
   fetchCourses() {
     this.courseService.getAllCourses(this.statusFilter).subscribe({
       next: (data) => {
-        this.courses = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        this.courses = data
+          .filter(course => ['Accept', 'Reject', 'Pending', 'In Progress'].includes(course.status))
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         this.updatePaginatedCourses();
         this.totalPages = Math.ceil(this.courses.length / this.itemsPerPage);
       },
