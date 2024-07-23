@@ -21,7 +21,13 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
   List<UserCourse> findByStatus(String status); //PK
   @Query("SELECT uc.course FROM UserCourse uc WHERE uc.status = 'Accept' GROUP BY uc.course ORDER BY COUNT(uc.id) DESC")
   List<Course> findTopTrendingCourses();
+
   @Query("SELECT COUNT(DISTINCT uc.user) FROM UserCourse uc WHERE uc.course = :course AND uc.status = :status")
   Long countDistinctUsersByCourseAndStatus(@Param("course") Course course, @Param("status") String status);
+
+  Long countByCourseId(Long courseId);
+  Long countByCourseIdAndStatus(Long courseId, String status);
+
+
 }
 

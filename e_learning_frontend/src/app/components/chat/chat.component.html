@@ -3,7 +3,7 @@
     <h2 class="text-lg">{{ userName }}</h2>
     <button (click)="closeChat()" class="text-2xl">&times;</button>
   </div>
-  <div class="p-3 overflow-y-auto" style="height: 19rem;">
+  <div class="p-3 overflow-y-auto" style="height: 19rem;" #chatContainer (scroll)="onScroll()">
     <div *ngIf="messages.length === 0" class="text-center text-gray-500">
       No Conversation
     </div>
@@ -13,24 +13,30 @@
            [ngClass]="{
              'bg-gray-200 text-black': message.message_side === 'receiver',
              'bg-logo-blue text-white': message.message_side === 'sender'
-           }">
+           }"
+           (mouseenter)="message.showDropdown = true"
+           (mouseleave)="message.showDropdown = false">
         <div *ngIf="!message.editMode" class="relative">
-          <div *ngIf="message.messageType === 'text'" class="hover:bg-gray-300 p-2 rounded-lg cursor-pointer"
-               (mouseenter)="message.showDropdown = true"
-               (mouseleave)="message.showDropdown = false">
-            {{ message.content }}
-            <div *ngIf="message.showDropdown" class="absolute right-0 top-0 mt-2 mr-2">
+          <div *ngIf="message.messageType === 'text'" class="hover:bg-gray-300 p-2 rounded-lg cursor-pointer flex items-center">
+            <span>{{ message.content }}</span>
+            <span *ngIf="message.showDropdown && message.message_side === 'sender'" class="ml-2">
               <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer flex items-center" 
                     (click)="softDeleteMessage(message.id)">
-                <i class="fas fa-trash-alt mr-1"></i>
+                <i class="fas fa-trash-alt"></i>
               </span>
-              <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer flex items-center" 
-                    (click)="editMessage(message)">
-                <i class="fas fa-edit mr-1"></i>
+            </span>
+          </div>
+          <div *ngIf="message.messageType === 'image'" class="flex items-center relative">
+            <img [src]="message.fileUrl" alt="Image" class="max-w-xs h-auto" style="max-width: 150px;">
+            <!-- Delete icon for images -->
+            <div class="absolute top-0 right-0 mt-2 mr-2" *ngIf="message.message_side === 'sender' && message.showDropdown">
+              <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer" 
+                    (click)="softDeleteMessage(message.id)">
+                <i class="fas fa-trash-alt"></i>
               </span>
             </div>
           </div>
-          <img *ngIf="message.messageType === 'image'" [src]="message.fileUrl" alt="Image" style="max-width: 100px; height: auto;" controls>
+          
           <audio *ngIf="message.messageType === 'voice'" controls>
             <source [src]="message.fileUrl" type="audio/mpeg">
             Your browser does not support the audio element.
@@ -40,15 +46,6 @@
             Your browser does not support the video element.
           </video>
         </div>
-        <div *ngIf="message.editMode">
-          <div class="mb-2">
-            <span class="font-semibold">Original Message:</span> {{ message.content }}
-          </div>
-          <input [(ngModel)]="message.content" (keyup.enter)="saveMessage(message)"  class="p-1 border rounded-lg">
-          <button (click)="saveMessage(message)" class="bg-green-500 text-gray-500 px-2 py-1 rounded-lg">Save</button>
-          <button (click)="cancelEdit(message)" class="bg-red-500 text-gray-500 px-2 py-1 rounded-lg">Cancel</button>
-        </div>
-        
       </div>
     </div>
   </div>
@@ -65,6 +62,10 @@
     <button (click)="sendMessage()" 
             class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
       <i class="fas fa-paper-plane"></i>
+    </button>
+    <button (click)="isRecording ? stopRecording() : startRecording()" 
+            class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+      <i class="fas" [ngClass]="isRecording ? 'fa-stop' : 'fa-microphone'"></i>
     </button>
   </div>
 </div>

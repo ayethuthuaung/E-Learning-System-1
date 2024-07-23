@@ -1,6 +1,8 @@
 package com.ai.e_learning.controllers;
 
 import com.ai.e_learning.dto.CourseModuleDto;
+import com.ai.e_learning.dto.LessonDto;
+import com.ai.e_learning.model.Lesson;
 import com.ai.e_learning.service.CourseModuleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -71,9 +73,31 @@ public class CourseModuleController {
     return courseModuleService.calculateCompletionPercentage(userId, courseId);
   }
 
+  @GetMapping("/all-students-progress")
+  public Map<String, Map<String, Double>> getAllStudentsProgress() {
+    return courseModuleService.getAllStudentsProgress();
+  }
+
+  @GetMapping("/all-courses-progress")
+  public Map<String, Map<String, Double>> getAllCoursesProgress() {
+    return courseModuleService.getAllCoursesProgress();
+  }
+
   @GetMapping("/byLesson/{lessonId}")
   public ResponseEntity<List<CourseModuleDto>> getModulesByLessonId(@PathVariable Long lessonId) {
     List<CourseModuleDto> modules = courseModuleService.getModulesByLessonId(lessonId);
+    return ResponseEntity.ok(modules);
+  }
+//NN
+@GetMapping("/lessons/{moduleId}")
+public ResponseEntity<List<LessonDto>> getLessonsByModuleId(@PathVariable Long moduleId) {
+  List<LessonDto> lessonDtos = courseModuleService.getLessonsByModuleId(moduleId);
+  return ResponseEntity.ok(lessonDtos);
+}
+
+  @GetMapping("/byCourse/{courseId}")
+  public ResponseEntity<List<CourseModuleDto>> getModulesByCourseId(@PathVariable Long courseId) {
+    List<CourseModuleDto> modules = courseModuleService.getModulesByCourseId(courseId);
     return ResponseEntity.ok(modules);
   }
 

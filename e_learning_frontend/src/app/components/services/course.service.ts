@@ -17,8 +17,10 @@ export class CourseService {
 
   
 
-  getInstructorCourses(instructorId: number): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseUrl}/instructor/${instructorId}`);
+  getInstructorCourses(userId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
+      params: { userId: userId.toString()}
+    });
   }
 
   changeStatus(id: number, status: string): Observable<Course> {

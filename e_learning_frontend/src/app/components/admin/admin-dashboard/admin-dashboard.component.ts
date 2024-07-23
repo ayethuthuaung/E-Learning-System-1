@@ -25,6 +25,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(private userCourseService: UserCourseService,private courseService:CourseService) {}
 
   ngOnInit(): void {
+
     this.fetchAcceptedCounts();
     this.fetchAcceptedCourses();
   }
@@ -39,4 +40,9 @@ export class AdminDashboardComponent implements OnInit {
         this.acceptedCourseCount = courses.length;
       });
     }
-}
+
+    
+  }
+ 
+
+

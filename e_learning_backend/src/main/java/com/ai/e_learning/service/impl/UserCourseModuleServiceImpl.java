@@ -67,4 +67,11 @@ public class UserCourseModuleServiceImpl implements UserCourseModuleService {
     dto.setDone(userCourseModule.isDone());
     return dto;
   }
+  @Override
+  public boolean getModuleCompletionStatus(Long userId, Long moduleId) {
+    Optional<UserCourseModule> optionalUserCourseModule = userCourseModuleRepository.findByUserIdAndCourseModuleId(userId, moduleId);
+    return optionalUserCourseModule.map(UserCourseModule::isDone).orElse(false);
+  }
+
+
 }

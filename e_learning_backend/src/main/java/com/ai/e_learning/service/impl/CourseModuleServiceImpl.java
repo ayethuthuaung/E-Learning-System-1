@@ -1,10 +1,14 @@
 package com.ai.e_learning.service.impl;
 
 import com.ai.e_learning.dto.CourseModuleDto;
+import com.ai.e_learning.dto.LessonDto;
+import com.ai.e_learning.exception.EntityNotFoundException;
 import com.ai.e_learning.model.CourseModule;
 import com.ai.e_learning.model.Lesson;
+import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.repository.CourseModuleRepository;
 import com.ai.e_learning.repository.LessonRepository;
+import com.ai.e_learning.repository.UserCourseRepository;
 import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.util.CloudinaryService;
 import com.ai.e_learning.util.DtoUtil;
@@ -30,6 +34,9 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
   @Autowired
   private CloudinaryService cloudinaryService;
+
+  @Autowired
+  private UserCourseRepository userCourseRepository;
 
   private final ModelMapper modelMapper;
 
@@ -85,9 +92,9 @@ public class CourseModuleServiceImpl implements CourseModuleService {
   public CourseModuleDto updateModule(Long id, CourseModuleDto courseModuleDto) {
     CourseModule existingModule = EntityUtil.getEntityById(courseModuleRepository, id, "CourseModule");
 //    System.out.println(existingModule);
-    if(courseModuleDto.getFileInput() == null){
+    if (courseModuleDto.getFileInput() == null) {
       courseModuleDto.setFile(existingModule.getFile());
-    }else{
+    } else {
       MultipartFile fileInput = courseModuleDto.getFileInput();
       String fileType = fileInput.getContentType();
       String fileId = null;
@@ -116,9 +123,9 @@ public class CourseModuleServiceImpl implements CourseModuleService {
     courseModuleDto.setLesson(existingModule.getLesson());
     courseModuleDto.setId(id);
 //    courseModuleDto.setName(existingModule.getName());
-    System.out.println(courseModuleDto.getName()+courseModuleDto.getLesson().getTitle()+courseModuleDto.getFile());
+    System.out.println(courseModuleDto.getName() + courseModuleDto.getLesson().getTitle() + courseModuleDto.getFile());
     modelMapper.map(courseModuleDto, existingModule);
-    System.out.println(existingModule.getName()+existingModule.getLesson().getTitle()+existingModule.getFile());
+    System.out.println(existingModule.getName() + existingModule.getLesson().getTitle() + existingModule.getFile());
 
     CourseModule updatedModule = EntityUtil.saveEntity(courseModuleRepository, existingModule, "CourseModule");
     return DtoUtil.map(updatedModule, CourseModuleDto.class, modelMapper);
@@ -136,6 +143,7 @@ public class CourseModuleServiceImpl implements CourseModuleService {
       .map(module -> DtoUtil.map(module, CourseModuleDto.class, modelMapper))
       .collect(Collectors.toList());
   }
+
   @Override
   public Long countDoneModulesByUserAndCourse(Long userId, Long courseId) {
     return courseModuleRepository.countDoneModulesByUserAndCourse(userId, courseId);
@@ -159,6 +167,46 @@ public class CourseModuleServiceImpl implements CourseModuleService {
   }
 
   @Override
+  public Map<String, Map<String, Double>> getAllStudentsProgress() {
+    List<UserCourse> userCourses = userCourseRepository.findAll();
+    Map<String, Map<String, Double>> allStudentsProgress = new HashMap<>();
+
+    for (UserCourse userCourse : userCourses) {
+      Long studentId = userCourse.getUser().getId();
+      String studentName = userCourse.getUser().getName();  // Assuming 'getName' returns the student's name
+      String courseName = userCourse.getCourse().getName();
+      Double completionPercentage = calculateCompletionPercentage(studentId, userCourse.getCourse().getId());
+
+
+      allStudentsProgress
+        .computeIfAbsent(studentName, k -> new HashMap<>())
+        .put(courseName, completionPercentage);
+    }
+
+    return allStudentsProgress;
+  }
+
+  @Override
+  public Map<String, Map<String, Double>> getAllCoursesProgress() {
+    List<UserCourse> userCourses = userCourseRepository.findAll();
+    Map<String, Map<String, Double>> allCoursesProgress = new HashMap<>();
+
+    for (UserCourse userCourse : userCourses) {
+      Long studentId = userCourse.getUser().getId();
+      String studentName = userCourse.getUser().getName();  // Assuming 'getName' returns the student's name
+      String courseName = userCourse.getCourse().getName();
+      Double completionPercentage = calculateCompletionPercentage(studentId, userCourse.getCourse().getId());
+
+      allCoursesProgress
+        .computeIfAbsent(courseName, k -> new HashMap<>())
+        .put(studentName, completionPercentage);
+    }
+
+    return allCoursesProgress;
+  }
+
+
+  @Override
   public List<CourseModuleDto> getModulesByLessonId(Long lessonId) {
     // Retrieve Lesson entity
     Lesson lesson = EntityUtil.getEntityById(lessonRepository, lessonId, "Lesson");
@@ -168,10 +216,45 @@ public class CourseModuleServiceImpl implements CourseModuleService {
 
     // Convert entities to DTOs
     List<CourseModuleDto> moduleDtos = modules.stream()
-            .map(module -> DtoUtil.map(module, CourseModuleDto.class, modelMapper))
-            .collect(Collectors.toList());
+      .map(module -> DtoUtil.map(module, CourseModuleDto.class, modelMapper))
+      .collect(Collectors.toList());
 
     return moduleDtos;
+  }
+
+  //NN
+  @Override
+  public List<LessonDto> getLessonsByModuleId(Long moduleId) {
+    // Find the CourseModule by ID
+    CourseModule module = courseModuleRepository.findById(moduleId)
+      .orElseThrow(() -> new EntityNotFoundException("CourseModule not found"));
+
+    // Find Lessons by Module ID
+    List<Lesson> lessons = lessonRepository.findByCourseModuleId(moduleId);
+
+    // Convert Lessons to LessonDto
+    return lessons.stream()
+      .map(this::convertToDto)
+      .collect(Collectors.toList());
+  }
+
+  private LessonDto convertToDto(Lesson lesson) {
+    LessonDto dto = new LessonDto();
+    dto.setId(lesson.getId());
+    dto.setTitle(lesson.getTitle());
+    dto.setCourseId(lesson.getCourse().getId());
+    return dto;
+  }
+
+
+
+
+  @Override
+  public List<CourseModuleDto> getModulesByCourseId(Long courseId) {
+    List<CourseModule> modules = courseModuleRepository.findByCourseId(courseId);
+    return modules.stream()
+      .map(module -> DtoUtil.map(module, CourseModuleDto.class, modelMapper))
+      .collect(Collectors.toList());
   }
 
 }

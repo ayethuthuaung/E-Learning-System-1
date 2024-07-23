@@ -42,6 +42,7 @@ public class CourseServiceImpl implements CourseService {
   @Autowired
   private CourseRepository courseRepository;
 
+
   @Autowired
   private CategoryRepository categoryRepository;
 
@@ -261,7 +262,7 @@ public class CourseServiceImpl implements CourseService {
     List<Course> courses = courseRepository.findLatestAcceptedCourses();
     return courses.stream()
       .map(course -> modelMapper.map(course, CourseDto.class))
-      .limit(5) // Limit to latest 5 courses
+      .limit(3) // Limit to latest 5 courses
       .collect(Collectors.toList());
   }
   @Override
@@ -274,6 +275,7 @@ public class CourseServiceImpl implements CourseService {
       .map(this::convertToDto)
       .collect(Collectors.toList());
   }
+
 
 
 }

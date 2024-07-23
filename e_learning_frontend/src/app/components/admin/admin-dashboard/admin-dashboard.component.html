@@ -40,6 +40,21 @@
           </mat-card-content>
         </mat-card>
       </div>
+
+      
+      <!-- Line Chart for Student Progress -->
+      <div class="my-4">
+        <mat-card class="w-full max-w-[600px] mx-auto">
+          <mat-card-header>
+            <mat-card-title>Student Progress</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
+            <div class="chart-container">
+              <app-admin-course-completion [chartType]="'line'"></app-admin-course-completion>
+            </div>
+          </mat-card-content>
+        </mat-card>
+</div>
       </div>
     </main>
   </div>

@@ -61,6 +61,7 @@ export class UserCourseService {
   getTrendingCourses(): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/trending-courses`);
   }
+
   getAcceptedStudentCounts(): Observable<{ [key: string]: number }> {
     return this.httpClient.get<{ [key: string]: number }>(`${this.baseURL}/accepted-student-counts`)
       .pipe(
@@ -71,5 +72,11 @@ export class UserCourseService {
       );
   }
   
+
+  getCourseAttendanceByInstructor(userId: number): Observable<{ [courseName: string]: number }> {
+    return this.httpClient.get<{ [courseName: string]: number }>(`${this.baseURL}/course-attendance/${userId}`);
+  }
+
+
 
 }

@@ -116,10 +116,12 @@ export class WebSocketService {
     );
   }
   public softDeleteMessage(messageId: number): Observable<void> {
-    return this.http.put<void>(`http://localhost:8080/api/chat/soft-delete/${messageId}`, {}).pipe(
+    return this.http.put<void>(`http://localhost:8080/api/chat/soft-delete/${messageId}`, {}, { responseType: 'text' as 'json' }).pipe(
       catchError(this.handleError)
     );
   }
+  
+  
   public uploadFile(file: File,fileType: string): Observable<string> {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);

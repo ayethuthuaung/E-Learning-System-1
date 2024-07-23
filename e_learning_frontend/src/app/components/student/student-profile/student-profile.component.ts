@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Course } from '../../models/course.model'; // Ensure Course model includes instructorName
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
 import { UserCourseService } from '../../services/user-course.service';
 import { CourseModuleService } from '../../services/course-module.service';
+import { Lesson } from '../../models/lesson.model';
+import { CourseModule } from '../../models/coursemodule.model';
+import { UserCourseModuleService } from '../../services/usercoursemodule.service';
 
 @Component({
   selector: 'app-student-profile',
@@ -23,17 +26,24 @@ export class StudentProfileComponent implements OnInit {
   selectedFile: File | null = null;
 
   courseNames: string[] = [];
- 
+  lessons: Lesson[] = [];
   selectedCourse?: Course;
   enrolledCourses: Course[] = [];
   coursePercentages: { [courseId: number]: number } = {};
-
+  selectedCourseModules: CourseModule[] = [];
+  selectedCourseLessons: { [moduleId: number]: Lesson[] } = {};
+  currentlyVisibleModuleId?: number;
+  moduleVisibility: { [moduleId: number]: boolean } = {};
+  moduleCompletionStatus: { [moduleId: number]: boolean } = {};
+  error: string | null = null;
   constructor(
     private router: Router,
     private courseService: CourseService,
     private userService: UserService,
     private userCourseService: UserCourseService,
-    private courseModuleService: CourseModuleService
+    private courseModuleService: CourseModuleService,
+    private userCourseModuleService: UserCourseModuleService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -51,19 +61,15 @@ export class StudentProfileComponent implements OnInit {
         this.id = this.loggedUser.id;
         this.roles = this.loggedUser.roles.map((role: any) => role.name);
         console.log(this.id);
-          this.fetchEnrolledCourses();
+        this.fetchEnrolledCourses();
       }
     }
   }
 
   onFileSelected(event: any): void {
-    console.log("Hi");
-
     const file: File = event.target.files[0];
-    console.log(file);
 
     if (file) {
-      console.log("Hi");
       this.selectedFile = file;
       this.updateProfile();
     }
@@ -105,7 +111,6 @@ export class StudentProfileComponent implements OnInit {
     }
   }
 
-
   fetchEnrolledCourses(): void {
     if (this.id) {
       this.userCourseService.getCoursesByUserId(this.id).subscribe({
@@ -118,7 +123,7 @@ export class StudentProfileComponent implements OnInit {
       });
     }
   }
-  
+
   fetchCourseNames(): void {
     this.enrolledCourses.forEach(course => {
       this.courseService.getCourseById(course.id).subscribe({
@@ -129,7 +134,6 @@ export class StudentProfileComponent implements OnInit {
       });
     });
   }
-  
 
   fetchCoursePercentages(): void {
     this.enrolledCourses.forEach(course => {
@@ -142,15 +146,53 @@ export class StudentProfileComponent implements OnInit {
       });
     });
   }
+
+  loadCourseModulesAndLessons(courseId: number): void {
+    this.courseModuleService.getModulesByCourseId(courseId).subscribe(modules => {
+      this.selectedCourseModules = modules;
+      this.selectedCourseModules.forEach(module => {
+        this.moduleVisibility[module.id] = false;
+        this.loadModuleLessons(module.id);
+        this.userCourseModuleService.getModuleCompletionStatus(this.id, module.id).subscribe(status => {
+          this.moduleCompletionStatus[module.id] = status;
+        });
+      });
+    });
+  }
+
+  loadModuleLessons(moduleId: number): void {
+    this.courseModuleService.getLessonsByModuleId(moduleId).subscribe({
+      next: (lessons) => {
+        this.selectedCourseLessons[moduleId] = lessons;
+      },
+      error: (err) => {
+        console.error('Error fetching lessons:', err);
+      }
+    });
+  }
+
+  toggleModuleVisibility(moduleId: number): void {
+    this.moduleVisibility[moduleId] = !this.moduleVisibility[moduleId];
+
+    if (this.moduleVisibility[moduleId] && !this.selectedCourseLessons[moduleId]) {
+      this.loadModuleLessons(moduleId);
+    }
+  }
+
   viewCourse(course: Course): void {
+    this.selectedCourse = course;
+    if (this.selectedCourse) {
+      this.loadCourseModulesAndLessons(this.selectedCourse.id);
+    }
+  }
+  viewCourses(course: Course): void {
     this.selectedCourse = course;
     if (this.selectedCourse) {
       this.router.navigate(['/course-detail', this.selectedCourse.id]);
     }
   }
+
   goBack(): void {
-    // Example of navigating back to the previous location
     window.history.back();
   }
- 
 }

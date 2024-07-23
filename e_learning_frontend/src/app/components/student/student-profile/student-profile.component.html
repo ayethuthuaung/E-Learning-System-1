@@ -8,11 +8,11 @@
         <div class="bg-white p-4 rounded-lg shadow-lg">
           <div class="flex flex-col items-center ">
             <div class="mt-4 w-full flex justify-start">
-            <button class="cursor-pointer duration-200 hover:scale-125 active:scale-100" title="Go Back" (click)="goBack()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 24 24" class="stroke-blue-300">
-                <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" d="M11 6L5 12M5 12L11 18M5 12H19"></path>
-              </svg>
-            </button>
+              <button class="cursor-pointer duration-200 hover:scale-125 active:scale-100" title="Go Back" (click)="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 24 24" class="stroke-blue-300">
+                  <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" d="M11 6L5 12M5 12L11 18M5 12H19"></path>
+                </svg>
+              </button>
             </div>
             <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden profile-picture">
               <img [src]="photo" alt="Profile Picture" class="w-full h-full object-cover">
@@ -37,8 +37,52 @@
             </div>
           </div>
         </div>
-      </div>
+        <div *ngIf="selectedCourseModules.length > 0" class="mt-6 w-full">
+          <h3 class="text-lg font-semibold mb-2">Modules and Lessons</h3>
+          <table class="min-w-full bg-white">
+            <thead>
+              <tr>
+                <th class="py-2 px-4 bg-gray-200">Lessons</th>
+                <th class="py-2 px-4 bg-gray-200">Module</th>
 
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let module of selectedCourseModules; let i = index">
+                <td class="border px-4 py-2">
+                  <ul class="list-none pl-0">
+                    <li *ngFor="let lesson of selectedCourseLessons[module.id]">{{ lesson.title }}</li>
+                  </ul>
+                </td>
+                <td class="border px-4 py-2">
+                  <div class="relative flex flex-col items-center">
+                    <!-- Module Name Display -->
+                    <div *ngIf="moduleVisibility[module.id]"
+                         class="mb-2 bg-gray-200 p-2 text-sm text-gray-700 rounded-md shadow-md">
+                      <p class="font-semibold">{{ module.name }}</p>
+                    </div>
+                    <!-- Number Display -->
+                  
+                    <button (click)="toggleModuleVisibility(module.id)"
+                            class="text-sm font-semibold py-1 px-3 rounded-md"
+                            [ngClass]="{
+                              'bg-green-500 text-white': moduleCompletionStatus[module.id],
+                              'bg-white text-gray-900': !moduleCompletionStatus[module.id]
+                            }">
+                      {{ i + 1 }}
+                    </button>
+                   
+                    
+                  </div>
+                </td>
+               
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+</div>        
+      
       <div class="md:w-2/3">
         <div *ngIf="enrolledCourses.length > 0">
           <h2 class="text-2xl font-bold mb-4 text-indigo-700">Enrolled Courses</h2>
@@ -48,10 +92,10 @@
                 <div class="bg-indigo-500 text-white rounded-full h-6 w-6 flex items-center justify-center mr-2">
                   <i class="fas fa-book text-xs"></i>
                 </div>
-                <span class="font-semibold text-base">{{ course.name }}</span>
+                <span class="font-semibold text-base cursor-pointer" (click)="viewCourse(course)">{{ course.name }}</span>
               </div>
               <div class="absolute top-4 right-4 text-right">
-                <button (click)="viewCourse(course)" class="text-indigo-500 hover:text-indigo-700 font-semibold text-sm">View Course</button>
+                <button (click)="viewCourses(course)" class="text-indigo-500 hover:text-indigo-700 font-semibold text-sm">View Course</button>
               </div>
               <!-- Completion percentage display -->
               <div class="flex items-center justify-between mt-4">

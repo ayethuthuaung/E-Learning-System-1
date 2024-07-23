@@ -19,17 +19,7 @@ export class CoursesComponent implements OnInit {
   latestCourses: Course[] = [];
   categories: Category[] = [];
   selectedCategory: string = '';
-  translateX = 0;
-  translateXTrending = 0;
-  intervalId: any;
-  intervalIdTrending: any;
-  slideConfig = {
-    showLeftRightArrow: true,
-    interval: 5000 // Slide every 5 seconds
-  }
-
-  @ViewChild('latestCoursesSlider') latestCoursesSlider!: ElementRef;
-  @ViewChild('trendingCoursesSlider') trendingCoursesSlider!: ElementRef;
+  
 
   constructor(
     private categoryService: CategoryService,
@@ -43,16 +33,7 @@ export class CoursesComponent implements OnInit {
     this.getLatestAcceptedCourses();
     this.getAllCourses();
     this.getCategories();
-    this.startAutoSlide();
-  }
-
-  ngOnDestroy() {
-    clearInterval(this.intervalId);
-    clearInterval(this.intervalIdTrending);
-  }
-
-  ngAfterViewInit() {
-    this.addEventListeners();
+    
   }
 
   private getAllCourses() {
@@ -92,7 +73,7 @@ export class CoursesComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.latestCourses = data;
-          this.startAutoSlide();
+          
         },
         error: (e) => console.error('Error fetching latest accepted courses:', e)
       });
@@ -103,7 +84,7 @@ export class CoursesComponent implements OnInit {
       .subscribe(
         (courses: Course[]) => {
           this.trendingCourses = courses;
-          this.startAutoSlide();
+          
         },
         (error) => {
           console.error('Error fetching trending courses:', error);
@@ -111,56 +92,5 @@ export class CoursesComponent implements OnInit {
       );
   }
 
-  addEventListeners() {
-    const latestSlider = this.latestCoursesSlider.nativeElement;
-    const trendingSlider = this.trendingCoursesSlider.nativeElement;
-
-    if (latestSlider) {
-      latestSlider.addEventListener('mouseenter', () => clearInterval(this.intervalId));
-      latestSlider.addEventListener('mouseleave', () => {
-        this.intervalId = setInterval(() => {
-          this.nextLatest();
-        }, this.slideConfig.interval);
-      });
-    }
-
-    if (trendingSlider) {
-      trendingSlider.addEventListener('mouseenter', () => clearInterval(this.intervalIdTrending));
-      trendingSlider.addEventListener('mouseleave', () => {
-        this.intervalIdTrending = setInterval(() => {
-          this.nextTrending();
-        }, this.slideConfig.interval);
-      });
-    }
-  }
-
-  startAutoSlide() {
-    this.intervalId = setInterval(() => {
-      this.nextLatest();
-    }, this.slideConfig.interval);
-
-    this.intervalIdTrending = setInterval(() => {
-      this.nextTrending();
-    }, this.slideConfig.interval);
-  }
-
-  nextLatest() {
-    const maxTranslateX = -((this.latestCourses.length - 1) * 400); // Adjust based on card width + margin
-    this.translateX = this.translateX <= maxTranslateX ? 0 : this.translateX - 400;
-  }
-
-  prevLatest() {
-    const maxTranslateX = -((this.latestCourses.length - 1) * 400);
-    this.translateX = this.translateX >= 0 ? maxTranslateX : this.translateX + 400;
-  }
-
-  nextTrending() {
-    const maxTranslateXTrending = -((this.trendingCourses.length - 1) * 400); // Adjust based on card width + margin
-    this.translateXTrending = this.translateXTrending <= maxTranslateXTrending ? 0 : this.translateXTrending - 400;
-  }
-
-  prevTrending() {
-    const maxTranslateXTrending = -((this.trendingCourses.length - 1) * 400);
-    this.translateXTrending = this.translateXTrending >= 0 ? maxTranslateXTrending : this.translateXTrending + 400;
-  }
+ 
 }

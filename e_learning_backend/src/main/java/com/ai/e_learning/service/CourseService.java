@@ -23,4 +23,5 @@ public interface CourseService {
   List<CourseDto> getAllCourses();
   List<CourseDto> getCoursesByInstructorId(Long instructorId);
   List<CourseDto> getLatestAcceptedCourses();
+
 }

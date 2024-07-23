@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { Role } from '../../models/user.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-menu',
@@ -11,7 +12,7 @@ export class MenuComponent implements OnInit {
   loggedUser: any = '';
   id: number = 0;
   roles: Role[] = [];
-
+  showNotifications = false;
 
   constructor(private userService: UserService) {}
 
@@ -38,6 +39,10 @@ export class MenuComponent implements OnInit {
   hasRole(roleId: number): boolean {
     return this.roles.some(role => role.id === roleId);
   }
+  toggleNotifications(): void {
+    this.showNotifications = !this.showNotifications;
+  }
+
 
   scrollToFooter(): void {
     const footerElement = document.querySelector('footer');

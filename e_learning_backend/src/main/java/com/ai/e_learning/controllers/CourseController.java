@@ -49,7 +49,7 @@ public class CourseController {
   //AT
 
   @GetMapping(value = "/instructorcourselist", produces = "application/json")
-  public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
+  public List<CourseDto> getInstructorCourses(@RequestParam(value = "userId") Long userId, @RequestParam(value = "status", required = false) String status) {
     return courseService.getCoursesByUserId(userId);
   }
 

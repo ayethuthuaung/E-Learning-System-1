@@ -64,7 +64,6 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
       }
     }
   };
-
   constructor(
     private authService: AuthService,
     private courseService: CourseService,
@@ -72,18 +71,18 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
   ) {}
 
   ngOnInit(): void {
-    this.loadInstructorCourseCounts();
-    this.loadAcceptedStudentCounts();
+    this.loadAcceptedCourses();
     this.loadStudentCounts();
+    this.loadAcceptedStudentCounts
   }
 
   ngAfterViewInit(): void {
-    this.renderChart();
+    this.renderChart(); // Render the chart once view has been initialized
   }
 
   ngOnDestroy(): void {
     if (this.chartInstance) {
-      this.chartInstance.destroy();
+      this.chartInstance.destroy(); // Clean up chart instance on component destruction
     }
   }
 
@@ -91,19 +90,24 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  private loadInstructorCourseCounts(): void {
+  private loadAcceptedCourses(): void {
     const instructorId = this.authService.getLoggedInUserId();
     this.courseService.getInstructorCourses(instructorId).subscribe(
       (courses: Course[]) => {
-        this.courseCount = courses.length;
-        this.courseNames = courses.map(course => course.name);
+        // Filter only accepted courses
+        const acceptedCourses = courses.filter(course => course.status === 'Accept');
+        this.courseCount = acceptedCourses.length;
+        this.courseNames = acceptedCourses.map(course => course.name); // Ensure IDs are strings
         this.updateChartData();
+        this.loadStudentCounts();
+        this.loadAcceptedStudentCounts();
       },
       (error) => {
-        console.error('Error loading courses:', error);
+        console.error('Error loading accepted courses:', error);
       }
     );
   }
+
   private loadStudentCounts(): void {
     const instructorId = this.authService.getLoggedInUserId();
     this.userCourseService.getAllUserCourses(instructorId).subscribe(

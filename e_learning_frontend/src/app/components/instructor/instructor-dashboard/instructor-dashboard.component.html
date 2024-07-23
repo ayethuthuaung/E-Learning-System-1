@@ -1,9 +1,12 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
+
   <!-- Navbar and Sidebar -->
+
   <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
     <div class="flex-1 p-6">
+
       <!-- Flex container for course and student count cards -->
       <div class="flex flex-wrap mb-6 space-x-4">
         <!-- Courses Count Card -->
@@ -17,6 +20,7 @@
 
         <!-- Students Count Cards -->
         <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6" *ngFor="let count of studentCounts">
+
           <i class="fas fa-user-graduate text-4xl text-purple-500 mr-4"></i>
           <div>
             <h3 class="text-xl font-semibold mb-2">Student</h3>
@@ -25,9 +29,24 @@
         </div>
       </div>
 
+ 
       <!-- Chart Section -->
       <div class="w-full h-80 mt-12">
         <canvas id="myChart" class="rounded-lg shadow-lg"></canvas>
+      </div>
+      <!-- Line Chart for Student Progress -->
+      <div>
+        <mat-card class="w-full max-w-[600px] mx-auto">
+          <mat-card-header>
+            <mat-card-title>Course Progress</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
+            <div class="chart-container">
+              <app-instructor-course-completion [chartType]="'line'"></app-instructor-course-completion>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
       </div>
     </div>
   </div>

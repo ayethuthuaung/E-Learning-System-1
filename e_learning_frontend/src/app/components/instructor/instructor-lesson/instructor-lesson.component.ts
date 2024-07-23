@@ -38,6 +38,7 @@ export class InstructorLessonComponent implements OnInit {
   lesson: Lesson = {
     title: '',
     id: 0,
+    
     courseId: 0,
     file: '',
     modules: [],

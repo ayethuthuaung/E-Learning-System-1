@@ -92,5 +92,20 @@
     stroke: #4a90e2;
     transition: stroke-dasharray 0.3s ease;
   }
+  .module-done {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .module-pending {
+    color: red;
+    font-weight: normal;
+  }
+  .completed-module {
+    font-weight: bold;
+  }
+  .bg-green-100 {
+    background-color: #d1fae5;
+  }
   
   

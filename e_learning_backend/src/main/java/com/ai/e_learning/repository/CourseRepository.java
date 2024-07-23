@@ -29,7 +29,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   List<Course> findByStatusIn(List<String> statusList);
 
   List<Course> findByUserId(Long userId);
-
+  List<Course> findByUserIdAndStatus(Long userId, String status);
 
   @Query("SELECT c FROM Course c WHERE c.status = 'Accept' ORDER BY c.acceptedAt DESC ")
   List<Course> findLatestAcceptedCourses();

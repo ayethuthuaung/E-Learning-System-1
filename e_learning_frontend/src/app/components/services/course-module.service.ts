@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Module } from '../models/module.model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Lesson } from '../models/lesson.model';
+import { CourseModule } from '../models/coursemodule.model';
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +59,25 @@ export class CourseModuleService {
   getCompletionPercentage(userId: number, courseId: number): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/completion-percentage?userId=${userId}&courseId=${courseId}`);
   }
+ 
+  getAllStudentsProgress(): Observable<{ [studentName: string]: { [courseName: string]: number } }> {
+    return this.http.get<{ [studentName: string]: { [courseName: string]: number } }>(`${this.baseUrl}/all-students-progress`);
+  }
+
+  getAllCoursesProgress(): Observable<{ [courseName: string]: { [studentName: string]: number } }> {
+    return this.http.get<{ [courseName: string]: { [studentName: string]: number } }>(`${this.baseUrl}/all-courses-progress`);
+  }
+  
+
   getModulesByLessonId(lessonId: number): Observable<Module[]> {
     return this.http.get<Module[]>(`${this.baseUrl}/byLesson/${lessonId}`);
+  }
+
+  getLessonsByModuleId(moduleId: number): Observable<Lesson[]> {
+    return this.http.get<Lesson[]>(`${this.baseUrl}/lessons/${moduleId}`);
+  }
+
+  getModulesByCourseId(courseId: number): Observable<CourseModule[]> {
+    return this.http.get<CourseModule[]>(`${this.baseUrl}/byCourse/${courseId}`);
   }
 }
