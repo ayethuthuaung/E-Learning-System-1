@@ -1,14 +1,13 @@
 package com.ai.e_learning.controllers;
 
-import com.ai.e_learning.dto.CategoryDto;
-import com.ai.e_learning.dto.CourseDto;
-import com.ai.e_learning.dto.ImageResponse;
+import com.ai.e_learning.dto.*;
 import com.ai.e_learning.model.Category;
 import com.ai.e_learning.model.Course;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.ProfileImageService;
 import com.ai.e_learning.util.DtoUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,54 +19,65 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
 
-  @Autowired
-  private CourseService courseService;
+    @Autowired
+    private CourseService courseService;
 
-  @Autowired
-  private ModelMapper modelMapper;
+    @Autowired
+    private ExcelExporter excelExporter;
 
-  @GetMapping(value = "/courselist", produces = "application/json")
-  public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
-    if ("all".equalsIgnoreCase(status) || status == null) {
-      return ResponseEntity.ok(courseService.getAllCourseList());
+    @Autowired
+    private ExcelExporterForAdmin excelExporterForAdmin;
+
+    @Autowired
+    private PDFExporterForAdmin pdfExporterForAdmin;
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @GetMapping(value = "/courselist", produces = "application/json")
+    public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
+        if ("all".equalsIgnoreCase(status) || status == null) {
+            return ResponseEntity.ok(courseService.getAllCourseList());
+        }
+        return ResponseEntity.ok(courseService.getAllCourses(status));
     }
-    return ResponseEntity.ok(courseService.getAllCourses(status));
-  }
 
-  //AT
-  @GetMapping(value = "/allCoursesList", produces = "application/json")
-  public List<CourseDto> allCourses() {
-      return courseService.getAllCourses();
-  }
-  //AT
-
-  @GetMapping(value = "/instructorcourselist", produces = "application/json")
-  public List<CourseDto> displayInstructorCourse(ModelMap model,@RequestParam(value = "userId") Long userId) {
-    return courseService.getCoursesByUserId(userId);
-  }
-
-  @PostMapping(value = "/changeStatus", produces = "application/json")
-  public ResponseEntity<?> changeStatus(ModelMap model,@RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
-    try{
-      courseService.changeStatus( id, status);
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
-    }catch(Exception e){
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
+    //AT
+    @GetMapping(value = "/allCoursesList", produces = "application/json")
+    public List<CourseDto> allCourses() {
+        return courseService.getAllCourses();
     }
-  }
+    //AT
+
+    @GetMapping(value = "/instructorcourselist", produces = "application/json")
+    public List<CourseDto> displayInstructorCourse(ModelMap model, @RequestParam(value = "userId") Long userId) {
+        return courseService.getCoursesByUserId(userId);
+    }
+
+    @PostMapping(value = "/changeStatus", produces = "application/json")
+    public ResponseEntity<?> changeStatus(ModelMap model, @RequestParam(value = "id") Long id, @RequestParam(value = "status") String status) {
+        try {
+            courseService.changeStatus(id, status);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Change Status Successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
+        }
+    }
 
 
-  @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
-  public ResponseEntity<CourseDto> addCourse(
-    @RequestPart("course") CourseDto courseDto,
-    @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
+    @PostMapping(value = "/addcourse", produces = "application/json", consumes = "multipart/form-data")
+    public ResponseEntity<CourseDto> addCourse(
+            @RequestPart("course") CourseDto courseDto,
+            @RequestParam(value = "photo", required = false) MultipartFile photo) throws IOException, GeneralSecurityException {
         if (photo.isEmpty()) {
             return ResponseEntity.badRequest().body(courseDto);
         }
@@ -91,9 +101,12 @@ public class CourseController {
         }
     }
 
-    @PutMapping(value = "/updatecourse/{id}", produces = "application/json")
-    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
-        handlePhotoConversion(courseDto);
+    @PutMapping(value = "/updatecourse/{id}", produces = "application/json", consumes = "multipart/form-data")
+    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id,
+                                                  @RequestPart CourseDto courseDto,
+                                                  @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        courseDto.setPhotoInput(photo);
+        System.out.println(courseDto.toString());
         CourseDto updatedCourse = courseService.updateCourse(id, courseDto);
 
         if (updatedCourse == null) {
@@ -128,21 +141,54 @@ public class CourseController {
     }
 
 
-
-    private void handlePhotoConversion(CourseDto courseDto) {
-        if (courseDto.getPhoto() != null) {
-            byte[] photoBytes = ProfileImageService.convertStringToByteArray(courseDto.getPhoto());
-            courseDto.setPhoto(Arrays.toString(photoBytes));
+    @GetMapping(value = "/latestAccepted", produces = "application/json")
+    public ResponseEntity<List<CourseDto>> getLatestAcceptedCourses() {
+        List<CourseDto> courses = courseService.getLatestAcceptedCourses();
+        if (courses.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(courses, HttpStatus.OK);
     }
-  @GetMapping(value = "/latestAccepted", produces = "application/json")
-  public ResponseEntity<List<CourseDto>> getLatestAcceptedCourses() {
-    List<CourseDto> courses = courseService.getLatestAcceptedCourses();
-    if (courses.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    @GetMapping("/lessons/{lessonId}/courseId")
+    public Long getCourseIdByLessonId(@PathVariable Long lessonId) {
+        return courseService.getCourseId(lessonId);
     }
-    return new ResponseEntity<>(courses, HttpStatus.OK);
-  }
+
+    //report
+
+    @GetMapping("/export/instructor/excel")
+    public void exportCoursesByInstructor(@RequestParam(name = "instructorId") Long instructorId,
+                                          HttpServletResponse response) throws IOException {
+        // Call the ExcelExporter to export courses by instructor ID
+        excelExporter.exportCoursesByInstructor(instructorId, response);
+    }
+
+    @GetMapping("/export/admin/excel")
+    public void exportAllCourses(HttpServletResponse response) throws IOException {
+        excelExporterForAdmin.exportAllCourses(response);
+    }
+
+    @GetMapping("/export/instructor/pdf")
+    public void exportToPdf(@RequestParam("instructorId") Long instructorId, HttpServletResponse response) throws IOException {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=courses_" + currentDateTime + ".pdf";
+        response.setHeader(headerKey, headerValue);
+
+        // Instantiate the PDFExporter and call the export method
+        PDFExporter exporter = new PDFExporter();
+        exporter.exportCoursesByInstructor(instructorId, response);
+    }
+
+    @GetMapping("/export/admin/pdf")
+    public void exportToPdf(HttpServletResponse response) throws IOException {
+        pdfExporterForAdmin.exportAllCourses(response);
+    }
+
 
 
 
@@ -167,6 +213,5 @@ public class CourseController {
       }
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Handle JSON parsing or file reading errors
-    }
-  }*/
+    }*/
 }

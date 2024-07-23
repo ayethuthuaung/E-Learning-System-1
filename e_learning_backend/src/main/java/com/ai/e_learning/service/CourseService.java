@@ -17,10 +17,12 @@ public interface CourseService {
   List<CourseDto> getCoursesByCategory(Long categoryId);
   void addCategoryToCourse(Long courseId, Long categoryId);
   boolean isCourseNameAlreadyExists(String name);
-  void changeStatus(Long id,String status);
+  void changeStatus(Long id, String status);
   List<CourseDto> getCoursesByUserId(Long userId);
-
   List<CourseDto> getAllCourses();
-
+  List<CourseDto> getCoursesByInstructorId(Long instructorId);
   List<CourseDto> getLatestAcceptedCourses();
+
+
+    Long getCourseId(Long lessonId);
 }

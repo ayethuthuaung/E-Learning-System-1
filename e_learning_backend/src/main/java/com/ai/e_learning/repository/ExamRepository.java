@@ -20,4 +20,6 @@ public interface ExamRepository extends JpaRepository<Exam,Long> {
     List<Exam> findByLesson(Lesson lesson);
 
     List<Exam> findByLessonAndIsDeletedFalse(Lesson lesson);
+
+    List<Exam> findByLessonAndFinalExamFalseAndIsDeletedFalse(Lesson lesson);
 }

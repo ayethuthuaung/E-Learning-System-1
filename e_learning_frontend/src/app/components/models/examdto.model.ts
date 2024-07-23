@@ -6,4 +6,5 @@ export interface ExamDTO {
   description: string;
   duration: string;
   questions: QuestionDto[];
+
 }

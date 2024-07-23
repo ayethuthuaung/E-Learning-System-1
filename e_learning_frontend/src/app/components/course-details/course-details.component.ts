@@ -15,6 +15,7 @@ import { ExamService } from '../services/exam.service';
 import { Location } from '@angular/common';
 import { UnreadMessageService } from '../services/unread-message.service';
 import { WebSocketService } from '../services/websocket.service';
+import { Role } from '../models/user.model';
 
 
 @Component({
@@ -40,9 +41,16 @@ export class CourseDetailsComponent implements OnInit {
   lesson: Lesson | undefined;
   module: Course | undefined;
   exam: ExamList | undefined;
+  roles: Role[] = [];
 
   isOwner: boolean = false;
   unreadMessageCount: number = 0;
+
+  isFinalExam: boolean = false;
+  filteredExamList: ExamList[] = [];
+  showFinalExam: boolean = false;
+  expandAllText: string = 'Expand All';
+
 
   constructor(
     private route: ActivatedRoute,
@@ -87,12 +95,14 @@ export class CourseDetailsComponent implements OnInit {
 
             console.log(`Fetched Course: ${JSON.stringify(this.course)}`);
             this.fetchLessons();
+           
           },
           error => {
             console.error('Error fetching course:', error);
           }
         );
       }
+
     });
 
     const storedUser = localStorage.getItem('loggedUser');
@@ -102,13 +112,14 @@ export class CourseDetailsComponent implements OnInit {
 
       if (this.loggedUser) {
         this.userId = this.loggedUser.id;
+        this.roles = this.loggedUser.roles;
         // this.instructorId = this.course.userId;
         // console.log(this.instructorId);
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
     } 
-    
+   
   }
 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
@@ -164,6 +175,17 @@ export class CourseDetailsComponent implements OnInit {
           }));
   
           console.log(this.lessons);
+          this.lessons.forEach(lesson => {
+            this.showFinalExam = lesson.userComplete;
+            if(this.showFinalExam){
+              this.filteredExamList = lesson.examListDto.filter(exam => exam.finalExam);
+
+            }
+            lesson.examListDto = lesson.examListDto.filter(exam => !exam.finalExam);
+
+          });
+  
+        console.log(this.filteredExamList);
           
           this.isDropdownOpen = new Array(this.lessons.length).fill(false);
         },
@@ -177,10 +199,10 @@ export class CourseDetailsComponent implements OnInit {
   toggleDropdown(index: number) {
     this.isDropdownOpen[index] = !this.isDropdownOpen[index];
   }
-
   expandAllLessons(): void {
     const shouldExpand = this.isDropdownOpen.some(open => !open);
     this.isDropdownOpen.fill(shouldExpand);
+    this.expandAllText = shouldExpand ? 'Close All' : 'Expand All';
   }
 
 
@@ -232,6 +254,21 @@ markAsDone(moduleId: number, lessonIndex: number): void {
     () => {
       module.done = true;
       localStorage.setItem(`module_${moduleId}_done`, 'true');
+
+      // Check if all modules are done
+      console.log(this.lessons);
+      
+      const allModulesDone = lesson.modules.every(m => m.done);
+      if (allModulesDone) {
+        console.log("Hi");
+        
+        this.showFinalExam = true;
+        this.filteredExamList = lesson.examListDto.filter(exam => exam.finalExam);
+      }else{
+        console.log("Hello");
+
+      }
+
       this.cdr.detectChanges();
     },
     (error: HttpErrorResponse) => {
@@ -243,6 +280,10 @@ markAsDone(moduleId: number, lessonIndex: number): void {
       }
     }
   );
+}
+
+hasRole(roleId: number): boolean {
+  return this.roles.some(role => role.id === roleId);
 }
 
 goBack() {

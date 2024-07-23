@@ -141,5 +141,5 @@ public class ChatController {
         chatServiceImpl.markAllMessagesAsRead(chatRoomId);
         return ResponseEntity.ok().build();
     }
-    sta
+
 }

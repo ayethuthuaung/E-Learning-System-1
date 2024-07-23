@@ -6,19 +6,18 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./timer.component.css']
 })
 export class TimerComponent {
-  hours: number | null = null;
-  minutes: number | null = null;
-  seconds: number | null = null;
+  hours: number = 0;
+  minutes: number = 0;
+  seconds: number = 0;
 
   @Output() durationChange = new EventEmitter<string>();
 
   updateDuration() {
-    const duration = `${this.pad(this.hours)}:${this.pad(this.minutes)}:${this.pad(this.seconds)}`;
-    console.log(duration);
+    const duration = `${this.pad(this.hours)}:${this.pad(this.minutes)}:${this.pad(this.seconds)}`;  
     this.durationChange.emit(duration);
   }
 
-  pad(value: number | null): string {
-    return value !== null ? value.toString().padStart(2, '0') : '00';
+  pad(value: number): string {
+    return value.toString().padStart(2, '0');
   }
 }

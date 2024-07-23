@@ -99,6 +99,22 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
+  @PostMapping("/changePasswordByStaffId")
+  public ResponseEntity<Map<String, String>> changePasswordByStaffId(@RequestParam("newPassword") String newPassword, @RequestParam("staffId") String staffId) {
+    Map<String, String> response = new HashMap<>();
+    int checkPassword = userService.updatePasswordByStaffId(staffId, newPassword);
+    if (checkPassword == 0) {
+      response.put("message", "User cannot be found.");
+    } else if (checkPassword == 2) {
+      response.put("message", "New password cannot be the same as the old password.");
+    } else {
+      response.put("message", "Password is updated.");
+    }
+    return ResponseEntity.ok(response);
+  }
+
+
+
 
   @GetMapping(value = "/userList", produces = "application/json")
   public List<UserDto> displayUser(ModelMap model) {
@@ -160,6 +176,8 @@ public class UserController {
   }
 
 
+
+  /*public static void main(String[] args){}*/
 }
 
 

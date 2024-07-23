@@ -30,6 +30,8 @@ export class AdminCourseComponent implements OnInit {
   loggedUser: any = null;
   userId: any;
 
+  loading = false;
+
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
@@ -95,11 +97,16 @@ export class AdminCourseComponent implements OnInit {
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.submitted = false;
-      this.saveCourse();
+      this.loading = true;
+      this.sureAlert();
+      
     } else {
       this.submitted = true;
       console.log('invalid form');
+      //Swal.fire('Please fill all the fields', '','error')
+      this.errorMessage = 'Please fill the required fields';
     }
+    
   }
 
   createCategory(): void {
@@ -163,6 +170,7 @@ export class AdminCourseComponent implements OnInit {
     this.courseService.addCourseWithFormData(formData).subscribe(
       (data: Course) => {
         console.log('Course created successfully:', data);
+        this.loading = false;
 
         this.getCourses(); // Refresh the course list after creation
         this.course = new Course(); // Clear the form
@@ -174,7 +182,7 @@ export class AdminCourseComponent implements OnInit {
       },
       (error) => {
         console.error('Error creating course:', error);
-       
+        this.loading = false;
       }
     );
   }
@@ -214,6 +222,28 @@ export class AdminCourseComponent implements OnInit {
 
   navigateToCourse(courseId: number) {
     this.router.navigate([`admin/lesson/${courseId}`]);
+  }
+
+  getAcceptedCourses(): Course[] {
+    return this.courses.filter(course => course.status === 'Accept' && course.userId === this.userId);
+  }
+
+
+  sureAlert(): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'Do you want to create this course?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.saveCourse();
+      } else {
+        this.loading = false;
+      }
+    });
   }
 
 

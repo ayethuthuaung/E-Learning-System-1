@@ -191,7 +191,21 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
     return acceptedUserCounts;
   }
+
   @Override
+  public Map<String, Long> getAcceptedStudentCount() {
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("accept");
+    Map<String, Long> acceptedStudentCounts = new HashMap<>();
+
+    for (UserCourse userCourse : acceptedCourses) {
+      String courseName = userCourse.getCourse().getName();
+      Long count = userCourseRepository.countDistinctUsersByCourseAndStatus(userCourse.getCourse(), "accept");
+      acceptedStudentCounts.put(courseName, count);
+    }
+
+    return acceptedStudentCounts;
+  }
+
   public Map<String, Double> getCourseAttendanceByInstructor(Long userId) {
     List<Course> courses = courseRepository.findByUserId(userId);
     Map<String, Double> courseAttendance = new HashMap<>();
@@ -205,6 +219,7 @@ public class UserCourseServiceImpl implements UserCourseService {
 
     return courseAttendance;
   }
+
 
 
 }

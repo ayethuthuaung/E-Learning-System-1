@@ -42,6 +42,16 @@ export class UserService {
     return this.httpClient.post<any>(`${this.baseURL}/changePassword`, { newPassword, email });
   }
 
+  changePasswordByStaffId(newPassword: string, staffId: string): Observable<any> {
+    return this.httpClient.post<any>(`${this.baseURL}/changePasswordByStaffId`, null, {
+      params: {
+        newPassword,
+        staffId
+      }
+    });
+  }
+  
+
   getUserList(): Observable<Student[]> {
     return this.httpClient.get<Student[]>(`${this.baseURL}/userList`);
   }
@@ -66,8 +76,9 @@ checkExamOwner(userId: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.baseURL}/checkExamOwner`, {
     params: { userId: userId.toString() }
   });
+  console.log(userId);
+  
 }
 
- 
 }
 

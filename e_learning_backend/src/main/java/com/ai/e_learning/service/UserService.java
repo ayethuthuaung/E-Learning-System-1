@@ -30,9 +30,17 @@ public interface UserService {
     UserDto getUserByStaffId(String staff_id);
     UserDto getUserByEmail(String email);
     int updatePassword(String email, String newPassword);
+    int updatePasswordByStaffId(String staffId, String newPassword);
     boolean checkPassword(String oldPassword, String inputPassword);
 
+
     void addAdmin();
+//    long countStudents();
+
+//    List<UserDto> findByRoleId(Long roleId);
+
+//    long countStudentsByRoleId(Long instructorRoleId);
+
 
       ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException;
     boolean isExamOwner(Long userId);

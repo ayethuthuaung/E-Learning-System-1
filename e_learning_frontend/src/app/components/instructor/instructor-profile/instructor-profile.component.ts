@@ -14,6 +14,7 @@ export class InstructorProfileComponent implements OnInit {
   division: string = '';
   loggedUser: any = '';
   id: number = 0;
+  roles: string[] = [];
   selectedFile: File | null = null;
 
   constructor(private userService: UserService) {}
@@ -32,6 +33,10 @@ export class InstructorProfileComponent implements OnInit {
         this.division = this.loggedUser.division;
         this.id = this.loggedUser.id;
         console.log(this.id);
+        console.log('Roles Data:', this.loggedUser.roles);
+        this.roles = this.loggedUser.roles.map((role: any) => role.name);
+        console.log('Mapped Roles:', this.roles);
+        
       }
     }
   }

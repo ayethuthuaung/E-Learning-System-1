@@ -1,63 +1,113 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../auth/auth.service';
 import { CourseService } from '../../services/course.service';
-import { Course } from '../../models/course.model';
 import { UserCourseService } from '../../services/user-course.service';
+import { Chart, ChartConfiguration } from 'chart.js/auto';
+import { Course } from '../../models/course.model';
 import { UserCourse } from '../../models/usercourse.model';
-
-interface Conversation {
-  id: number;
-  name: string;
-  chatRoomId: number;
-  photo:any;
-  
-}
 
 @Component({
   selector: 'app-instructor-dashboard',
   templateUrl: './instructor-dashboard.component.html',
   styleUrls: ['./instructor-dashboard.component.css']
 })
-export class InstructorDashboardComponent implements OnInit {
+export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isSidebarOpen = true;
-  chatRoomVisible: boolean = false;
- // createdCoursesCount: number = 0;
-  acceptedCoursesCount: number = 0;
+  courseCount: number = 0;
+  courseNames: string[] = [];
+  acceptedStudentCounts: { [courseName: string]: number,  } = {};
   studentCounts: { courseId: number, studentCount: number, acceptedCount: number }[] = [];
-  
-
-  constructor(private http: HttpClient,
-     private router: Router,
-     private authService: AuthService,
-     private courseService: CourseService,
-     private userCourseService: UserCourseService) {}
+  chartInstance: Chart<'bar'> | null = null;
+  chartConfig: ChartConfiguration<'bar'> = {
+    type: 'bar',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'Accepted Student Count',
+          data: [],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(250, 210, 210, 0.2)'
+          ],
+          borderColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+            'rgb(153, 102, 255)',
+            'rgb(250, 210, 210)'
+          ],
+          borderWidth: 1
+        }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          stacked: false,
+          beginAtZero: true
+        },
+        y: {
+          stacked: false,
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1 // Ensure y-axis steps are whole numbers
+          }
+        }
+      }
+    }
+  };
+  constructor(
+    private authService: AuthService,
+    private courseService: CourseService,
+    private userCourseService: UserCourseService
+  ) {}
 
   ngOnInit(): void {
-    this.loadInstructorCourseCounts();
+    this.loadAcceptedCourses();
     this.loadStudentCounts();
+    this.loadAcceptedStudentCounts
+  }
+
+  ngAfterViewInit(): void {
+    this.renderChart(); // Render the chart once view has been initialized
+  }
+
+  ngOnDestroy(): void {
+    if (this.chartInstance) {
+      this.chartInstance.destroy(); // Clean up chart instance on component destruction
+    }
   }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  toggleChatRoom(): void {
-    this.chatRoomVisible = !this.chatRoomVisible;
-  }
-  private loadInstructorCourseCounts(): void {
-    const userId = this.authService.getLoggedInUserId();
-    this.courseService.getInstructorCourses(userId).subscribe(
+  private loadAcceptedCourses(): void {
+    const instructorId = this.authService.getLoggedInUserId();
+    this.courseService.getInstructorCourses(instructorId).subscribe(
       (courses: Course[]) => {
-       // this.createdCoursesCount = courses.length;
-        this.acceptedCoursesCount = courses.filter(course => course.status === 'Accept').length;
+        // Filter only accepted courses
+        const acceptedCourses = courses.filter(course => course.status === 'Accept');
+        this.courseCount = acceptedCourses.length;
+        this.courseNames = acceptedCourses.map(course => course.name); // Ensure IDs are strings
+        this.updateChartData();
+        this.loadStudentCounts();
+        this.loadAcceptedStudentCounts();
       },
       (error) => {
-        console.error('Error fetching instructor courses', error);
+        console.error('Error loading accepted courses:', error);
       }
     );
   }
+
   private loadStudentCounts(): void {
     const instructorId = this.authService.getLoggedInUserId();
     this.userCourseService.getAllUserCourses(instructorId).subscribe(
@@ -86,8 +136,38 @@ export class InstructorDashboardComponent implements OnInit {
       }
     );
   }
+
+
+  private loadAcceptedStudentCounts(): void {
+    this.userCourseService.getAcceptedStudentCounts().subscribe(
+      (acceptedStudentCounts: { [courseName: string]: number }) => {
+        this.acceptedStudentCounts = acceptedStudentCounts;
+        this.updateChartData();
+      },
+      (error) => {
+        console.error('Error fetching accepted student counts', error);
+      }
+    );
+  }
+
+  private updateChartData(): void {
+    const acceptedStudentData = this.courseNames.map(name =>
+      this.acceptedStudentCounts[name] || 0
+    );
+
+    this.chartConfig.data.labels = this.courseNames;
+    this.chartConfig.data.datasets[0].data = acceptedStudentData.map(count => Math.round(count)); // Round to nearest integer
+
+    this.renderChart();
+  }
+
+  private renderChart(): void {
+    const ctx = document.getElementById('myChart') as HTMLCanvasElement;
+
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+
+    this.chartInstance = new Chart(ctx, this.chartConfig);
+  }
 }
-
-
-  
-

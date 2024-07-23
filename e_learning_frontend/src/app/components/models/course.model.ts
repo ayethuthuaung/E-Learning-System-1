@@ -1,5 +1,7 @@
 import { User } from './user.model';
 import { Category } from "./category.model";
+import { Lesson } from './lesson.model';
+import Module from 'module';
 
 export class Course {
   id: number;
@@ -20,7 +22,8 @@ export class Course {
   instructorName: string;
   instructorId: number; // Added property
   chatRoomId: number; // Added property
-
+  modules: Module[];
+  lessons: Lesson[];
   acceptedAt: number;
   createdAt: number;
 
@@ -48,7 +51,8 @@ export class Course {
     this.chatRoomId = 1; // Initialized property
 
     this.instructorName='';
-
+    this.modules=[];
+    this.lessons=[];
     this.createdDate = '';
     this.createdAt = 0;
     this.acceptedAt = 0;
