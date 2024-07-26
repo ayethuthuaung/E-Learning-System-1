@@ -174,6 +174,7 @@ public class CourseServiceImpl implements CourseService {
     // Send notifications
     sendInstructorNotification(updatedCourse, status);
   }
+
   private void sendInstructorNotification(Course course, String action) {
     Optional<Role> instructorRoleOptional = roleService.getRoleByName("Instructor");
     if (instructorRoleOptional.isPresent()) {
@@ -307,6 +308,7 @@ public class CourseServiceImpl implements CourseService {
       .limit(3) // Limit to latest 5 courses
       .collect(Collectors.toList());
   }
+
   @Override
   public List<CourseDto> getCoursesByInstructorId(Long instructorId) {
     List<Course> courses = courseRepository.findByUserId(instructorId);

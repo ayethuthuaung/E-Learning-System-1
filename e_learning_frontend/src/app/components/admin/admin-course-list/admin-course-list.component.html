@@ -1,4 +1,5 @@
-<!-- <div class="datatable-container">
+
+<div class="datatable-container bg-white p-3 rounded-lg shadow-lg">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
 
@@ -98,131 +99,11 @@
             </div>
           </td>
           <td class="center-cell">
-            <button (click)="openModal(course)" class="btn" data-bs-toggle="modal" data-bs-target="#courseDetailModal">
+            <button (click)="goToCourseDetails(course.id)" class="btn" >
               <i class="fa-solid fa-list" style="color: #075ea0;"></i>
             </button>
           </td>
           
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div id="fullScreenModal" class="modal" tabindex="-1">
-  <div class="modal-dialog modal-lg"> 
-  <div class="modal-dialog modal-xl modal-dialog-centered"> 
-    <div class="modal-content">
-      <div class="modal-header">h
-        <h5 class="modal-title">Course Detail</h5>
-        <button type="button" class="btn-close" (click)="closeModal()"></button>
-      </div>
-      <div class="modal-body">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-4 d-flex justify-content-center align-items-center">
-              <div class="profile-picture">
-                <img *ngIf="selectedCourse?.photo" [src]="selectedCourse?.photo" class="img-fluid rounded-circle" alt="Course Photo">
-              </div>
-            </div>
-            <div class="col-md-8">
-              <div class="bg-white p-4 rounded-lg shadow-lg">
-                <div class="d-flex flex-column align-items-center align-items-md-start">
-                  <h1 class="text-2xl font-bold mb-4">{{ selectedCourse?.name }}</h1>
-                  <p><strong>Level:</strong> {{ selectedCourse?.level }}</p>
-                  <p><strong>Duration:</strong> {{ selectedCourse?.duration }}</p>
-                  <p><strong>Instructor:</strong> {{ selectedCourse?.user?.name }}</p>
-                  <p><strong>Status:</strong> {{ selectedCourse?.status }}</p>
-                  <p><strong>Description:</strong> {{ selectedCourse?.description }}</p>
-                  <p><strong>Created Date:</strong> {{ selectedCourse?.createdAt | date: 'short'}}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
- 
- -->
-
- <div class="datatable-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <input type="text" class="form-control w-25" placeholder="Search..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
-
-    <select [(ngModel)]="statusFilter" (change)="onStatusChange()" class="form-control w-25">
-      <option value="all">All</option>
-      <option value="accept">Accept</option>
-      <option value="reject">Reject</option>
-      <option value="pending">Pending</option>
-    </select>
-
-    <div class="pagination-controls">
-      <button (click)="firstPage()" [disabled]="currentPage === 1" class="btn btn-secondary">
-        <i class="fas fa-angle-double-left"></i>
-      </button>
-      <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn btn-secondary">
-        <i class="fas fa-angle-left"></i>
-      </button>
-      <span>
-        Page
-        <input type="number" class="page-input" [(ngModel)]="currentPage" (ngModelChange)="goToPage($event)" min="1" max="{{ totalPages }}" />
-        of {{ totalPages }}
-      </span>
-      <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary">
-        <i class="fas fa-angle-right"></i>
-      </button>
-      <button (click)="lastPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary">
-        <i class="fas fa-angle-double-right"></i>
-      </button>
-    </div>
-  </div>
-
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover">
-      <thead class="thead-dark">
-        <tr>
-          <th>No</th>
-          <th>Course Name</th>
-          <th>Level</th>
-          <th>Duration</th>
-          <th>Instructor</th>
-          <th>Status</th>
-          <th>Details</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let course of paginatedCourses; let i = index">
-          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-          <td>{{ course.name }}</td>
-          <td>{{ course.level }}</td>
-          <td>{{ course.duration }}</td>
-          <td>{{ course.user?.name }}</td>
-          <td>
-            <div class="icon-container status-cell">
-              <i *ngIf="course.status === 'Accept'" class="fa-solid fa-circle-check" style="color: green; font-size: 24px;"></i>
-              <i *ngIf="course.status === 'Reject'" class="fa-solid fa-circle-xmark" style="color: red; font-size: 24px;"></i>
-
-              <div *ngIf="course.status === 'Pending'" class="d-flex justify-content-around status-buttons">
-                <button class="accept-button" (click)="acceptCourse(course)">
-                  <i class="fa-regular fa-circle-check icon-green"></i>
-                </button>
-                <button class="reject-button" (click)="rejectCourse(course)">
-                  <i class="fa-regular fa-circle-xmark icon-red"></i>
-                </button>
-              </div>
-            </div>
-          </td>
-          <td>
-            <button (click)="openModal(course)" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#courseDetailModal">Detail</button>
-          </td>
         </tr>
       </tbody>
     </table>

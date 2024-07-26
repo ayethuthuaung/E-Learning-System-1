@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Course } from '../models/course.model';
 
 @Injectable({
@@ -10,6 +11,14 @@ export class CourseService {
   private baseUrl = 'http://localhost:8080/api/courses';
 
   constructor(private http: HttpClient) {}
+
+  //PK (Auto Refresh)
+  pollCourses(interval: number, status: string): Observable<Course[]> {
+    return timer(0, interval).pipe(
+      switchMap(() => this.getAllCourses(status))
+    );
+  }
+  //-------------
 
   getAllCourses(status: string): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/courselist?status=`+ status);

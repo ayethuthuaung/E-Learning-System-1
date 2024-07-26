@@ -22,29 +22,27 @@ export class AdminCourseComponent implements OnInit {
   errorMessage: string = '';
   categories: Category[] = [];
   nameDuplicateError = false;
-  
+
   course: Course = new Course();
-  courses: Course[] = [];
   categoryList: number[] = [];
   submitted = false;
 
-  loggedUser: any = null;
+  loggedUser: any = '';
   userId: any;
 
   loading = false;
   isEditing : boolean =  false;
 
+  courses: Course[] = [];
+  status: string = 'Accept,Pending'; 
+
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
-
-    private router:Router,
-    private route: ActivatedRoute) { }
+    private router:Router) { }
 
   ngOnInit(): void {
     this.getCategories();
-    this.getCourses(); // Fetch courses on init
-
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
       this.loggedUser = JSON.parse(storedUser);
@@ -53,14 +51,11 @@ export class AdminCourseComponent implements OnInit {
       if (this.loggedUser) {
     
         this.userId = this.loggedUser.id;
+       
         
       }
     }
-    this.route.queryParams.subscribe(params => {
-      if (params['tab']) {
-        this.activeTab = params['tab'];
-      }
-    });
+    this.getInstructorCourses();
   }
 
   getCategories(): void {
@@ -70,28 +65,6 @@ export class AdminCourseComponent implements OnInit {
       },
       (error) => {
         this.errorMessage = `Error fetching categories: ${error}`;
-      }
-    );
-  }
-
-  getCourses(): void {
-    this.courseService.getCourseList().subscribe(
-      (data: Course[]) => {
-        this.courses = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      },
-      (error) => {
-        this.errorMessage = `Error fetching courses: ${error}`;
-      }
-    );
-  }
-
-  validateCategoryName(name: string): void {
-    this.categoryService.isCategoryNameAlreadyExists(name).subscribe(
-      (exists: boolean) => {
-        this.nameDuplicateError = exists;
-      },
-      (error) => {
-        console.error('Error checking category name:', error);
       }
     );
   }
@@ -111,35 +84,13 @@ export class AdminCourseComponent implements OnInit {
     
   }
 
-  createCategory(): void {
-    this.categoryService.createCategory(this.category).subscribe(
-      () => {
-        console.log('Category created successfully');
-        this.goToCategoryList();
-        this.getCategories(); // Refresh the list after creation
-        this.category = new Category(); // Clear the form
-      },
-      (error) => {
-        this.errorMessage = `Error creating category: ${error}`;
-      }
-    );
-  }
-
-
-
-  goToCategoryList(): void {
-    this.router.navigate(['/categories']);
-  }
-
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
+
   setActiveTab(tab: string) {
     this.activeTab = tab;
-    if (tab === 'courseList') {
-      this.getCourses(); // Refresh courses list when switching to course list tab
-    }
   }
 
   loadCategories(): void {
@@ -151,44 +102,77 @@ export class AdminCourseComponent implements OnInit {
     });
   }
 
-  validateCourseName(name: string): void {
-    this.courseService.isCourseNameAlreadyExists(name).subscribe(
-      (exists: boolean) => {
-        this.nameDuplicateError = exists;
+  getCourses(): void {
+    this.courseService.getCourseList().subscribe(
+      (data: Course[]) => {
+        this.courses = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       },
       (error) => {
-        console.error('Error checking course name:', error);
+        this.errorMessage = `Error fetching courses: ${error}`;
       }
     );
   }
 
+
+ 
+
   saveCourse(): void {
     this.course.userId = this.userId;
     this.course.status = 'In Progress';
+    console.log(this.course.status);
+    
     const formData = new FormData();
+    
     formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
     if (this.course.photoFile) {
       formData.append('photo', this.course.photoFile, this.course.photoFile.name);
     }
-  
     this.courseService.addCourseWithFormData(formData).subscribe(
       (data: Course) => {
         console.log('Course created successfully:', data);
         this.loading = false;
 
-        this.getCourses(); // Refresh the course list after creation
+        this.getInstructorCourses(); // Refresh courses list after adding new course
         this.course = new Course(); // Clear the form
         this.course.status = data.status; // Update local status with returned status
         this.course.photoFile = undefined; // Clear the photo input
-        this.course.categories = []; // Clear selected categories
-        this.showSuccessAlert();
+        this.categoryList = []; // Clear selected categories
+        this.course.categories = []; // Clear selected categories in the course object
         
+        // Clear checkboxes
+        this.categories.forEach(category => {
+          const checkbox = document.getElementById(`category_${category.id}`) as HTMLInputElement;
+          if (checkbox) {
+            checkbox.checked = false;
+          }
+        });
+  
+        // Clear file input
+        const photo = document.getElementById('photo') as HTMLInputElement;
+        if (photo) {
+          photo.value = '';
+        }
+
+        this.showSuccessAlert();
       },
       (error) => {
         console.error('Error creating course:', error);
         this.loading = false;
       }
     );
+  }
+
+  editCourse(course: Course): void {
+
+    this.isEditing = true;
+    console.log(this.isEditing);
+    
+    console.log(course);
+    
+    this.course = { ...course }; 
+    this.course.categorylist = course.categories.map(cat => cat.id);
+
+   
   }
 
   confirmUpdateCourse(): void {
@@ -205,7 +189,7 @@ export class AdminCourseComponent implements OnInit {
       }
     });
   }
-
+  
   updateCourse(): void {
     console.log("Update Course");
     
@@ -219,7 +203,7 @@ export class AdminCourseComponent implements OnInit {
       (updatedCourse: Course) => {
         console.log('Course updated successfully:', updatedCourse);
         this.loading = false;
-        this.getCourses(); // Refresh courses list after updating the course
+        this.getInstructorCourses(); // Refresh courses list after updating the course
         this.course = new Course(); // Clear the form
         this.isEditing = false; // Exit editing mode
         this.showSuccessAlert1();
@@ -230,7 +214,7 @@ export class AdminCourseComponent implements OnInit {
       }
     );
   }
-
+  
   showSuccessAlert1(): void {
     Swal.fire({
       title: 'Updated!',
@@ -239,127 +223,7 @@ export class AdminCourseComponent implements OnInit {
       confirmButtonText: 'OK'
     });
   }
-  
-
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.course.photoFile = file;
-    }
-  }
-
-  goToCourseList(): void {
-    this.router.navigate(['/courses']);
-  }
-
-  toggleCategory(event: any, categoryId: number): void {
-    if (event.target.checked) {
-      this.categoryList.push(categoryId); // Add category ID to the list
-    } else {
-      this.categoryList = this.categoryList.filter(id => id !== categoryId); // Remove category ID from the list
-    }
-  }
-
-  toggleCategories(event: any, category: Category) {
-    if (event.target.checked) {
-      this.course.categories.push(category);
-    } else {
-      const index = this.course.categories.findIndex(cat => cat.id === category.id);
-      if (index !== -1) {
-        this.course.categories.splice(index, 1);
-      }
-    }
-    console.log(this.course.categories);
-    console.log(this.course);
-  }
-
-  navigateToCourse(courseId: number) {
-    this.router.navigate([`admin/lesson/${courseId}`]);
-  }
-
-  getAcceptedCourses(): Course[] {
-    return this.courses.filter(course => course.status === 'Accept' && course.userId === this.userId);
-  }
-
-
-  sureAlert(): void {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Are you sure?',
-      text: 'Do you want to create this course?',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then((result: { isConfirmed: boolean }) => {
-      if (result.isConfirmed) {
-        this.saveCourse();
-      } else {
-        this.loading = false;
-      }
-    });
-  }
-
-
-  showSuccessAlert(): void {
-    Swal.fire({
-      icon: 'success',
-      title: 'Successful',
-      text: 'Course has been created Successfully.',
-      confirmButtonText: 'OK'
-    }).then((result: { isConfirmed: any; }) => {
-      if (result.isConfirmed) {
-        // Navigate to createLesson tab
-        this.clearForm();
-        this.setActiveTab('createCourse');
-      }
-    });
-  }
-
-  clearForm(): void {
-    this.course = new Course();
-    this.course.status = '';
-    this.course.photoFile = undefined;
-    this.course.categories = [];
-  }
-
-  pendingCourse(course: Course) {
-    Swal.fire({
-      title: 'Request to Admin?',
-      text: 'Are you sure request to admin?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'OK'
-    }).then((result: { isConfirmed: any; }) => {
-      if (result.isConfirmed) {
-        course.status = 'Pending';
-        this.courseService.changeStatus(course.id, 'Pending').subscribe({
-          next: () => {
-            this.getCourses();
-          },
-          error: (err) => {
-            console.error(err);
-          }
-        });
-      }
-    });
-  }
-
-  editCourse(course: Course): void {
-
-    this.isEditing = true;
-    console.log(this.isEditing);
-    
-    console.log(course);
-    
-    this.course = { ...course }; 
-    this.course.categorylist = course.categories.map(cat => cat.id);
-
-   
-  }
-
-
+ 
   deleteCourse(courseId: number) {
     Swal.fire({
       title: 'Are you sure?',
@@ -382,6 +246,126 @@ export class AdminCourseComponent implements OnInit {
         );
       }
     });
+  }
+
+  onFileChange(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.course.photoFile = file;
+    }
+  }
+
+  goToCourseList(): void {
+    this.router.navigate(['/courses']);
+  }
+
+  toggleCategory(event: any, categoryId: number): void {
+    if (event.target.checked) {
+      this.categoryList.push(categoryId); // Add category ID to the list
+    } else {
+      this.categoryList = this.categoryList.filter(id => id !== categoryId); // Remove category ID from the list
+    }
+  }
+
+  toggleCategories(event: any, category: Category) {
+
+    if (event.target.checked) {
+
+      this.course.categories.push(category);
+    } else {
+      const index = this.course.categories.findIndex(cat => cat.id === category.id);
+      if (index !== -1) {
+        this.course.categories.splice(index, 1);
+      }
+    }
+
+    console.log(this.course.categories);
+    console.log(this.course);
+    
+    
+  }
+
+  getInstructorCourses(): void {
+    this.courseService.getInstructorCourses(this.userId).subscribe(
+      (data: Course[]) => {
+        console.log(data);
+        console.log("Admin Course",data);
+        
+        this.courses = data;
+        this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
+       
+      },
+      error => {
+        console.error('Error fetching courses', error);
+      }
+    );
+  }
+
+  AcceptCourse(course: Course) {
+    Swal.fire({
+      title: 'Course Upload?',
+      text: 'Are you sure to upload this course?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        course.status = 'Accept';
+        this.courseService.changeStatus(course.id, 'Accept').subscribe({
+          next: () => {
+            this.getInstructorCourses();
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+      }
+    });
+  }
+
+  navigateToCourse(courseId: number) {
+    this.router.navigate([`admin/lesson/${courseId}`]);
+  }
+
+  getAcceptedCourses(): Course[] {
+    return this.courses.filter(course => course.status === 'Accept');
+  }
+
+  sureAlert(): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'Do you want to create this course?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.saveCourse();
+      } else {
+        this.loading = false;
+      }
+    });
+  }
+
+  showSuccessAlert(): void {
+    Swal.fire({
+      icon: 'info',
+      title: 'Successful',
+      text: 'Course has been created successfully.',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        // Navigate to createLesson tab
+        this.setActiveTab('createCourse');
+      }
+    });
+  }
+
+  goToCourseDetails(courseId: number): void {
+    this.router.navigate(['/course-detail', courseId]);
   }
   
 }

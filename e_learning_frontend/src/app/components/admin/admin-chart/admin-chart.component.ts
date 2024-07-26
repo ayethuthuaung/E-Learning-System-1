@@ -2,7 +2,6 @@ import { Component, AfterViewInit, Input, OnDestroy } from '@angular/core';
 import { Chart, ChartType, ChartConfiguration } from 'chart.js/auto';
 import { UserCourseService } from '../../services/user-course.service';
 
-
 @Component({
   selector: 'app-admin-chart',
   templateUrl: './admin-chart.component.html',
@@ -14,21 +13,41 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
   private chartInstance: Chart | null = null;
   private courseLabels: string[] = [];
   private courseData: number[] = [];
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000; // 3 seconds
 
   constructor(private userCourseService: UserCourseService) {}
 
   ngAfterViewInit(): void {
-    this.userCourseService.getAcceptedUserCounts().subscribe(data => {
-      this.courseLabels = Object.keys(data);
-      this.courseData = Object.values(data);
-      this.renderChart();
-    });
+    this.fetchChartData();
+    this.startPolling();
   }
 
   ngOnDestroy(): void {
     if (this.chartInstance) {
       this.chartInstance.destroy();
     }
+    this.stopPolling();
+  }
+
+  private startPolling(): void {
+    this.pollingInterval = setInterval(() => {
+      this.fetchChartData();
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling(): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
+  }
+
+  private fetchChartData(): void {
+    this.userCourseService.getAcceptedUserCounts().subscribe(data => {
+      this.courseLabels = Object.keys(data);
+      this.courseData = Object.values(data);
+      this.renderChart();
+    });
   }
 
   renderChart(): void {
@@ -73,7 +92,7 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
           beginAtZero: true,
           ticks: {
             stepSize: 2
-          } 
+          }
         }
       }
     };
