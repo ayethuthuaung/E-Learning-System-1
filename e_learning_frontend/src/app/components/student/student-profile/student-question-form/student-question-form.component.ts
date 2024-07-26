@@ -1,5 +1,7 @@
+import { CourseService } from './../../../services/course.service';
+import { AnswerOptionDto } from './../../../models/question.model';
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExamService } from '../../../services/exam.service';
 import { QuestionService } from '../../../services/question.service';
@@ -9,6 +11,8 @@ import { ExamDTO } from '../../../models/examdto.model';
 import { StudentAnswer } from '../../../models/student-answer.model';
 import { Role } from '../../../models/user.model';
 import html2canvas from 'html2canvas';
+import { CertificateService } from '../../../services/certificate.service';
+import { Certificate } from '../../../models/certificate.model';
 
 interface Option {
   id: number;
@@ -38,6 +42,8 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
 
   exam!: ExamDTO;
   examId: any;
+  courseId: any;
+
   loggedUser: any = '';
   roles: Role[] = [];
   userId: any;
@@ -52,9 +58,13 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   isOwner: boolean = false;
 
   duration: string = '';
-  remainingTime: number = 0; // Remaining time in seconds
+  remainingTime: number = 0; 
 
   timerInterval: any; 
+
+  certificate: Certificate | null = null;
+  certificateId: number | undefined; 
+
 
   constructor(
     private route: ActivatedRoute,
@@ -62,16 +72,21 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     private questionService: QuestionService,
     private studentAnswerService: StudentAnswerService,
     private userService: UserService,
-    private location: Location
+    private courseService: CourseService,
+    private location: Location,
+    private certificateService: CertificateService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.examId = +params.get('examId')!;
       if (this.examId != null) {
+       this.courseId = this.getCourseId(this.examId);
         this.loadQuestions(this.examId);
       }
       this.exam = history.state.exam;
+
       if (this.exam && this.exam.duration) {
         this.startTimer(this.parseDuration(this.exam.duration));
       }
@@ -84,6 +99,7 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
         this.userId = this.loggedUser.id;
         this.roles = this.loggedUser.roles;
         this.checkOwner();
+
         // Access role IDs
 
         if (this.roles.length > 0) {
@@ -93,6 +109,18 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  getCourseId(examId: number): void {
+    this.courseService.getCourseIdByExamId(examId).subscribe(
+      (courseId: number) => {
+        this.courseId = courseId;
+        console.log('Course ID:', this.courseId);
+      },
+      (error) => {
+        console.error('Error fetching course ID:', error);
+      }
+    );
   }
 
   parseDuration(duration: string): number {
@@ -136,12 +164,12 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   }
 
   checkOwner() {
-    console.log('Checking owner for userId:', this.userId);
-    this.userService.checkExamOwner(this.userId).subscribe({
+    console.log('Checking examId:', this.examId);
+    this.userService.checkExamOwner(this.examId, this.userId).subscribe({
       next: (response) => {
-        console.log("Hi");
+        console.log("Owner check response:", response);
         this.isOwner = response;
-        console.log(this.isOwner);
+        console.log('Is owner:', this.isOwner);
       },
       error: (error) => {
         console.error('Error checking exam owner:', error);
@@ -154,6 +182,8 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   
   loadQuestions(examId: number) {
     this.examService.getExamById(examId).subscribe((data: ExamDTO) => {
+      this.exam = data; // Ensure exam is set here
+
       this.questions = data.questions.map(question => ({
         id: question.id,
         text: question.content,
@@ -163,13 +193,21 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
           id: option.id,
           label: option.answer,
           value: option.answer,
-          isAnswered: false
+          isAnswered: false,
+          isCorrect: option.isAnswered
         }))),
-        correctAnswers: []
+        correctAnswers: question.answerList.filter(option => option.isAnswered).map(option => option.id)
+        // adminOwnerCorrectAnswers: []
+        // adminOwnerCorrectAnswers: 
+
+        
       }));
       this.questionTotalMarks = this.questions.reduce((total, question) => total + question.marks, 0);
+   
     });
   }
+
+
 
   shuffleArray(array: any[]): any[] {
     return array
@@ -206,16 +244,10 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  checkAnswers(response: any) {
-    console.log(response);
-  
-    response.forEach((res: any) => {
-      console.log(res);
-      
+  checkAnswers(response: any) {  
+    response.forEach((res: any) => {     
       const question = this.questions.find(q => q.id === res.questionId);
-      if (question) {
-        console.log(question);
-        
+      if (question) {        
         question.correctAnswers = res.correctAnswerIds || [];
         const selectedOptions = question.options.filter(option => option.isAnswered).map(option => option.id);
   
@@ -255,6 +287,20 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     const option = question.options.find(option => option.id === correctAnswerId);
     return option ? option.label : undefined;
   }
+
+
+  
+
+  gotoCertificate(): void {
+    if (this.userId && this.courseId) {
+      console.log('Navigating to Certificate Component with:', { userId: this.userId, courseId: this.courseId });
+      this.router.navigate(['/certificate'], { queryParams: { userId: this.userId, courseId: this.courseId } });
+    } else {
+      console.error('User ID or Course ID is not defined');
+    }
+  }
+  
+  
 
   goBack() {
     this.location.back();

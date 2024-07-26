@@ -21,4 +21,6 @@ export class HeroComponent implements OnInit {
         this.acceptedCourseCount = courses.length;
       });
   }
+
+ 
 }

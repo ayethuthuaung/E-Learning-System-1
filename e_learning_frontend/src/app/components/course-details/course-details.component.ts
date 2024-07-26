@@ -174,13 +174,19 @@ export class CourseDetailsComponent implements OnInit {
             modules: lesson.modules.sort((a, b) => a.id - b.id) // Sort modules by moduleId
           }));
   
-          console.log(this.lessons);
-          this.lessons.forEach(lesson => {
-            this.showFinalExam = lesson.userComplete;
-            if(this.showFinalExam){
-              this.filteredExamList = lesson.examListDto.filter(exam => exam.finalExam);
+          this.filteredExamList = []; // Clear filteredExamList at the start
 
-            }
+        this.lessons.forEach(lesson => {
+          this.showFinalExam = lesson.userComplete;
+          console.log(this.showFinalExam);
+
+          if (this.showFinalExam) {
+            lesson.examListDto.forEach(exam => {
+              if (exam.finalExam) {
+                this.filteredExamList.push(exam); // Use push to add exams to the array
+              }
+            });
+          }
             lesson.examListDto = lesson.examListDto.filter(exam => !exam.finalExam);
 
           });

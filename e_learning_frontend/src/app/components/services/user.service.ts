@@ -72,12 +72,10 @@ export class UserService {
     return this.httpClient.get<User[]>(`${this.baseURL}/showData`);
 }
 
-checkExamOwner(userId: number): Observable<boolean> {
+checkExamOwner(examId: number, userId: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.baseURL}/checkExamOwner`, {
-    params: { userId: userId.toString() }
+    params: { examId: examId.toString(), userId: userId.toString() }
   });
-  console.log(userId);
-  
 }
 
 }

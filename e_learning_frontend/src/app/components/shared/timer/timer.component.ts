@@ -20,4 +20,11 @@ export class TimerComponent {
   pad(value: number): string {
     return value.toString().padStart(2, '0');
   }
+
+  resetTimer() {
+    this.hours = 0;
+    this.minutes = 0;
+    this.seconds = 0;
+    this.updateDuration();
+  }
 }
