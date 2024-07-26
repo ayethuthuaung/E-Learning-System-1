@@ -13,16 +13,14 @@ import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.RoleService;
-import com.ai.e_learning.util.DtoUtil;
-import com.ai.e_learning.util.EntityUtil;
-import com.ai.e_learning.util.GoogleDriveJSONConnector;
-import com.ai.e_learning.util.Helper;
+import com.ai.e_learning.util.*;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +54,9 @@ public class CourseServiceImpl implements CourseService {
 
   @Autowired
   private RoleService roleService;
+
+  @Autowired
+  private CloudinaryService cloudinaryService;
 
   @Autowired
   private NotificationController notificationController;
@@ -99,6 +100,7 @@ public class CourseServiceImpl implements CourseService {
   }
   //AT
 
+  //PK
   @Override
   public List<CourseDto> getAllCourseList() {
     List<Course> courses = courseRepository.findAll();
@@ -113,26 +115,30 @@ public class CourseServiceImpl implements CourseService {
     Course course = convertToEntity(courseDto);
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-    boolean isAdmin = user.getRoles().stream()
-      .anyMatch(role -> role.getName().equals("Admin"));
-    if (isAdmin) {
-      course.setStatus("Accept");
-    }
-//    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
-//    courseDto.getPhotoInput().transferTo(tempFile);
-//    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
-//    course.setPhoto(tempFile.getName());
-    String imageUrl;
-    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//    boolean isAdmin = user.getRoles().stream()
+//      .anyMatch(role -> role.getName().equals("Admin"));
+//    if (isAdmin) {
+      course.setStatus("In Progress");
 
-    try {
-      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
-    } catch (IOException | GeneralSecurityException e) {
-      throw new RuntimeException("Failed to upload file to Google Drive", e);
-    }
-    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
 
-//    course.setPhoto(imageUrl);
+    //Google Drive
+//    String imageUrl;
+//    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//
+//    try {
+//      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
+//    } catch (IOException | GeneralSecurityException e) {
+//      throw new RuntimeException("Failed to upload file to Google Drive", e);
+//    }
+//    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
+
+    //Cloudinary
+    MultipartFile photofile = courseDto.getPhotoInput();
+    String fileUrl = cloudinaryService.uploadFile(photofile);
+    course.setPhoto(fileUrl);
+    course.setPhotoName(photofile.getOriginalFilename());
+
+
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
@@ -149,6 +155,8 @@ public class CourseServiceImpl implements CourseService {
     sendAdminNotifications(savedCourse);
     return convertToDto(savedCourse);
   }
+
+
   private void sendAdminNotifications(Course course) {
     Optional<Role> adminRoleOptional = roleService.getRoleByName("Admin");
     if (adminRoleOptional.isPresent()) {
@@ -174,6 +182,7 @@ public class CourseServiceImpl implements CourseService {
     // Send notifications
     sendInstructorNotification(updatedCourse, status);
   }
+
   private void sendInstructorNotification(Course course, String action) {
     Optional<Role> instructorRoleOptional = roleService.getRoleByName("Instructor");
     if (instructorRoleOptional.isPresent()) {
@@ -307,6 +316,7 @@ public class CourseServiceImpl implements CourseService {
       .limit(3) // Limit to latest 5 courses
       .collect(Collectors.toList());
   }
+
   @Override
   public List<CourseDto> getCoursesByInstructorId(Long instructorId) {
     List<Course> courses = courseRepository.findByUserId(instructorId);
@@ -323,7 +333,11 @@ public class CourseServiceImpl implements CourseService {
     return courseRepository.findCourseIdByLessonId(lessonId);
   }
 
-
+  @Override
+  public Long getCourseIdByExamId(Long examId) {
+    Course course = courseRepository.findCourseByExamId(examId);
+    return course.getId();
+  }
 
 
 }

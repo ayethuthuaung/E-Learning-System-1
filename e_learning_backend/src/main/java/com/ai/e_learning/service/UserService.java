@@ -43,5 +43,5 @@ public interface UserService {
 
 
       ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException;
-    boolean isExamOwner(Long userId);
+    boolean isExamOwner(Long examId, Long userId);
 }

@@ -1,14 +1,10 @@
 package com.ai.e_learning.service.impl;
 
+import com.ai.e_learning.dto.CertificateDto;
 import com.ai.e_learning.dto.StudentAnswerDto;
-import com.ai.e_learning.model.AnswerOption;
-import com.ai.e_learning.model.Question;
-import com.ai.e_learning.model.StudentAnswer;
-import com.ai.e_learning.model.User;
-import com.ai.e_learning.repository.AnswerOptionRepository;
-import com.ai.e_learning.repository.QuestionRepository;
-import com.ai.e_learning.repository.StudentAnswerRepository;
-import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.model.*;
+import com.ai.e_learning.repository.*;
+import com.ai.e_learning.service.CertificateService;
 import com.ai.e_learning.service.StudentAnswerService;
 import com.ai.e_learning.util.EntityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +28,22 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ExamRepository examRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private CertificateService certificateService;
+
     @Override
     public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerDto> studentAnswerDTOList) {
         List<Map<String, Object>> result = new ArrayList<>();
         double totalMarks = 0.0;
-
+        boolean finalExam = false;
+        User student = null;
+        Long examId = 0L;
         for (StudentAnswerDto requestDTO : studentAnswerDTOList) {
 
             Map<String, Object> answerResult = new HashMap<>();
@@ -44,6 +51,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
 
             // Retrieve question entity
             Question question = EntityUtil.getEntityById(questionRepository, requestDTO.getQuestionId(), "Question");
+            examId = question.getExam().getId();
 
             // Handle the case where answer option ID might be null or zero
             AnswerOption selectedAnswerOption = null;
@@ -95,6 +103,7 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
 
             // Save the student answer with the selected option ID
             User user = EntityUtil.getEntityById(userRepository, requestDTO.getUserId(), "User");
+            student = user;
             StudentAnswer studentAnswer = new StudentAnswer();
             studentAnswer.setAnswerOption(selectedAnswerOption);
             studentAnswer.setQuestion(question);
@@ -103,7 +112,15 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             studentAnswerRepository.save(studentAnswer);
             result.add(answerResult);
         }
-
+        Exam exam = EntityUtil.getEntityById(examRepository, examId,"Exam");
+        Course course = courseRepository.findCourseByExamId(exam.getId());
+        finalExam = exam.isFinalExam();
+        if(finalExam && totalMarks >= exam.getPassScore()){
+            CertificateDto certificateDto = new CertificateDto();
+            certificateDto.setUser(student);
+            certificateDto.setCourse(course);
+            certificateService.saveCertificate(certificateDto);
+        }
         return result;
     }
 }

@@ -171,13 +171,12 @@ public class UserController {
     return ResponseEntity.status(imageResponse.getStatus()).body(imageResponse);
   }
 
-  public ResponseEntity<Boolean> checkExamOwner(@RequestParam("userId") Long userId){
-    return ResponseEntity.ok(userService.isExamOwner(userId));
+  @GetMapping(value = "/checkExamOwner", produces = "application/json")
+  public ResponseEntity<Boolean> checkExamOwner(@RequestParam("examId") Long examId, @RequestParam("userId") Long userId) {
+    return ResponseEntity.ok(userService.isExamOwner(examId, userId));
   }
 
 
-
-  /*public static void main(String[] args){}*/
 }
 
 

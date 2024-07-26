@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener  } from '@angular/core';
 import { Role } from '../../models/user.model';
 import { Router } from '@angular/router';
 
@@ -42,6 +42,18 @@ export class NavProfileComponent implements OnInit{
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = (event.target as HTMLElement).closest('.relative');
+    if (!clickedInside) {
+      this.closeDropdown();
+    }
   }
 
   logout() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Course } from '../../../models/course.model';
 import { UserCourseService } from '../../../services/user-course.service';
@@ -13,7 +13,7 @@ import { log } from 'node:console';
   templateUrl: './course-footer.component.html',
   styleUrls: ['./course-footer.component.css']
 })
-export class CourseFooterComponent implements OnInit {
+export class CourseFooterComponent implements OnInit, OnDestroy {
 
   @Input() course: Course | undefined;
   user: User | null = null;
@@ -26,12 +26,32 @@ export class CourseFooterComponent implements OnInit {
 
   roles: Role[] = [];
 
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
+
 
   constructor(private userCourseService: UserCourseService, private router: Router) { }
 
   ngOnInit(): void {
     this.fetchUserData();
     this.isOwner = this.checkIsOwner();
+    this.startPolling(); // Start polling when component is initialized
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling(); // Clean up polling when component is destroyed
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.checkEnrollmentStatus(); // Poll by calling the checkEnrollmentStatus method
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 
   checkIsOwner(): boolean{return this.userId===this.course?.user?.id}

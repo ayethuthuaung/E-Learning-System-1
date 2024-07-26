@@ -1,0 +1,32 @@
+<!-- <div *ngIf="certificate; else loading">
+    <h1>Certificate Details</h1>
+    <p><strong>ID:</strong> {{ certificate.id }}</p>
+    <p><strong>User:</strong> {{ certificate.user.name }}</p>
+    <p><strong>Course:</strong> {{ certificate.course.name }}</p>
+    <p><strong>Created At:</strong> {{ certificate.createdAt | date:'short' }}</p>
+  </div>
+  <ng-template #loading>
+    <p>Loading...</p>
+  </ng-template> -->
+  <div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div *ngIf="certificate; else loading" class="bg-white shadow-lg rounded-lg p-10 w-96 text-center mx-auto">
+      <img [src]="certificate.course.photo" alt="{{ certificate.course.name }}" class="mx-auto h-16 mb-6">
+      <h1 class="text-3xl font-semibold text-gray-800 mb-2">{{ certificate.course.name }}</h1>
+      <h2 class="text-xl text-gray-600 mb-4">{{ certificate.course.level }}</h2>
+      <p class="mb-2 text-lg text-gray-700">Course completed by <strong class="text-gray-900">{{ certificate.user.name }}</strong></p>
+      <p class="mb-4 text-gray-500">{{ certificate.createdAt | date:'short' }}</p>
+      <p class="text-xl font-medium text-gray-800 mb-4">Top skills covered</p>
+      <p class="inline-block bg-blue-100 text-blue-700 px-6 py-3 rounded-full text-lg">Java</p>
+      <div class="mt-10">
+        <!-- <p class="text-sm text-gray-600">Certificate ID: <span class="font-medium text-gray-800">CPD9VXPQK2RX</span></p> -->
+        <p class="text-sm text-gray-600">Issued by <span class="font-medium text-gray-800">DIR-ACE Technology</span></p>
+      </div>
+      <div class="mt-10 flex justify-center">
+        <img src="../../../../assets/DAT.png" class="mx-auto h-16 mb-6">
+      </div>
+    </div>
+    <ng-template #loading>
+      <p>Loading...</p>
+    </ng-template>
+  </div>
+  

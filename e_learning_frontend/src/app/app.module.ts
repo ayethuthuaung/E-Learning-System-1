@@ -118,6 +118,7 @@ import { ChangePasswordModalComponent } from './components/change-password-modal
 
 import { AdminCourseCompletionComponent } from './components/admin/admin-course-completion/admin-course-completion.component';
 import { InstructorCourseCompletionComponent } from './components/instructor/instructor-course-completion/instructor-course-completion.component';
+import { CertificateComponent } from './components/shared/certificate/certificate.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
@@ -230,7 +231,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     ChangePasswordModalComponent,
     TimerComponent,
     AdminCourseCompletionComponent,
-    InstructorCourseCompletionComponent
+    InstructorCourseCompletionComponent,
+    CertificateComponent
   ],
   imports: [
     BrowserModule,

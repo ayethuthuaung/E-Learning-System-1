@@ -30,6 +30,7 @@ public class CourseDto {
   private List<Long> categorylist;
   private boolean isDeleted;
   private String photo;
+  private String photoName;
   private MultipartFile photoInput;
   private User user;
   private String status;

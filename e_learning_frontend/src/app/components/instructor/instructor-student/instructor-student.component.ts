@@ -1,7 +1,7 @@
 import { CourseService } from '../../services/course.service';
 import { UserCourse } from './../../models/usercourse.model';
 import { UserCourseService } from './../../services/user-course.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { orderBy } from 'lodash';
 declare var Swal: any;
 
@@ -10,7 +10,7 @@ declare var Swal: any;
   templateUrl: './instructor-student.component.html',
   styleUrls: ['./instructor-student.component.css']
 })
-export class InstructorStudentComponent implements OnInit {
+export class InstructorStudentComponent implements OnInit , OnDestroy{
   userCourses: UserCourse[] = [];
   paginatedUserCourses: UserCourse[] = [];
   
@@ -28,12 +28,12 @@ export class InstructorStudentComponent implements OnInit {
   sortKey: string = '';
 sortDirection: string = 'asc';
 
+private pollingInterval: any;
+private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
+
+
   constructor(private userCourseService: UserCourseService,private courseService: CourseService) {}
   
-
-
-  
-
   ngOnInit() {
  
     const storedUser = localStorage.getItem('loggedUser');
@@ -50,7 +50,13 @@ sortDirection: string = 'asc';
       // }
     }
     this.fetchAllStudentByCourse();
+    this.startPolling(); // Start polling for updates
   }
+
+  ngOnDestroy(): void {
+    this.stopPolling(); // Clean up polling when component is destroyed
+  }
+
   exportCoursesByInstructorToPdf(instructorId: number): void {
     this.courseService.exportCoursesByInstructorToPdf(instructorId).subscribe(blob => {
       const link = document.createElement('a');
@@ -207,5 +213,17 @@ onFilterChange(event: { key: string, term: string }) {
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.fetchAllStudentByCourse(); // Poll for student course updates
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 }

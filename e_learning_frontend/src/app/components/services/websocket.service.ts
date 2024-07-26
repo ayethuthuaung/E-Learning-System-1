@@ -169,5 +169,9 @@ export class WebSocketService {
       console.error('Client is not connected');
     }
   }
+  updateAllMessagesReadStatus(chatRoomId: number): Observable<void> {
+    return this.http.put<void>(`http://localhost:8080/api/chat/messages/${chatRoomId}/read`, {});
+  }
+  
 }
 

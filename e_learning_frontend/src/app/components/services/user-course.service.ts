@@ -58,6 +58,7 @@ export class UserCourseService {
   getAcceptedUserCounts(): Observable<{ [courseName: string]: number }> {
     return this.httpClient.get<{ [courseName: string]: number }>(`${this.baseURL}/accepted-user-counts`);
   }
+  
   getTrendingCourses(): Observable<Course[]> {
     return this.httpClient.get<Course[]>(`${this.baseURL}/trending-courses`);
   }

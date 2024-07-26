@@ -19,6 +19,7 @@ thead.thead-dark th {
 
 .table th, .table td {
   vertical-align: middle;
+  padding: 8px 4px; /* Reduced left and right padding */
 }
 
 .btn {
@@ -184,7 +185,14 @@ thead.thead-dark th {
 
 .table-cell-height {
   height: 50px;
-  padding: 10px; /* Adjust padding as needed */
+  padding: 5px 4px; /* Reduced left and right padding */
   line-height: 30px; /* Adjust line height as needed */
 }
+
+.scrollable-section {
+  max-height: 80vh; /* Adjust as needed */
+  overflow-y: auto;
+  padding-right: 15px; /* To avoid content hidden behind scrollbar */
+}
+
 

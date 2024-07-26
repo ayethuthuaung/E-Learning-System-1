@@ -13,6 +13,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ExamList } from '../models/examList.model';
 import { ExamService } from '../services/exam.service';
 import { Location } from '@angular/common';
+import { UnreadMessageService } from '../services/unread-message.service';
+import { WebSocketService } from '../services/websocket.service';
 import { Role } from '../models/user.model';
 
 
@@ -42,6 +44,8 @@ export class CourseDetailsComponent implements OnInit {
   roles: Role[] = [];
 
   isOwner: boolean = false;
+  unreadMessageCount: number = 0;
+
   isFinalExam: boolean = false;
   filteredExamList: ExamList[] = [];
   showFinalExam: boolean = false;
@@ -60,10 +64,15 @@ export class CourseDetailsComponent implements OnInit {
     private userCourseModuleService:UserCourseModuleService,
     private cdr: ChangeDetectorRef,
     private examService: ExamService,
-    private location: Location
+    private location: Location,
+    private unreadMessageService: UnreadMessageService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
+    this.unreadMessageService.unreadMessageCount$.subscribe(count => {
+      this.unreadMessageCount = count;
+    });
     this.route.paramMap.subscribe(params => {
       this.courseId = +params.get('id')!;
 
@@ -117,9 +126,28 @@ export class CourseDetailsComponent implements OnInit {
 
   toggleChatRoom(): void {
     if (!this.chatRoomVisible) {
-      this.createChatRoom();
+      // Check if the chat room already exists
+      if (!this.chatRoomId) {
+        this.createChatRoom();
+      }
     }
     this.chatRoomVisible = !this.chatRoomVisible;
+
+    if (this.chatRoomVisible) {
+      // Mark all messages as read when the chat room is opened
+      if (this.chatRoomId) {
+        this.webSocketService.updateAllMessagesReadStatus(this.chatRoomId).subscribe(
+          () => {
+            // Successfully marked all messages as read
+            this.unreadMessageCount = 0; // Reset unread message count
+            this.unreadMessageService.setUnreadMessageCount(this.unreadMessageCount);
+          },
+          (error) => {
+            console.error('Error marking all messages as read:', error);
+          }
+        );
+      }
+    }
   }
 
   createChatRoom(): void {
@@ -146,13 +174,19 @@ export class CourseDetailsComponent implements OnInit {
             modules: lesson.modules.sort((a, b) => a.id - b.id) // Sort modules by moduleId
           }));
   
-          console.log(this.lessons);
-          this.lessons.forEach(lesson => {
-            this.showFinalExam = lesson.userComplete;
-            if(this.showFinalExam){
-              this.filteredExamList = lesson.examListDto.filter(exam => exam.finalExam);
+          this.filteredExamList = []; // Clear filteredExamList at the start
 
-            }
+        this.lessons.forEach(lesson => {
+          this.showFinalExam = lesson.userComplete;
+          console.log(this.showFinalExam);
+
+          if (this.showFinalExam) {
+            lesson.examListDto.forEach(exam => {
+              if (exam.finalExam) {
+                this.filteredExamList.push(exam); // Use push to add exams to the array
+              }
+            });
+          }
             lesson.examListDto = lesson.examListDto.filter(exam => !exam.finalExam);
 
           });
@@ -261,4 +295,6 @@ hasRole(roleId: number): boolean {
 goBack() {
   this.location.back();
 }
+
+
 }

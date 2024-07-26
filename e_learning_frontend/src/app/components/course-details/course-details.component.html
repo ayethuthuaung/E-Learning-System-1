@@ -93,9 +93,13 @@
   </div>
 </div> 
 
-<button *ngIf="!isOwner" (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-logo-blue text-white p-3 rounded-full shadow-lg hover:bg-dark-blue text-sm">
+<button (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-logo-blue text-white p-3 rounded-full shadow-lg hover:bg-dark-blue text-sm">
   <i class="fas fa-comments"></i>
+  <span *ngIf="unreadMessageCount > 0" class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-6 h-6 flex items-center justify-center">
+    {{ unreadMessageCount }}
+  </span>
 </button>
+
 
 
 <!-- Chat Room Section -->

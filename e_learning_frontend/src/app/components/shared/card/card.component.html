@@ -3,17 +3,28 @@
   <div class="flex justify-between mt-3 items-center">
     <div class="flex items-center gap-2">
       <!-- <img class="w-8 h-8 rounded-full" [src]="input.user?.photo" alt="{{ input.user?.name }}"> -->
-      <p class="text-slate-500 font-semibold text-sm">{{ input.user?.name }} (Instructor)</p>
+      <h3 class="text-slate-500 font-bold text-lg ">
+        {{ input.name }}
+      </h3>    
     </div>
     <div>
       <button class="px-3 py-1 bg-logo-blue rounded text-opacity-80 text-white text-sm">
-        <span *ngFor="let category of input.categories">{{ category.name }}</span>
+        <span *ngFor="let category of input.categories; let i = index">
+          {{ category.name }}<span *ngIf="i < input.categories.length - 1">,</span>
+        </span>      
       </button>
     </div>
   </div>
-  <h3 class="leading-tight mt-2 text-slate-700 transition-all duration-500 hover:text-emerald-600 font-semibold text-md">
-    {{ input.name }}
-  </h3>
+ 
+  <div class="flex justify-between items-center mt-2">
+    <p class="text-slate-500 font-semibold text-sm">
+      {{ input.user?.name }}
+    </p>
+    <div>
+
+    </div> <!-- This empty div will push the user name to the left -->
+  </div>
+  
   <app-course-footer [course]="input" class="mt-2 block"></app-course-footer>
   
 </div>
