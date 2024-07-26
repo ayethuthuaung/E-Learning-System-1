@@ -45,6 +45,7 @@ import { StudentQuestionFormComponent } from './components/student/student-profi
 import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
 import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
+import { CertificateComponent } from './components/shared/certificate/certificate.component';
 
 
 
@@ -102,6 +103,9 @@ const routes: Routes = [
 
    {path:'question-form/:examId', component: StudentQuestionFormComponent},
    {path:'all-courses', component: AllCoursesComponent},
+
+   {path:'certificate', component: CertificateComponent},
+
 
 ];
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CourseService } from './../../services/course.service';
 import { Course } from './../../models/course.model';
@@ -12,7 +12,7 @@ import { SlideConfig } from '../../models/slide-config.model';
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.css']
 })
-export class CoursesComponent implements OnInit {
+export class CoursesComponent implements OnInit, OnDestroy{
   trendingCourses: Course[] = [];
   courses: Course[] = [];
   filteredCourses: Course[] = [];
@@ -20,6 +20,8 @@ export class CoursesComponent implements OnInit {
   categories: Category[] = [];
   selectedCategory: string = '';
   
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 2000;
 
   constructor(
     private categoryService: CategoryService,
@@ -33,7 +35,26 @@ export class CoursesComponent implements OnInit {
     this.getLatestAcceptedCourses();
     this.getAllCourses();
     this.getCategories();
-    
+    this.startPolling(); // Start polling
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling(); // Stop polling when component is destroyed
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.fetchTrendingCourses();
+      this.getLatestAcceptedCourses();
+      this.getAllCourses();
+      this.getCategories();
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 
   private getAllCourses() {

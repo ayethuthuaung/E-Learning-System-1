@@ -1,6 +1,8 @@
+import { CourseService } from '../../services/course.service';
 import { UserCourse } from './../../models/usercourse.model';
 import { UserCourseService } from './../../services/user-course.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , OnDestroy} from '@angular/core';
+import { orderBy } from 'lodash';
 declare var Swal: any;
 
 @Component({
@@ -8,7 +10,7 @@ declare var Swal: any;
   templateUrl: './admin-student.component.html',
   styleUrls: ['./admin-student.component.css']
 })
-export class AdminStudentComponent implements OnInit {
+export class AdminStudentComponent implements OnInit, OnDestroy {
   activeTab: string = 'attendStudent';
   userCourses: UserCourse[] = [];
   paginatedUserCourses: UserCourse[] = [];
@@ -19,9 +21,15 @@ export class AdminStudentComponent implements OnInit {
   isSidebarOpen = true;
   loggedUser: any = '';
   userId: any;
+  sortKey: string = '';
+  sortDirection: string = 'asc';
+  filterTerm = '';
+  filterKey = '';
 
-  constructor(private userCourseService: UserCourseService) {}
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
 
+  constructor(private userCourseService: UserCourseService,private courseService: CourseService) {}
   ngOnInit() {
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
@@ -29,6 +37,11 @@ export class AdminStudentComponent implements OnInit {
       this.userId = this.loggedUser.id;
     }
     this.fetchAllStudentByCourse();
+    this.startPolling(); // Start polling for updates
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling(); // Clean up polling when component is destroyed
   }
 
   setActiveTab(tab: string) {
@@ -38,28 +51,50 @@ export class AdminStudentComponent implements OnInit {
   fetchAllStudentByCourse() {
     this.userCourseService.getAllUserCourses(this.userId).subscribe({
       next: (data) => {
-        this.userCourses = data;
-        this.updatePaginatedStudentByCourses();
-        this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
-      },
-      error: (err) => console.error('Error fetching UserCourse:', err)
-    });
-  }
+        this.userCourses = orderBy(data, ['createdAt'], ['desc']);
+      this.updatePaginatedStudentByCourses();
+      this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
+    },
+    error: (err) => console.error('Error fetching UserCourse:', err)
+  });
+}
 
   onSearchChange() {
     this.currentPage = 1;
     this.updatePaginatedStudentByCourses();
   }
 
+  onSortChange(key: string, direction: string) {
+    this.sortKey = key;
+    this.sortDirection = direction;
+    this.updatePaginatedStudentByCourses();
+  }
+
+  onFilterChange(event: { key: string, term: string }) {
+    this.filterKey = event.key;
+    this.filterTerm = event.term;
+    this.updatePaginatedStudentByCourses();
+  }
+
   updatePaginatedStudentByCourses() {
-    const filteredStudentByCourses = this.userCourses.filter(userCourse =>
+    let filteredStudentByCourses = this.userCourses.filter(userCourse =>
       userCourse.course?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.team.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+
       userCourse.status.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
+
+    if (this.sortKey && (this.sortDirection === 'asc' || this.sortDirection === 'desc')) {
+      filteredStudentByCourses = orderBy(filteredStudentByCourses, [this.sortKey], [this.sortDirection as 'asc' | 'desc']);
+    }
+    if (this.filterKey && this.filterTerm) {
+      filteredStudentByCourses = filteredStudentByCourses.filter(userCourse =>
+        (userCourse as any)[this.filterKey].toLowerCase().includes(this.filterTerm.toLowerCase())
+      );
+    }
 
     this.totalPages = Math.ceil(filteredStudentByCourses.length / this.itemsPerPage);
     const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -143,5 +178,39 @@ export class AdminStudentComponent implements OnInit {
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  exportCoursesByInstructor(instructorId: number): void {
+    this.courseService.exportCoursesByInstructor(instructorId).subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `courses_${instructorId}.xls`;
+      link.click();
+    }, error => {
+      console.error('Error exporting courses:', error);
+    });
+  }
+
+  exportCoursesByInstructorToPdf(instructorId: number): void {
+    this.courseService.exportCoursesByInstructorToPdf(instructorId).subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `courses_${instructorId}.pdf`;
+      link.click();
+    }, error => {
+      console.error('Error exporting courses to PDF:', error);
+    });
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.fetchAllStudentByCourse(); // Poll for student course updates
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 }

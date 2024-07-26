@@ -14,6 +14,7 @@ import { ExamCreationDto } from '../../models/examCreationDto.model';
 import { AnswerOptionDTO } from '../../models/answeroptiondto.model';
 import { Location } from '@angular/common';
 import { CourseService } from '../../services/course.service';
+import { TimerComponent } from '../../shared/timer/timer.component';
 
 interface Option {
   label: string;
@@ -58,6 +59,7 @@ course: Course | undefined;
 
 
 @ViewChild('formRef') formRef!: ElementRef;
+@ViewChild(TimerComponent) timerComponent!: TimerComponent;
 
 
  //Create Exam
@@ -65,7 +67,7 @@ course: Course | undefined;
  examTitle: string='';
  examDescription: string= '';
  examDuration: string= '';
- examFinal: boolean = false;
+ examFinal: boolean | null = null;
  examPassScore: number = 0;
  formDescription: string = 'Please fill out this form';
  examList: ExamList[]=[];
@@ -385,7 +387,7 @@ course: Course | undefined;
           title: this.examTitle,
           description: this.examDescription,
           duration: this.examDuration,
-          finalExam: this.examFinal,
+          finalExam: this.examFinal,          
           passScore: this.examPassScore,
           questionList: this.questions.map(question => ({
             content: question.text,
@@ -405,6 +407,8 @@ course: Course | undefined;
                 this.examTitle= '';  
                 this.examDescription='';
                 this.examDuration = '';
+                this.examFinal = null;
+                this.examPassScore = 0;
                  this.questions = [];
                 this.questions = [
                   {
@@ -416,6 +420,8 @@ course: Course | undefined;
                     marks:0
                   }
                 ];
+                this.timerComponent.resetTimer(); // Reset the timer component
+
                 this.loadExamByLessonId(this.lessonId);
                  
           },

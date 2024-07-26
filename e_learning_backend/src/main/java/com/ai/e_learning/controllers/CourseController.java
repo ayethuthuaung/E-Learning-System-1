@@ -7,6 +7,7 @@ import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.ProfileImageService;
 import com.ai.e_learning.util.DtoUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.DocumentException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,13 @@ public class CourseController {
 
     @Autowired
     private ExcelExporter excelExporter;
+
+    @Autowired
+    private PdfExporterCoursesForInstructor pdfExporterCoursesForInstructor;
+
+    @Autowired
+    private ExcelExporterCoursesForInstructor excelExporterCoursesForInstructor;
+
 
     @Autowired
     private ExcelExporterForAdmin excelExporterForAdmin;
@@ -155,7 +163,14 @@ public class CourseController {
 
     @GetMapping("/lessons/{lessonId}/courseId")
     public Long getCourseIdByLessonId(@PathVariable Long lessonId) {
+
         return courseService.getCourseId(lessonId);
+    }
+
+    @GetMapping("/requestWithExamId/{examId}")
+    public Long getCourseIdByExamId(@PathVariable Long examId) {
+
+        return courseService.getCourseIdByExamId(examId);
     }
 
     //report
@@ -193,29 +208,20 @@ public class CourseController {
         pdfExporterForAdmin.exportAllCourses(response);
     }
 
+    @GetMapping("/export/courses")
+    public void exportCoursesForInstructor(
+            @RequestParam("userId") Long userId,
+            HttpServletResponse response) throws IOException {
+        excelExporterCoursesForInstructor.exportCoursesForInstructor(userId, response);
+    }
+
+    @GetMapping("/export/courses/pdf")
+    public void exportCoursesForInstructorPdf(
+            @RequestParam("userId") Long userId,
+            HttpServletResponse response) throws IOException, DocumentException {
+        pdfExporterCoursesForInstructor.exportCoursesForInstructor(userId, response);
+    }
 
 
 
-  /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
-  public ResponseEntity<CourseDto> addCourse(@RequestParam("course") String courseDtoString,
-                                             @RequestParam(value = "photo", required = false) MultipartFile photoFile) {
-    try {
-      CourseDto courseDto = new ObjectMapper().readValue(courseDtoString, CourseDto.class);
-
-      // Handle photo conversion if needed
-      if (photoFile != null) {
-        byte[] photoBytes = photoFile.getBytes();
-        // Convert photoBytes to necessary format and set it to courseDto
-        courseDto.setPhoto(Arrays.toString(photoBytes)); // Example: Convert to base64 or store as byte array
-      }
-
-      CourseDto savedCourse = courseService.saveCourse(courseDto);
-      if (savedCourse != null) {
-        return ResponseEntity.ok(savedCourse); // Return HTTP 200 OK with saved course details
-      } else {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Or handle error as needed
-      }
-    } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Handle JSON parsing or file reading errors
-    }*/
 }

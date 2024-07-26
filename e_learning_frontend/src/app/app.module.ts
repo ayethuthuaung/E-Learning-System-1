@@ -120,6 +120,7 @@ import { AdminCourseCompletionComponent } from './components/admin/admin-course-
 import { InstructorCourseCompletionComponent } from './components/instructor/instructor-course-completion/instructor-course-completion.component';
 import { AdminMonthlyCoursesChartComponent } from './components/admin/admin-monthly-courses-chart/admin-monthly-courses-chart.component';
 import { AdminPieChartComponent } from './components/admin/admin-pie-chart/admin-pie-chart.component';
+import { CertificateComponent } from './components/shared/certificate/certificate.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
@@ -234,7 +235,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AdminCourseCompletionComponent,
     InstructorCourseCompletionComponent,
     AdminMonthlyCoursesChartComponent,
-    AdminPieChartComponent
+    AdminPieChartComponent,
+
+    CertificateComponent
   ],
   imports: [
     BrowserModule,

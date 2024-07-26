@@ -1,6 +1,7 @@
+import { CertificateService } from './../../services/certificate.service';
+import { Course } from './../../models/course.model';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Course } from '../../models/course.model'; // Ensure Course model includes instructorName
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
 import { UserCourseService } from '../../services/user-course.service';
@@ -36,6 +37,9 @@ export class StudentProfileComponent implements OnInit {
   moduleVisibility: { [moduleId: number]: boolean } = {};
   moduleCompletionStatus: { [moduleId: number]: boolean } = {};
   error: string | null = null;
+  hasUserCertificate: boolean = false;
+  certificateStatuses: { [key: number]: boolean } = {};
+
   constructor(
     private router: Router,
     private courseService: CourseService,
@@ -43,6 +47,7 @@ export class StudentProfileComponent implements OnInit {
     private userCourseService: UserCourseService,
     private courseModuleService: CourseModuleService,
     private userCourseModuleService: UserCourseModuleService,
+    private certificateService: CertificateService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -118,7 +123,11 @@ export class StudentProfileComponent implements OnInit {
           this.enrolledCourses = courses;
           this.fetchCourseNames(); // Call this method after fetching courses
           this.fetchCoursePercentages(); // Call this method after fetching courses
-        },
+
+          this.enrolledCourses.forEach(course => {
+
+            this.checkUserCertificate(course.id);
+          });        },
         error: (e) => console.log(e)
       });
     }
@@ -191,6 +200,36 @@ export class StudentProfileComponent implements OnInit {
       this.router.navigate(['/course-detail', this.selectedCourse.id]);
     }
   }
+
+  gotoCertificate(courseId: number): void {
+    if (this.id && courseId) {
+      console.log('Navigating to Certificate Component with:', { userId: this.id, courseId: courseId });
+      this.router.navigate(['/certificate'], { queryParams: { userId: this.id, courseId: courseId } });
+    } else {
+      console.error('User ID or Course ID is not defined');
+    }
+  }
+
+  checkUserCertificate(courseId: number): void {
+    console.log(courseId);
+    
+    if (this.certificateStatuses[courseId] !== undefined) {
+      return;
+    }
+
+    this.certificateService.checkUserCertificate(this.id, courseId).subscribe({
+      next: (response) => {
+        this.certificateStatuses[courseId] = response;
+        console.log(this.certificateStatuses);
+
+      },
+      error: (error) => {
+        console.error('Error checking exam owner:', error);
+        this.certificateStatuses[courseId] = false;
+      }
+    });
+  }
+  
 
   goBack(): void {
     window.history.back();

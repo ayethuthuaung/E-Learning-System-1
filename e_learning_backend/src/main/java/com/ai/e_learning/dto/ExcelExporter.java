@@ -1,4 +1,3 @@
-
 package com.ai.e_learning.dto;
 
 import com.ai.e_learning.service.CourseModuleService;
@@ -8,6 +7,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -69,6 +69,9 @@ public class ExcelExporter {
                 createStudentCells(row, userCourse, course, formatter, workbook);
             }
         }
+
+        // Apply auto-filter to the header row
+        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 9)); // Apply filter to the first row, covering columns 0 to 9
 
         for (int i = 0; i < 10; i++) { // Adjust the loop limit to account for all columns
             sheet.autoSizeColumn(i);
@@ -175,16 +178,4 @@ public class ExcelExporter {
             cell.setCellValue("N/A");
         }
     }
-
-    private void wrapText(Cell cell, HSSFWorkbook workbook) {
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setWrapText(true);
-        cell.setCellStyle(cellStyle);
-
-        // Auto-size row height to fit the wrapped text
-        Row row = cell.getRow();
-        row.setHeight((short) -1); // Set row height to auto
-    }
 }
-
-

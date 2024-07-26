@@ -48,21 +48,5 @@ export class QuestionService {
     return this.httpClient.delete(`${this.baseURL}/delete/${id}`);
   }
  
-  //for marks
-
-  getMarks(): Observable<MarksDTO[]> {
-    return this.httpClient.get<MarksDTO[]>(`http://localhost:8080/api/marks/viewList`);
-  }
-
-  addMark(mark: MarksDTO): Observable<MarksDTO> {
-    return this.httpClient.post<MarksDTO>(`http://localhost:8080/api/marks/add`, mark);
-  }
-
-  updateMark(id: number, mark: MarksDTO): Observable<MarksDTO> {
-    return this.httpClient.put<MarksDTO>(`http://localhost:8080/api/marks/update/${id}`, mark);
-  }
-
-  deleteMark(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`http://localhost:8080/api/marks/delete/${id}`);
-  }
+ 
 }

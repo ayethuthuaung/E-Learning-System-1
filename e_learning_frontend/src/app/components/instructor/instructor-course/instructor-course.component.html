@@ -160,6 +160,19 @@
                 <input type="text"
                   class="form-control w-1/4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                   placeholder="Search..." [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
+
+
+                  <!-- download button -->
+                  <button (click)="exportCourses()" class="py-2 px-4 bg-blue-500 text-white rounded-md">
+                    Excel
+                  </button>
+
+                  <button (click)="exportCoursesPdf()" class="py-2 px-4 bg-blue-500 text-white rounded-md">
+                    PDF
+                  </button>
+                  
+
+
                 <div class="pagination-controls flex items-center space-x-2">
                   <button (click)="firstPage()" [disabled]="currentPage === 1"
                     class="btn bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300">

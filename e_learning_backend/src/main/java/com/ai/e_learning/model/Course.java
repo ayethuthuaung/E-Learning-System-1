@@ -34,6 +34,7 @@ public class Course  {
   @Column(nullable = false, length = 30)
   private String badge;
   private String photo;
+  private String photoName;
   private boolean isDeleted;
   private String status;
 

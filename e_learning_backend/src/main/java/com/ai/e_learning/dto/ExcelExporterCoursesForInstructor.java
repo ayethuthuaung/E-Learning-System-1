@@ -1,14 +1,16 @@
 package com.ai.e_learning.dto;
 
+import com.ai.e_learning.dto.CourseDto;
+import com.ai.e_learning.dto.UserCourseDto;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.UserCourseService;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -18,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
-public class ExcelExporterForAdmin {
+public class ExcelExporterCoursesForInstructor {
 
     @Autowired
     private CourseService courseService;
@@ -26,16 +28,16 @@ public class ExcelExporterForAdmin {
     @Autowired
     private UserCourseService userCourseService;
 
-    public void exportAllCourses(HttpServletResponse response) throws IOException {
-        // Fetch all courses
-        List<CourseDto> courses = courseService.getAllCourseList();
+    public void exportCoursesForInstructor(Long userId, HttpServletResponse response) throws IOException {
+        // Fetch courses for the specific instructor
+        List<CourseDto> courses = courseService.getCoursesByUserId(userId);
 
-        // Fetch all user courses
+        // Fetch all user courses to calculate student count
         List<UserCourseDto> userCourses = userCourseService.getAllUserCourses();
 
         // Create a new workbook
         HSSFWorkbook workbook = new HSSFWorkbook();
-        Sheet sheet = workbook.createSheet("All Courses");
+        Sheet sheet = workbook.createSheet("Instructor Courses");
 
         int rowCount = 0;
 
@@ -70,23 +72,23 @@ public class ExcelExporterForAdmin {
             cell.setCellValue(course.getDuration());
 
             cell = row.createCell(4);
-            cell.setCellValue(course.getUser().getName()); // Assuming CourseDto contains instructor details
+            cell.setCellValue(course.getDescription());
+
+            // Convert createdAt timestamp to formatted date string
+            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
+            cell = row.createCell(5);
+            cell.setCellValue(createdAt.format(formatter));
+
+            cell = row.createCell(6);
+            cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
 
             // Calculate student count for the course
             long studentCount = userCourses.stream()
                     .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
                     .count();
 
-            cell = row.createCell(5);
-            cell.setCellValue(studentCount);
-
-            // Convert createdAt timestamp to formatted date string
-            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
-            cell = row.createCell(6);
-            cell.setCellValue(createdAt.format(formatter));
-
             cell = row.createCell(7);
-            cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
+            cell.setCellValue(studentCount);
         }
 
         // Apply filter to the header row
@@ -98,10 +100,10 @@ public class ExcelExporterForAdmin {
         }
 
         // Set content type and header for the response
-        response.setContentType("application/octet-stream");
+        response.setContentType("application/vnd.ms-excel");
         String currentDateTime = java.time.LocalDateTime.now().toString().replace(":", "-");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=all_courses_" + currentDateTime + ".xls";
+        String headerValue = "attachment; filename=instructor_courses_" + currentDateTime + ".xls";
         response.setHeader(headerKey, headerValue);
 
         // Write workbook to the response output stream
@@ -130,19 +132,19 @@ public class ExcelExporterForAdmin {
         cell.setCellStyle(style);
 
         cell = headerRow.createCell(4);
-        cell.setCellValue("Instructor");
+        cell.setCellValue("Course Description");
         cell.setCellStyle(style);
 
         cell = headerRow.createCell(5);
-        cell.setCellValue("Students");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(6);
         cell.setCellValue("Created Date");
         cell.setCellStyle(style);
 
-        cell = headerRow.createCell(7);
+        cell = headerRow.createCell(6);
         cell.setCellValue("Status");
+        cell.setCellStyle(style);
+
+        cell = headerRow.createCell(7);
+        cell.setCellValue("Students");
         cell.setCellStyle(style);
     }
 }

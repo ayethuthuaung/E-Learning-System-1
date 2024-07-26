@@ -58,18 +58,14 @@ public class PDFExporterForAdmin {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // Iterate over courses and populate data rows
+        int index = 1; // For numbering rows
         for (CourseDto course : courses) {
-            table.addCell(course.getUser().getName()); // Assuming CourseDto contains instructor details
+            table.addCell(String.valueOf(index++)); // Add row number
+
             table.addCell(course.getName());
             table.addCell(course.getLevel());
             table.addCell(course.getDuration());
-            table.addCell(course.getDescription());
-
-            // Convert createdAt timestamp to formatted date string
-            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
-            table.addCell(createdAt.format(formatter));
-
-            table.addCell(course.getStatus()); // Assuming CourseDto contains course status
+            table.addCell(course.getUser().getName()); // Assuming CourseDto contains instructor details
 
             // Calculate student count for the course
             long studentCount = userCourses.stream()
@@ -77,6 +73,12 @@ public class PDFExporterForAdmin {
                     .count();
 
             table.addCell(String.valueOf(studentCount));
+
+            // Convert createdAt timestamp to formatted date string
+            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
+            table.addCell(createdAt.format(formatter));
+
+            table.addCell(course.getStatus()); // Assuming CourseDto contains course status
         }
 
         document.add(table);
@@ -94,7 +96,7 @@ public class PDFExporterForAdmin {
         PdfPCell cell = new PdfPCell();
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
         font.setSize(12);
-        cell.setPhrase(new Phrase("Instructor", font));
+        cell.setPhrase(new Phrase("No", font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase("Course Name", font));
@@ -106,16 +108,16 @@ public class PDFExporterForAdmin {
         cell.setPhrase(new Phrase("Course Duration", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Course Description", font));
+        cell.setPhrase(new Phrase("Instructor", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Course Created At", font));
+        cell.setPhrase(new Phrase("Students", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Course Status", font));
+        cell.setPhrase(new Phrase("Created Date", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Student Count", font));
+        cell.setPhrase(new Phrase("Status", font));
         table.addCell(cell);
     }
 }

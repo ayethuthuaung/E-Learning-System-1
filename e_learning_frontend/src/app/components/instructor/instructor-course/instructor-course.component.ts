@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Category } from '../../models/category.model';
 
 import { CategoryService } from '../../services/category.service';
@@ -14,7 +14,7 @@ import { orderBy } from 'lodash';
   templateUrl: './instructor-course.component.html',
   styleUrl: './instructor-course.component.css'
 })
-export class InstructorCourseComponent implements OnInit {
+export class InstructorCourseComponent implements OnInit, OnDestroy {
   isSidebarOpen = true;
   activeTab: string = 'createCourse';
   category: Category = new Category();
@@ -34,6 +34,10 @@ export class InstructorCourseComponent implements OnInit {
 
   courses: Course[] = [];
   status: string = 'Accept,Pending'; 
+
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
+
 
   constructor(
     private categoryService: CategoryService,
@@ -55,6 +59,23 @@ export class InstructorCourseComponent implements OnInit {
       }
     }
     this.getInstructorCourses();
+    this.startPolling(); // Start polling for updates
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling(); // Clean up polling when component is destroyed
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.getInstructorCourses(); // Poll for course updates
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 
   getCategories(): void {
@@ -448,6 +469,44 @@ filterTerm = '';
   goToCourseDetails(courseId: number): void {
     this.router.navigate(['/course-detail', courseId]);
   }
+  exportCourses(): void {
+    if (this.userId) {
+      this.courseService.exportCoursesForInstructor(this.userId).subscribe(
+        (response: Blob) => {
+          const url = window.URL.createObjectURL(response);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'instructor_courses.xls'; // Name of the file
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        (error) => {
+          console.error('Error exporting courses:', error);
+        }
+      );
+    }
+  }
+
+  exportCoursesPdf(): void {
+    if (this.userId) {
+      this.courseService.exportCoursesForInstructorPDf(this.userId).subscribe(
+        (response: Blob) => {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'courses.pdf'; // Name of the file
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        (error) => {
+          console.error('Error exporting courses:', error);
+        }
+      );
+    }
+  }
+  
+  
 
 
 }
