@@ -152,7 +152,14 @@ public class CourseController {
 
     @GetMapping("/lessons/{lessonId}/courseId")
     public Long getCourseIdByLessonId(@PathVariable Long lessonId) {
+
         return courseService.getCourseId(lessonId);
+    }
+
+    @GetMapping("/requestWithExamId/{examId}")
+    public Long getCourseIdByExamId(@PathVariable Long examId) {
+
+        return courseService.getCourseIdByExamId(examId);
     }
 
     //report
@@ -191,27 +198,4 @@ public class CourseController {
 
 
 
-
-  /*@PostMapping(value = "/addcourse", consumes = {"multipart/form-data"})
-  public ResponseEntity<CourseDto> addCourse(@RequestParam("course") String courseDtoString,
-                                             @RequestParam(value = "photo", required = false) MultipartFile photoFile) {
-    try {
-      CourseDto courseDto = new ObjectMapper().readValue(courseDtoString, CourseDto.class);
-
-      // Handle photo conversion if needed
-      if (photoFile != null) {
-        byte[] photoBytes = photoFile.getBytes();
-        // Convert photoBytes to necessary format and set it to courseDto
-        courseDto.setPhoto(Arrays.toString(photoBytes)); // Example: Convert to base64 or store as byte array
-      }
-
-      CourseDto savedCourse = courseService.saveCourse(courseDto);
-      if (savedCourse != null) {
-        return ResponseEntity.ok(savedCourse); // Return HTTP 200 OK with saved course details
-      } else {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Or handle error as needed
-      }
-    } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Handle JSON parsing or file reading errors
-    }*/
 }

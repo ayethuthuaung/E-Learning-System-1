@@ -83,6 +83,12 @@ export class CourseService {
       params: { userId: userId.toString() }
     });
   }
+
+  
+  getCourseIdByExamId(examId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/requestWithExamId/${examId}`);
+  }
+
   exportCoursesByInstructor(instructorId: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/instructor/excel?instructorId=${instructorId}`, { responseType: 'blob' });
   }

@@ -42,4 +42,6 @@ export class HeroComponent implements OnInit, OnDestroy {
         this.acceptedCourseCount = courses.length;
       });
   }
+
+ 
 }

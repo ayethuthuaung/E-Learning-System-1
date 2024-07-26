@@ -35,6 +35,7 @@ public class UserCourse {
 
   private Long createdAt;
 
+
   @PrePersist
   protected void onCreate() {
     this.createdAt = System.currentTimeMillis();

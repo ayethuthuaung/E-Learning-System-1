@@ -344,8 +344,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isExamOwner(Long userId) {
-        return userRepository.findExamOwnerByExamId(userId) == null;
+    public boolean isExamOwner(Long examId, Long userId) {
+        User user = EntityUtil.getEntityById(userRepository, userId,"User");
+        User examOwner = userRepository.findExamOwnerByExamId(examId);
+        return user.getStaffId().equals(examOwner.getStaffId());
     }
 
 

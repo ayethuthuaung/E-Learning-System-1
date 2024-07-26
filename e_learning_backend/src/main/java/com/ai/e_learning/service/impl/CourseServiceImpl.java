@@ -13,16 +13,14 @@ import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.RoleService;
-import com.ai.e_learning.util.DtoUtil;
-import com.ai.e_learning.util.EntityUtil;
-import com.ai.e_learning.util.GoogleDriveJSONConnector;
-import com.ai.e_learning.util.Helper;
+import com.ai.e_learning.util.*;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +54,9 @@ public class CourseServiceImpl implements CourseService {
 
   @Autowired
   private RoleService roleService;
+
+  @Autowired
+  private CloudinaryService cloudinaryService;
 
   @Autowired
   private NotificationController notificationController;
@@ -120,17 +121,24 @@ public class CourseServiceImpl implements CourseService {
       course.setStatus("In Progress");
 
 
-    String imageUrl;
-    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+    //Google Drive
+//    String imageUrl;
+//    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//
+//    try {
+//      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
+//    } catch (IOException | GeneralSecurityException e) {
+//      throw new RuntimeException("Failed to upload file to Google Drive", e);
+//    }
+//    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
 
-    try {
-      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
-    } catch (IOException | GeneralSecurityException e) {
-      throw new RuntimeException("Failed to upload file to Google Drive", e);
-    }
-    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
+    //Cloudinary
+    MultipartFile photofile = courseDto.getPhotoInput();
+    String fileUrl = cloudinaryService.uploadFile(photofile);
+    course.setPhoto(fileUrl);
+    course.setPhotoName(photofile.getOriginalFilename());
 
-//    course.setPhoto(imageUrl);
+
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
@@ -325,7 +333,11 @@ public class CourseServiceImpl implements CourseService {
     return courseRepository.findCourseIdByLessonId(lessonId);
   }
 
-
+  @Override
+  public Long getCourseIdByExamId(Long examId) {
+    Course course = courseRepository.findCourseByExamId(examId);
+    return course.getId();
+  }
 
 
 }

@@ -1,9 +1,9 @@
+import { ExamDTO } from './../models/examdto.model';
 import { ExamCreationDto } from './../models/examCreationDto.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Exam } from '../models/exam.model';
-import { ExamDTO } from '../models/examdto.model';
 import { StudentAnswer } from '../models/student-answer.model';
 import { ExamList } from '../models/examList.model';
 
@@ -57,4 +57,5 @@ export class ExamService {
     getExamByLessonId(lessonId: number): Observable<ExamList[]> {
         return this.httpClient.get<ExamList[]>(`${this.baseURL}/byLesson/${lessonId}`);
     }
+
 }

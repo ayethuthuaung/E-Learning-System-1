@@ -13,6 +13,9 @@
         </div>
         <div class="font-bold text-3xl mb-4 text-center text-logo-blue">{{exam.title}}</div>
         <div class="font-semibold text-xl mb-4 text-center text-logo-blue">{{exam.description}}</div>
+       
+          <div *ngIf="exam.finalExam" class="font-semibold text-xl mb-4 text-center text-logo-blue">Pass Score  : {{ exam.passScore }}</div>
+    
         <div *ngIf="showResults" class="text-center text-logo-blue font-semibold mb-4">
           Total Points: {{totalMarks}} / {{questionTotalMarks}}
         </div>
@@ -46,6 +49,17 @@
               <span *ngIf="showResults && option.isCorrect" class="text-green-500 font-semibold ml-2">(Correct Answer)</span>
             </div>
 
+            <div *ngIf="isOwner || hasRole(2)" class="mt-3">
+              <div *ngIf="question.correctAnswers && question.correctAnswers.length > 0">
+                <span class="font-semibold text-logo-blue">Correct Answers:</span>
+                <ul class="list-disc ml-5 mt-2">
+                  <li *ngFor="let correctAnswerId of question.correctAnswers">
+                    {{ getOptionLabel(question, correctAnswerId) }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             <div *ngIf="showResults" class="mt-3">
               <div *ngIf="question.correctAnswers && question.correctAnswers.length > 0">
                 <span class="font-semibold text-logo-blue">Correct Answers:</span>
@@ -63,7 +77,7 @@
         </form>
 
         <div class="flex justify-center mt-8">
-          <button *ngIf="hasRole(1) && !showResults"
+          <button *ngIf="!isOwner && !hasRole(2) && !showResults"
             type="button"
             [disabled]="showResults"
             (click)="submitAnswers()"
@@ -75,6 +89,12 @@
             (click)="captureScreenshot()"
             class="bg-logo-blue hover:bg-dark-blue text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 ml-4">
             Save Form
+          </button>
+          <button *ngIf="showResults && totalMarks >= exam.passScore "
+            type="button"
+            (click)="gotoCertificate()"
+            class="bg-logo-blue hover:bg-dark-blue text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 ml-4">
+            Certificate
           </button>
         </div>
       </div>

@@ -25,4 +25,6 @@ public interface CourseService {
 
 
     Long getCourseId(Long lessonId);
+
+  Long getCourseIdByExamId(Long examId);
 }

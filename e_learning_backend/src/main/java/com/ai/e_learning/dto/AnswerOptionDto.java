@@ -9,9 +9,7 @@ import lombok.ToString;
 @ToString
 public class AnswerOptionDto {
     private Long id,questionId;
-
     private String answer;
-
     private Boolean isAnswered;
 
 }
