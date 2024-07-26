@@ -18,6 +18,8 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
     List<Notification> findByRoleAndIsDeletedFalse(Optional<Role> role);
 //    List<Notification> findByRoleNameAndIsDeletedFalse(String roleName);
     List<Notification> findByIsDeletedFalseAndUserId(Long userId);
+    long countByIsDeletedFalseAndIsReadFalse();
+    long countByIsDeletedFalseAndIsReadFalseAndUserId(Long userId);
 
 
 

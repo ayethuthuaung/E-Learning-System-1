@@ -59,4 +59,10 @@ public class NotificationController {
     public Notification softDeleteNotification(@PathVariable Long id) {
         return notificationServiceImpl.softDeleteNotification(id);
     }
+    @GetMapping("/unread-count")
+    public long getUnreadCount(
+            @RequestParam String roleName,
+            @RequestParam Long userId) {
+        return notificationServiceImpl.getUnreadCount(roleName, userId);
+    }
 }

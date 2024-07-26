@@ -17,6 +17,9 @@
                 <div class="ml-2 flex-grow">
                   <span class="font-semibold truncate">{{ conversation.name }}</span>
                 </div>
+                <span *ngIf="conversation.unreadCount && conversation.unreadCount > 0" class="ml-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs font-bold unread-count">
+                  {{ conversation.unreadCount }}
+                </span>
               </div>
             </li>
           </ul>
@@ -24,10 +27,11 @@
 
         <!-- Chat Window -->
         <div class="w-3/4 bg-white border border-gray-300 rounded-md shadow-lg p-4 ml-4 flex flex-col">
+          <div *ngIf="selectedConversation; else noConversationSelected">
           <div class="flex items-center justify-between p-4 bg-gray-200 rounded-t-lg">
             <div class="flex items-center">
-              <img [src]="selectedConversation?.photoUrl" alt="User Photo" class="w-8 h-8 bg-gray-400 rounded-full">
-              <span class="ml-2 font-semibold">{{ selectedConversation?.name || 'Select a conversation' }}</span>
+              <img [src]="selectedConversation.photoUrl" alt="User Photo" class="w-8 h-8 bg-gray-400 rounded-full">
+              <span class="ml-2 font-semibold">{{ selectedConversation.name  }}</span>
             </div>
             <i class="fas fa-info-circle text-lg"></i>
           </div>
@@ -85,6 +89,12 @@
             <button class="ml-2 text-xl" (click)="stopRecording()" *ngIf="isRecording"><i class="fas fa-stop"></i></button>
             <button class="ml-2 text-xl" (click)="sendMessage()"><i class="fas fa-paper-plane"></i></button>
           </div>
+        </div>
+        <ng-template #noConversationSelected>
+          <div class="flex items-center justify-center h-full text-gray-500">
+            Select a conversation to start chatting.
+          </div>
+        </ng-template>
         </div>
       </section>
     </main>

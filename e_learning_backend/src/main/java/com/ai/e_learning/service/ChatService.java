@@ -18,5 +18,6 @@ public interface ChatService {
     Long getChatRoomIdForUsers(Long instructorId, Long studentId);
     ChatRoom getOrCreateChatRoom(Long instructorId, Long studentId);
     void softDeleteMessage(Long messageId);
+    long getUnreadMessageCount(Long chatRoomId, Long userId);
 
 }

@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -67,42 +64,44 @@ public class PDFExporter {
         Paragraph courseName = new Paragraph("Course Name: " + course.getName(), font);
         document.add(courseName);
 
-        Paragraph courseDuration = new Paragraph("Course Duration: " + course.getDuration(), font);
-        document.add(courseDuration);
-
         Paragraph courseDescription = new Paragraph("Course Description: " + course.getDescription(), font);
         document.add(courseDescription);
 
         // Iterate over user courses for the current course
         for (UserCourseDto userCourse : userCourses) {
             if (userCourse.getCourse().getId().equals(course.getId())) {
-                // Student details
-                UserDto userDto = new UserDto(userCourse.getUser());
+                // Directly retrieve user information from userCourse
+                String studentName = userCourse.getUser().getName(); // Ensure this returns the correct value
+                String studentEmail = userCourse.getUser().getEmail();
+                String studentTeam = userCourse.getUser().getTeam();
+                String studentDivision = userCourse.getUser().getDivision();
+                String studentDepartment = userCourse.getUser().getDepartment();
 
-                Paragraph studentName = new Paragraph("Student Name: " + userDto.getName(), font);
-                document.add(studentName);
+                Paragraph studentNameParagraph = new Paragraph("Student Name: " + studentName, font);
+                document.add(studentNameParagraph);
 
-                Paragraph studentEmail = new Paragraph("Student Email: " + userDto.getEmail(), font);
-                document.add(studentEmail);
+                Paragraph studentEmailParagraph = new Paragraph("Email: " + studentEmail, font);
+                document.add(studentEmailParagraph);
 
-                Paragraph studentTeam = new Paragraph("Student Team: " + userDto.getTeam(), font);
-                document.add(studentTeam);
+                Paragraph studentTeamParagraph = new Paragraph("Team: " + studentTeam, font);
+                document.add(studentTeamParagraph);
 
-                Paragraph studentDivision = new Paragraph("Student Division: " + userDto.getDivision(), font);
-                document.add(studentDivision);
+                Paragraph studentDivisionParagraph = new Paragraph("Division: " + studentDivision, font);
+                document.add(studentDivisionParagraph);
 
-                Paragraph studentDepartment = new Paragraph("Student Department: " + userDto.getDepartment(), font);
-                document.add(studentDepartment);
+                Paragraph studentDepartmentParagraph = new Paragraph("Department: " + studentDepartment, font);
+                document.add(studentDepartmentParagraph);
+
 
                 // Completion progress
-                Double completionPercentage = courseModuleService.calculateCompletionPercentage(userDto.getId(), course.getId());
-                Paragraph completionProgress;
+                Double completionPercentage = courseModuleService.calculateCompletionPercentage(userCourse.getUser().getId(), course.getId());
+                Paragraph completionProgressParagraph;
                 if (completionPercentage != null) {
-                    completionProgress = new Paragraph("Completion Progress: " + String.format("%.2f%%", completionPercentage), font);
+                    completionProgressParagraph = new Paragraph("Completion Progress: " + String.format("%.2f%%", completionPercentage), font);
                 } else {
-                    completionProgress = new Paragraph("Completion Progress: N/A", font);
+                    completionProgressParagraph = new Paragraph("Completion Progress: N/A", font);
                 }
-                document.add(completionProgress);
+                document.add(completionProgressParagraph);
 
                 // Add space between students
                 document.add(Chunk.NEWLINE);

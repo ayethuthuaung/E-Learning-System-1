@@ -70,13 +70,14 @@ export class UserCourseService {
           return throwError('Something went wrong while fetching accepted student counts.');
         })
       );
-  }
-  
+  } 
 
   getCourseAttendanceByInstructor(userId: number): Observable<{ [courseName: string]: number }> {
     return this.httpClient.get<{ [courseName: string]: number }>(`${this.baseURL}/course-attendance/${userId}`);
   }
 
-
+  getMonthlyStudentCounts(): Observable<{ [key: string]: number }> {
+    return this.httpClient.get<{ [key: string]: number }>(`${this.baseURL}/monthly-student-counts`);
+  }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -61,6 +62,10 @@ public class CategoryController {
   @GetMapping("/existsByName")
   public boolean isCategoryNameAlreadyExists(@RequestParam String name) {
     return categoryService.isCategoryNameAlreadyExists(name);
+  }
+  @GetMapping("/course-counts")
+  public Map<String, Long> getCourseCountsPerCategory() {
+    return categoryService.getCourseCountsPerCategory();
   }
   }
 

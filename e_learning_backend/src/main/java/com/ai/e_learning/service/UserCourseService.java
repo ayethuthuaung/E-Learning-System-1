@@ -31,7 +31,7 @@ public interface UserCourseService {
   Map<String, Long> getAcceptedStudentCount();
 
   Map<String, Double> getCourseAttendanceByInstructor(Long userId);
-
+  Map<String, Long> getMonthlyStudentCounts();
 
 
 }

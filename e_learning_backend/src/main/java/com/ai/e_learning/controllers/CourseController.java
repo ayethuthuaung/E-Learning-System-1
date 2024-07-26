@@ -43,6 +43,9 @@ public class CourseController {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private PDFExporter pdfExporter;
+
     @GetMapping(value = "/courselist", produces = "application/json")
     public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
         if ("all".equalsIgnoreCase(status) || status == null) {
@@ -170,18 +173,19 @@ public class CourseController {
     }
 
     @GetMapping("/export/instructor/pdf")
-    public void exportToPdf(@RequestParam("instructorId") Long instructorId, HttpServletResponse response) throws IOException {
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
+    public void exportToPdf(@RequestParam(name = "instructorId") Long instructorId, HttpServletResponse response) throws IOException {
+        System.out.println("Received instructorId: " + instructorId);
+        try {
+            response.setContentType("application/pdf");
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=courses_" + new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date()) + ".pdf";
+            response.setHeader(headerKey, headerValue);
 
-        response.setContentType("application/pdf");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=courses_" + currentDateTime + ".pdf";
-        response.setHeader(headerKey, headerValue);
-
-        // Instantiate the PDFExporter and call the export method
-        PDFExporter exporter = new PDFExporter();
-        exporter.exportCoursesByInstructor(instructorId, response);
+            pdfExporter.exportCoursesByInstructor(instructorId, response);
+        } catch (IOException ex) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating PDF");
+            ex.printStackTrace();
+        }
     }
 
     @GetMapping("/export/admin/pdf")

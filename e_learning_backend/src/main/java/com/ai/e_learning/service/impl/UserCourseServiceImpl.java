@@ -15,14 +15,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.*;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.Map;
-import java.util.HashMap;
-
 
 
 @Service
@@ -205,7 +202,7 @@ public class UserCourseServiceImpl implements UserCourseService {
 
     return acceptedStudentCounts;
   }
-
+  @Override
   public Map<String, Double> getCourseAttendanceByInstructor(Long userId) {
     List<Course> courses = courseRepository.findByUserId(userId);
     Map<String, Double> courseAttendance = new HashMap<>();
@@ -219,7 +216,25 @@ public class UserCourseServiceImpl implements UserCourseService {
 
     return courseAttendance;
   }
+  @Override
+  public Map<String, Long> getMonthlyStudentCounts() {
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("Accept");
+    Map<String, Long> monthlyStudentCounts = new HashMap<>();
 
+    for (UserCourse userCourse : acceptedCourses) {
+      LocalDate date = Instant.ofEpochMilli(userCourse.getCreatedAt()).atZone(ZoneId.systemDefault()).toLocalDate();
+      String monthName = date.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+      monthlyStudentCounts.put(monthName, monthlyStudentCounts.getOrDefault(monthName, 0L) + 1);
+    }
+
+    // Ensure all months are present in the map
+    for (String month : List.of("January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December")) {
+      monthlyStudentCounts.putIfAbsent(month, 0L);
+    }
+
+    return monthlyStudentCounts;
+  }
 
 
 }

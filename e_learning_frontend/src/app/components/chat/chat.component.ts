@@ -26,8 +26,7 @@ export class ChatComponent implements OnInit, AfterViewChecked,OnChanges {
   private userScrolled = false;
   constructor(
     private webSocketService: WebSocketService,
-    private authService: AuthService,private audioRecorderService:AudioRecorderService,
-    private unreadMessageService: UnreadMessageService
+    private authService: AuthService,private audioRecorderService:AudioRecorderService,private unreadMessageService:UnreadMessageService
   ) { }
 
   ngOnInit(): void {
@@ -138,32 +137,13 @@ export class ChatComponent implements OnInit, AfterViewChecked,OnChanges {
     this.webSocketService.softDeleteMessage(messageId).subscribe(
       () => {
         this.messages = this.messages.filter(message => message.id !== messageId);
+        
       },
       (error) => {
         console.error('Error deleting message:', error);
       }
     );
   }
-  // markAllAsRead(): void {
-  //   // Set all messages to read
-  //   this.messages.forEach(message => {
-  //     if (!message.read) {
-  //       message.read = true;
-  //     }
-  //   });
-    
-  //   // Reset the unread message count
-  //   this.unreadMessageCount = 0;
-  //   this.unreadMessageService.setUnreadMessageCount(this.unreadMessageCount);
-  
-  //   // Call the backend to update all messages' read status
-  //   this.webSocketService.updateAllMessagesReadStatus(this.chatRoomId).subscribe(
-  //     () => {},
-  //     (error) => {
-  //       console.error('Error updating all messages read status:', error);
-  //     }
-  //   );
-  // }
   
 
   editMessage(message: ChatMessage): void {

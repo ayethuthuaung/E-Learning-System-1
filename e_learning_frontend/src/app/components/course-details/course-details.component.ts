@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { CourseService } from '../services/course.service';
 import { ChatRoomService } from '../services/chat-room.service';
 import { AuthService } from '../auth/auth.service';
@@ -44,13 +44,12 @@ export class CourseDetailsComponent implements OnInit {
   roles: Role[] = [];
 
   isOwner: boolean = false;
-  unreadMessageCount: number = 0;
 
   isFinalExam: boolean = false;
   filteredExamList: ExamList[] = [];
   showFinalExam: boolean = false;
   expandAllText: string = 'Expand All';
-
+  unreadCount: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -65,13 +64,14 @@ export class CourseDetailsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private examService: ExamService,
     private location: Location,
+    private webSocketService: WebSocketService,
     private unreadMessageService: UnreadMessageService,
-    private webSocketService: WebSocketService
+    private elRef: ElementRef
   ) {}
 
   ngOnInit(): void {
     this.unreadMessageService.unreadMessageCount$.subscribe(count => {
-      this.unreadMessageCount = count;
+      this.unreadCount = count;
     });
     this.route.paramMap.subscribe(params => {
       this.courseId = +params.get('id')!;
@@ -118,15 +118,23 @@ export class CourseDetailsComponent implements OnInit {
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
       }
-    } 
-   
+    }
+  }
+ 
+  checkIsOwner(): boolean{return this.userId===this.instructorId}
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const chatRoom = this.elRef.nativeElement.querySelector('app-chat');
+    
+    if (this.chatRoomVisible && chatRoom && !chatRoom.contains(target)) {
+      this.toggleChatRoom(); // Close the chat room if click is outside
+    }
   }
 
-  checkIsOwner(): boolean{return this.userId===this.instructorId}
-
+ 
   toggleChatRoom(): void {
     if (!this.chatRoomVisible) {
-      // Check if the chat room already exists
       if (!this.chatRoomId) {
         this.createChatRoom();
       }
@@ -134,13 +142,10 @@ export class CourseDetailsComponent implements OnInit {
     this.chatRoomVisible = !this.chatRoomVisible;
 
     if (this.chatRoomVisible) {
-      // Mark all messages as read when the chat room is opened
       if (this.chatRoomId) {
         this.webSocketService.updateAllMessagesReadStatus(this.chatRoomId).subscribe(
           () => {
-            // Successfully marked all messages as read
-            this.unreadMessageCount = 0; // Reset unread message count
-            this.unreadMessageService.setUnreadMessageCount(this.unreadMessageCount);
+            this.unreadCount = 0; // Fetch unread count when chat room is opened
           },
           (error) => {
             console.error('Error marking all messages as read:', error);

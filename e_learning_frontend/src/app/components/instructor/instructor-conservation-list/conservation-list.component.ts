@@ -11,6 +11,7 @@ interface Conversation {
   name: string;
   chatRoomId: number;
   photoUrl: '';
+  unreadCount: number;
 }
 
 @Component({
@@ -56,8 +57,24 @@ export class ConservationListComponent implements OnInit, AfterViewChecked {
           this.scrollToBottom();
         }
       }
+      else if (message && message.senderId !== this.senderId) {
+        // Update unread count for the receiver
+        this.updateUnreadCount(message.chatRoomId);
+      }
     });
     this.loadChatHistory();
+  }
+  updateUnreadCount(chatRoomId: number): void {
+    const userId = this.authService.getLoggedInUserId();
+    this.http.get<number>(`http://localhost:8080/api/chat/unread-count/${chatRoomId}/${userId}`).subscribe({
+      next: (unreadCount) => {
+        const conversation = this.conversationList.find(c => c.chatRoomId === chatRoomId);
+        if (conversation) {
+          conversation.unreadCount = unreadCount;
+        }
+      },
+      error: (error) => console.error('Error updating unread count:', error)
+    });
   }
 
   
@@ -134,18 +151,39 @@ export class ConservationListComponent implements OnInit, AfterViewChecked {
     const userId = this.authService.getLoggedInUserId();
     if (userId !== null) {
       this.http.get<Conversation[]>(`http://localhost:8080/api/chat/conversation-list/${userId}`).subscribe({
-        next: (conversations) => this.conversationList = conversations,
+        next: (conversations) => {
+          this.conversationList = conversations;
+          this.conversationList.forEach(conversation => {
+            // Fetch unread count for each conversation
+            this.http.get<number>(`http://localhost:8080/api/chat/unread-count/${conversation.chatRoomId}/${userId}`).subscribe({
+              next: (unreadCount) => conversation.unreadCount = unreadCount,
+              error: (error) => console.error('Error fetching unread count:', error)
+            });
+          });
+        },
         error: (error) => console.error('Error fetching conversation list:', error)
       });
     }
   }
+  
 
   selectConversation(conversation: Conversation): void {
     this.selectedConversation = conversation;
     this.chatRoomId = conversation.chatRoomId;
     this.loadChatHistory();
+    this.resetUnreadCount(conversation.chatRoomId);
   }
-
+  resetUnreadCount(chatRoomId: number): void {
+    const userId = this.authService.getLoggedInUserId();
+    this.webSocketService.updateAllMessagesReadStatus(chatRoomId).subscribe(() => {
+      this.updateUnreadCount(chatRoomId);
+      if (this.selectedConversation) {
+        this.selectedConversation.unreadCount = 0;
+      }
+    }, (error) => {
+      console.error('Error resetting unread count:', error);
+    });
+  }
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }

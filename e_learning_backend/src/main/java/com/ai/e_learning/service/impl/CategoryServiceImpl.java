@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,11 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
       });
   }
-
+  @Override
+  public Map<String, Long> getCourseCountsPerCategory() {
+    return categoryRepository.findAll().stream()
+            .collect(Collectors.toMap(Category::getName, category -> (long) category.getCourses().size()));
+  }
   private Category convertToEntity(CategoryDto dto) {
     return modelMapper.map(dto, Category.class);
   }

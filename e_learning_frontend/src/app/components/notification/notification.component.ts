@@ -21,8 +21,7 @@ export class NotificationComponent implements OnInit {
   constructor(
     private webSocketService: WebSocketService,
     private authService: AuthService,
-    private router: Router,
-    private unreadMessageService: UnreadMessageService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +36,7 @@ export class NotificationComponent implements OnInit {
             .filter(notification => !notification.deleted)
             .map(notification => ({ ...notification, createdAt: new Date(notification.createdAt) }))
             .reverse(); // Reverse the array to display newest first
-          this.updateUnreadCount();
+            this.updateUnreadCount();
         },
         (error) => {
           console.error('Failed to fetch notifications:', error);
@@ -65,7 +64,7 @@ export class NotificationComponent implements OnInit {
       this.webSocketService.markAsRead(notification.id).subscribe(
         () => {
           notification.read = true; // Update the local state
-          this.updateUnreadCount();
+          
         },
         (error) => {
           console.error('Failed to mark notification as read:', error);
@@ -78,7 +77,8 @@ export class NotificationComponent implements OnInit {
       if (notification.message.includes('Student')) {
         // If the message includes "student", navigate to InstructorStudentComponent
         this.router.navigate(['/instructor/student']);
-      } else {
+      }else if(notification.message.includes('enrollment')) {}
+      else {
         this.router.navigate(['/instructor/course'], { queryParams: { tab: 'courseList' } });
       }
     }
@@ -88,7 +88,7 @@ export class NotificationComponent implements OnInit {
     this.webSocketService.softDeleteNotification(notification.id).subscribe(
       () => {
         this.notifications = this.notifications.filter(n => n.id !== notification.id);
-        this.updateUnreadCount();
+        
       },
       (error) => {
         console.error('Failed to delete notification:', error);
@@ -119,10 +119,8 @@ export class NotificationComponent implements OnInit {
     message = message.replace(/Reject/g, '<span class="text-red-600">Reject</span>');
     return message;
   }
-
-  private updateUnreadCount(): void {
+  updateUnreadCount(): void {
     const unreadCount = this.notifications.filter(notification => !notification.read).length;
-    this.unreadMessageService.setUnreadNotiCount(unreadCount);
     this.unreadCountChange.emit(unreadCount);
   }
 }

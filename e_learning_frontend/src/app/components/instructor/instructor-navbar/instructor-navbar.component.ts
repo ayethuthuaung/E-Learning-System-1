@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { UnreadMessageService } from '../../services/unread-message.service';
+import { WebSocketService } from '../../services/websocket.service';
 
 
 @Component({
@@ -16,14 +17,28 @@ export class InstructorNavbarComponent implements OnInit {
   unreadNotiCount: number = 0;
   showNotifications: boolean = false;
 
-  constructor( private router: Router, private unreadMessageService: UnreadMessageService) {}
+  constructor( private router: Router,
+    private authService: AuthService,
+    private webSocketService: WebSocketService ) {}
 
   ngOnInit(): void {
-    this.unreadMessageService.unreadNotiCount$.subscribe(count => {
-      this.unreadNotiCount = count;
-    });
+    this.loadUnreadCount();
   }
+  loadUnreadCount(): void {
+    const roleName = this.authService.getLoggedInUserRole();
+    const userId = this.authService.getLoggedInUserId();
 
+    if (roleName === 'Admin' || roleName === 'Instructor' || roleName === 'Student') {
+      this.webSocketService.getUnreadNotiCount(roleName, userId).subscribe(
+        (count) => {
+          this.unreadNotiCount = count;
+        },
+        (error) => {
+          console.error('Failed to fetch unread count:', error);
+        }
+      );
+    }
+  }
   toggleSidebar() {
     this.toggleSidebarEvent.emit();
   }

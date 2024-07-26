@@ -125,6 +125,10 @@ public class UserCourseController {
     return ResponseEntity.ok(courseAttendance);
   }
 
+  @GetMapping("/monthly-student-counts")
+  public Map<String, Long> getMonthlyStudentCounts() {
+    return userCourseService.getMonthlyStudentCounts();
+  }
 
 
 }

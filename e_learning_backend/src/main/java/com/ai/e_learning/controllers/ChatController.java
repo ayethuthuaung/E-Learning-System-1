@@ -141,5 +141,10 @@ public class ChatController {
         chatServiceImpl.markAllMessagesAsRead(chatRoomId);
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/unread-count/{chatRoomId}/{userId}")
+    public ResponseEntity<Long> getUnreadMessageCount(@PathVariable Long chatRoomId, @PathVariable Long userId) {
+        long unreadCount = chatServiceImpl.getUnreadMessageCount(chatRoomId, userId);
+        return ResponseEntity.ok(unreadCount);
+    }
 
 }

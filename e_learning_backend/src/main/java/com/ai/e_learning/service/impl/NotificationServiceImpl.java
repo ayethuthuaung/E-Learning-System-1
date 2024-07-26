@@ -94,4 +94,13 @@ public class NotificationServiceImpl implements NotificationService {
         }
         throw new RuntimeException("Notification not found");
     }
+    @Override
+    public long getUnreadCount(String roleName, Long userId) {
+        if ("Admin".equals(roleName)) {
+            return notificationRepository.countByIsDeletedFalseAndIsReadFalse();
+        } else if ("Instructor".equals(roleName) && userId != null) {
+            return notificationRepository.countByIsDeletedFalseAndIsReadFalseAndUserId(userId);
+        }
+        return 0;
+    }
 }

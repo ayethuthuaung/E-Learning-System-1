@@ -16,4 +16,5 @@ public interface NotificationService {
     Notification softDeleteNotification(Long id);
     void sendNotificationToUser(Notification notification, User user);
     List<Notification> getNotificationsForUser(Long userId);
+    long getUnreadCount(String roleName, Long userId);
 }

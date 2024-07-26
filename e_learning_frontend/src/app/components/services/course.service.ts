@@ -88,7 +88,9 @@ export class CourseService {
   exportAllCoursesPDF(): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
   }
-  
+  getMonthlyCourseCounts(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/monthly-counts`);
+  }
   
  
 }

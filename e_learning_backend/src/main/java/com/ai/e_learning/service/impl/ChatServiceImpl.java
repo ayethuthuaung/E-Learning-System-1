@@ -140,6 +140,8 @@ public class ChatServiceImpl implements ChatService {
         }
 
     }
-
+    public long getUnreadMessageCount(Long chatRoomId, Long userId) {
+        return messageRepository.countByChatRoomIdAndSenderIdNotAndIsReadFalse(chatRoomId, userId);
+    }
 
 }
