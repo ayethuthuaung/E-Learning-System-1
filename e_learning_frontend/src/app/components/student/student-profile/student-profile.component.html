@@ -3,7 +3,7 @@
     <div class="flex flex-col md:flex-row">
     
       <!-- Right Panel -->
-      <div class="md:w-1/3 p-4">
+      <div class="md:w-2/5 p-4">
         
         <div class="bg-white p-4 rounded-lg shadow-lg">
           <div class="flex flex-col items-center ">
@@ -44,44 +44,36 @@
               <tr>
                 <th class="py-2 px-4 bg-gray-200">Lessons</th>
                 <th class="py-2 px-4 bg-gray-200">Module</th>
-
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let module of selectedCourseModules; let i = index">
                 <td class="border px-4 py-2">
                   <ul class="list-none pl-0">
-                    <li *ngFor="let lesson of selectedCourseLessons[module.id]">{{ lesson.title }}</li>
+                    <li *ngIf="isFirstModuleOfLesson(module, i)">
+                      {{ getFirstLessonForModule(module.id)?.title }}
+                    </li>
                   </ul>
                 </td>
                 <td class="border px-4 py-2">
                   <div class="relative flex flex-col items-center">
-                    <!-- Module Name Display -->
-                    <div *ngIf="moduleVisibility[module.id]"
-                         class="mb-2 bg-gray-200 p-2 text-sm text-gray-700 rounded-md shadow-md">
+                    <div *ngIf="moduleVisibility[module.id]" class="mb-2 bg-gray-200 p-2 text-sm text-gray-700 rounded-md shadow-md">
                       <p class="font-semibold">{{ module.name }}</p>
                     </div>
-                    <!-- Number Display -->
-                  
-                    <button (click)="toggleModuleVisibility(module.id)"
-                            class="text-sm font-semibold py-1 px-3 rounded-md"
-                            [ngClass]="{
-                              'bg-green-500 text-white': moduleCompletionStatus[module.id],
-                              'bg-white text-gray-900': !moduleCompletionStatus[module.id]
-                            }">
-                      {{ i + 1 }}
-                    </button>
-                   
-                    
+                    <button (click)="toggleModuleVisibility(module.id)" class="text-sm font-semibold py-1 px-3 rounded-md"
+                    [ngClass]="{
+                      'bg-green-500 text-white': moduleCompletionStatus[module.id],
+                      'bg-white text-gray-900': !moduleCompletionStatus[module.id]
+                    }">
+                    {{ getModuleNumber(module.id) }}
+            </button>
                   </div>
                 </td>
-               
               </tr>
             </tbody>
           </table>
         </div>
-        
-</div>        
+      </div>
       
       <div class="md:w-2/3">
         <div *ngIf="enrolledCourses.length > 0">
@@ -92,7 +84,12 @@
                 <div class="bg-indigo-500 text-white rounded-full h-6 w-6 flex items-center justify-center mr-2">
                   <i class="fas fa-book text-xs"></i>
                 </div>
-                <span class="font-semibold text-base cursor-pointer" (click)="viewCourse(course)">{{ course.name }}</span>
+                <span 
+                class="font-semibold text-base cursor-pointer" 
+                [class.text-blue-500]="selectedCourse === course" 
+                (click)="viewCourse(course)">
+                {{ course.name }}
+              </span>
               </div>
               <div class="absolute top-4 right-4 text-right">
                 <button (click)="viewCourses(course)" class="text-indigo-500 hover:text-indigo-700 font-semibold text-sm">View Course</button>
@@ -111,6 +108,7 @@
                   </div>
                 </div>
               </div>
+              
             </div>
           </div>
         </div>

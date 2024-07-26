@@ -185,6 +185,7 @@ export class StudentProfileComponent implements OnInit {
       this.loadCourseModulesAndLessons(this.selectedCourse.id);
     }
   }
+
   viewCourses(course: Course): void {
     this.selectedCourse = course;
     if (this.selectedCourse) {
@@ -194,5 +195,32 @@ export class StudentProfileComponent implements OnInit {
 
   goBack(): void {
     window.history.back();
+  }
+
+  getFirstLessonForModule(moduleId: number): Lesson | undefined {
+    const lessons = this.selectedCourseLessons[moduleId];
+    return lessons && lessons.length > 0 ? lessons[0] : undefined;
+  }
+
+  isFirstModuleOfLesson(module: CourseModule, moduleIndex: number): boolean {
+    if (moduleIndex === 0) {
+      return true;
+    }
+    const previousModule = this.selectedCourseModules[moduleIndex - 1];
+    const currentLesson = this.getFirstLessonForModule(module.id);
+    const previousLesson = this.getFirstLessonForModule(previousModule.id);
+    return currentLesson?.id !== previousLesson?.id;
+  }
+  getModuleNumber(moduleId: number): number {
+    const lessonId = this.getFirstLessonForModule(moduleId)?.id;
+    if (lessonId) {
+      const modulesForLesson = this.selectedCourseModules.filter(module => {
+        const lessonForModule = this.getFirstLessonForModule(module.id);
+        return lessonForModule?.id === lessonId;
+      });
+      const moduleIndex = modulesForLesson.findIndex(module => module.id === moduleId);
+      return moduleIndex + 1; // Start counting from 1
+    }
+    return 0; // Default value if lessonId is not found
   }
 }

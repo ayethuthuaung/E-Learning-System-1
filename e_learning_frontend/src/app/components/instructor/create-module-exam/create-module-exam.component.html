@@ -35,7 +35,11 @@
               <div class="bg-white rounded-lg shadow-md p-6">
                 <form class="flex flex-col" #moduleForm="ngForm" (ngSubmit)="onSubmit(moduleForm)" method="post">
                   <div *ngFor="let module of modules; let i = index" class="mb-4">
-                    <div class="flex items-center mb-2">
+                    
+                    <div *ngIf="moduleForm.submitted && !module.name" class="text-red-500 mb-2">
+                      Please fill the field.
+                    </div><div class="flex items-center mb-2">
+                      
                       <input
                         type="text"
                         class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 flex-grow"

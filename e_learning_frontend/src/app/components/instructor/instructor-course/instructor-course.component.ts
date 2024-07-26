@@ -72,16 +72,18 @@ export class InstructorCourseComponent implements OnInit {
     if (form.valid) {
       this.submitted = false;
       this.loading = true;
+      
       this.sureAlert();
       
     } else {
       this.submitted = true;
       console.log('invalid form');
-      //Swal.fire('Please fill all the fields', '','error')
-      this.errorMessage = 'Please fill the required fields';
+      this.errorMessage = 'Please fill all the required fields';
+      
     }
-    
   }
+ 
+  
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
