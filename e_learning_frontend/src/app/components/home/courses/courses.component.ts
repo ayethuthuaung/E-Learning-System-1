@@ -1,27 +1,23 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CourseService } from './../../services/course.service';
 import { Course } from './../../models/course.model';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
 import { UserCourseService } from '../../services/user-course.service';
-import { SlideConfig } from '../../models/slide-config.model';
 
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.css']
 })
-export class CoursesComponent implements OnInit, OnDestroy{
+export class CoursesComponent implements OnInit {
   trendingCourses: Course[] = [];
   courses: Course[] = [];
   filteredCourses: Course[] = [];
   latestCourses: Course[] = [];
   categories: Category[] = [];
   selectedCategory: string = '';
-  
-  private pollingInterval: any;
-  private pollingIntervalMs: number = 2000;
 
   constructor(
     private categoryService: CategoryService,
@@ -35,26 +31,6 @@ export class CoursesComponent implements OnInit, OnDestroy{
     this.getLatestAcceptedCourses();
     this.getAllCourses();
     this.getCategories();
-    this.startPolling(); // Start polling
-  }
-
-  ngOnDestroy(): void {
-    this.stopPolling(); // Stop polling when component is destroyed
-  }
-
-  private startPolling() {
-    this.pollingInterval = setInterval(() => {
-      this.fetchTrendingCourses();
-      this.getLatestAcceptedCourses();
-      this.getAllCourses();
-      this.getCategories();
-    }, this.pollingIntervalMs);
-  }
-
-  private stopPolling() {
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-    }
   }
 
   private getAllCourses() {
@@ -93,25 +69,21 @@ export class CoursesComponent implements OnInit, OnDestroy{
     this.courseService.getLatestAcceptedCourses()
       .subscribe({
         next: (data) => {
-          this.latestCourses = data;
-          
+          this.latestCourses = data.slice(0, 3); // Only take the latest three
         },
         error: (e) => console.error('Error fetching latest accepted courses:', e)
       });
   }
-
   fetchTrendingCourses(): void {
     this.userCourseService.getTrendingCourses()
       .subscribe(
         (courses: Course[]) => {
-          this.trendingCourses = courses;
-          
+          this.trendingCourses = courses.slice(0, 3); // Limit to top 3 trending courses
         },
         (error) => {
           console.error('Error fetching trending courses:', error);
+          // Handle error as needed
         }
       );
   }
-
- 
 }

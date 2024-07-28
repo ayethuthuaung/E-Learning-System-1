@@ -64,7 +64,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
-    @Override
+  @Override
     public Set<QuestionDto> getQuestions() {
         List<Question> questionList = EntityUtil.getAllEntities(questionRepository);
         return questionList.stream()
@@ -156,7 +156,21 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
+  @Override
+  public void addQuestionType() {
+      QuestionType questionType1 = questionTypeRepository.findByType("Multiple Choice");
+      if(questionType1 == null) {
+        QuestionType multipleChoice = new QuestionType(1L, "Multiple Choice", false, null);
+        questionTypeRepository.save(multipleChoice);
+      }
 
+      QuestionType questionType2 = questionTypeRepository.findByType("Checkbox");
+      if(questionType2 == null) {
+        QuestionType checkbox = new QuestionType(2L, "Checkbox", false, null);
+        questionTypeRepository.save(checkbox);
+      }
+
+  }
 
 
 }

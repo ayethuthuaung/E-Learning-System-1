@@ -7,7 +7,7 @@
         <div class="bg-white p-8 rounded-lg shadow-lg relative">
           
           <!-- Back Icon -->
-          <button class="absolute top-4 left-4 text-gray-600 hover:text-gray-800" (click)="goBack()">
+          <button class="cursor-pointer duration-200 hover:scale-125 active:scale-100" title="Go Back" (click)="goBack()">
             <i class="fa-solid fa-arrow-left text-xl"></i>
           </button>
 
@@ -32,7 +32,7 @@
             <div class="flex-1">
               <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold">{{name}}</h1>
-                <!-- Key Icon -->
+                <!-- Key Icon
                 <button class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md hover:bg-dark-blue transition ease-in-out duration-150"
                         (click)="openChangePasswordModal()"
                         title="Change Password"
@@ -41,7 +41,7 @@
                 </button>
 
                 <app-change-password-modal *ngIf="isChangePasswordModalOpen" (close)="isChangePasswordModalOpen = false"></app-change-password-modal>
-             
+              -->
               </div>
               <div class="mb-4">
                 <p class="text-lg text-gray-900 tracking-wider mb-1"><strong>Team:</strong> {{team}}</p>
@@ -56,9 +56,15 @@
                 <p class="text-lg text-gray-900 tracking-wider mb-1"><strong>Email:</strong> {{email}}</p>
               </div>
               <div class="mt-6">
-                <button class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md hover:bg-dark-blue transition ease-in-out duration-150" (click)="updateProfile()">
-                  Update Profile
+                <button class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md hover:bg-dark-blue transition ease-in-out duration-150"
+                        (click)="openChangePasswordModal()"
+                        title="Change Password"
+                        aria-label="Change Password">
+                  Change Password
                 </button>
+
+                <app-change-password-modal *ngIf="isChangePasswordModalOpen" (close)="isChangePasswordModalOpen = false"></app-change-password-modal>
+             
               </div>
             </div>
 

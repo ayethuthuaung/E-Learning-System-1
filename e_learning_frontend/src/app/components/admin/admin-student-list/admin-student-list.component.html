@@ -1,0 +1,133 @@
+
+       <div class="datatable-container bg-white p-3 rounded-lg shadow-lg">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <input 
+                        type="text" 
+                        class="form-control w-25" 
+                        placeholder="Search..." 
+                        [(ngModel)]="searchTerm" 
+                        (ngModelChange)="onSearchChange()" 
+                        />
+
+                    
+            
+                        <div class="pagination-controls">
+                        <button 
+                            (click)="firstPage()" 
+                            [disabled]="currentPage === 1" 
+                            class="btn btn-secondary"
+                        >
+                            <i class="fas fa-angle-double-left"></i>
+                        </button>
+                        <button 
+                            (click)="previousPage()" 
+                            [disabled]="currentPage === 1" 
+                            class="btn btn-secondary"
+                        >
+                            <i class="fas fa-angle-left"></i>
+                        </button>
+                        <span class="flex items-center">
+                            Page 
+                            <input 
+                            type="number" 
+                            class="page-input " 
+                            [(ngModel)]="currentPage" 
+                            (ngModelChange)="goToPage($event)" 
+                            min="1" 
+                            [max]="totalPages" 
+                            /> 
+                            of {{ totalPages }}
+                        </span>
+                        <button 
+                            (click)="nextPage()" 
+                            [disabled]="currentPage === totalPages" 
+                            class="btn btn-secondary"
+                        >
+                            <i class="fas fa-angle-right"></i>
+                        </button>
+                        <button 
+                            (click)="lastPage()" 
+                            [disabled]="currentPage === totalPages" 
+                            class="btn btn-secondary"
+                        >
+                            <i class="fas fa-angle-double-right"></i>
+                        </button>
+                        </div>
+                    </div>
+            
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                            <th>No</th>
+                            <th>Student Name
+                                <app-filter-sort-dropdown 
+                                (sortChanged)="onSortChange('user.name', $event)" 
+                                (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                            </th>
+                            <th>Course Name
+                                <app-filter-sort-dropdown 
+                                (sortChanged)="onSortChange('course.name', $event)" 
+                                (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                            </th>
+                            
+                            <th>Dept
+                                <app-filter-sort-dropdown 
+                                (sortChanged)="onSortChange('user.department', $event)" 
+                                (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                            </th>
+                            <th>Team
+                                <app-filter-sort-dropdown 
+                                (sortChanged)="onSortChange('user.team', $event)" 
+                                (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                            </th>
+                            <th>Email
+                                <app-filter-sort-dropdown 
+                                (sortChanged)="onSortChange('user.email', $event)" 
+                                (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                            </th>
+                            <th>
+                                Completion
+                                
+                              </th>
+                              <th>
+                                Certificate
+                              </th>
+                            
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let userCourse of paginatedUserCourses; let i = index">
+                            <td class="center-cell table-cell-height">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                            <td class="table-cell-height">{{ userCourse.user?.name }}</td>                            
+                            <td class="table-cell-height">{{ userCourse.course?.name }}</td>
+                            <td class="table-cell-height">{{ userCourse.user?.department }}</td>
+                            <td class="table-cell-height">{{ userCourse.user?.team }}</td>
+                            <td class="table-cell-height">{{ userCourse.user?.email }}</td>
+                            <td class="table-cell-height">
+                                <svg class="w-full h-6" viewBox="0 0 100 6">
+                                    <!-- Background line -->
+                                    <rect x="0" y="0" width="100" height="6" fill="#e6e6e6" />
+                                  
+                                    <!-- Progress line -->
+                                    <rect x="0" y="0" [attr.width]="" height="6" fill="#00aaff" />
+                                  
+                                    <!-- Percentage text -->
+                                    <text x="50" y="4.5" text-anchor="middle" fill="#333" font-size="3" dy=".3em">
+                                     
+                                    </text>
+                                  </svg>
+                                  
+                            </td>
+                            <td class="table-cell-height"></td> 
+                            
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
