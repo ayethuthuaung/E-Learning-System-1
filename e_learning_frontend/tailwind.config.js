@@ -13,6 +13,12 @@ module.exports = {
         'dark-blue':'#00239c',
         'logo-yellow': "#FC3"
       },
+      borderRadius: {
+        '3xl': '1.5rem', // Customize as needed
+      },
+      boxShadow: {
+        '3xl': '0 10px 30px rgba(0, 0, 0, 0.25)', // Customize as needed
+      },
     },
   },
   plugins: [],

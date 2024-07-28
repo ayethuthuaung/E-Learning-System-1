@@ -236,22 +236,16 @@ public Double calculateCompletionPercentage(Long userId, Long courseId) {
     return moduleDtos;
   }
 
-  //NN
-  @Override
+  //NN(module and lesson in stu profile)
   public List<LessonDto> getLessonsByModuleId(Long moduleId) {
-    // Find the CourseModule by ID
     CourseModule module = courseModuleRepository.findById(moduleId)
       .orElseThrow(() -> new EntityNotFoundException("CourseModule not found"));
 
-    // Find Lessons by Module ID
     List<Lesson> lessons = lessonRepository.findByCourseModuleId(moduleId);
-
-    // Convert Lessons to LessonDto
     return lessons.stream()
       .map(this::convertToDto)
       .collect(Collectors.toList());
   }
-
   private LessonDto convertToDto(Lesson lesson) {
     LessonDto dto = new LessonDto();
     dto.setId(lesson.getId());
@@ -259,9 +253,6 @@ public Double calculateCompletionPercentage(Long userId, Long courseId) {
     dto.setCourseId(lesson.getCourse().getId());
     return dto;
   }
-
-
-
 
   @Override
   public List<CourseModuleDto> getModulesByCourseId(Long courseId) {

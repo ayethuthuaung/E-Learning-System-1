@@ -352,6 +352,14 @@ public class UserServiceImpl implements UserService {
         User examOwner = userRepository.findExamOwnerByExamId(examId);
         return user.getStaffId().equals(examOwner.getStaffId());
     }
+    //NN
+    @Override
+    public long countInstructors() {
+      Role instructorRole = roleRepository.findByName("Instructor")
+        .orElseThrow(() -> new RuntimeException("Instructor role not found"));
+
+      return userRepository.countByRolesContains(instructorRole);
+    }
 
 
 }

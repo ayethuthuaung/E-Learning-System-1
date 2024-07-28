@@ -32,6 +32,8 @@ public interface UserService {
     int updatePassword(String email, String newPassword);
     int updatePasswordByStaffId(String staffId, String newPassword);
     boolean checkPassword(String oldPassword, String inputPassword);
+  //NN
+    long countInstructors();
 
 
     void addAdmin();

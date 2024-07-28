@@ -222,12 +222,12 @@ public class UserCourseServiceImpl implements UserCourseService {
 
   @Override
   public Map<String, Long> getAcceptedStudentCount() {
-    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("accept");
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("Accept");
     Map<String, Long> acceptedStudentCounts = new HashMap<>();
 
     for (UserCourse userCourse : acceptedCourses) {
       String courseName = userCourse.getCourse().getName();
-      Long count = userCourseRepository.countDistinctUsersByCourseAndStatus(userCourse.getCourse(), "accept");
+      Long count = userCourseRepository.countDistinctUsersByCourseAndStatus(userCourse.getCourse(), "Accept");
       acceptedStudentCounts.put(courseName, count);
     }
 
