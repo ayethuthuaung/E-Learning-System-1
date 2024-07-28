@@ -10,5 +10,6 @@ createdAt:number;
   fileInput:File | null;
   buttonText?: string;
   done: boolean;
+  url: string;
 
 }

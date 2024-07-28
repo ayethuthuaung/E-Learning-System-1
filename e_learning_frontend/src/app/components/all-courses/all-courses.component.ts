@@ -52,13 +52,21 @@ export class AllCoursesComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.categories = data;
+          this.categories.unshift({
+            id: -1, name: 'All',
+            deleted: false,
+            courses: [],
+            instructorName: '',
+            createdBy: ''
+          });
         },
         error: (e) => console.log(e)
       });
+       
   }
 
   filterCourses(category: string) {
-    if (category === 'all') {
+    if (category.toLowerCase() === 'all') {
       this.filteredCourses = this.courses;
     } else {
       this.filteredCourses = this.courses.filter(course =>

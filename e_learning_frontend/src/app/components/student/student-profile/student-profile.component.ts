@@ -1,6 +1,6 @@
 import { CertificateService } from './../../services/certificate.service';
 import { Course } from './../../models/course.model';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
@@ -34,9 +34,11 @@ export class StudentProfileComponent implements OnInit {
   selectedCourseModules: CourseModule[] = [];
   selectedCourseLessons: { [moduleId: number]: Lesson[] } = {};
   currentlyVisibleModuleId?: number;
+  modulesGroupedByLessons: { [lessonTitle: string]: CourseModule[] } = {};
   moduleVisibility: { [moduleId: number]: boolean } = {};
   moduleCompletionStatus: { [moduleId: number]: boolean } = {};
   error: string | null = null;
+  
   hasUserCertificate: boolean = false;
   certificateStatuses: { [key: number]: boolean } = {};
 
@@ -159,6 +161,7 @@ export class StudentProfileComponent implements OnInit {
   loadCourseModulesAndLessons(courseId: number): void {
     this.courseModuleService.getModulesByCourseId(courseId).subscribe(modules => {
       this.selectedCourseModules = modules;
+     
       this.selectedCourseModules.forEach(module => {
         this.moduleVisibility[module.id] = false;
         this.loadModuleLessons(module.id);
@@ -173,11 +176,46 @@ export class StudentProfileComponent implements OnInit {
     this.courseModuleService.getLessonsByModuleId(moduleId).subscribe({
       next: (lessons) => {
         this.selectedCourseLessons[moduleId] = lessons;
+        this.groupModulesByLessons();
       },
       error: (err) => {
         console.error('Error fetching lessons:', err);
       }
     });
+  }
+
+  groupModulesByLessons(): void {
+    this.modulesGroupedByLessons = {};
+    for (const moduleId in this.selectedCourseLessons) {
+      if (this.selectedCourseLessons.hasOwnProperty(moduleId)) {
+        const lessons = this.selectedCourseLessons[moduleId];
+        lessons.forEach(lesson => {
+          if (!this.modulesGroupedByLessons[lesson.title]) {
+            this.modulesGroupedByLessons[lesson.title] = [];
+          }
+          const module = this.selectedCourseModules.find(mod => mod.id === +moduleId);
+          if (module) {
+            this.modulesGroupedByLessons[lesson.title].push(module);
+          }
+        });
+      }
+    }
+  }
+
+  filterModulesBySelectedCourse(): void {
+    if (this.selectedCourse) {
+      this.selectedCourseModules = this.selectedCourseModules.filter(
+        module => module.courseId === this.selectedCourse!.id
+      );
+      this.selectedCourseLessons = {};
+      this.selectedCourseModules.forEach(module => {
+        this.loadModuleLessons(module.id);
+      });
+    }
+  }
+
+  getModulesGroupedByLessonsKeys(): string[] {
+    return Object.keys(this.modulesGroupedByLessons);
   }
 
   toggleModuleVisibility(moduleId: number): void {
@@ -187,13 +225,55 @@ export class StudentProfileComponent implements OnInit {
       this.loadModuleLessons(moduleId);
     }
   }
+  
 
+  getLessonTitles(): string[] {
+    return Object.keys(this.modulesGroupedByLessons);
+  }
+
+  // Add this method to return module number
+  getModuleNumber(moduleId: number): number {
+    let moduleNumber = 0;
+    for (const lessonTitle in this.modulesGroupedByLessons) {
+      if (this.modulesGroupedByLessons.hasOwnProperty(lessonTitle)) {
+        const modules = this.modulesGroupedByLessons[lessonTitle];
+        const index = modules.findIndex(mod => mod.id === moduleId);
+        if (index !== -1) {
+          moduleNumber = index + 1;
+          break;
+        }
+      }
+    }
+    return moduleNumber;
+  }
+  handleClickOutside(moduleId: number): void {
+    if (this.moduleVisibility[moduleId]) {
+      this.moduleVisibility[moduleId] = false;
+    }
+  }
   viewCourse(course: Course): void {
     this.selectedCourse = course;
     if (this.selectedCourse) {
       this.loadCourseModulesAndLessons(this.selectedCourse.id);
+      this.filterModulesBySelectedCourse();
+  
+      // Check if there are modules for the selected course
+      if (this.selectedCourseModules.length > 0) {
+        const section = document.getElementById('lessons-modules-section');
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }
+      }  else {
+        // Clear the lessons and modules section if there are no modules
+        this.modulesGroupedByLessons = {};
+        const section = document.getElementById('lessons-modules-section');
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }
     }
   }
+}
+  
 
   viewCourses(course: Course): void {
     this.selectedCourse = course;
@@ -234,6 +314,7 @@ export class StudentProfileComponent implements OnInit {
 
   goBack(): void {
     window.history.back();
+
   }
 
   getFirstLessonForModule(moduleId: number): Lesson | undefined {
@@ -250,16 +331,6 @@ export class StudentProfileComponent implements OnInit {
     const previousLesson = this.getFirstLessonForModule(previousModule.id);
     return currentLesson?.id !== previousLesson?.id;
   }
-  getModuleNumber(moduleId: number): number {
-    const lessonId = this.getFirstLessonForModule(moduleId)?.id;
-    if (lessonId) {
-      const modulesForLesson = this.selectedCourseModules.filter(module => {
-        const lessonForModule = this.getFirstLessonForModule(module.id);
-        return lessonForModule?.id === lessonId;
-      });
-      const moduleIndex = modulesForLesson.findIndex(module => module.id === moduleId);
-      return moduleIndex + 1; // Start counting from 1
-    }
-    return 0; // Default value if lessonId is not found
-  }
+ 
+
 }

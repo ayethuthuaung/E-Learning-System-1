@@ -175,8 +175,14 @@ public class UserController {
   public ResponseEntity<Boolean> checkExamOwner(@RequestParam("examId") Long examId, @RequestParam("userId") Long userId) {
     return ResponseEntity.ok(userService.isExamOwner(examId, userId));
   }
-
-
+//NN
+@GetMapping("/instructor-count")
+public ResponseEntity<Map<String, Long>> getInstructorCount() {
+  long instructorCount = userService.countInstructors();
+  Map<String, Long> response = new HashMap<>();
+  response.put("instructorCount", instructorCount);
+  return ResponseEntity.ok(response);
+}
 }
 
 

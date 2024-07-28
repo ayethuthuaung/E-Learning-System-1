@@ -1,28 +1,29 @@
 .chart-container {
-    padding: 1rem; /* Padding inside the container */
-    background-color: #f9f9f9; /* Light background color for contrast */
-    border-radius: 0.5rem; /* Rounded corners */
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
-  }
-  
-  .mat-card {
-    background-color: #ffffff; /* Ensure card background is white */
-    border-radius: 0.5rem; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Outer shadow for card */
-  }
-  
-  .mat-card-header {
-    background-color: #f3f4f6; /* Slightly gray background for header */
-  }
-  
-  .mat-card-title {
-    color: #333; /* Darker color for title text */
-  }
-  
-  canvas {
-    display: block; /* Ensures canvas takes the full width of its container */
-  }
-  /* Custom scroll bar styles */
+  padding: 1rem; /* Padding inside the container */
+  background-color: #f9f9f9; /* Light background color for contrast */
+  border-radius: 0.5rem; /* Rounded corners */
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+}
+
+.mat-card {
+  background-color: #ffffff; /* Ensure card background is white */
+  border-radius: 0.5rem; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Outer shadow for card */
+  margin-bottom: 0; /* Remove bottom margin */
+}
+
+.mat-card-header {
+  background-color: #f3f4f6; /* Slightly gray background for header */
+}
+
+.mat-card-title {
+  color: #333; /* Darker color for title text */
+}
+
+canvas {
+  display: block; /* Ensures canvas takes the full width of its container */
+}
+
 /* Custom scroll bar styles */
 .custom-scroll {
   overflow-y: scroll;
