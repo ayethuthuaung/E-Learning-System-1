@@ -31,22 +31,17 @@
 
  
       <!-- Chart Section -->
-      <div class="w-full h-80 mt-12">
-        <canvas id="myChart" class="rounded-lg shadow-lg"></canvas>
-      </div>
-      <!-- Line Chart for Student Progress -->
-      <div>
-        <mat-card class="w-full max-w-[600px] mx-auto">
-          <mat-card-header>
-            <mat-card-title>Course Progress</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
-            <div class="chart-container">
-              <app-instructor-course-completion [chartType]="'line'"></app-instructor-course-completion>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
+      <div class="flex flex-wrap space-x-4">
+        <!-- Line Chart -->
+        <div class="flex-1 min-w-[300px] h-80 mt-4">
+          <canvas id="myChart" class="rounded-lg shadow-lg"></canvas>
+        </div>
+        
+        <!-- Pie Chart -->
+        <div class="flex-1 min-w-[400px] h-80 mt-4 relative">
+          <p class="font-bold text-xl mb-2 text-center absolute top-[-20px] left-0 right-0">Category Count</p>
+          <app-admin-pie-chart class="w-full h-full"></app-admin-pie-chart>
+        </div>
       </div>
     </div>
   </div>
