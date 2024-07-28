@@ -46,16 +46,14 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
     this.userCourseService.getAcceptedUserCounts().subscribe(data => {
       this.courseLabels = Object.keys(data);
       this.courseData = Object.values(data);
-      this.renderChart();
+      this.updateChart();
     });
   }
 
-  renderChart(): void {
+  private initializeChart(): void {
     const ctx = document.getElementById('myChart') as HTMLCanvasElement;
 
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-    }
+    
 
     const chartData: ChartConfiguration['data'] = {
       labels: this.courseLabels,
@@ -91,7 +89,7 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
         y: {
           beginAtZero: true,
           ticks: {
-            stepSize: 2
+            stepSize: 1
           }
         }
       }
@@ -102,5 +100,15 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
       data: chartData,
       options: chartOptions
     });
+  }
+
+  private updateChart(): void {
+    if (!this.chartInstance) {
+      this.initializeChart();
+    } else {
+      this.chartInstance.data.labels = this.courseLabels;
+      this.chartInstance.data.datasets[0].data = this.courseData;
+      this.chartInstance.update();
+    }
   }
 }

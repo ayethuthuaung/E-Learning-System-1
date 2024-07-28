@@ -262,3 +262,20 @@
     color: #366593; 
     font-weight: 1000;
 }
+
+
+  
+  .error-message {
+    color: red;
+    margin-bottom: 5px;
+    font-size: small;
+}
+
+.success-message {
+    color: green;
+    margin-bottom: 5px;
+    font-size: small;
+
+}
+
+  
