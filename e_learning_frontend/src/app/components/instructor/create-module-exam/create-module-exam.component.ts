@@ -67,7 +67,7 @@ course: Course | undefined;
  examTitle: string='';
  examDescription: string= '';
  examDuration: string= '';
- examFinal: boolean | null = null;
+ examFinal: boolean | null = false;
  examPassScore: number = 0;
  formDescription: string = 'Please fill out this form';
  examList: ExamList[]=[];

@@ -173,21 +173,13 @@ public Double calculateCompletionPercentage(Long userId, Long courseId) {
   Long doneModules = courseModuleRepository.countDoneModulesByUserAndCourse(userId, courseId);
   Long totalModules = courseModuleRepository.countTotalModulesByCourse(courseId);
 
-  System.out.println("User ID: " + userId);
-  System.out.println("Course ID: " + courseId);
-  System.out.println("Done Modules: " + doneModules);
-  System.out.println("Total Modules: " + totalModules);
-
   if (totalModules == 0) {
     return 0.0;
   }
-
-
-  Double completionPercentage = (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
-  System.out.println("Completion Percentage: " + completionPercentage);
-
-  return completionPercentage;
+    return (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
 }
+
+
   @Override
   public Map<String, Map<String, Double>> getAllStudentsProgress() {
     List<UserCourse> userCourses = userCourseRepository.findAll();

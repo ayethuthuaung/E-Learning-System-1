@@ -9,6 +9,10 @@ export class UserCourse {
   progress: number;
   status: string;
   createdAt: number;
+  statusChangeTimestamp?: number;
+  progressOutput?: string;
+  certificateOutput?: string;
+
   user?: User;
   course?: Course;
 

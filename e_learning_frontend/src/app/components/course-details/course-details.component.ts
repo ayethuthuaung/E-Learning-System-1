@@ -92,7 +92,7 @@ export class CourseDetailsComponent implements OnInit {
             console.log(this.course.userId);
             this.instructorId = this.course.userId;
             this.isOwner = this.checkIsOwner();
-
+            
             console.log(`Fetched Course: ${JSON.stringify(this.course)}`);
             this.fetchLessons();
            
@@ -117,11 +117,13 @@ export class CourseDetailsComponent implements OnInit {
         // console.log(this.instructorId);
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
+       
       }
     }
   }
  
   checkIsOwner(): boolean{return this.userId===this.instructorId}
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
@@ -182,7 +184,7 @@ export class CourseDetailsComponent implements OnInit {
           this.filteredExamList = []; // Clear filteredExamList at the start
 
         this.lessons.forEach(lesson => {
-          this.showFinalExam = lesson.userComplete;
+          this.showFinalExam = lesson.userComplete || this.isOwner || this.hasRole(2);
           console.log(this.showFinalExam);
 
           if (this.showFinalExam) {
@@ -276,6 +278,7 @@ markAsDone(moduleId: number, lessonIndex: number): void {
         this.showFinalExam = true;
         this.filteredExamList = lesson.examListDto.filter(exam => exam.finalExam);
       }else{
+
         console.log("Hello");
 
       }

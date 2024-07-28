@@ -28,13 +28,15 @@ public class UserCourse {
   private boolean completed;
 
   @Column(nullable = false)
-  private int progress;
+  private double progress;
 
   @Column(nullable = false)
   private String status;
 
   private Long createdAt;
 
+  @Column
+  private Long statusChangeTimestamp;
 
   @PrePersist
   protected void onCreate() {

@@ -278,8 +278,10 @@
             <li *ngFor="let exam of examList; let i = index" class="group">
               <div 
                 class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue bg-white font-bold relative">
-                <span (click)="viewQuestionFormClick(exam.id)" class="text-logo-blue font-bold">{{ i + 1 }}. {{ exam.title }} {{ exam.finalExam ? '(Final Exam)' : '' }}</span>
-                <div class="flex space-x-2">
+                <span (click)="viewQuestionFormClick(exam.id)" class="text-logo-blue font-bold">
+                  {{ i + 1 }}. {{ exam.title }} 
+                  <span *ngIf="exam.finalExam">(Final Exam)</span>
+                </span>                <div class="flex space-x-2">
                   <!-- <button class="flex justify-center items-center w-8 h-8 rounded-full bg-green-100 hover:bg-green-300 text-green-800" >
                     <i class="fa-solid fa-edit"></i>
                   </button> -->

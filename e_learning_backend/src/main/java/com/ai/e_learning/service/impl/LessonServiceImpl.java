@@ -208,15 +208,23 @@ public class LessonServiceImpl implements LessonService {
 
             return moduleDto;
           }).collect(Collectors.toList());
-        Optional<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId,courseId);
+//        List<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId,courseId);
+//        UserCourse userCourse = null;
+//        if(userCourseOptional.isPresent()){
+//          userCourse = userCourseOptional.get();
+//        }
+        List<UserCourse> userCourses = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
+//        UserCourse userCourse = userCourses.stream()
+//                .max(Comparator.comparingLong(UserCourse::getCreatedAt))
+//                .orElseThrow();
+        Optional<UserCourse> latestUserCourse = userCourses.stream()
+                .max(Comparator.comparingLong(UserCourse::getCreatedAt));
         UserCourse userCourse = null;
-        if(userCourseOptional.isPresent()){
-          userCourse = userCourseOptional.get();
+        if(latestUserCourse.isPresent()){
+          userCourse = latestUserCourse.get();
+            lessonDto.setUserComplete(userCourse.isCompleted());
         }
-        if(userCourse != null){
-          lessonDto.setUserComplete(userCourse.isCompleted());
-        }
-        //        Exam exam = examRepository.findByLessonId(lesson.getId());
+          //        Exam exam = examRepository.findByLessonId(lesson.getId());
 //        if (exam != null) {
 //            examListDtos.setId(exam.getId());
 //            examListDtos.setTitle(exam.getTitle());

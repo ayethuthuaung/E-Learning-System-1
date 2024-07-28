@@ -163,11 +163,11 @@
 
 
                   <!-- download button -->
-                  <button (click)="exportCourses()" class="py-2 px-4 bg-blue-500 text-white rounded-md">
+                  <button (click)="exportCourses()" class="py-2 px-4 bg-logo-blue hover:bg-dark-blue text-white rounded-md">
                     Excel
                   </button>
 
-                  <button (click)="exportCoursesPdf()" class="py-2 px-4 bg-blue-500 text-white rounded-md">
+                  <button (click)="exportCoursesPdf()" class="py-2 px-4 bg-logo-blue hover:bg-dark-blue text-white rounded-md">
                     PDF
                   </button>
                   
@@ -211,6 +211,12 @@
                         </app-filter-sort-dropdown>
                       </th>
                       <th class="p-2 border">
+                        Level
+                        <app-filter-sort-dropdown (sortChanged)="onSortChange('level', $event)"
+                          (filterChanged)="onFilterChange($event)">
+                        </app-filter-sort-dropdown>
+                      </th>
+                      <th class="p-2 border">
                         Duration
                         <app-filter-sort-dropdown (sortChanged)="onSortChange('duration', $event)"
                           (filterChanged)="onFilterChange($event)">
@@ -235,8 +241,9 @@
                     <tr *ngFor="let course of paginatedInstructorCourses; let i = index" class="hover:bg-gray-100">
                       <td class="p-2 border">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
                       <td class="p-2 border">{{ course.name }}</td>
+                      <td class="p-2 border">{{ course.level }}</td>
                       <td class="p-2 border">{{ course.duration }}</td>
-                      <td class="p-2 border">{{ course.createdAt | date: 'short' }}</td>
+                      <td class="p-2 border">{{ course.createdAt | date:'dd-MMMM-yy' }}</td>
                       <td class="p-2 border" [ngClass]="{
                         'text-logo-blue': course.status === 'In Progress',
                         'text-green-700': course.status === 'Accept',
