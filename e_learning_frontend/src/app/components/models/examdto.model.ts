@@ -5,5 +5,8 @@ export interface ExamDTO {
   title: string;
   description: string;
   duration: string;
+  finalExam: boolean | null;
+  passScore: number;
   questions: QuestionDto[];
+
 }

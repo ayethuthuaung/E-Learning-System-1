@@ -20,14 +20,18 @@ public interface UserCourseService {
   Course findCourseById(Long courseId);
   List<Course> getCoursesByUserId(Long userId);
   boolean checkEnrollment(Long userId, Long courseId);
-  boolean checkEnrollmentAcceptance(Long userId, Long courseId);
+  int checkEnrollmentAcceptance(Long userId, Long courseId);
 
   List<UserCourseDto> getAllUserCourseByUserId(Long userId);
 
   //PK
   Map<String, Long> getAcceptedUserCountsByCourse();
   List<Course> getTrendingCourses();
+
+  Map<String, Long> getAcceptedStudentCount();
+
   Map<String, Double> getCourseAttendanceByInstructor(Long userId);
+  Map<String, Long> getMonthlyStudentCounts();
 
 
 }

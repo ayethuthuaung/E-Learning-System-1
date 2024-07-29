@@ -55,15 +55,15 @@ public class UserCourseController {
 
   //ATTA
 
-  @PutMapping("/update/{userCourseId}")
-  public ResponseEntity<UserCourseDto> updateUserCourse(
-    @PathVariable Long userCourseId,
-    @RequestBody UserCourseDto userCourseDto
-  ) {
-    UserCourseDto updatedUserCourse = userCourseService.updateUserCourse(userCourseId,
-      userCourseDto.isCompleted(), userCourseDto.getProgress(), userCourseDto.getStatus());
-    return ResponseEntity.ok(updatedUserCourse);
-  }
+//  @PutMapping("/update/{userCourseId}")
+//  public ResponseEntity<UserCourseDto> updateUserCourse(
+//    @PathVariable Long userCourseId,
+//    @RequestBody UserCourseDto userCourseDto
+//  ) {
+//    UserCourseDto updatedUserCourse = userCourseService.updateUserCourse(userCourseId,
+//      userCourseDto.isCompleted(), userCourseDto.getProgress(), userCourseDto.getStatus());
+//    return ResponseEntity.ok(updatedUserCourse);
+//  }
 
   @GetMapping("/user/{userId}")
   public ResponseEntity<User> getUserById(@PathVariable Long userId) {
@@ -93,8 +93,8 @@ public class UserCourseController {
   }
 
   @GetMapping("/check-enrollment-acceptance/{userId}/{courseId}")
-  public ResponseEntity<Boolean> checkEnrollmentAcceptance(@PathVariable Long userId, @PathVariable Long courseId) {
-    boolean isAccepted = userCourseService.checkEnrollmentAcceptance(userId, courseId);
+  public ResponseEntity<Integer> checkEnrollmentAcceptance(@PathVariable Long userId, @PathVariable Long courseId) {
+    int isAccepted = userCourseService.checkEnrollmentAcceptance(userId, courseId);
     return ResponseEntity.ok(isAccepted);
   }
 
@@ -112,10 +112,22 @@ public class UserCourseController {
       .collect(Collectors.toList());
     return ResponseEntity.ok(courseDtos);
   }
+
+  @GetMapping("/accepted-student-counts")
+  public ResponseEntity<Map<String, Long>> getAcceptedStudentCounts() {
+    Map<String, Long> acceptedStudentCounts = userCourseService.getAcceptedStudentCount();
+    return ResponseEntity.ok(acceptedStudentCounts);
+  }
+
   @GetMapping("/course-attendance/{userId}")
   public ResponseEntity<Map<String, Double>> getCourseAttendanceByInstructor(@PathVariable Long userId){
     Map<String, Double> courseAttendance = userCourseService.getCourseAttendanceByInstructor(userId);
     return ResponseEntity.ok(courseAttendance);
+  }
+
+  @GetMapping("/monthly-student-counts")
+  public Map<String, Long> getMonthlyStudentCounts() {
+    return userCourseService.getMonthlyStudentCounts();
   }
 
 

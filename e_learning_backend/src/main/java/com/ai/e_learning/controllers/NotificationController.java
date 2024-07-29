@@ -3,6 +3,7 @@ package com.ai.e_learning.controllers;
 import com.ai.e_learning.model.Notification;
 import com.ai.e_learning.model.Role;
 import com.ai.e_learning.model.User;
+import com.ai.e_learning.service.NotificationService;
 import com.ai.e_learning.service.impl.NotificationServiceImpl;
 import com.ai.e_learning.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class NotificationController {
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private NotificationServiceImpl notificationServiceImpl;
+    private NotificationService notificationServiceImpl;
 
     @Autowired
     private RoleService roleService;
@@ -57,5 +58,11 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     public Notification softDeleteNotification(@PathVariable Long id) {
         return notificationServiceImpl.softDeleteNotification(id);
+    }
+    @GetMapping("/unread-count")
+    public long getUnreadCount(
+            @RequestParam String roleName,
+            @RequestParam Long userId) {
+        return notificationServiceImpl.getUnreadCount(roleName, userId);
     }
 }

@@ -9,10 +9,7 @@ import com.ai.e_learning.repository.RoleRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.ExcelUploadService;
 import com.ai.e_learning.service.UserService;
-import com.ai.e_learning.util.DtoUtil;
-import com.ai.e_learning.util.EntityUtil;
-import com.ai.e_learning.util.GoogleDriveJSONConnector;
-import com.ai.e_learning.util.Helper;
+import com.ai.e_learning.util.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,7 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
     private final Helper helper;
+    private final CloudinaryService cloudinaryService;
 
 
     public void updateExcel(MultipartFile file) {
@@ -61,9 +59,11 @@ public class UserServiceImpl implements UserService {
                         .collect(Collectors.toSet());
                 int index = 0;
                 for (User user : users) {
+                    System.out.println("User -> " + user.getName());
 
                     User update_user = userRepository.findUserByStaffId(user.getStaffId());
                     if (update_user != null) {
+
                         if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
                             update_user.setDivision(user.getDivision());
                         } else {
@@ -100,36 +100,41 @@ public class UserServiceImpl implements UserService {
                             update_user.setStatus(update_user.getStatus());
                         }
 
-              if (!update_user.getEmail().equalsIgnoreCase(user.getEmail())) {
-                update_user.setEmail(user.getEmail());
-              } else {
-                update_user.setEmail(update_user.getEmail());
-              }
+                        if (!update_user.getEmail().equalsIgnoreCase(user.getEmail())) {
+                            update_user.setEmail(user.getEmail());
+                        } else {
+                            update_user.setEmail(update_user.getEmail());
+                        }
 
 
-              if(update_user.getPassword().equalsIgnoreCase("")) {
-                update_user.setPassword(passwordEncoder.encode("123@dirace"));
-              }
-                System.out.println(roleList.get(index));
-                Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
+                        if(update_user.getPassword().equalsIgnoreCase("")) {
+                            update_user.setPassword(passwordEncoder.encode("123@dirace"));
+                        } else {
+                            update_user.setPassword(update_user.getPassword());
+                        }
+                        System.out.println(roleList.get(index) + "<>");
+                        update_user.setCreatedAt(System.currentTimeMillis());
+                        update_user.setPhoto(update_user.getPhoto());
+
+//                        user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
 
 
-                Set<Role> roles = new HashSet<>();
-                roles.add(role);
-                update_user.setRoles(roles);
+                        Role role = roleRepository.findByName(roleList.get(index)).orElse(null);
+                        Set<Role> roles = new HashSet<>();
+                        roles.add(role);
+                        update_user.setRoles(roles);
                         insert_user.add(update_user);
                     } else {
+                        user.setCreatedAt(System.currentTimeMillis());
                         user.setPassword(passwordEncoder.encode("123@dirace"));
-
-
-
-                user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
-                        Role role = roleRepository.findByName(roleList.get(index)).orElseThrow();
+                        user.setPhoto("http://res.cloudinary.com/dshrtebct/image/upload/v1722069545/8b208a10-a3f1-4e14-bfcd-b474b9029646.png");
+                        Role role = roleRepository.findByName(roleList.get(index)).orElse(null);
 
                         Set<Role> roles = new HashSet<>();
                         roles.add(role);
                         user.setRoles(roles);
                         insert_user.add(user);
+
                     }
                     index++;
                     System.out.println(index);
@@ -147,7 +152,6 @@ public class UserServiceImpl implements UserService {
                 this.userRepository.saveAll(insert_user);
             } catch (IOException e) {
                 throw new IllegalArgumentException("This file is not a valid excel file");
-
             }
         }
     }
@@ -155,14 +159,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUsers() {
         List<User> userList = EntityUtil.getAllEntities(userRepository);
-        if (userList == null)
+        if(userList==null)
             return null;
         return DtoUtil.mapList(userList, UserDto.class, modelMapper);
     }
 
     @Override
     public UserDto getCurrentUser(String staffId) {
-
         User user=userRepository.findUserByStaffId(staffId);
 //        try {
 //            GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
@@ -185,17 +188,10 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    //original
-//    @Override
-//    public UserDto getUserById(Long id) {
-//        return userRepository.findById(id)
-//                .map(this::convertToDto)
-//                .orElse(null);
-//    }
     @Override
     public UserDto getUserById(Long id) {
         return userRepository.findById(id)
-                .map(user -> modelMapper.map(user, UserDto.class))
+                .map(this::convertToDto)
                 .orElse(null);
     }
 
@@ -210,6 +206,7 @@ public class UserServiceImpl implements UserService {
                     Set<Role> roles = new HashSet<>();
                     for (Long roleId : userDto.getRoleIdList()) {
                         Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
+                        System.out.println("Role -> " + role.getName());
                         roles.add(role);
                     }
                     existingUser.setRoles(roles);
@@ -228,16 +225,15 @@ public class UserServiceImpl implements UserService {
                     userRepository.save(user);
                 });
     }
-
     @Override
-
     public UserDto getUserByStaffId(String staff_id){
-      User user = userRepository.findUserByStaffId(staff_id);
-      if (user == null)
-        return null;
+        User user = userRepository.findUserByStaffId(staff_id);
+        if (user == null)
+            return null;
 
-      return DtoUtil.map(user,UserDto.class,modelMapper);
+        return DtoUtil.map(user,UserDto.class,modelMapper);
     }
+
 
 
     @Override
@@ -258,6 +254,20 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         return 1; // Password updated successfully
+    }
+
+    @Override
+    public int updatePasswordByStaffId(String staffId, String newPassword) {
+        User user = userRepository.findUserByStaffId(staffId);
+        if (user == null) {
+            return 0;  // User not found
+        }
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            return 2; // New password is the same as the old password
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return 1;
     }
 
     @Override
@@ -282,9 +292,9 @@ public class UserServiceImpl implements UserService {
         if (adminRoleOpt.isPresent()) {
             adminRole = adminRoleOpt.get();
         }
-        User admin = userRepository.findUserByStaffId("11-11111");
+        User admin =userRepository.findUserByStaffId("11-11111");
 
-        if (admin == null) {
+        if(admin == null){
             User user = new User(
                     1L,
                     "11-11111",
@@ -295,7 +305,7 @@ public class UserServiceImpl implements UserService {
                     "HR",
                     "Admin/HR",
                     "Active",
-                    "userPhoto.png",
+                    "http://res.cloudinary.com/dshrtebct/image/upload/v1722069545/8b208a10-a3f1-4e14-bfcd-b474b9029646.png",
                     passwordEncoder.encode("11111"),
                     System.currentTimeMillis(),
                     new HashSet<>(Collections.singletonList(adminRole)),
@@ -309,56 +319,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ImageResponse uploadProfile(MultipartFile file, Long userId) throws IOException, GeneralSecurityException {
-        User user = EntityUtil.getEntityById(userRepository, userId, "user");
-        File tempFile = File.createTempFile(user.getName() + "_" + Helper.getCurrentTimestamp(), null);
-        file.transferTo(tempFile);
-        String imageUrl = helper.uploadImageToDrive(tempFile, "user");
+    public ImageResponse uploadProfile(MultipartFile file,Long userId) throws IOException, GeneralSecurityException {
+        User user = EntityUtil.getEntityById(userRepository, userId,"user");
+//        File tempFile = File.createTempFile(user.getName() + "_" + Helper.getCurrentTimestamp(), null);
+//        file.transferTo(tempFile);
+//        String imageUrl = helper.uploadImageToDrive(tempFile, "user");
+
+        //Cloudinary
+//        MultipartFile photofile = file;
+        String fileUrl = cloudinaryService.uploadFile(file);
+        user.setPhoto(fileUrl);
+
         //boolean isUploaded = helper.uploadImageToDrive(tempFile);
         // return new GoogleDriveJSONConnector().uploadFileToDrive(file, contentType);
-        user.setPhoto(tempFile.getName());
+//        user.setPhoto(tempFile.getName());
         userRepository.save(user);
         ImageResponse imageResponse = new ImageResponse();
         imageResponse.setStatus(200);
         imageResponse.setMessage("File Successfully Uploaded To Drive");
-        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-        String fileId = driveConnector.getFileIdByName(user.getPhoto());
-        System.out.println("fileId" + fileId);
-        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-        imageResponse.setUrl(thumbnailLink);
-        System.out.println("thumnailLink" + thumbnailLink);
+//        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//        String fileId = driveConnector.getFileIdByName(user.getPhoto());
+//        System.out.println("fileId"+fileId);
+//        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+        imageResponse.setUrl(fileUrl);
+        System.out.println("fileUrl"+fileUrl);
         return imageResponse;
     }
 
-    public boolean isExamOwner(Long userId) {
-        return userRepository.findExamOwnerByExamId(userId) == null;
-    }
-
     @Override
-    public long countStudents() {
-        Role studentRole = roleRepository.findById(1L)  // Assuming role ID 1 is for students
-                .orElseThrow(() -> new RuntimeException("Student role not found"));
-
-        return userRepository.countByRolesContains(studentRole);
+    public boolean isExamOwner(Long examId, Long userId) {
+        User user = EntityUtil.getEntityById(userRepository, userId,"User");
+        User examOwner = userRepository.findExamOwnerByExamId(examId);
+        return user.getStaffId().equals(examOwner.getStaffId());
     }
+    //NN
     @Override
-    public long countStudentsByRoleId(Long instructorRoleId) {
-        Role role = roleRepository.findById(instructorRoleId)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+    public long countInstructors() {
+      Role instructorRole = roleRepository.findByName("Instructor")
+        .orElseThrow(() -> new RuntimeException("Instructor role not found"));
 
-        return userRepository.countByRolesContains(role);
+      return userRepository.countByRolesContains(instructorRole);
     }
 
-    @Override
-    public List<UserDto> findByRoleId(Long roleId) {
-        List<User> users = userRepository.findByRoleId(roleId);
-        return users.stream()
-                .map(user -> modelMapper.map(user, UserDto.class))
-                .collect(Collectors.toList());
-
-    }
 
 }
-
-
-

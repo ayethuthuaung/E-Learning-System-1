@@ -1,7 +1,8 @@
 <div class="fixed bottom-20 right-8 w-full max-w-sm bg-white rounded-lg shadow-lg">
   <div class="flex justify-between items-center p-2 bg-logo-blue rounded-t-lg text-white">
-    <h2 class="text-lg">{{ userName }}</h2>
+    <h2 class="text-lg">Chat</h2>
     <button (click)="closeChat()" class="text-2xl">&times;</button>
+    
   </div>
   <div class="p-3 overflow-y-auto" style="height: 19rem;" #chatContainer (scroll)="onScroll()">
     <div *ngIf="messages.length === 0" class="text-center text-gray-500">
@@ -37,10 +38,19 @@
             </div>
           </div>
           
-          <audio *ngIf="message.messageType === 'voice'" controls>
-            <source [src]="message.fileUrl" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
+          <div *ngIf="message.messageType === 'voice'" class="flex items-center">
+            <audio controls class="flex-1" style="max-width: 200px; height: 40px;">
+              <source [src]="message.fileUrl" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+            <!-- Delete icon for voice messages -->
+            <span *ngIf="message.message_side === 'sender' && message.showDropdown" class="ml-2">
+              <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer flex items-center" 
+                    (click)="softDeleteMessage(message.id)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+          </div>
           <video *ngIf="message.messageType === 'video'" controls style="max-width: 100px; height: auto;">
             <source [src]="message.fileUrl" type="video/mp4">
             Your browser does not support the video element.
@@ -50,15 +60,16 @@
     </div>
   </div>
   <div class="p-2 border-t flex gap-2">
+    <button (click)="fileInput.click()" class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
+      +
+    </button>
     <input [(ngModel)]="newMessage" 
            (keyup.enter)="sendMessage()" 
            type="text" 
            class="flex-1 p-2 border rounded-lg" 
            placeholder="Type a message...">
     <input type="file" (change)="uploadFile($event)" class="hidden" #fileInput>
-    <button (click)="fileInput.click()" class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
-      <i class="fas fa-paperclip"></i>
-    </button>
+    
     <button (click)="sendMessage()" 
             class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm">
       <i class="fas fa-paper-plane"></i>

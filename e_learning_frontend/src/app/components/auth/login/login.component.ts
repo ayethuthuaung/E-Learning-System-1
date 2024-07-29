@@ -12,31 +12,48 @@ export class LoginComponent {
   loginObj: LoginModel = new LoginModel();
   isSignDivVisiable: boolean = false;
   showPassword: boolean = false; // Added property
+  successmessage: string = ''; // Added property for message
+  errormessage: string ='';
+  messageType: string = ''; // To differentiate between success and error
+
 
   constructor(private authService: AuthService, private router: Router) { }
 
+  onInputChange(): void {
+    this.errormessage = ''; 
+    this.successmessage = ''; 
+  }
+
   onLogin() {
+
+    if (!this.loginObj.staffId || !this.loginObj.password) {
+      this.errormessage = 'Fill the fields';
+      this.messageType = 'error';
+      return;
+    }
+
     this.authService.login(this.loginObj).subscribe(
       response => {
-        console.log('Response:', response);
         if (response && response.currentUser) {
           const currentUser: User = response.currentUser;
 
-          // Ensure role is present in the currentUser
           if (currentUser.roles && currentUser.roles.length > 0) {
-            alert('Login Success');
+            this.successmessage = 'Login Success';
+            this.messageType = 'success';
             localStorage.setItem('loggedUser', JSON.stringify(currentUser));
             this.router.navigateByUrl('/home');
           } else {
-            alert('Login Failed: User role is missing');
+            this.errormessage = 'Login Failed: User role is missing';
+            this.messageType = 'error';
           }
         } else {
-          alert('Login Failed: Invalid response structure');
+          this.errormessage = 'Login Failed: Invalid response structure';
+          this.messageType = 'error';
         }
       },
       error => {
-        console.error('Error:', error);
-        alert('Login Failed');
+        this.errormessage = 'Login Failed';
+        this.messageType = 'error';
       }
     );
   }

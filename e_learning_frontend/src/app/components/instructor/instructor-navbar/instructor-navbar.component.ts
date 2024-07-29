@@ -2,6 +2,8 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { UnreadMessageService } from '../../services/unread-message.service';
+import { WebSocketService } from '../../services/websocket.service';
 
 
 @Component({
@@ -12,15 +14,31 @@ import { AuthService } from '../../auth/auth.service';
 export class InstructorNavbarComponent implements OnInit {
   @Output() toggleSidebarEvent = new EventEmitter<void>();
   dropdownOpen = false;
-  unreadCount: number = 0;
+  unreadNotiCount: number = 0;
   showNotifications: boolean = false;
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+  constructor( private router: Router,
+    private authService: AuthService,
+    private webSocketService: WebSocketService ) {}
 
   ngOnInit(): void {
-    
+    this.loadUnreadCount();
   }
+  loadUnreadCount(): void {
+    const roleName = this.authService.getLoggedInUserRole();
+    const userId = this.authService.getLoggedInUserId();
 
+    if (roleName === 'Admin' || roleName === 'Instructor' || roleName === 'Student') {
+      this.webSocketService.getUnreadNotiCount(roleName, userId).subscribe(
+        (count) => {
+          this.unreadNotiCount = count;
+        },
+        (error) => {
+          console.error('Failed to fetch unread count:', error);
+        }
+      );
+    }
+  }
   toggleSidebar() {
     this.toggleSidebarEvent.emit();
   }
@@ -33,8 +51,8 @@ export class InstructorNavbarComponent implements OnInit {
   gohome():void{
     this.router.navigate(['home']);
   }
-  handleUnreadCountChange(count: number) {
-    this.unreadCount = count;
+  updateUnreadCount(count: number): void {
+    this.unreadNotiCount = count;
   }
 
   toggleNotifications() {

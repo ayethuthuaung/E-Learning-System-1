@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Module } from '../models/module.model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Lesson } from '../models/lesson.model';
+import { CourseModule } from '../models/coursemodule.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,8 +45,8 @@ export class CourseModuleService {
     // });
 // }
 
-  updateModule(moduleId: number, formData : FormData): Observable<Module> {
-    return this.http.put<Module>(`${this.baseUrl}/${moduleId}`, formData);
+  updateModule(moduleId: number, formData : FormData): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${moduleId}`, formData);
   }
 
   deleteModule(moduleId: number): Observable<void> {
@@ -69,5 +71,13 @@ export class CourseModuleService {
 
   getModulesByLessonId(lessonId: number): Observable<Module[]> {
     return this.http.get<Module[]>(`${this.baseUrl}/byLesson/${lessonId}`);
+  }
+
+  getLessonsByModuleId(moduleId: number): Observable<Lesson[]> {
+    return this.http.get<Lesson[]>(`${this.baseUrl}/lessons/${moduleId}`);
+  }
+
+  getModulesByCourseId(courseId: number): Observable<CourseModule[]> {
+    return this.http.get<CourseModule[]>(`${this.baseUrl}/byCourse/${courseId}`);
   }
 }

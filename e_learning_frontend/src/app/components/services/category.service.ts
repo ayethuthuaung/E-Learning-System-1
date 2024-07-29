@@ -49,4 +49,7 @@ export class CategoryService {
   isCategoryNameAlreadyExists(name: string): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.baseURL}/existsByName`, { params: { name } });
   }
+  getCourseCountsPerCategory(): Observable<{ [category: string]: number }> {
+    return this.httpClient.get<{ [category: string]: number }>(`${this.baseURL}/course-counts`);
+  }
 }

@@ -24,6 +24,11 @@ export class ForgetPasswordComponent {
 
   constructor(private forgetPasswordService: ForgetPasswordService, private router: Router) { }
 
+  onInputChange(): void {
+    this.errorMessage = ''; // Clear error message on input change
+    this.successMessage = ''; // Clear success message on input change
+  }
+
   sendOTP() {
     this.forgetPasswordService.sendOTP(this.resetEmail).subscribe(
       response => {
@@ -31,14 +36,12 @@ export class ForgetPasswordComponent {
           this.errorMessage = response.message;
           this.successMessage = '';
         } else {
-          console.log('OTP sent successfully', response);
           this.otpSent = true;
           this.errorMessage = '';
           this.successMessage = 'OTP sent successfully. Please check your email.';
         }
       },
       error => {
-        console.error('Error sending OTP', error);
         this.errorMessage = 'Error sending OTP. Please try again.';
         this.successMessage = '';
       }
@@ -53,14 +56,12 @@ export class ForgetPasswordComponent {
           this.errorMessage = 'Incorrect OTP. Please try again.';
           this.successMessage = '';
         } else {
-          console.log('OTP matched successfully', response);
           this.otpMatched = true;
           this.errorMessage = '';
           this.successMessage = '';
         }
       },
       error => {
-        console.error('Error matching OTP', error);
         this.errorMessage = 'Error matching OTP. Please try again.';
         this.successMessage = '';
       }
@@ -93,12 +94,10 @@ export class ForgetPasswordComponent {
         }
       },
       error => {
-        console.error('Error changing password', error);
         this.errorMessage = 'Error changing password. Please try again.';
         this.successMessage = '';
       }
     );
-    
   }
 
   focusNext(event: Event, index: number) {
@@ -127,7 +126,7 @@ export class ForgetPasswordComponent {
       confirmButtonText: 'OK'
     }).then((result: { isConfirmed: boolean }) => {
       if (result.isConfirmed) {
-        this.router.navigate(['/login']); // Navigate to the login page
+        this.router.navigate(['/login']);
       }
     });
   }

@@ -2,7 +2,6 @@ import { Component, AfterViewInit, Input, OnDestroy } from '@angular/core';
 import { Chart, ChartType, ChartConfiguration } from 'chart.js/auto';
 import { UserCourseService } from '../../services/user-course.service';
 
-
 @Component({
   selector: 'app-admin-chart',
   templateUrl: './admin-chart.component.html',
@@ -14,29 +13,47 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
   private chartInstance: Chart | null = null;
   private courseLabels: string[] = [];
   private courseData: number[] = [];
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000; // 3 seconds
 
   constructor(private userCourseService: UserCourseService) {}
 
   ngAfterViewInit(): void {
-    this.userCourseService.getAcceptedUserCounts().subscribe(data => {
-      this.courseLabels = Object.keys(data);
-      this.courseData = Object.values(data);
-      this.renderChart();
-    });
+    this.fetchChartData();
+    this.startPolling();
   }
 
   ngOnDestroy(): void {
     if (this.chartInstance) {
       this.chartInstance.destroy();
     }
+    this.stopPolling();
   }
 
-  renderChart(): void {
+  private startPolling(): void {
+    this.pollingInterval = setInterval(() => {
+      this.fetchChartData();
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling(): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
+  }
+
+  private fetchChartData(): void {
+    this.userCourseService.getAcceptedUserCounts().subscribe(data => {
+      this.courseLabels = Object.keys(data);
+      this.courseData = Object.values(data);
+      this.updateChart();
+    });
+  }
+
+  private initializeChart(): void {
     const ctx = document.getElementById('myChart') as HTMLCanvasElement;
 
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-    }
+    
 
     const chartData: ChartConfiguration['data'] = {
       labels: this.courseLabels,
@@ -72,8 +89,8 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
         y: {
           beginAtZero: true,
           ticks: {
-            stepSize: 2
-          } 
+            stepSize: 1
+          }
         }
       }
     };
@@ -83,5 +100,15 @@ export class AdminChartComponent implements AfterViewInit, OnDestroy {
       data: chartData,
       options: chartOptions
     });
+  }
+
+  private updateChart(): void {
+    if (!this.chartInstance) {
+      this.initializeChart();
+    } else {
+      this.chartInstance.data.labels = this.courseLabels;
+      this.chartInstance.data.datasets[0].data = this.courseData;
+      this.chartInstance.update();
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { CourseService } from './../../services/course.service';
 import { Lesson } from './../../models/lesson.model';
 import { ExamCreationDto } from './../../models/examCreationDto.model';
 import { ExamService } from './../../services/exam.service';
@@ -9,6 +10,7 @@ import Swal from 'sweetalert2';
 import { QuestionDto } from '../../models/question.model';
 import { AnswerOptionDTO } from '../../models/questiondto.model';
 import { Location } from '@angular/common';
+import { Course } from '../../models/course.model';
 
 interface Option {
   label: string;
@@ -34,15 +36,18 @@ interface Question {
 export class InstructorLessonComponent implements OnInit {
 
   courseId: number = -1; // Initialize courseId with a default value
+  course: Course | undefined;
   lessonObj: Lesson | undefined;
   lesson: Lesson = {
     title: '',
     id: 0,
+    
     courseId: 0,
     file: '',
     modules: [],
     fileType: '',
-    examListDto: []
+    examListDto: [],
+    userComplete: false
   };
   lessons: Lesson[] = [];
   modules: Module[] = [];
@@ -57,6 +62,7 @@ export class InstructorLessonComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private lessonService: LessonService,
     private examService: ExamService,
+    private courseService: CourseService,
     private location: Location,
     private router: Router,
     private cdr: ChangeDetectorRef
@@ -69,9 +75,21 @@ export class InstructorLessonComponent implements OnInit {
     console.log('Course ID Param:', courseIdParam);
 
     if (courseIdParam !== null) {
-      this.courseId = +courseIdParam; // Convert courseIdParam to number if not null
+      this.courseId = +courseIdParam; 
+      this.getCourseById(this.courseId);
     }
     this.getLessonsByCourseId();
+  }
+
+  getCourseById(courseId: number): void {
+    this.courseService.getCourseById(courseId).subscribe(
+      (data: Course) => {
+        this.course = data;
+      },
+      error => {
+        console.error('Error fetching course', error);
+      }
+    );
   }
 
 
@@ -156,6 +174,7 @@ export class InstructorLessonComponent implements OnInit {
               (createdLesson) => {
                 console.log('Lesson Created:', createdLesson);
                 Swal.fire('Success!', 'Lesson created successfully!', 'success');
+                lessonForm.resetForm();
                 this.getLessonsByCourseId();
               },
               (error) => {
@@ -230,5 +249,9 @@ export class InstructorLessonComponent implements OnInit {
           );
         }
       );
+    }
+
+    goToCourseDetails():void {
+      this.router.navigate(['/course-detail', this.courseId]);
     }
   }

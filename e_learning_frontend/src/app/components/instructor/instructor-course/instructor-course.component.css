@@ -26,9 +26,26 @@
     animation: spin 1s linear infinite;
   }
 
-  .scrollable-section {
-    max-height: 80vh; /* Adjust as needed */
+  .scrollable-element {
     overflow-y: auto;
-    padding-right: 15px; /* To avoid content hidden behind scrollbar */
 }
+
+.scrollable-element::-webkit-scrollbar {
+    width: 12px;
+}
+
+.scrollable-element::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.scrollable-element::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 10px;
+    border: 3px solid #f1f1f1;
+}
+
+.scrollable-element::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
 

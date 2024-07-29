@@ -169,5 +169,19 @@ export class WebSocketService {
       console.error('Client is not connected');
     }
   }
+  getUnreadCount(chatRoomId: number, userId: number): Observable<number> {
+    return this.http.get<number>(`http://localhost:8080/api/chat/unread-count/${chatRoomId}/${userId}`);
+  }
+  updateAllMessagesReadStatus(chatRoomId: number): Observable<void> {
+    return this.http.put<void>(`http://localhost:8080/api/chat/messages/${chatRoomId}/read`, {});
+  }
+  getUnreadNotiCount(roleName: string, userId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/unread-count`, {
+      params: {
+        roleName,
+        userId: userId.toString()
+      }
+    });
+  }
 }
 

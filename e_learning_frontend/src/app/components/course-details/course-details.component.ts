@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { CourseService } from '../services/course.service';
 import { ChatRoomService } from '../services/chat-room.service';
 import { AuthService } from '../auth/auth.service';
@@ -13,6 +13,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ExamList } from '../models/examList.model';
 import { ExamService } from '../services/exam.service';
 import { Location } from '@angular/common';
+import { UnreadMessageService } from '../services/unread-message.service';
+import { WebSocketService } from '../services/websocket.service';
+import { Role } from '../models/user.model';
 
 
 @Component({
@@ -38,8 +41,15 @@ export class CourseDetailsComponent implements OnInit {
   lesson: Lesson | undefined;
   module: Course | undefined;
   exam: ExamList | undefined;
+  roles: Role[] = [];
 
   isOwner: boolean = false;
+
+  isFinalExam: boolean = false;
+  filteredExamList: ExamList[] = [];
+  showFinalExam: boolean = false;
+  expandAllText: string = 'Expand All';
+  unreadCount: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,10 +63,16 @@ export class CourseDetailsComponent implements OnInit {
     private userCourseModuleService:UserCourseModuleService,
     private cdr: ChangeDetectorRef,
     private examService: ExamService,
-    private location: Location
+    private location: Location,
+    private webSocketService: WebSocketService,
+    private unreadMessageService: UnreadMessageService,
+    private elRef: ElementRef
   ) {}
 
   ngOnInit(): void {
+    this.unreadMessageService.unreadMessageCount$.subscribe(count => {
+      this.unreadCount = count;
+    });
     this.route.paramMap.subscribe(params => {
       this.courseId = +params.get('id')!;
 
@@ -76,15 +92,17 @@ export class CourseDetailsComponent implements OnInit {
             console.log(this.course.userId);
             this.instructorId = this.course.userId;
             this.isOwner = this.checkIsOwner();
-
+            
             console.log(`Fetched Course: ${JSON.stringify(this.course)}`);
             this.fetchLessons();
+           
           },
           error => {
             console.error('Error fetching course:', error);
           }
         );
       }
+
     });
 
     const storedUser = localStorage.getItem('loggedUser');
@@ -94,22 +112,49 @@ export class CourseDetailsComponent implements OnInit {
 
       if (this.loggedUser) {
         this.userId = this.loggedUser.id;
+        this.roles = this.loggedUser.roles;
         // this.instructorId = this.course.userId;
         // console.log(this.instructorId);
         
         this.instructorName = this.course?.user?.name || ''; // Set instructorName
+       
       }
-    } 
-    
+    }
   }
-
+ 
   checkIsOwner(): boolean{return this.userId===this.instructorId}
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const chatRoom = this.elRef.nativeElement.querySelector('app-chat');
+    
+    if (this.chatRoomVisible && chatRoom && !chatRoom.contains(target)) {
+      this.toggleChatRoom(); // Close the chat room if click is outside
+    }
+  }
+
+ 
   toggleChatRoom(): void {
     if (!this.chatRoomVisible) {
-      this.createChatRoom();
+      if (!this.chatRoomId) {
+        this.createChatRoom();
+      }
     }
     this.chatRoomVisible = !this.chatRoomVisible;
+
+    if (this.chatRoomVisible) {
+      if (this.chatRoomId) {
+        this.webSocketService.updateAllMessagesReadStatus(this.chatRoomId).subscribe(
+          () => {
+            this.unreadCount = 0; // Fetch unread count when chat room is opened
+          },
+          (error) => {
+            console.error('Error marking all messages as read:', error);
+          }
+        );
+      }
+    }
   }
 
   createChatRoom(): void {
@@ -136,7 +181,24 @@ export class CourseDetailsComponent implements OnInit {
             modules: lesson.modules.sort((a, b) => a.id - b.id) // Sort modules by moduleId
           }));
   
-          console.log(this.lessons);
+          this.filteredExamList = []; // Clear filteredExamList at the start
+
+        this.lessons.forEach(lesson => {
+          this.showFinalExam = lesson.userComplete || this.isOwner || this.hasRole(2);
+          console.log(this.showFinalExam);
+
+          if (this.showFinalExam) {
+            lesson.examListDto.forEach(exam => {
+              if (exam.finalExam) {
+                this.filteredExamList.push(exam); // Use push to add exams to the array
+              }
+            });
+          }
+            lesson.examListDto = lesson.examListDto.filter(exam => !exam.finalExam);
+
+          });
+  
+        console.log(this.filteredExamList);
           
           this.isDropdownOpen = new Array(this.lessons.length).fill(false);
         },
@@ -150,10 +212,10 @@ export class CourseDetailsComponent implements OnInit {
   toggleDropdown(index: number) {
     this.isDropdownOpen[index] = !this.isDropdownOpen[index];
   }
-
   expandAllLessons(): void {
     const shouldExpand = this.isDropdownOpen.some(open => !open);
     this.isDropdownOpen.fill(shouldExpand);
+    this.expandAllText = shouldExpand ? 'Close All' : 'Expand All';
   }
 
 
@@ -205,6 +267,22 @@ markAsDone(moduleId: number, lessonIndex: number): void {
     () => {
       module.done = true;
       localStorage.setItem(`module_${moduleId}_done`, 'true');
+
+      // Check if all modules are done
+      console.log(this.lessons);
+      
+      const allModulesDone = lesson.modules.every(m => m.done);
+      if (allModulesDone) {
+        console.log("Hi");
+        
+        this.showFinalExam = true;
+        this.filteredExamList = lesson.examListDto.filter(exam => exam.finalExam);
+      }else{
+
+        console.log("Hello");
+
+      }
+
       this.cdr.detectChanges();
     },
     (error: HttpErrorResponse) => {
@@ -218,7 +296,13 @@ markAsDone(moduleId: number, lessonIndex: number): void {
   );
 }
 
+hasRole(roleId: number): boolean {
+  return this.roles.some(role => role.id === roleId);
+}
+
 goBack() {
   this.location.back();
 }
+
+
 }

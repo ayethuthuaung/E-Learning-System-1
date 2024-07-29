@@ -42,7 +42,10 @@ import { AdminLessonComponent } from './components/admin/admin-lesson/admin-less
 import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
 import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
+import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
+import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
+import { CertificateComponent } from './components/shared/certificate/certificate.component';
 
 
 
@@ -84,6 +87,9 @@ const routes: Routes = [
    {path:'admin/category', component: AdminCategoryComponent},
    {path:'admin/lesson/:courseId', component: AdminLessonComponent},
    {path:'admin/student', component: AdminStudentComponent},
+   {path:'admin/profile', component: AdminProfileComponent},
+   {path:'admin/module-exam/:lessonId', component: AdminCreateModuleExamComponent},
+
 
 
    {path:'course-detail/:id', component: CourseDetailsComponent},
@@ -97,6 +103,9 @@ const routes: Routes = [
 
    {path:'question-form/:examId', component: StudentQuestionFormComponent},
    {path:'all-courses', component: AllCoursesComponent},
+
+   {path:'certificate', component: CertificateComponent},
+
 
 ];
 

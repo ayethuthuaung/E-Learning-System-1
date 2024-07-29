@@ -35,7 +35,7 @@ public class ChatServiceImpl implements ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final CloudinaryService cloudinaryService;
 
-    public ChatMessageDto sendMessage(Long chatRoomId, Long senderId, String content, String file, String messageType, String sessionId) throws IOException, GeneralSecurityException {
+    public ChatMessageDto sendMessage(Long chatRoomId, Long senderId, String content, String file, String messageType, String sessionId,boolean read) throws IOException, GeneralSecurityException {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
         User sender = userRepository.findById(senderId)
@@ -56,6 +56,7 @@ public class ChatServiceImpl implements ChatService {
         }
 
         message.setMessageType(messageType);
+        message.setRead(read);
         Message savedMessage = messageRepository.save(message);
 
         ChatMessageDto chatMessageDto = modelMapper.map(savedMessage, ChatMessageDto.class);
@@ -129,4 +130,18 @@ public class ChatServiceImpl implements ChatService {
         message.setContent(newContent);
         return messageRepository.save(message);
     }
+    public void markAllMessagesAsRead(Long chatRoomId) {
+        List<Message> messages = messageRepository.findByChatRoomIdAndSoftDeletedFalse(chatRoomId);
+        for (Message message : messages) {
+            if (!message.isRead()) {
+                message.setRead(true);
+                messageRepository.save(message);
+            }
+        }
+
+    }
+    public long getUnreadMessageCount(Long chatRoomId, Long userId) {
+        return messageRepository.countByChatRoomIdAndSenderIdNotAndIsReadFalse(chatRoomId, userId);
+    }
+
 }

@@ -20,4 +20,11 @@ public interface CourseModuleRepository extends JpaRepository<CourseModule, Long
   Long countTotalModulesByCourse(@Param("courseId") Long courseId);
 
     List<CourseModule> findByLesson(Lesson lesson);
+    //NN
+    @Query("SELECT l FROM Lesson l JOIN l.courseModules cm WHERE cm.id = :moduleId")
+    List<Lesson> findByCourseModuleId(@Param("moduleId") Long moduleId);
+
+  @Query("SELECT cm FROM CourseModule cm JOIN cm.lesson l WHERE l.course.id = :courseId")
+  List<CourseModule> findByCourseId(@Param("courseId") Long courseId);
+
 }

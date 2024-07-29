@@ -42,6 +42,16 @@ export class UserService {
     return this.httpClient.post<any>(`${this.baseURL}/changePassword`, { newPassword, email });
   }
 
+  changePasswordByStaffId(newPassword: string, staffId: string): Observable<any> {
+    return this.httpClient.post<any>(`${this.baseURL}/changePasswordByStaffId`, null, {
+      params: {
+        newPassword,
+        staffId
+      }
+    });
+  }
+  
+
   getUserList(): Observable<Student[]> {
     return this.httpClient.get<Student[]>(`${this.baseURL}/userList`);
   }
@@ -62,12 +72,14 @@ export class UserService {
     return this.httpClient.get<User[]>(`${this.baseURL}/showData`);
 }
 
-checkExamOwner(userId: number): Observable<boolean> {
+checkExamOwner(examId: number, userId: number): Observable<boolean> {
   return this.httpClient.get<boolean>(`${this.baseURL}/checkExamOwner`, {
-    params: { userId: userId.toString() }
+    params: { examId: examId.toString(), userId: userId.toString() }
   });
 }
+getInstructorCount(): Observable<{ instructorCount: number }> {
+  return this.httpClient.get<{ instructorCount: number }>(`${this.baseURL}/instructor-count`);
+}
 
- 
 }
 

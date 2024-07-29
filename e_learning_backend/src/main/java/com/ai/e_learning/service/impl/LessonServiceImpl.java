@@ -21,10 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +46,9 @@ public class LessonServiceImpl implements LessonService {
 
   @Autowired
   private CloudinaryService cloudinaryService;
+
+  @Autowired
+  private UserCourseRepository userCourseRepository;
 
   private final Helper helper;
   private final ModelMapper modelMapper;
@@ -208,12 +208,28 @@ public class LessonServiceImpl implements LessonService {
 
             return moduleDto;
           }).collect(Collectors.toList());
-//        Exam exam = examRepository.findByLessonId(lesson.getId());
+//        List<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId,courseId);
+//        UserCourse userCourse = null;
+//        if(userCourseOptional.isPresent()){
+//          userCourse = userCourseOptional.get();
+//        }
+        List<UserCourse> userCourses = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
+//        UserCourse userCourse = userCourses.stream()
+//                .max(Comparator.comparingLong(UserCourse::getCreatedAt))
+//                .orElseThrow();
+        Optional<UserCourse> latestUserCourse = userCourses.stream()
+                .max(Comparator.comparingLong(UserCourse::getCreatedAt));
+        UserCourse userCourse = null;
+        if(latestUserCourse.isPresent()){
+          userCourse = latestUserCourse.get();
+            lessonDto.setUserComplete(userCourse.isCompleted());
+        }
+          //        Exam exam = examRepository.findByLessonId(lesson.getId());
 //        if (exam != null) {
 //            examListDtos.setId(exam.getId());
 //            examListDtos.setTitle(exam.getTitle());
 //        }
-        List<Exam> exams= examRepository.findByLesson(lesson);
+        List<Exam> exams= examRepository.findByLessonAndIsDeletedFalse(lesson);
         List<ExamListDto> examListDtos = DtoUtil.mapList(exams, ExamListDto.class,modelMapper);
         lessonDto.setExamListDto(examListDtos);
         lessonDto.setModules(courseModuleDtos);

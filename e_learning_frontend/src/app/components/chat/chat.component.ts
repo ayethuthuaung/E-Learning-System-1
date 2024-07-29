@@ -1,15 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { WebSocketService } from '../services/websocket.service';
 import { ChatMessage } from '../models/message';
 import { AuthService } from '../auth/auth.service';
 import { AudioRecorderService } from '../services/audio-recorder.service';
+import { UnreadMessageService } from '../services/unread-message.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements OnInit, AfterViewChecked {
+export class ChatComponent implements OnInit, AfterViewChecked,OnChanges {
   @Input() chatRoomId!: number;
   @Input() userName: string = '';
   @Output() close = new EventEmitter<void>();
@@ -21,10 +22,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   messageSent: boolean = false;
   sessionId!: string;
   isRecording = false;
+  unreadMessageCount: number = 0;
   private userScrolled = false;
   constructor(
     private webSocketService: WebSocketService,
-    private authService: AuthService,private audioRecorderService:AudioRecorderService
+    private authService: AuthService,private audioRecorderService:AudioRecorderService,private unreadMessageService:UnreadMessageService
   ) { }
 
   ngOnInit(): void {
@@ -40,6 +42,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.webSocketService.getMessages().subscribe((message: ChatMessage | null) => {
       if (message && message.chatRoomId === this.chatRoomId) {
         message.message_side = message.senderId === this.senderId ? 'sender' : 'receiver';
+        if (message.senderId !== this.senderId && !message.read) {
+          this.unreadMessageCount++;
+          this.unreadMessageService.setUnreadMessageCount(this.unreadMessageCount);
+        }
         this.messages.push(message);
         if (!this.userScrolled) {
           this.scrollToBottom();
@@ -47,19 +53,37 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       }
     });
 
-    this.fetchChatHistory();
+    if (this.chatRoomId) {
+      this.fetchChatHistory();
+    } else {
+      console.error('chatRoomId is undefined in ngOnInit');
+    }
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['chatRoomId'] && !changes['chatRoomId'].firstChange) {
+      if (this.chatRoomId) {
+        this.fetchChatHistory();
+      } else {
+        console.error('chatRoomId is undefined in ngOnChanges');
+      }
+    }
+  }
   ngAfterViewChecked(): void {
     if (!this.userScrolled) {
       this.scrollToBottom();
     }
   }
   fetchChatHistory(): void {
+   
     this.webSocketService.getChatHistory(this.chatRoomId).subscribe(
       (history: ChatMessage[]) => {
         this.messages = history.map(message => {
+          
           message.message_side = message.senderId === this.senderId ? 'sender' : 'receiver';
+          if (message.senderId !== this.senderId && !message.read) {
+            this.unreadMessageCount++;
+            this.unreadMessageService.setUnreadMessageCount(this.unreadMessageCount);
+          }
           message.showDropdown = false; // Initialize showDropdown to false
           return message;
         });
@@ -82,7 +106,8 @@ export class ChatComponent implements OnInit, AfterViewChecked {
         id: Date.now(),
         showDropdown: false,
         fileUrl: '',
-        messageType: 'text'
+        messageType: 'text',
+        read: false 
       };
 
       this.webSocketService.sendMessage(chatMessage);
@@ -112,6 +137,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.webSocketService.softDeleteMessage(messageId).subscribe(
       () => {
         this.messages = this.messages.filter(message => message.id !== messageId);
+        
       },
       (error) => {
         console.error('Error deleting message:', error);

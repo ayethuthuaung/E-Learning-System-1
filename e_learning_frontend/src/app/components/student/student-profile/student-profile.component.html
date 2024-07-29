@@ -1,13 +1,22 @@
 <div class="min-h-screen bg-gray-100 text-gray-900">
   <div class="container mx-auto p-4">
     <div class="flex flex-col md:flex-row">
+
       <!-- Right Panel -->
-      <div class="md:w-1/3 p-4">
+      <div class="md:w-2/5 p-4">
+
         <div class="bg-white p-4 rounded-lg shadow-lg">
-          <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center ">
+            <div class="mt-4 w-full flex justify-start">
+
+              <button class="cursor-pointer duration-200 hover:scale-125 active:scale-100" title="Go Back" (click)="goBack()">
+                <i class="fa-solid fa-arrow-left text-xl"></i>
+              </button>
+            </div>
             <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden profile-picture">
               <img [src]="photo" alt="Profile Picture" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+              <div
+                class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                 <label for="file-input" class="cursor-pointer">
                   <i class="fas fa-camera text-white text-xl"></i>
                 </label>
@@ -18,7 +27,22 @@
             <p>Team: {{team}}</p>
             <p>Department: {{department}}</p>
             <p>Division: {{division}}</p>
-            <button class="bg-logo-blue hover:bg-dark-blue text-white font-bold py-2 px-4 rounded mt-4" (click)="updateProfile()">Update Profile</button>
+            <p>Role: <span *ngFor="let role of roles; let i = index">{{role}}{{i < roles.length - 1 ? ', ' : ''
+                  }}</span>
+            </p>
+          
+
+            <br>
+            
+            <button class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded-md hover:bg-dark-blue transition ease-in-out duration-150"
+              (click)="openChangePasswordModal()"
+              title="Change Password"
+              aria-label="Change Password">
+              Change Password
+            </button>  
+            <app-change-password-modal *ngIf="isChangePasswordModalOpen" (close)="isChangePasswordModalOpen = false"></app-change-password-modal>
+
+
             <h3 class="text-lg font-semibold mt-6 mb-2">Active in these Squads</h3>
             <div class="flex space-x-4">
               <div class="bg-gray-200 p-4 rounded-lg w-20 h-20 flex items-center justify-center">+</div>
@@ -27,47 +51,95 @@
             </div>
           </div>
         </div>
+     
+       
       </div>
+      
 
       <div class="md:w-2/3">
         <div *ngIf="enrolledCourses.length > 0">
           <h2 class="text-2xl font-bold mb-4 text-indigo-700">Enrolled Courses</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div *ngFor="let course of enrolledCourses" class="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition duration-300 p-4 relative">
+            <div *ngFor="let course of enrolledCourses"
+              class="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition duration-300 p-4 relative">
               <div class="flex items-center mb-2">
-                <div class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">
-                  <i class="fas fa-book text-sm"></i>
+                <div class="bg-indigo-500 text-white rounded-full h-6 w-6 flex items-center justify-center mr-2">
+                  <i class="fas fa-book text-xs"></i>
                 </div>
-                <div class="flex-1">
-                  <p class="font-semibold text-gray-800 text-base">{{ course.name }}</p>
-              
-                </div>
+                <span class="font-semibold text-base cursor-pointer" [class.text-blue-500]="selectedCourse === course"
+                  (click)="viewCourse(course)">
+                  {{ course.name }}
+                </span>
               </div>
               <div class="absolute top-4 right-4 text-right">
-                <button (click)="viewCourse(course)" class="text-indigo-500 hover:text-indigo-700 font-semibold text-sm">View Course</button>
+                <button (click)="viewCourses(course)"
+                  class="text-indigo-500 hover:text-indigo-700 font-semibold text-sm">View Course</button>
               </div>
+              <!-- Completion percentage display -->
               <div class="flex items-center justify-between mt-4">
-                <div class="flex items-center">
-                  <div class="relative w-12 h-12">
-                    <svg class="w-full h-full" viewBox="0 0 36 36">
-                      <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                      <path class="circle" [attr.stroke-dasharray]="coursePercentages[course.id] ? (coursePercentages[course.id] * 0.01 * 100) + ', 100' : '0, 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    </svg>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                      <span class="text-gray-800 text-sm">{{ coursePercentages[course.id] ? (coursePercentages[course.id] >= 100 ? '100' : coursePercentages[course.id].toFixed(1)) : '0.0' }}%</span>
-                    </div>
+                <div class="relative w-12 h-12">
+                  <svg class="w-full h-full" viewBox="0 0 36 36">
+                    <path class="circle-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="circle"
+                      [attr.stroke-dasharray]="coursePercentages[course.id] ? (coursePercentages[course.id] * 0.01 * 100) + ', 100' : '0, 100'"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-gray-800 text-sm">{{ coursePercentages[course.id] ? (coursePercentages[course.id]
+                      >= 100 ? '100' : coursePercentages[course.id].toFixed(1)) : '0.0' }}%</span>
                   </div>
                 </div>
+                <div *ngIf="certificateStatuses[course.id]" class="ml-2 text-indigo-500">
+                  <i (click)="gotoCertificate(course.id)" class="fas fa-certificate fa-2xl"></i>
+                </div>
+
               </div>
+              
+
             </div>
           </div>
         </div>
-
         <div *ngIf="!enrolledCourses.length">
           <h2 class="text-2xl font-bold mb-4 text-indigo-700">No Enrolled Courses</h2>
         </div>
       </div>
-      
     </div>
+    <div  *ngIf="getModulesGroupedByLessonsKeys().length > 0" id="lessons-modules-section" class="mt-6 w-full">  
+      <div *ngIf="selectedCourse">
+        <h6 class="text-lg font-semibold mb-2">
+          {{ selectedCourse.name }}
+        </h6>
+        </div>
+      <table class="min-w-full bg-white">
+        <thead>
+          <tr>
+            <th class="py-2 px-4 bg-gray-200">Lessons</th>
+            <th class="py-2 px-4 bg-gray-200">Module</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lessonTitle of getLessonTitles(); let i = index">
+            <td class="border px-4 py-2">{{ lessonTitle }}</td>
+            <td class="border px-4 py-2">
+              <div class="flex flex-wrap">
+                <div *ngFor="let module of modulesGroupedByLessons[lessonTitle]" class="relative flex flex-col items-center mr-2 mb-2" appClickOutside (clickOutside)="handleClickOutside(module.id)">
+                  <div *ngIf="moduleVisibility[module.id]" class="mb-2 bg-gray-200 p-2 text-sm text-gray-700 rounded-md shadow-md">
+                    <p class="font-semibold">{{ module.name }}</p>
+                  </div>
+                  <button (click)="toggleModuleVisibility(module.id)" class="text-sm font-semibold py-1 px-3 rounded-md"
+                  [ngClass]="{
+                    'bg-green-500 text-white': moduleCompletionStatus[module.id],
+                    'bg-white text-gray-900': !moduleCompletionStatus[module.id]
+                  }">
+                  {{ getModuleNumber(module.id) }}
+          </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+   </div>
   </div>
 </div>

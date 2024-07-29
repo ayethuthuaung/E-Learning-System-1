@@ -33,8 +33,8 @@
         class="px-3 {{isMenuScrolled?'fixed top-0 w-full bg-white shadow-xl animate-slideInDown animate-faster':'pt-10'}}">
         <div
             class="py-3 flex items-center justify-between container {{isMenuScrolled?'':'border'}}  border-dark-blue rounded-xl">
-            <a href="">
-                <img src="../assets/DAT.png" alt="" class="w-28 h-auto">
+            <a [routerLink]="['/home']">
+                <img src="../../../assets/growhub3.png" alt="" class="w-56 h-auto">
             </a>
             <div class="lg:hidden">
                 <svg (click)="this.openSideBar()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

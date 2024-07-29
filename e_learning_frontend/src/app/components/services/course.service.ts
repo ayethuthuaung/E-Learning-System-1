@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Course } from '../models/course.model';
 
 @Injectable({
@@ -11,15 +12,22 @@ export class CourseService {
 
   constructor(private http: HttpClient) {}
 
+  //PK (Auto Refresh)
+  pollCourses(interval: number, status: string): Observable<Course[]> {
+    return timer(0, interval).pipe(
+      switchMap(() => this.getAllCourses(status))
+    );
+  }
+  //-------------
+
   getAllCourses(status: string): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/courselist?status=`+ status);
   }
 
-  
 
   getInstructorCourses(userId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
-      params: { userId: userId.toString() }
+      params: { userId: userId.toString()}
     });
   }
 
@@ -44,8 +52,8 @@ export class CourseService {
     return this.http.put<Course>(`${this.baseUrl}/updatecourse/${id}`, formData);
   }
 
-  softDeleteCourse(id: number): Observable<Object> {
-    return this.http.delete(`${this.baseUrl}/delete/${id}`);
+  softDeleteCourse(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
   getCoursesByCategory(categoryId: number): Observable<Course[]> {
@@ -65,12 +73,22 @@ export class CourseService {
   getLatestAcceptedCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/latestAccepted`);
   }
+
+  getCourseIdByLessonId(lessonId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/lessons/${lessonId}/courseId`);
+  }
   
   getCoursesByUserId(userId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
       params: { userId: userId.toString() }
     });
   }
+
+  
+  getCourseIdByExamId(examId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/requestWithExamId/${examId}`);
+  }
+
   exportCoursesByInstructor(instructorId: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/instructor/excel?instructorId=${instructorId}`, { responseType: 'blob' });
   }
@@ -86,6 +104,25 @@ export class CourseService {
   exportAllCoursesPDF(): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
   }
+  getMonthlyCourseCounts(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/monthly-counts`);
+  }
+
+  exportCoursesForInstructor(userId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/courses`, {
+      params: { userId: userId.toString() },
+      responseType: 'blob'
+    });
+  }
+
+  exportCoursesForInstructorPDf(userId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/courses/pdf`, {
+      params: { userId: userId.toString() },
+      responseType: 'blob'
+    });
+  }
+  
+  
   
   
  

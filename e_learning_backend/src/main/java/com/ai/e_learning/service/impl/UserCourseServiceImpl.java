@@ -4,34 +4,37 @@ import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.UserCourseDto;
 import com.ai.e_learning.model.*;
+import com.ai.e_learning.repository.CertificateRepository;
 import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserCourseRepository;
 import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.service.RoleService;
 import com.ai.e_learning.service.UserCourseService;
 import com.ai.e_learning.util.DtoUtil;
 import com.ai.e_learning.util.EntityUtil;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.*;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.Map;
-import java.util.HashMap;
 
-
-
+@RequiredArgsConstructor
 @Service
 public class UserCourseServiceImpl implements UserCourseService {
 
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
   private final UserCourseRepository userCourseRepository;
+  private final CertificateRepository certificateRepository;
+
   private final ModelMapper modelMapper;
+  private final CourseModuleService courseModuleService;
 
   @Autowired
   private NotificationController notificationController;
@@ -39,24 +42,17 @@ public class UserCourseServiceImpl implements UserCourseService {
   @Autowired
   private RoleService roleService;
 
-  @Autowired
-  public UserCourseServiceImpl(UserRepository userRepository, CourseRepository courseRepository,
-                               UserCourseRepository userCourseRepository, ModelMapper modelMapper) {
-    this.userRepository = userRepository;
-    this.courseRepository = courseRepository;
-    this.userCourseRepository = userCourseRepository;
-    this.modelMapper = modelMapper;
-  }
+
 
   @Override
   public UserCourseDto enrollUserInCourse(Long userId, Long courseId) {
     User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
     Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
 
-    boolean isEnrolled = userCourseRepository.existsByUserAndCourse(user, course);
-    if (isEnrolled) {
-      throw new IllegalStateException("User is already enrolled in this course");
-    }
+//    boolean isEnrolled = userCourseRepository.existsByUserAndCourse(user, course);
+//    if (isEnrolled) {
+//      throw new IllegalStateException("User is already enrolled in this course");
+//    }
 
     UserCourse userCourse = new UserCourse();
     userCourse.setUser(user);
@@ -99,10 +95,12 @@ public class UserCourseServiceImpl implements UserCourseService {
     UserCourse userCourse = userCourseRepository.findById(id)
       .orElseThrow(() -> new IllegalArgumentException("UserCourse not found"));
     userCourse.setStatus(status);
+    userCourse.setStatusChangeTimestamp(System.currentTimeMillis());
     userCourseRepository.save(userCourse);
 
     sendStudentNotification(userCourse);
   }
+
   private void sendStudentNotification(UserCourse userCourse) {
     User student = userCourse.getUser();
     Course course = userCourse.getCourse();
@@ -160,20 +158,50 @@ public class UserCourseServiceImpl implements UserCourseService {
   }
 
   @Override
-  public boolean checkEnrollmentAcceptance(Long userId, Long courseId) {
-    Optional<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
-    return userCourseOptional.isPresent() && userCourseOptional.get().getStatus().equals("Accept");
+  public int checkEnrollmentAcceptance(Long userId, Long courseId) {
+    List<UserCourse> userCourses = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
+    if (userCourses.isEmpty()) {
+      return -1;
+    }
+
+    UserCourse latestUserCourse = userCourses.stream()
+            .max(Comparator.comparingLong(UserCourse::getCreatedAt))
+            .orElseThrow(); // Since the list is not empty, this should not throw
+
+    return switch (latestUserCourse.getStatus()) {
+      case "Pending" -> 0;
+      case "Accept" -> 1;
+      case "Reject" -> 2;
+      default -> -1;
+    };
   }
+
+
   @Override
   public List<UserCourseDto> getAllUserCourseByUserId(Long userId) {
     List<Course> courses = courseRepository.findByUserId(userId);
     List<UserCourse> userCourses = new ArrayList<>();
     for (Course course : courses) {
       List<UserCourse> courseUserCourses = userCourseRepository.findByCourseId(course.getId());
+      for(UserCourse userCourse : courseUserCourses){
+        Double completionPercentage = courseModuleService.calculateCompletionPercentage(userCourse.getUser().getId(), course.getId());
+        userCourse.setProgress(completionPercentage);
+        Certificate certificate = certificateRepository.findCertificateByUserIdAndCourseId(userCourse.getUser().getId(), course.getId());
+        userCourse.setCompleted(certificate != null);
+      }
       userCourses.addAll(courseUserCourses);
     }
-    return DtoUtil.mapList(userCourses,UserCourseDto.class,modelMapper);
+    List<UserCourseDto> userCourseDtoList = DtoUtil.mapList(userCourses,UserCourseDto.class,modelMapper);
+    for(UserCourseDto userCourseDto: userCourseDtoList){
+      String progress = String.format("%.2f%%" ,userCourseDto.getProgress());
+      userCourseDto.setProgressOutput(progress);
+      String certificate = userCourseDto.isCompleted() ? "Available" : "Unavailable" ;
+      userCourseDto.setCertificateOutput(certificate);
+    }
+      return userCourseDtoList;
+
   }
+
   @Override
   public List<Course> getTrendingCourses() {
     List<Course> trendingCourses = userCourseRepository.findTopTrendingCourses();
@@ -191,6 +219,20 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
     return acceptedUserCounts;
   }
+
+  @Override
+  public Map<String, Long> getAcceptedStudentCount() {
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("Accept");
+    Map<String, Long> acceptedStudentCounts = new HashMap<>();
+
+    for (UserCourse userCourse : acceptedCourses) {
+      String courseName = userCourse.getCourse().getName();
+      Long count = userCourseRepository.countDistinctUsersByCourseAndStatus(userCourse.getCourse(), "Accept");
+      acceptedStudentCounts.put(courseName, count);
+    }
+
+    return acceptedStudentCounts;
+  }
   @Override
   public Map<String, Double> getCourseAttendanceByInstructor(Long userId) {
     List<Course> courses = courseRepository.findByUserId(userId);
@@ -204,6 +246,25 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
 
     return courseAttendance;
+  }
+  @Override
+  public Map<String, Long> getMonthlyStudentCounts() {
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("Accept");
+    Map<String, Long> monthlyStudentCounts = new HashMap<>();
+
+    for (UserCourse userCourse : acceptedCourses) {
+      LocalDate date = Instant.ofEpochMilli(userCourse.getCreatedAt()).atZone(ZoneId.systemDefault()).toLocalDate();
+      String monthName = date.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+      monthlyStudentCounts.put(monthName, monthlyStudentCounts.getOrDefault(monthName, 0L) + 1);
+    }
+
+    // Ensure all months are present in the map
+    for (String month : List.of("January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December")) {
+      monthlyStudentCounts.putIfAbsent(month, 0L);
+    }
+
+    return monthlyStudentCounts;
   }
 
 

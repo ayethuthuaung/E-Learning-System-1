@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserCourseModuleService {
   UserCourseModuleDto markModuleAsDone(Long userId, Long moduleId);
-
+  boolean getModuleCompletionStatus(Long userId, Long moduleId);
 
 
 

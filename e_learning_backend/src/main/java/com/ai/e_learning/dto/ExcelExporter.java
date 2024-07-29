@@ -1,4 +1,3 @@
-
 package com.ai.e_learning.dto;
 
 import com.ai.e_learning.service.CourseModuleService;
@@ -8,6 +7,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,6 +58,7 @@ public class ExcelExporter {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // Iterate over courses and populate data rows
+        int rowIndex = 1;  // Initialize row index for "No" column
         for (CourseDto course : courses) {
             // Student details rows
             List<UserCourseDto> courseUserCourses = userCourses.stream()
@@ -66,11 +67,14 @@ public class ExcelExporter {
 
             for (UserCourseDto userCourse : courseUserCourses) {
                 Row row = sheet.createRow(rowCount++);
-                createStudentCells(row, userCourse, course, formatter, workbook);
+                createStudentCells(row, userCourse, course, formatter, workbook, rowIndex++);
             }
         }
 
-        for (int i = 0; i < 8; i++) { // Adjust the loop limit to account for all columns
+        // Apply auto-filter to the header row
+        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 11)); // Apply filter to the first row, covering columns 0 to 11
+
+        for (int i = 0; i < 12; i++) { // Adjust the loop limit to account for all columns
             sheet.autoSizeColumn(i);
         }
 
@@ -90,82 +94,40 @@ public class ExcelExporter {
     }
 
     private void createHeaderCells(Row headerRow, CellStyle style) {
-        Cell cell = headerRow.createCell(0);
-        cell.setCellValue("Student Name");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(1);
-        cell.setCellValue("Email");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(2);
-        cell.setCellValue("Status");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(3);
-        cell.setCellValue("Team");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(4);
-        cell.setCellValue("Department");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(5);
-        cell.setCellValue("Division");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(6);
-        cell.setCellValue("Course Name");
-        cell.setCellStyle(style);
-
-        /*cell = headerRow.createCell(7);
-        cell.setCellValue("Course Level");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(8);
-        cell.setCellValue("Course Duration");
-        cell.setCellStyle(style);*/
-
-        cell = headerRow.createCell(7);
-        cell.setCellValue("Completion Percentage");
-        cell.setCellStyle(style);
+        String[] headers = {"No", "Staff ID", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(style);
+        }
     }
 
-    private void createStudentCells(Row row, UserCourseDto userCourse, CourseDto course, DateTimeFormatter formatter, HSSFWorkbook workbook) {
-        UserDto user = new UserDto(userCourse.getUser());
+    private void createStudentCells(Row row, UserCourseDto userCourse, CourseDto course, DateTimeFormatter formatter, HSSFWorkbook workbook, int rowIndex) {
         Long userId = userCourse.getUser().getId(); // Ensure you fetch the correct user ID
 
         Cell cell = row.createCell(0);
-        cell.setCellValue(userCourse.getUser().getName());
+        cell.setCellValue(rowIndex);  // Row index as "No"
 
         cell = row.createCell(1);
-        cell.setCellValue(userCourse.getUser().getEmail());
+        cell.setCellValue(userCourse.getUser().getStaffId());  // Add getter for Staff ID
 
         cell = row.createCell(2);
-        cell.setCellValue(userCourse.getStatus());
-
-        cell = row.createCell(3);
-        cell.setCellValue(userCourse.getUser().getTeam());
-
-        cell = row.createCell(4);
-        cell.setCellValue(userCourse.getUser().getDepartment());
-
-        cell = row.createCell(5);
-        cell.setCellValue(userCourse.getUser().getDivision());
-
-        cell = row.createCell(6);
         cell.setCellValue(course.getName());
 
-       /* cell = row.createCell(7);
-        cell.setCellValue(course.getLevel());
+        cell = row.createCell(3);
+        cell.setCellValue(userCourse.getUser().getEmail());  // Add getter for Email
 
-        cell = row.createCell(8);
-        cell.setCellValue(course.getDuration());*/
+        cell = row.createCell(4);
+        cell.setCellValue(userCourse.getUser().getTeam());  // Add getter for Team
 
-        // Pass correct userId and courseId
-        Double completionPercentage = courseModuleService.calculateCompletionPercentage(userId, course.getId());
-        System.out.println("User ID: " + userId + ", Course ID: " + course.getId() + ", Completion Percentage: " + completionPercentage);
+        cell = row.createCell(5);
+        cell.setCellValue(userCourse.getUser().getDepartment());  // Add getter for Department
+
+        cell = row.createCell(6);
+        cell.setCellValue(userCourse.getUser().getDivision());  // Add getter for Division
+
         cell = row.createCell(7);
+        Double completionPercentage = courseModuleService.calculateCompletionPercentage(userId, course.getId());
         if (completionPercentage != null) {
             cell.setCellValue(completionPercentage / 100); // Adjust as needed based on the range of your completionPercentage
             CellStyle cellStyle = workbook.createCellStyle();
@@ -174,17 +136,21 @@ public class ExcelExporter {
         } else {
             cell.setCellValue("N/A");
         }
-    }
 
-    private void wrapText(Cell cell, HSSFWorkbook workbook) {
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setWrapText(true);
-        cell.setCellStyle(cellStyle);
+        cell = row.createCell(8);
+        cell.setCellValue(userCourse.isCompleted() ? "Available" : "Unavailable");
 
-        // Auto-size row height to fit the wrapped text
-        Row row = cell.getRow();
-        row.setHeight((short) -1); // Set row height to auto
+        cell = row.createCell(9);
+        cell.setCellValue(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getCreatedAt()), ZoneId.systemDefault())));  // Convert createdAt to LocalDateTime
+
+        cell = row.createCell(10);
+        cell.setCellValue(userCourse.getStatus());
+
+        cell = row.createCell(11); // Adjust cell index based on your layout
+        if (userCourse.getStatusChangeTimestamp() != null) {
+            cell.setCellValue(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getStatusChangeTimestamp()), ZoneId.systemDefault())));
+        } else {
+            cell.setCellValue("N/A");
+        }
     }
 }
-
-

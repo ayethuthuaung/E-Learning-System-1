@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Course } from '../../../models/course.model';
 import { UserCourseService } from '../../../services/user-course.service';
@@ -13,18 +13,23 @@ import { log } from 'node:console';
   templateUrl: './course-footer.component.html',
   styleUrls: ['./course-footer.component.css']
 })
-export class CourseFooterComponent implements OnInit {
+export class CourseFooterComponent implements OnInit, OnDestroy {
 
   @Input() course: Course | undefined;
   user: User | null = null;
   userId: number | undefined;
   isEnrolled: boolean = false; 
   isAccepted: boolean = false; 
+  isPending: boolean = false;
+  isRejected: boolean = false;
   userCourseId: number | undefined; 
 
   isOwner: boolean = false;
 
   roles: Role[] = [];
+
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
 
 
   constructor(private userCourseService: UserCourseService, private router: Router) { }
@@ -32,6 +37,23 @@ export class CourseFooterComponent implements OnInit {
   ngOnInit(): void {
     this.fetchUserData();
     this.isOwner = this.checkIsOwner();
+    this.startPolling(); // Start polling when component is initialized
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling(); // Clean up polling when component is destroyed
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.checkEnrollmentStatus(); // Poll by calling the checkEnrollmentStatus method
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 
   checkIsOwner(): boolean{return this.userId===this.course?.user?.id}
@@ -91,14 +113,14 @@ export class CourseFooterComponent implements OnInit {
     if (this.course && this.userId) {
       this.userCourseService.checkEnrollmentAcceptance(this.userId, this.course.id).subscribe(
         
-        (isAccepted: boolean) => {
-          this.isAccepted = isAccepted;
-          console.log(this.isAccepted);
-
-        },
-        (error) => {
+        (status: number) => {
+          this.isPending = (status === 0); 
+          this.isAccepted = (status === 1); 
+          this.isRejected = (status === 2);
+      },
+      (error) => {
           console.error('Error checking enrollment acceptance', error);
-        }
+      }
       );
     }
   }
@@ -109,15 +131,15 @@ export class CourseFooterComponent implements OnInit {
       return;
     }
 
-    if (this.isEnrolled) {
-      Swal.fire({
-        title: 'Already Enrolled',
-        text: 'You are already enrolled in this course. Please wait for the instructor to approve your enrollment.',
-        icon: 'info',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
+    // if (this.isEnrolled) {
+    //   Swal.fire({
+    //     title: 'Already Enrolled',
+    //     text: 'You are already enrolled in this course. Please wait for the instructor to approve your enrollment.',
+    //     icon: 'info',
+    //     confirmButtonText: 'OK'
+    //   });
+    //   return;
+    // }
 
     const courseName = this.course.name ?? 'this course';
 
@@ -158,7 +180,9 @@ export class CourseFooterComponent implements OnInit {
     console.log('Roles:', this.roles);
 
 
+
     if (!this.isAccepted && !this.isOwner && !this.hasRole(2)) {
+
       console.log("Hi");
       Swal.fire({
         title: 'Enrollment Not Accepted',

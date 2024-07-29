@@ -136,4 +136,15 @@ public class ChatController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
         }
     }
+    @PutMapping("/messages/{chatRoomId}/read")
+    public ResponseEntity<Void> markAllMessagesAsRead(@PathVariable Long chatRoomId) {
+        chatServiceImpl.markAllMessagesAsRead(chatRoomId);
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/unread-count/{chatRoomId}/{userId}")
+    public ResponseEntity<Long> getUnreadMessageCount(@PathVariable Long chatRoomId, @PathVariable Long userId) {
+        long unreadCount = chatServiceImpl.getUnreadMessageCount(chatRoomId, userId);
+        return ResponseEntity.ok(unreadCount);
+    }
+
 }

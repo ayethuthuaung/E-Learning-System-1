@@ -13,16 +13,14 @@ import com.ai.e_learning.repository.CourseRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.RoleService;
-import com.ai.e_learning.util.DtoUtil;
-import com.ai.e_learning.util.EntityUtil;
-import com.ai.e_learning.util.GoogleDriveJSONConnector;
-import com.ai.e_learning.util.Helper;
+import com.ai.e_learning.util.*;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +40,7 @@ public class CourseServiceImpl implements CourseService {
   @Autowired
   private CourseRepository courseRepository;
 
+
   @Autowired
   private CategoryRepository categoryRepository;
 
@@ -55,6 +54,9 @@ public class CourseServiceImpl implements CourseService {
 
   @Autowired
   private RoleService roleService;
+
+  @Autowired
+  private CloudinaryService cloudinaryService;
 
   @Autowired
   private NotificationController notificationController;
@@ -98,6 +100,7 @@ public class CourseServiceImpl implements CourseService {
   }
   //AT
 
+  //PK
   @Override
   public List<CourseDto> getAllCourseList() {
     List<Course> courses = courseRepository.findAll();
@@ -112,26 +115,30 @@ public class CourseServiceImpl implements CourseService {
     Course course = convertToEntity(courseDto);
     User user = EntityUtil.getEntityById(userRepository,courseDto.getUserId(),"user");
     course.setUser(user);
-    boolean isAdmin = user.getRoles().stream()
-      .anyMatch(role -> role.getName().equals("Admin"));
-    if (isAdmin) {
-      course.setStatus("Accept");
-    }
-//    File tempFile = File.createTempFile(course.getName() + "_" + Helper.getCurrentTimestamp(), null);
-//    courseDto.getPhotoInput().transferTo(tempFile);
-//    String imageUrl = helper.uploadImageToDrive(tempFile, "course");
-//    course.setPhoto(tempFile.getName());
-    String imageUrl;
-    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//    boolean isAdmin = user.getRoles().stream()
+//      .anyMatch(role -> role.getName().equals("Admin"));
+//    if (isAdmin) {
+      course.setStatus("In Progress");
 
-    try {
-      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
-    } catch (IOException | GeneralSecurityException e) {
-      throw new RuntimeException("Failed to upload file to Google Drive", e);
-    }
-    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
 
-//    course.setPhoto(imageUrl);
+    //Google Drive
+//    String imageUrl;
+//    GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//
+//    try {
+//      imageUrl = driveConnector.uploadImageToDrive2( courseDto.getPhotoInput(), "Course");
+//    } catch (IOException | GeneralSecurityException e) {
+//      throw new RuntimeException("Failed to upload file to Google Drive", e);
+//    }
+//    course.setPhoto("https://lh3.google.com/u/0/d/"+imageUrl);
+
+    //Cloudinary
+    MultipartFile photofile = courseDto.getPhotoInput();
+    String fileUrl = cloudinaryService.uploadFile(photofile);
+    course.setPhoto(fileUrl);
+    course.setPhotoName(photofile.getOriginalFilename());
+
+
     Set<Category> mergedCategories = new HashSet<>();
     for (Category category : courseDto.getCategories()) {
       Category managedCategory = categoryRepository.findById(category.getId())
@@ -148,6 +155,8 @@ public class CourseServiceImpl implements CourseService {
     sendAdminNotifications(savedCourse);
     return convertToDto(savedCourse);
   }
+
+
   private void sendAdminNotifications(Course course) {
     Optional<Role> adminRoleOptional = roleService.getRoleByName("Admin");
     if (adminRoleOptional.isPresent()) {
@@ -173,6 +182,7 @@ public class CourseServiceImpl implements CourseService {
     // Send notifications
     sendInstructorNotification(updatedCourse, status);
   }
+
   private void sendInstructorNotification(Course course, String action) {
     Optional<Role> instructorRoleOptional = roleService.getRoleByName("Instructor");
     if (instructorRoleOptional.isPresent()) {
@@ -198,14 +208,66 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public CourseDto updateCourse(Long id, CourseDto courseDto) {
     return courseRepository.findById(id)
-      .map(existingCourse -> {
-        courseDto.setId(existingCourse.getId());
-        modelMapper.map(courseDto, existingCourse);
-        Course updatedCourse = courseRepository.save(existingCourse);
-        return convertToDto(updatedCourse);
-      })
-      .orElse(null);
+            .map(existingCourse -> {
+              courseDto.setId(existingCourse.getId());
+
+              if (courseDto.getPhotoInput() == null || courseDto.getPhotoInput().isEmpty()) {
+                courseDto.setPhoto(existingCourse.getPhoto());
+              } else {
+//                String imageUrl;
+//                GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//
+//                try {
+//                  imageUrl = driveConnector.uploadImageToDrive2(courseDto.getPhotoInput(), "Course");
+//                } catch (IOException | GeneralSecurityException e) {
+//                  throw new RuntimeException("Failed to upload file to Google Drive", e);
+//                }
+//                courseDto.setPhoto("https://lh3.google.com/u/0/d/" + imageUrl);
+                //Cloudinary
+                MultipartFile photofile = courseDto.getPhotoInput();
+                  String fileUrl = null;
+                  try {
+                      fileUrl = cloudinaryService.uploadFile(photofile);
+                  } catch (IOException e) {
+                      throw new RuntimeException(e);
+                  }
+                  courseDto.setPhoto(fileUrl);
+                courseDto.setPhotoName(photofile.getOriginalFilename());
+              }
+              List<Long> categoryIdList = new ArrayList<>();
+              for(Category category : courseDto.getCategories()){
+                Long categoryId = category.getId();
+                categoryIdList.add(categoryId);
+              }
+              Set<Category> updatedCategories = new HashSet<>(categoryRepository.findAllById(categoryIdList));
+              courseDto.setCategories(updatedCategories);
+              // Clear existing categories
+//              for(Category category : existingCourse.getCategories()){
+//                System.out.println(category.toString());
+//              }
+//              existingCourse.getCategories().clear();
+//
+//              courseRepository.saveAndFlush(existingCourse); // Save to ensure categories are cleared
+
+              // Add updated categories
+//              Set<Category> updatedCategories = new HashSet<>();
+//              for (Long categoryId : courseDto.getCategorylist()) {
+//                Category category = categoryRepository.findById(categoryId)
+//                        .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId));
+//                updatedCategories.add(category);
+//              }
+//              existingCourse.getCategories().addAll(updatedCategories);
+
+              // Map other fields
+              modelMapper.map(courseDto, existingCourse);
+
+              Course updatedCourse = courseRepository.saveAndFlush(existingCourse); // Save to ensure changes are persisted
+              return convertToDto(updatedCourse);
+            })
+            .orElse(null);
   }
+
+
 
   @Override
   public void softDeleteCourse(Long id) {
@@ -244,7 +306,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public List<CourseDto> getCoursesByUserId(Long userId) {
-    List<Course> courses = courseRepository.findByUserId(userId);
+    List<Course> courses = courseRepository.findByUserIdAndIsDeletedFalse(userId);
     return DtoUtil.mapList(courses,CourseDto.class,modelMapper);
   }
 
@@ -261,10 +323,31 @@ public class CourseServiceImpl implements CourseService {
     List<Course> courses = courseRepository.findLatestAcceptedCourses();
     return courses.stream()
       .map(course -> modelMapper.map(course, CourseDto.class))
-      .limit(3) // Limit to latest 3 courses
+      .limit(3) // Limit to latest 5 courses
       .collect(Collectors.toList());
   }
 
+  @Override
+  public List<CourseDto> getCoursesByInstructorId(Long instructorId) {
+    List<Course> courses = courseRepository.findByUserId(instructorId);
+    List<Course> acceptedCourses = courses.stream()
+      .filter(course -> "Accept".equalsIgnoreCase(course.getStatus()))
+      .collect(Collectors.toList());
+    return acceptedCourses.stream()
+      .map(this::convertToDto)
+      .collect(Collectors.toList());
+  }
+
+  @Override
+  public Long getCourseId(Long lessonId) {
+    return courseRepository.findCourseIdByLessonId(lessonId);
+  }
+
+  @Override
+  public Long getCourseIdByExamId(Long examId) {
+    Course course = courseRepository.findCourseByExamId(examId);
+    return course.getId();
+  }
 
 
 }

@@ -16,4 +16,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query("SELECT m FROM Message m WHERE m.chatRoom.id = :chatRoomId AND m.sender.id = :senderId")
     List<Message> findChatHistoryForUser(@Param("chatRoomId") Long chatRoomId, @Param("senderId") Long senderId);
+
+    @Query("SELECT COUNT(m) FROM Message m WHERE m.chatRoom.id = :chatRoomId AND m.sender.id <> :userId AND m.isRead = false")
+    long countByChatRoomIdAndSenderIdNotAndIsReadFalse(@Param("chatRoomId") Long chatRoomId, @Param("userId") Long userId);
+
 }

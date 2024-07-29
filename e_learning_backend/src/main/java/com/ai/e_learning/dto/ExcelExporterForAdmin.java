@@ -6,6 +6,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,11 +53,12 @@ public class ExcelExporterForAdmin {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // Iterate over courses and populate data rows
+        int index = 1; // For numbering rows
         for (CourseDto course : courses) {
             Row row = sheet.createRow(rowCount++);
 
             Cell cell = row.createCell(0);
-            cell.setCellValue(course.getUser().getName()); // Assuming CourseDto contains instructor details
+            cell.setCellValue(index++);
 
             cell = row.createCell(1);
             cell.setCellValue(course.getName());
@@ -67,25 +69,31 @@ public class ExcelExporterForAdmin {
             cell = row.createCell(3);
             cell.setCellValue(course.getDuration());
 
-            /*cell = row.createCell(4);
-            cell.setCellValue(course.getDescription());*/
 
-            // Convert createdAt timestamp to formatted date string
-            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
             cell = row.createCell(4);
-            cell.setCellValue(createdAt.format(formatter));
-
-            cell = row.createCell(5);
-            cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
+            cell.setCellValue(course.getUser().getName()); // Assuming CourseDto contains instructor details
 
             // Calculate student count for the course
             long studentCount = userCourses.stream()
                     .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
                     .count();
 
-            cell = row.createCell(6);
+
+
+            cell = row.createCell(5);
             cell.setCellValue(studentCount);
+
+            // Convert createdAt timestamp to formatted date string
+            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
+            cell = row.createCell(6);
+            cell.setCellValue(createdAt.format(formatter));
+
+            cell = row.createCell(7);
+            cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
         }
+
+        // Apply filter to the header row
+        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 7)); // Adjust range according to your columns
 
         // Auto size all columns
         for (int i = 0; i < 7; i++) {
@@ -109,7 +117,7 @@ public class ExcelExporterForAdmin {
 
     private void createHeaderCells(Row headerRow, CellStyle style) {
         Cell cell = headerRow.createCell(0);
-        cell.setCellValue("Instructor");
+        cell.setCellValue("No");
         cell.setCellStyle(style);
 
         cell = headerRow.createCell(1);
@@ -124,20 +132,23 @@ public class ExcelExporterForAdmin {
         cell.setCellValue("Course Duration");
         cell.setCellStyle(style);
 
-        /*cell = headerRow.createCell(4);
-        cell.setCellValue("Course Description");
-        cell.setCellStyle(style);*/
+
+
 
         cell = headerRow.createCell(4);
-        cell.setCellValue("Course Created AT");
+        cell.setCellValue("Instructor");
         cell.setCellStyle(style);
 
         cell = headerRow.createCell(5);
-        cell.setCellValue("Course Status");
+        cell.setCellValue("Students");
         cell.setCellStyle(style);
 
         cell = headerRow.createCell(6);
-        cell.setCellValue("Student Count");
+        cell.setCellValue("Created Date");
+        cell.setCellStyle(style);
+
+        cell = headerRow.createCell(7);
+        cell.setCellValue("Status");
         cell.setCellStyle(style);
     }
 }

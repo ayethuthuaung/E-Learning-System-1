@@ -12,8 +12,10 @@ public class UserCourseDto {
     private User user;
     private Course course;
     private boolean completed;
-    private int progress;
+    private double progress;
     private String status;
     private Long createdAt;
-
+    private Long statusChangeTimestamp;
+    private String progressOutput;
+    private String certificateOutput;
 }

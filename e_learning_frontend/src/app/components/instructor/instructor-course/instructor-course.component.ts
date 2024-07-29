@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Category } from '../../models/category.model';
 
 import { CategoryService } from '../../services/category.service';
@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
-declare var Swal: any;
+import Swal from 'sweetalert2';
 import { orderBy } from 'lodash';
 
 @Component({
@@ -14,7 +14,7 @@ import { orderBy } from 'lodash';
   templateUrl: './instructor-course.component.html',
   styleUrl: './instructor-course.component.css'
 })
-export class InstructorCourseComponent implements OnInit {
+export class InstructorCourseComponent implements OnInit, OnDestroy {
   isSidebarOpen = true;
   activeTab: string = 'createCourse';
   category: Category = new Category();
@@ -30,9 +30,14 @@ export class InstructorCourseComponent implements OnInit {
   userId: any;
 
   loading = false;
+  isEditing : boolean =  false;
 
   courses: Course[] = [];
   status: string = 'Accept,Pending'; 
+
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
+
 
   constructor(
     private categoryService: CategoryService,
@@ -54,6 +59,23 @@ export class InstructorCourseComponent implements OnInit {
       }
     }
     this.getInstructorCourses();
+    this.startPolling(); // Start polling for updates
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling(); // Clean up polling when component is destroyed
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.getInstructorCourses(); // Poll for course updates
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 
   getCategories(): void {
@@ -67,49 +89,22 @@ export class InstructorCourseComponent implements OnInit {
     );
   }
 
-  validateCategoryName(name: string): void {
-    this.categoryService.isCategoryNameAlreadyExists(name).subscribe(
-      (exists: boolean) => {
-        this.nameDuplicateError = exists;
-      },
-      (error) => {
-        console.error('Error checking category name:', error);
-      }
-    );
-  }
-
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.submitted = false;
       this.loading = true;
+      
       this.sureAlert();
       
     } else {
       this.submitted = true;
       console.log('invalid form');
-      //Swal.fire('Please fill all the fields', '','error')
-      this.errorMessage = 'Please fill the required fields';
+      this.errorMessage = 'Please fill all the required fields';
+      
     }
-    
   }
-
-  createCategory(): void {
-    this.categoryService.createCategory(this.category).subscribe(
-      () => {
-        console.log('Category created successfully');
-        this.goToCategoryList();
-
-        this.getCategories(); // Refresh the list after creation
-        this.category = new Category(); // Clear the form
-      },
-      (error) => {
-        this.errorMessage = `Error creating category: ${error}`;
-      }
-    );
-  }
-  goToCategoryList(): void {
-    this.router.navigate(['/categories']);
-  }
+ 
+  
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
@@ -129,20 +124,13 @@ export class InstructorCourseComponent implements OnInit {
     });
   }
 
-  validateCourseName(name: string): void {
-    this.courseService.isCourseNameAlreadyExists(name).subscribe(
-      (exists: boolean) => {
-        this.nameDuplicateError = exists;
-      },
-      (error) => {
-        console.error('Error checking course name:', error);
-      }
-    );
-  }
+ 
 
   saveCourse(): void {
     this.course.userId = this.userId;
     this.course.status = 'In Progress';
+    console.log(this.course.status);
+    
     const formData = new FormData();
     
     formData.append('course', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
@@ -158,14 +146,121 @@ export class InstructorCourseComponent implements OnInit {
         this.course = new Course(); // Clear the form
         this.course.status = data.status; // Update local status with returned status
         this.course.photoFile = undefined; // Clear the photo input
-        this.course.categories = []; // Clear selected categories
-        this.showSuccessAlert();
+        this.categoryList = []; // Clear selected categories
+        this.course.categories = []; // Clear selected categories in the course object
+        
+        // Clear checkboxes
+        this.categories.forEach(category => {
+          const checkbox = document.getElementById(`category_${category.id}`) as HTMLInputElement;
+          if (checkbox) {
+            checkbox.checked = false;
+          }
+        });
+  
+        // Clear file input
+        const photo = document.getElementById('photo') as HTMLInputElement;
+        if (photo) {
+          photo.value = '';
+        }
+
+        Swal.fire({
+          title: 'Success!',
+          text: 'Course created successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
       },
       (error) => {
         console.error('Error creating course:', error);
         this.loading = false;
       }
     );
+  }
+
+  editCourse(course: Course): void {
+
+    this.isEditing = true;
+    console.log(this.isEditing);
+    
+    console.log(course);
+    
+    this.course = { ...course }; 
+    this.course.categorylist = course.categories.map(cat => cat.id);
+
+   
+  }
+
+  confirmUpdateCourse(): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to update this course?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.updateCourse();
+      }
+    });
+  }
+  
+  updateCourse(): void {
+    console.log("Update Course");
+    
+    const formData = new FormData();
+    formData.append('courseDto', new Blob([JSON.stringify(this.course)], { type: 'application/json' }));
+    if (this.course.photoFile) {
+      formData.append('photo', this.course.photoFile);
+    }
+    console.log("Hi");
+    this.courseService.updateCourse(this.course.id, formData).subscribe(
+      (updatedCourse: Course) => {
+        console.log('Course updated successfully:', updatedCourse);
+        this.loading = false;
+        this.getInstructorCourses(); // Refresh courses list after updating the course
+        this.course = new Course(); // Clear the form
+        this.isEditing = false; // Exit editing mode
+        this.showSuccessAlert1();
+      },
+      (error) => {
+        console.error('Error updating course:', error);
+        this.loading = false;
+      }
+    );
+  }
+  
+  showSuccessAlert1(): void {
+    Swal.fire({
+      title: 'Updated!',
+      text: 'Course updated successfully.',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
+ 
+  deleteCourse(courseId: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this Course?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.courseService.softDeleteCourse(courseId).subscribe(
+          () => {
+            this.courses = this.courses.filter(course => course.id !== courseId);
+            Swal.fire('Deleted!', 'The module has been deleted.', 'success');
+          },
+          error => {
+            console.error('Error deleting module:', error);
+            Swal.fire('Error!', 'Failed to delete the module.', 'error');
+          }
+        );
+      }
+    });
   }
 
   onFileChange(event: any): void {
@@ -208,6 +303,9 @@ export class InstructorCourseComponent implements OnInit {
   getInstructorCourses(): void {
     this.courseService.getInstructorCourses(this.userId).subscribe(
       (data: Course[]) => {
+        console.log(data);
+        console.log("Instructor Course",data);
+        
         this.courses = data;
         this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
         this.updatePaginatedInstructorCourses();
@@ -282,6 +380,7 @@ export class InstructorCourseComponent implements OnInit {
       }
     });
   }
+ 
 
   // Course List
   searchTerm = '';
@@ -368,5 +467,48 @@ filterTerm = '';
       this.updatePaginatedInstructorCourses();
     }
   }
+
+  goToCourseDetails(courseId: number): void {
+    this.router.navigate(['/course-detail', courseId]);
+  }
+  exportCourses(): void {
+    if (this.userId) {
+      this.courseService.exportCoursesForInstructor(this.userId).subscribe(
+        (response: Blob) => {
+          const url = window.URL.createObjectURL(response);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'instructor_courses.xls'; // Name of the file
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        (error) => {
+          console.error('Error exporting courses:', error);
+        }
+      );
+    }
+  }
+
+  exportCoursesPdf(): void {
+    if (this.userId) {
+      this.courseService.exportCoursesForInstructorPDf(this.userId).subscribe(
+        (response: Blob) => {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'courses.pdf'; // Name of the file
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        (error) => {
+          console.error('Error exporting courses:', error);
+        }
+      );
+    }
+  }
+  
+  
+
 
 }
