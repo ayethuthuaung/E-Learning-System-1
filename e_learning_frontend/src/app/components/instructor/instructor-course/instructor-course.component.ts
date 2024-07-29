@@ -34,7 +34,7 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
 
   courses: Course[] = [];
   status: string = 'Accept,Pending'; 
-
+  availableNames: string[] = [];
   private pollingInterval: any;
   private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
 
@@ -308,6 +308,7 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
         
         this.courses = data;
         this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
+        this.availableNames = [...new Set(this.courses.map(course => course.level))];
         this.updatePaginatedInstructorCourses();
         this.totalPages = Math.ceil(this.courses.length / this.itemsPerPage);
    

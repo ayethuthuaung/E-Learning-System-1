@@ -24,7 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(CourseModuleController.class)
@@ -70,20 +73,18 @@ public class CourseModuleControllerTest {
         MockMultipartFile file = new MockMultipartFile("files", "test.txt", "text/plain", "some content".getBytes());
 
         List<CourseModuleDto> courseModuleDtos = Arrays.asList(courseModuleDto);
-        List<MockMultipartFile> files = Arrays.asList(file);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "CourseModules created successfully");
-
-        when(courseModuleService.createModules(anyList(), anyList())).thenReturn(courseModuleDtos);
+        // Set up the mock to do nothing
+        doNothing().when(courseModuleService).createModules(anyList(), anyList());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/modules/createModules")
-                        .file("files", file.getBytes())
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .param("modules", objectMapper.writeValueAsString(courseModuleDtos)))
+                        .file(file)
+                        .param("modules", objectMapper.writeValueAsString(courseModuleDtos))
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("CourseModules created successfully"));
     }
+
 
     @Test
     public void testUpdateModule_Success() throws Exception {
@@ -153,8 +154,10 @@ public class CourseModuleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Lesson 1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("Lesson 1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value("Lesson 2"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("Lesson 2"));
     }
+
+    // Additional tests for other endpoints
 }

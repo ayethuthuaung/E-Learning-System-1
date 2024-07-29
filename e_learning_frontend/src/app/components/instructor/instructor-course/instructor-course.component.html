@@ -217,7 +217,8 @@
                       </th>
                       <th class="p-2 border">
                         Level
-                        <app-filter-sort-dropdown (sortChanged)="onSortChange('level', $event)"
+                        <app-filter-sort-dropdown  filterKey="level" 
+                        [availableNames]="availableNames" (sortChanged)="onSortChange('level', $event)"
                           (filterChanged)="onFilterChange($event)">
                         </app-filter-sort-dropdown>
                       </th>

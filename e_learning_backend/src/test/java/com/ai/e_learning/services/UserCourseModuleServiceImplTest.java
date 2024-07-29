@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,7 +97,7 @@ public class UserCourseModuleServiceImplTest {
         when(courseModuleRepository.findById(any(Long.class))).thenReturn(Optional.of(courseModule));
         when(courseRepository.findByModuleId(any(Long.class))).thenReturn(course);
         when(userCourseRepository.findByUserIdAndCourseId(any(Long.class), any(Long.class)))
-                .thenReturn(Optional.of(userCourse));
+                .thenReturn(List.of(userCourse));
         when(courseModuleService.calculateCompletionPercentage(any(Long.class), any(Long.class))).thenReturn(100.0);
         when(userCourseModuleRepository.save(any(UserCourseModule.class))).thenReturn(userCourseModule);
         when(userCourseRepository.save(any(UserCourse.class))).thenReturn(userCourse);
@@ -114,6 +115,7 @@ public class UserCourseModuleServiceImplTest {
 
     @Test
     void testGetModuleCompletionStatus_WhenModuleIsCompleted() {
+        userCourseModule.setDone(true);
         when(userCourseModuleRepository.findByUserIdAndCourseModuleId(any(Long.class), any(Long.class)))
                 .thenReturn(Optional.of(userCourseModule));
 

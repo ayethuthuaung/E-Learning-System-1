@@ -11,6 +11,16 @@
       <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         <a (click)="sort('asc')" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Sort A to Z</a>
       <a (click)="sort('desc')" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Sort Z to A</a>
+      
+      <div *ngFor="let name of availableNames" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+        <input 
+          type="checkbox" 
+          [id]="name" 
+          (change)="onCheckboxChange($event, name)" 
+          [checked]="isSelected(name)"
+        />
+        <label [for]="name" class="ml-2">{{ name }}</label>
+      </div>
       <div class="border-t border-gray-100"></div>
         <input 
           type="text" 
