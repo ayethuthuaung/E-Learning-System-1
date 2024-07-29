@@ -230,10 +230,12 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.getInstructorCourses(); // Refresh courses list after updating the course
         this.course = new Course(); // Clear the form
-        this.course.categorylist = [];
-        this.course.categories = [];
-        this.categories = [];
-        this.categoryList=[];
+        // this.categories.forEach(category => category.checked = false);
+
+        // this.course.categorylist = [];
+        // this.course.categories = [];
+        this.categories = [];// I don't want to remove all Categories I just want to false checked check box
+        this.loadCategories();
         console.log(this.course.categories);
         console.log(this.course.categorylist);
         console.log(this.categories);
@@ -288,6 +290,7 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      this.course.photoName = file.name;
       this.course.photoFile = file;
     }
   }
@@ -305,9 +308,10 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
   }
 
   toggleCategories(event: any, category: Category) {
-
-    if (event.target.checked) {
-
+    category.checked = event.target.checked;
+    if (category.checked) {
+      console.log(category.checked);
+      
       this.course.categories.push(category);
     } else {
       const index = this.course.categories.findIndex(cat => cat.id === category.id);
