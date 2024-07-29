@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(CourseModuleController.class)
@@ -70,12 +71,9 @@ public class CourseModuleControllerTest {
         MockMultipartFile file = new MockMultipartFile("files", "test.txt", "text/plain", "some content".getBytes());
 
         List<CourseModuleDto> courseModuleDtos = Arrays.asList(courseModuleDto);
-        List<MockMultipartFile> files = Arrays.asList(file);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "CourseModules created successfully");
 
-        when(courseModuleService.createModules(anyList(), anyList())).thenReturn(courseModuleDtos);
+        doNothing().when(courseModuleService).createModules(anyList(),anyList());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/modules/createModules")
                         .file("files", file.getBytes())
