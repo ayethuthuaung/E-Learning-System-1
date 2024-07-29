@@ -16,5 +16,6 @@ public class CategoryDto {
   private Long id;
   private String name;
   private boolean isDeleted;
+
   private Set<Course> courses = new HashSet<>();
 }

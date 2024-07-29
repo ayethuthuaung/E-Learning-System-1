@@ -27,74 +27,74 @@
 
         <!-- Chat Window -->
         <div class="w-3/4 bg-white border border-gray-300 rounded-md shadow-lg p-4 ml-4 flex flex-col">
-          <div *ngIf="selectedConversation; else noConversationSelected">
-          <div class="flex items-center justify-between p-4 bg-gray-200 rounded-t-lg">
-            <div class="flex items-center">
-              <img [src]="selectedConversation.photoUrl" alt="User Photo" class="w-8 h-8 bg-gray-400 rounded-full">
-              <span class="ml-2 font-semibold">{{ selectedConversation.name  }}</span>
+          <ng-container *ngIf="selectedConversation; else noConversationSelected">
+            <div class="flex items-center justify-between p-4 bg-gray-200 rounded-t-lg">
+              <div class="flex items-center">
+                <img [src]="selectedConversation.photoUrl" alt="User Photo" class="w-8 h-8 bg-gray-400 rounded-full">
+                <span class="ml-2 font-semibold">{{ selectedConversation.name  }}</span>
+              </div>
+              <i class="fas fa-info-circle text-lg"></i>
             </div>
-            <i class="fas fa-info-circle text-lg"></i>
-          </div>
-          <div class="flex-1 overflow-y-auto p-4" style="max-height: 44vh;" #chatContainer (scroll)="onScroll()">
-            <div *ngIf="messages.length === 0" class="flex items-center justify-center h-full text-gray-500">
-              No messages available.
-            </div>
-            <div *ngFor="let message of messages"
-                 [ngClass]="{'text-right': message.message_side === 'sender'}">
-              <div class="inline-block p-2 m-1 rounded-lg relative"
-                   [ngClass]="{
-                     'bg-gray-200 text-black': message.message_side === 'receiver',
-                     'bg-logo-blue text-white': message.message_side === 'sender'
-                   }"
-                   (mouseenter)="message.showDropdown = true"
-                   (mouseleave)="message.showDropdown = false">
-                <div *ngIf="message.messageType === 'text'" class="flex">
-                  <div class="flex-1">{{ message.content }}</div>
-                  <div *ngIf="message.message_side === 'sender' && message.showDropdown" class="ml-2">
-                    <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer delete-button"
-                          (click)="softDeleteMessage(message.id)">
-                      <i class="fas fa-trash-alt"></i> <!-- Delete icon -->
-                    </span>
+            <div class="flex-1 overflow-y-auto p-4" style="max-height: 44vh;" #chatContainer (scroll)="onScroll()">
+              <div *ngIf="messages.length === 0" class="flex items-center justify-center h-full text-gray-500">
+                No messages available.
+              </div>
+              <div *ngFor="let message of messages" [ngClass]="{'text-right': message.message_side === 'sender'}">
+                <div class="inline-block p-2 m-1 rounded-lg relative"
+                     [ngClass]="{
+                       'bg-gray-200 text-black': message.message_side === 'receiver',
+                       'bg-logo-blue text-white': message.message_side === 'sender'
+                     }"
+                     (mouseenter)="message.showDropdown = true"
+                     (mouseleave)="message.showDropdown = false">
+                  <div *ngIf="message.messageType === 'text'" class="flex">
+                    <div class="flex-1">{{ message.content }}</div>
+                    <div *ngIf="message.message_side === 'sender' && message.showDropdown" class="ml-2">
+                      <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer delete-button"
+                            (click)="softDeleteMessage(message.id)">
+                        <i class="fas fa-trash-alt"></i> <!-- Delete icon -->
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div *ngIf="message.messageType === 'image'" class="flex items-center">
-                  <img [src]="message.fileUrl" alt="Image" class="max-w-xs h-auto" style="max-width: 150px;">
-                  <div *ngIf="message.message_side === 'sender' && message.showDropdown" class="ml-2">
-                    <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer delete-button"
-                          (click)="softDeleteMessage(message.id)">
-                      <i class="fas fa-trash-alt"></i> <!-- Delete icon -->
-                    </span>
+                  <div *ngIf="message.messageType === 'image'" class="flex items-center">
+                    <img [src]="message.fileUrl" alt="Image" class="max-w-xs h-auto" style="max-width: 150px;">
+                    <div *ngIf="message.message_side === 'sender' && message.showDropdown" class="ml-2">
+                      <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer delete-button"
+                            (click)="softDeleteMessage(message.id)">
+                        <i class="fas fa-trash-alt"></i> <!-- Delete icon -->
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div *ngIf="message.messageType === 'voice'" class="flex items-center">
-                  <audio controls class="mr-2">
-                    <source [src]="message.fileUrl" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                  </audio>
-                  <div *ngIf="message.message_side === 'sender' && message.showDropdown">
-                    <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer delete-button"
-                          (click)="softDeleteMessage(message.id)">
-                      <i class="fas fa-trash-alt"></i> <!-- Delete icon -->
-                    </span>
+                  <div *ngIf="message.messageType === 'voice'" class="flex items-center">
+                    <audio controls class="mr-2">
+                      <source [src]="message.fileUrl" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                    </audio>
+                    <div *ngIf="message.message_side === 'sender' && message.showDropdown">
+                      <span class="bg-gray-500 shadow-lg rounded-lg text-white px-2 py-1 cursor-pointer delete-button"
+                            (click)="softDeleteMessage(message.id)">
+                        <i class="fas fa-trash-alt"></i> <!-- Delete icon -->
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="flex items-center p-4 bg-gray-200 rounded-b-lg">
-            <input type="file" (change)="uploadFile($event)" class="hidden" #fileInput>
-            <button (click)="fileInput.click()" class="mr-2 text-xl">+</button>
-            <input type="text" [(ngModel)]="newMessage" placeholder="Type Message here" class="flex-1 px-4 py-2 border rounded-lg">
-            <button class="ml-2 text-xl" (click)="startRecording()" *ngIf="!isRecording"><i class="fas fa-microphone"></i></button>
-            <button class="ml-2 text-xl" (click)="stopRecording()" *ngIf="isRecording"><i class="fas fa-stop"></i></button>
-            <button class="ml-2 text-xl" (click)="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-          </div>
-        </div>
-        <ng-template #noConversationSelected>
-          <div class="flex items-center justify-center h-full text-gray-500">
-            Select a conversation to start chatting.
-          </div>
-        </ng-template>
+            <div class="flex items-center p-4 bg-gray-200 rounded-b-lg">
+              <input type="file" (change)="uploadFile($event)" class="hidden" #fileInput>
+              <button (click)="fileInput.click()" class="mr-2 text-xl">+</button>
+              <input type="text" [(ngModel)]="newMessage" placeholder="Type Message here" class="flex-1 px-4 py-2 border rounded-lg">
+              <button class="ml-2 text-xl" (click)="startRecording()" *ngIf="!isRecording"><i class="fas fa-microphone"></i></button>
+              <button class="ml-2 text-xl" (click)="stopRecording()" *ngIf="isRecording"><i class="fas fa-stop"></i></button>
+              <button class="ml-2 text-xl" (click)="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </ng-container>
+
+          <ng-template #noConversationSelected>
+            <div class="flex items-center justify-center h-full text-gray-500">
+              Select a conversation to start chatting.
+            </div>
+          </ng-template>
         </div>
       </section>
     </main>

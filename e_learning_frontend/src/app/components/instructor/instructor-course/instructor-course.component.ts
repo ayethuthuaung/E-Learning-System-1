@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Category } from '../../models/category.model';
 
 import { CategoryService } from '../../services/category.service';
@@ -15,6 +15,8 @@ import { orderBy } from 'lodash';
   styleUrl: './instructor-course.component.css'
 })
 export class InstructorCourseComponent implements OnInit, OnDestroy {
+  @ViewChild('courseForm') courseForm!: NgForm; // Access the form template reference
+
   isSidebarOpen = true;
   activeTab: string = 'createCourse';
   category: Category = new Category();
@@ -34,7 +36,7 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
 
   courses: Course[] = [];
   status: string = 'Accept,Pending'; 
-
+  availableNames: string[] = [];
   private pollingInterval: any;
   private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
 
@@ -177,6 +179,11 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
     );
   }
 
+  triggerFileInput(): void {
+    document.getElementById('photo')?.click();
+  }
+
+
   editCourse(course: Course): void {
 
     this.isEditing = true;
@@ -185,6 +192,9 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
     console.log(course);
     
     this.course = { ...course }; 
+    this.course.photoName = course.photoName; // Ensure the photoName is set
+    console.log(this.course.photo);
+    
     this.course.categorylist = course.categories.map(cat => cat.id);
 
    
@@ -220,7 +230,19 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.getInstructorCourses(); // Refresh courses list after updating the course
         this.course = new Course(); // Clear the form
+        this.course.categorylist = [];
+        this.course.categories = [];
+        this.categories = [];
+        this.categoryList=[];
+        console.log(this.course.categories);
+        console.log(this.course.categorylist);
+        console.log(this.categories);
+
+
         this.isEditing = false; // Exit editing mode
+        if (this.courseForm) {
+          this.courseForm.resetForm();
+        }
         this.showSuccessAlert1();
       },
       (error) => {
@@ -308,6 +330,7 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
         
         this.courses = data;
         this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
+        this.availableNames = [...new Set(this.courses.map(course => course.level))];
         this.updatePaginatedInstructorCourses();
         this.totalPages = Math.ceil(this.courses.length / this.itemsPerPage);
    
@@ -418,8 +441,10 @@ filterTerm = '';
   updatePaginatedInstructorCourses() {
     let filteredInstructorCourses = this.courses.filter(course =>
       course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      course.level.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       course.duration.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      course.status.toLowerCase().includes(this.searchTerm.toLowerCase())
+      course.status.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      course.studentCount?.toString().toLowerCase().includes(this.searchTerm.toLowerCase()) 
       );
 
       if (this.sortKey && (this.sortDirection === 'asc' || this.sortDirection === 'desc')) {
@@ -471,6 +496,7 @@ filterTerm = '';
   goToCourseDetails(courseId: number): void {
     this.router.navigate(['/course-detail', courseId]);
   }
+  
   exportCourses(): void {
     if (this.userId) {
       this.courseService.exportCoursesForInstructor(this.userId).subscribe(

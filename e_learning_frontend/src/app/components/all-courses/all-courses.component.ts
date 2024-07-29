@@ -17,6 +17,8 @@ export class AllCoursesComponent implements OnInit {
   selectedCourse: Course | null = null;
   categories: Category[] = [];
   selectedCategory: string = '';
+  filteredCategories: Category[] = [];
+
   isSidebarShowing = false;
   isMenuScrolled = false;
   currentPage = 1;
@@ -52,7 +54,8 @@ export class AllCoursesComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.categories = data;
-          this.categories.unshift({
+          this.filteredCategories = this.filterActiveCategories(data); // Filter categories here
+          this.filteredCategories.unshift({
             id: -1, name: 'All',
             deleted: false,
             courses: [],
@@ -62,8 +65,12 @@ export class AllCoursesComponent implements OnInit {
         },
         error: (e) => console.log(e)
       });
-       
+  } 
+  private filterActiveCategories(categories: Category[]): Category[] {
+    return categories.filter(category => !category.deleted);
   }
+
+
 
   filterCourses(category: string) {
     if (category.toLowerCase() === 'all') {

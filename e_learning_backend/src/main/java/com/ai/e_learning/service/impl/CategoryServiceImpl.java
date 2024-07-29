@@ -94,5 +94,6 @@ public class CategoryServiceImpl implements CategoryService {
     return categoryRepository.existsByName(name);
   }
 
+
 }
 

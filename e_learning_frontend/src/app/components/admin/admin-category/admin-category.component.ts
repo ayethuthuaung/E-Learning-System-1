@@ -29,7 +29,7 @@ export class AdminCategoryComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
-
+  submitted = false;
   @ViewChild('updateCategoryDialog') updateCategoryDialog!: TemplateRef<any>;
 
   constructor(
@@ -81,11 +81,14 @@ export class AdminCategoryComponent implements OnInit {
 
 
   onSubmit(form: NgForm): void {
-    if (form.valid && !this.nameDuplicateError) {
-      this.category.id ? this.updateCategory(this.category.id) : this.createCategory();
+    if (form.valid) {
+      this.createCategory();  // Assuming you have this method to handle the form submission
+      
+      this.submitted = false;
     } else {
-      console.log('Form is invalid.');
-      this.nameRequiredError = true;
+      this.submitted = true;
+      console.log('invalid form');
+      this.errorMessage = 'Please fill the required fields';
     }
   }
 
@@ -129,19 +132,32 @@ export class AdminCategoryComponent implements OnInit {
       );
     } else {
       console.log('Form is invalid.');
-      this.nameRequiredError = true;
+      this.submitted = true;
     }
   }
-
   softDeleteCategory(id: number): void {
-    this.categoryService.softDeleteCategory(id).subscribe({
-      next: () => {
-        this.categories = this.categories.filter(category => category.id !== id);
-        this.getCategories();
-      },
-      error: (error) => {
-        console.error('Error deleting category:', error);
-        this.errorMessage = `Error deleting category: ${error}`;
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "This category will be soft deleted and won't be visible in the category list.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        this.categoryService.softDeleteCategory(id).subscribe({
+          next: () => {
+            this.categories = this.categories.filter(category => category.id !== id);
+            this.getCategories();
+            // Optionally show a brief notification or just handle the UI update
+          },
+          error: (error) => {
+            console.error('Error deleting category:', error);
+            this.errorMessage = `Error deleting category: ${error}`;
+          }
+        });
       }
     });
   }
