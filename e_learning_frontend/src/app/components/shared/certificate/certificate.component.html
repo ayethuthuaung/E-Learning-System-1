@@ -1,32 +1,31 @@
+
 <div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 relative">
   <div *ngIf="certificate; else loading" class="relative bg-white shadow-2xl p-4 w-full max-w-2xl mx-auto text-center certificate-border">
     <!-- Header with decorative line and stylish icon -->
+    <div class="watermark">
+      <p class="watermark-text">GrowthHub</p>
+    </div>
     <div class="mb-4 flex flex-col items-center">
-      <div class="mb-2">
-        <!-- Certificate Icon -->
-        <img src="assets/certificate-icon.png" alt="Certificate Icon" class="w-16 h-16 mx-auto">
-      </div>
+      
       <p class="text-xl font-bold text-gray-800">Certificate of Completion</p>
       <p class="text-md font-semibold text-gray-600 mt-1">This Certificate is Proudly Presented to</p>
     </div>
 
     <!-- Recipient Name -->
     <h1 class="text-4xl font-extrabold text-gray-900 mb-2">{{ certificate.user.name }}</h1>
-
-    <!-- Course Information -->
-    <img [src]="certificate.course.photo" alt="{{ certificate.course.name }}" class="mx-auto h-16 w-16 rounded-full border-4 border-gradient-to-r from-purple-300 to-pink-300 mb-2 shadow-lg">
+<br>
+   
     <p class="text-md text-gray-800 mb-2">You are now a certified {{ certificate.course.name }} User capable of performing advanced tasks.</p>
-
+<br>
     <!-- Course Details -->
     <h2 class="text-xl text-gray-700 mb-2">{{ certificate.course.name }}<br>Completed: {{ certificate.createdAt | date:'longDate' }}</h2>
-
+<br>
     <!-- Skills Section -->
     
     <!-- Signatures Section -->
     <div class="text-center">
-      <div class="flex items-center justify-center mb-1">
-        <!-- Badge Icon -->
-        <img src="assets/badge-icon.png" alt="Badge Icon" class="w-12 h-12 mx-auto">
+      <div class="mb-2">
+        <i class="fas fa-award" style="color: #1D4ED8; font-size: 3rem;" aria-hidden="true"></i>
       </div>
     </div>
       

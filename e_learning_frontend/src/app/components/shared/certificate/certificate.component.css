@@ -50,4 +50,33 @@
   opacity: 0.3; /* Make text less distracting */
   content: 'No Screenshots Allowed';
 }
+.education-badge-icon {
+  color: #4F46E5; /* Adjust color to match your theme */
+  font-size: 3rem; /* Adjust size as needed */
+  transition: color 0.3s ease;
+}
+
+.education-badge-icon:hover {
+  color: #3B82F6; /* Change color on hover */
+}
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-43deg); /* Center and rotate the watermark */
+  opacity: 0.1; /* Light watermark effect */
+  width: 80%; /* Adjust size as needed */
+  z-index: 0; /* Behind content */
+}
+
+.watermark-text {
+  font-size: 3rem; /* Adjust size as needed */
+  color: #1D4ED8; /* Adjust color to match your theme */
+  text-transform: uppercase; /* Uppercase text */
+  font-weight: bold; /* Make text bold */
+  text-align: center; /* Center the text */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+
 

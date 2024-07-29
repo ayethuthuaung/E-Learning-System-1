@@ -6,14 +6,12 @@
 <div class="flex-grow container mx-auto pt-48 relative">
   <div class="transition-transform duration-500 ease-in-out">
     <app-slider class="block rounded-3xl bg-blue-50 p-3 py-4 sm:p-12"
-                *ngIf="categories.length > 0"
-                [items]="categories"
+                *ngIf="filteredCategories.length > 0"
+                [items]="filteredCategories"
                 (categoryClicked)="filterCourses($event)">
     </app-slider>
   </div>
 </div>
-
-
 
 <div class="mt-12 container mx-auto">
   <!-- Search Box -->

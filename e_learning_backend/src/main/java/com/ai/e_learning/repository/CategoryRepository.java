@@ -29,4 +29,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   @Query("SELECT COUNT(c) > 0 FROM Category c WHERE c.name = :name")
   boolean existsByName(String name);
+
+
+
+  
 }
