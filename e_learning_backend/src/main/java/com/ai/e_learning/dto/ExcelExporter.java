@@ -70,7 +70,7 @@ public class ExcelExporter {
             }
         }
 
-        for (int i = 0; i < 10; i++) { // Adjust the loop limit to account for all columns
+        for (int i = 0; i < 8; i++) { // Adjust the loop limit to account for all columns
             sheet.autoSizeColumn(i);
         }
 
@@ -91,7 +91,7 @@ public class ExcelExporter {
 
     private void createHeaderCells(Row headerRow, CellStyle style) {
         Cell cell = headerRow.createCell(0);
-        cell.setCellValue("Name");
+        cell.setCellValue("Student Name");
         cell.setCellStyle(style);
 
         cell = headerRow.createCell(1);
@@ -118,15 +118,15 @@ public class ExcelExporter {
         cell.setCellValue("Course Name");
         cell.setCellStyle(style);
 
-        cell = headerRow.createCell(7);
+        /*cell = headerRow.createCell(7);
         cell.setCellValue("Course Level");
         cell.setCellStyle(style);
 
         cell = headerRow.createCell(8);
         cell.setCellValue("Course Duration");
-        cell.setCellStyle(style);
+        cell.setCellStyle(style);*/
 
-        cell = headerRow.createCell(9);
+        cell = headerRow.createCell(7);
         cell.setCellValue("Completion Percentage");
         cell.setCellStyle(style);
     }
@@ -156,16 +156,16 @@ public class ExcelExporter {
         cell = row.createCell(6);
         cell.setCellValue(course.getName());
 
-        cell = row.createCell(7);
+       /* cell = row.createCell(7);
         cell.setCellValue(course.getLevel());
 
         cell = row.createCell(8);
-        cell.setCellValue(course.getDuration());
+        cell.setCellValue(course.getDuration());*/
 
         // Pass correct userId and courseId
         Double completionPercentage = courseModuleService.calculateCompletionPercentage(userId, course.getId());
         System.out.println("User ID: " + userId + ", Course ID: " + course.getId() + ", Completion Percentage: " + completionPercentage);
-        cell = row.createCell(9);
+        cell = row.createCell(7);
         if (completionPercentage != null) {
             cell.setCellValue(completionPercentage / 100); // Adjust as needed based on the range of your completionPercentage
             CellStyle cellStyle = workbook.createCellStyle();

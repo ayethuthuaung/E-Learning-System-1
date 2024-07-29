@@ -47,7 +47,7 @@ public class PDFExporterForAdmin {
         document.add(title);
 
         // Create a table with 8 columns
-        PdfPTable table = new PdfPTable(8);
+        PdfPTable table = new PdfPTable(7);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
 
@@ -63,7 +63,9 @@ public class PDFExporterForAdmin {
             table.addCell(course.getName());
             table.addCell(course.getLevel());
             table.addCell(course.getDuration());
+/*
             table.addCell(course.getDescription());
+*/
 
             // Convert createdAt timestamp to formatted date string
             LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
@@ -106,8 +108,8 @@ public class PDFExporterForAdmin {
         cell.setPhrase(new Phrase("Course Duration", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Course Description", font));
-        table.addCell(cell);
+        /*cell.setPhrase(new Phrase("Course Description", font));
+        table.addCell(cell);*/
 
         cell.setPhrase(new Phrase("Course Created At", font));
         table.addCell(cell);

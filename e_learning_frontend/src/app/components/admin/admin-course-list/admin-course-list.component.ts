@@ -141,6 +141,7 @@ import { Course } from '../../models/course.model';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 import { WebSocketService } from '../../services/websocket.service';
+import { error } from 'node:console';
 
 
 @Component({
@@ -309,6 +310,8 @@ export class AdminCourseListComponent implements OnInit {
       link.href = window.URL.createObjectURL(blob);
       link.download = 'all_courses.pdf';
       link.click();
+    },error =>{
+      console.error('Error exporting pdf:' , error);
     });
   }
   exportAllCourses() {

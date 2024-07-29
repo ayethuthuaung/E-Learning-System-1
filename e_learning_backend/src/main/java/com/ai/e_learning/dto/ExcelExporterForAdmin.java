@@ -67,15 +67,15 @@ public class ExcelExporterForAdmin {
             cell = row.createCell(3);
             cell.setCellValue(course.getDuration());
 
-            cell = row.createCell(4);
-            cell.setCellValue(course.getDescription());
+            /*cell = row.createCell(4);
+            cell.setCellValue(course.getDescription());*/
 
             // Convert createdAt timestamp to formatted date string
             LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
-            cell = row.createCell(5);
+            cell = row.createCell(4);
             cell.setCellValue(createdAt.format(formatter));
 
-            cell = row.createCell(6);
+            cell = row.createCell(5);
             cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
 
             // Calculate student count for the course
@@ -83,12 +83,12 @@ public class ExcelExporterForAdmin {
                     .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
                     .count();
 
-            cell = row.createCell(7);
+            cell = row.createCell(6);
             cell.setCellValue(studentCount);
         }
 
         // Auto size all columns
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 7; i++) {
             sheet.autoSizeColumn(i);
         }
 
@@ -124,19 +124,19 @@ public class ExcelExporterForAdmin {
         cell.setCellValue("Course Duration");
         cell.setCellStyle(style);
 
-        cell = headerRow.createCell(4);
+        /*cell = headerRow.createCell(4);
         cell.setCellValue("Course Description");
-        cell.setCellStyle(style);
+        cell.setCellStyle(style);*/
 
-        cell = headerRow.createCell(5);
+        cell = headerRow.createCell(4);
         cell.setCellValue("Course Created AT");
         cell.setCellStyle(style);
 
-        cell = headerRow.createCell(6);
+        cell = headerRow.createCell(5);
         cell.setCellValue("Course Status");
         cell.setCellStyle(style);
 
-        cell = headerRow.createCell(7);
+        cell = headerRow.createCell(6);
         cell.setCellValue("Student Count");
         cell.setCellStyle(style);
     }

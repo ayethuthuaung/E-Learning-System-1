@@ -80,7 +80,9 @@ export class CourseService {
   }
   exportCoursesByInstructorToPdf(instructorId: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/instructor/pdf?instructorId=${instructorId}`, { responseType: 'blob' });
-  }
+}
+
+
   exportAllCoursesPDF(): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
   }
