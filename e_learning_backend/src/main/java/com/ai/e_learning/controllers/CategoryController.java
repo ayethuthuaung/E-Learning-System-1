@@ -67,7 +67,10 @@ public class CategoryController {
   public Map<String, Long> getCourseCountsPerCategory() {
     return categoryService.getCourseCountsPerCategory();
   }
-  }
+
+
+
+}
 
 
 

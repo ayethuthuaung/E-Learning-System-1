@@ -27,6 +27,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -74,8 +75,7 @@ public class CourseModuleControllerTest {
 
         List<CourseModuleDto> courseModuleDtos = Arrays.asList(courseModuleDto);
 
-        // Set up the mock to do nothing
-        doNothing().when(courseModuleService).createModules(anyList(), anyList());
+        doNothing().when(courseModuleService).createModules(anyList(),anyList());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/modules/createModules")
                         .file(file)

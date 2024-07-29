@@ -35,6 +35,9 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     private CourseRepository courseRepository;
 
     @Autowired
+    private CertificateRepository certificateRepository;
+
+    @Autowired
     private CertificateService certificateService;
 
     @Override
@@ -112,15 +115,26 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
             studentAnswerRepository.save(studentAnswer);
             result.add(answerResult);
         }
+        Map<String, Object> passed = new HashMap<>();
         Exam exam = EntityUtil.getEntityById(examRepository, examId,"Exam");
         Course course = courseRepository.findCourseByExamId(exam.getId());
         finalExam = exam.isFinalExam();
-        if(finalExam && totalMarks >= exam.getPassScore()){
-            CertificateDto certificateDto = new CertificateDto();
-            certificateDto.setUser(student);
-            certificateDto.setCourse(course);
-            certificateService.saveCertificate(certificateDto);
+
+        if(finalExam && totalMarks >= exam.getPassScore() && student != null){
+            Certificate certificate = certificateRepository.findCertificateByUserIdAndCourseId(student.getId(), course.getId());
+            if(certificate == null){
+                CertificateDto certificateDto = new CertificateDto();
+                certificateDto.setUser(student);
+                certificateDto.setCourse(course);
+
+                certificateService.saveCertificate(certificateDto);
+                passed.put("isPassed", false);
+            }else
+                passed.put("isPassed", true);
+
         }
+        result.add(passed);
+
         return result;
     }
 }

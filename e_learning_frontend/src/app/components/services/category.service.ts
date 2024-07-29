@@ -39,8 +39,8 @@ export class CategoryService {
     return this.httpClient.get<Category>(`${this.baseURL}/${id}`);
   }
 
-  updateCategory(id: number, category: Category): Observable<Object> {
-    return this.httpClient.put(`${this.baseURL}/update/${id}`, category);
+  updateCategory(id: number, category: Category): Observable<Category> {
+    return this.httpClient.put<Category>(`${this.baseURL}/update/${id}`, category);
   }
 
   softDeleteCategory(id: number): Observable<Object>{
@@ -51,5 +51,9 @@ export class CategoryService {
   }
   getCourseCountsPerCategory(): Observable<{ [category: string]: number }> {
     return this.httpClient.get<{ [category: string]: number }>(`${this.baseURL}/course-counts`);
+  }
+
+  getCategoriesByInstructorId(instructorId: string): Observable<Category[]> {
+    return this.httpClient.get<Category[]>(`${this.baseURL}/instructor/${instructorId}`);
   }
 }

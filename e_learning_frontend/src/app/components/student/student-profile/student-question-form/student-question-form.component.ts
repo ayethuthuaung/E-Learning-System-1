@@ -64,7 +64,7 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
 
   certificate: Certificate | null = null;
   certificateId: number | undefined; 
-
+  isPassed: boolean = false;
 
 
   constructor(
@@ -240,6 +240,14 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     this.studentAnswerService.submitStudentAnswers(answers).subscribe(response => {      
       this.checkAnswers(response);
       this.showResults = true;
+      console.log(response);   
+      console.log(response.isPassed);
+      
+      const passedResult = response.find((res: any) => 'isPassed' in res);
+      if (passedResult) {
+          this.isPassed = passedResult.isPassed;
+          console.log(passedResult.isPassed);
+      }
     }, error => {
       console.error('Error submitting answers', error);
     });

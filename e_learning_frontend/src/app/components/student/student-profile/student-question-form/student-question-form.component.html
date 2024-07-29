@@ -90,7 +90,7 @@
             class="bg-logo-blue hover:bg-dark-blue text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 ml-4">
             Save Form
           </button>
-          <button *ngIf="exam.finalExam && showResults && totalMarks >= exam.passScore"
+          <button *ngIf="exam.finalExam && showResults && totalMarks >= exam.passScore && !isPassed"
             type="button"
             (click)="gotoCertificate()"
             class="bg-logo-blue hover:bg-dark-blue text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 ml-4">

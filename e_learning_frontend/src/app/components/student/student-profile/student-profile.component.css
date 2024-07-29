@@ -141,3 +141,12 @@
 .text-white {
   color: #fff;
 }
+.education-badge-icon {
+  color: #4F46E5; /* Adjust color to match your theme */
+  font-size: 2rem; /* Adjust size if needed */
+  transition: color 0.3s ease;
+}
+
+.education-badge-icon:hover {
+  color: #3B82F6; /* Change color on hover */
+}

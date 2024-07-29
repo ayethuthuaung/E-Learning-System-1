@@ -110,7 +110,8 @@ onFilterChange(event: { key: string, term: string }) {
   this.updatePaginatedStudentByCourses();
 }
 
-  updatePaginatedStudentByCourses() {
+  updatePaginatedStudentByCourses() 
+  {
     let filteredStudentByCourses = this.userCourses.filter(userCourse =>
       userCourse.user?.staffId.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
