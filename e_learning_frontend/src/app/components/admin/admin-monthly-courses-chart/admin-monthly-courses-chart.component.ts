@@ -9,6 +9,7 @@ import { Chart, ChartConfiguration, ChartType } from 'chart.js';
 })
 export class AdminMonthlyCoursesChartComponent implements AfterViewInit, OnDestroy {
   @Input() chartType: ChartType = 'bar';
+  selectedStepSize: number = 1;
 
   private chartInstance: Chart | null = null;
   private labels: string[] = [
@@ -42,6 +43,12 @@ export class AdminMonthlyCoursesChartComponent implements AfterViewInit, OnDestr
     }
   }
 
+  onStepSizeChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.selectedStepSize = +value;
+    this.renderChart();
+  }
+
   renderChart(): void {
     const ctx = document.getElementById('barChart') as HTMLCanvasElement;
 
@@ -68,7 +75,7 @@ export class AdminMonthlyCoursesChartComponent implements AfterViewInit, OnDestr
         x: {
           beginAtZero: true,
           ticks: {
-            stepSize: 1
+            stepSize: this.selectedStepSize
           }
         }
       }

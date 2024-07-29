@@ -25,8 +25,10 @@ export class Course {
   chatRoomId: number; // Added property
   modules: Module[];
   lessons: Lesson[];
-  acceptedAt: number;
+  acceptedAt?: number;
+  requestedAt?: number;
   createdAt: number;
+  studentCount?: number;
 
   createdDate: string;
   completion: any;
@@ -56,7 +58,6 @@ export class Course {
     this.lessons=[];
     this.createdDate = '';
     this.createdAt = 0;
-    this.acceptedAt = 0;
 
   }
 }

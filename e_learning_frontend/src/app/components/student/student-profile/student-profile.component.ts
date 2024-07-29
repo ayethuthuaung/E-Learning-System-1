@@ -42,6 +42,8 @@ export class StudentProfileComponent implements OnInit {
   hasUserCertificate: boolean = false;
   certificateStatuses: { [key: number]: boolean } = {};
 
+  isChangePasswordModalOpen = false;
+
   constructor(
     private router: Router,
     private courseService: CourseService,
@@ -333,4 +335,8 @@ export class StudentProfileComponent implements OnInit {
   }
  
 
+
+  openChangePasswordModal(): void {
+    this.isChangePasswordModalOpen = true;
+  }
 }

@@ -24,6 +24,7 @@ public interface QuestionService {
 
     public List<QuestionDto> getQuestionsByQuestionType(Long questionTypeId);
 
+    void addQuestionType();
 
 
 //    List<QuestionDTO> getQuestionsWithAnswers(Long examId);

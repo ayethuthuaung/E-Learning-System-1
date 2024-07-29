@@ -2,6 +2,10 @@ import { CourseService } from '../../services/course.service';
 import { UserCourse } from './../../models/usercourse.model';
 import { UserCourseService } from './../../services/user-course.service';
 import { Component, OnInit , OnDestroy} from '@angular/core';
+import { CourseModuleService } from '../../services/course-module.service';
+import { Course } from './../../models/course.model';
+
+
 import { orderBy } from 'lodash';
 declare var Swal: any;
 
@@ -25,11 +29,17 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
   sortDirection: string = 'asc';
   filterTerm = '';
   filterKey = '';
+  coursePercentages: { [courseId: number]: number} = {};
+  enrolledCourses: Course[] = [];
 
   private pollingInterval: any;
   private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
 
-  constructor(private userCourseService: UserCourseService,private courseService: CourseService) {}
+  constructor(
+    private userCourseService: UserCourseService,
+    private courseService: CourseService,
+    private courseModuleService: CourseModuleService) {}
+
   ngOnInit() {
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
@@ -53,6 +63,7 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.userCourses = orderBy(data, ['createdAt'], ['desc']);
       this.updatePaginatedStudentByCourses();
+      this.fetchCoursePercentages();
       this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
     },
     error: (err) => console.error('Error fetching UserCourse:', err)
@@ -99,6 +110,7 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
     this.totalPages = Math.ceil(filteredStudentByCourses.length / this.itemsPerPage);
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
+
     this.paginatedUserCourses = filteredStudentByCourses.slice(start, end);
   }
 
@@ -199,6 +211,18 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
       link.click();
     }, error => {
       console.error('Error exporting courses to PDF:', error);
+    });
+  }
+
+   fetchCoursePercentages(): void {
+    this.enrolledCourses.forEach(course => {
+      this.courseModuleService.getCompletionPercentage(this.loggedUser.id, course.id).subscribe({
+        next: (percentage) => {
+          console.log(`Fetched percentage for course ${course.id}: ${percentage}`);
+          this.coursePercentages[course.id] = percentage;
+        },
+        error: (e) => console.log(e)
+      });
     });
   }
 
