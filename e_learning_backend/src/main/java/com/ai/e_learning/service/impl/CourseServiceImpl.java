@@ -10,10 +10,12 @@ import com.ai.e_learning.model.Course;
 import com.ai.e_learning.model.User;
 import com.ai.e_learning.repository.CategoryRepository;
 import com.ai.e_learning.repository.CourseRepository;
+import com.ai.e_learning.repository.UserCourseRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.CourseService;
 import com.ai.e_learning.service.RoleService;
 import com.ai.e_learning.util.*;
+import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
@@ -48,6 +50,9 @@ public class CourseServiceImpl implements CourseService {
   private UserRepository userRepository;
 
   @Autowired
+  private UserCourseRepository userCourseRepository;
+
+  @Autowired
   private ModelMapper modelMapper;
   private final Helper helper;
 
@@ -73,7 +78,6 @@ public class CourseServiceImpl implements CourseService {
     List<String> statusList = Arrays.asList(status.split(","));
     List<Course> allCourses = courseRepository.findByStatusIn(statusList);
 
-      for (Course course : allCourses) {
 
 //      try {
 //        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
@@ -84,8 +88,7 @@ public class CourseServiceImpl implements CourseService {
 //        e.printStackTrace();
 //      }
         // Convert createdAt to createdDate in CourseDto
-        course.setCreatedDate(convertLongToLocalDate(course.getCreatedAt()));
-    }
+
 
     return DtoUtil.mapList(allCourses,CourseDto.class,modelMapper);
   }
@@ -176,6 +179,11 @@ public class CourseServiceImpl implements CourseService {
   public void changeStatus(Long id,String status){
     Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
     course.setStatus(status);
+    if("Pending".equals(status))
+      course.setRequestedAt(System.currentTimeMillis());
+    else
+      course.setAcceptedAt(System.currentTimeMillis());
+
     Course updatedCourse = EntityUtil.saveEntity(courseRepository, course, "Course");
 
     Hibernate.initialize(updatedCourse.getUser());
@@ -194,8 +202,6 @@ public class CourseServiceImpl implements CourseService {
     } else {
       System.out.println("Instructor role not found");
     }
-    course.setAcceptedAt(System.currentTimeMillis());
-    EntityUtil.saveEntity(courseRepository,course,"Course");
   }
 
   @Override
@@ -307,7 +313,12 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public List<CourseDto> getCoursesByUserId(Long userId) {
     List<Course> courses = courseRepository.findByUserIdAndIsDeletedFalse(userId);
-    return DtoUtil.mapList(courses,CourseDto.class,modelMapper);
+    List<CourseDto> courseDtos = DtoUtil.mapList(courses,CourseDto.class,modelMapper);
+    for(CourseDto courseDto : courseDtos){
+      List<UserCourse> userCourses = userCourseRepository.findByCourseId(courseDto.getId());
+      courseDto.setStudentCount(userCourses.size());
+    }
+    return courseDtos;
   }
 
   private Course convertToEntity(CourseDto dto) {

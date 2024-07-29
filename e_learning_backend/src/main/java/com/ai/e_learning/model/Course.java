@@ -26,9 +26,14 @@ public class Course  {
 
   @Column(nullable = false, length = 500)
   private String description;
+
   private Long createdAt;
-  private String createdDate;
+  private Long requestedAt;
   private Long acceptedAt;
+
+//    @Column
+//    private Long statusChangeTimestamp;
+
   @Column(nullable = false, length = 30)
   private String certificate;
   @Column(nullable = false, length = 30)
