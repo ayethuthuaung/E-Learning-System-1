@@ -33,7 +33,7 @@
                   <div *ngIf="nameDuplicateError" class="text-red-500 mb-2">
                     Course name already exists.
                   </div>
-                  <div *ngIf="courseForm.submitted && !course.name" class="text-red-500 mb-2">
+                  <div *ngIf="errorMessage && !course.name " class="text-red-500 mb-2">
                     Please fill the field.
                   </div>
 
@@ -43,9 +43,9 @@
                     placeholder="Name" />
 
 
-                  <div *ngIf="courseForm.submitted && !course.level" class="text-red-500 mb-2">
-                    Please fill the field.
-                  </div>
+                    <div *ngIf="errorMessage && !course.level" class="text-red-500 mb-2">
+                      Please fill the field.
+                    </div>
                   <select
                     class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                     id="level" name="level" [(ngModel)]="course.level" required>
@@ -55,7 +55,7 @@
                     <option value="Advanced">Advanced</option>
                   </select>
 
-                  <div *ngIf="courseForm.submitted && !course.duration" class="text-red-500 mb-2">
+                  <div *ngIf="errorMessage && !course.duration " class="text-red-500 mb-2">
                     Please fill the field.
                   </div>
 
@@ -64,15 +64,17 @@
                     id="duration" name="duration" [(ngModel)]="course.duration" required placeholder="Duration" />
 
 
-                  <div *ngIf="courseForm.submitted && !course.description" class="text-red-500 mb-2">
-                    Please fill the field.
-                  </div>
+                    <div *ngIf="errorMessage && !course.description " class="text-red-500 mb-2">
+                      Please fill the field.
+                    </div>
                   <textarea type="text"
                     class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                     id="description" name="description" [(ngModel)]="course.description" required
                     placeholder="Description"></textarea>
 
-
+                    <div *ngIf="errorMessage && !course.photo " class="text-red-500 mb-2">
+                      Please fill the field.
+                    </div>
                   <div
                     class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
                     <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload
@@ -81,6 +83,9 @@
                       class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500" />
                   </div>
 
+                  <div *ngIf="errorMessage && (!course.categorylist || course.categorylist.length === 0)" class="text-red-500 mb-2">
+                    Please fill the field.
+                  </div>
                   <div
                     class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
                     <label class="block mb-2 font-medium text-gray-700">Select Categories:</label>
@@ -95,13 +100,13 @@
                       </div>
                     </div>
                   </div>
-
-                  <button type="button"
-                  [ngClass]="isEditing ? 'bg-green-500 hover:bg-green-700' : 'bg-logo-blue hover:bg-dark-blue'"
-                  class="text-white font-bold py-2 px-4 rounded-md mt-4 transition ease-in-out duration-150"
-                  [disabled]="nameDuplicateError" (click)="isEditing ? confirmUpdateCourse() : onSubmit(courseForm)">
-                  {{ isEditing ? 'Update' : 'Submit' }}
-                </button>
+                  
+                    <button type="button"
+                    [ngClass]="isEditing ? 'bg-green-500 hover:bg-green-700' : 'bg-logo-blue hover:bg-dark-blue'"
+                    class="text-white font-bold py-2 px-4 rounded-md mt-4 transition ease-in-out duration-150"
+                    [disabled]="nameDuplicateError" (click)="isEditing ? confirmUpdateCourse() : onSubmit(courseForm)">
+                    {{ isEditing ? 'Update' : 'Submit' }}
+                  </button>
 
                 </form>
 
@@ -163,11 +168,11 @@
 
 
                   <!-- download button -->
-                  <button (click)="exportCourses()" class="py-2 px-4 bg-blue-500 text-white rounded-md">
+                  <button (click)="exportCourses()" class="py-2 px-4 bg-logo-blue hover:bg-dark-blue text-white rounded-md">
                     Excel
                   </button>
 
-                  <button (click)="exportCoursesPdf()" class="py-2 px-4 bg-blue-500 text-white rounded-md">
+                  <button (click)="exportCoursesPdf()" class="py-2 px-4 bg-logo-blue hover:bg-dark-blue text-white rounded-md">
                     PDF
                   </button>
                   
@@ -211,6 +216,12 @@
                         </app-filter-sort-dropdown>
                       </th>
                       <th class="p-2 border">
+                        Level
+                        <app-filter-sort-dropdown (sortChanged)="onSortChange('level', $event)"
+                          (filterChanged)="onFilterChange($event)">
+                        </app-filter-sort-dropdown>
+                      </th>
+                      <th class="p-2 border">
                         Duration
                         <app-filter-sort-dropdown (sortChanged)="onSortChange('duration', $event)"
                           (filterChanged)="onFilterChange($event)">
@@ -235,8 +246,9 @@
                     <tr *ngFor="let course of paginatedInstructorCourses; let i = index" class="hover:bg-gray-100">
                       <td class="p-2 border">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
                       <td class="p-2 border">{{ course.name }}</td>
+                      <td class="p-2 border">{{ course.level }}</td>
                       <td class="p-2 border">{{ course.duration }}</td>
-                      <td class="p-2 border">{{ course.createdAt | date: 'short' }}</td>
+                      <td class="p-2 border">{{ course.createdAt | date:'dd-MMMM-yy' }}</td>
                       <td class="p-2 border" [ngClass]="{
                         'text-logo-blue': course.status === 'In Progress',
                         'text-green-700': course.status === 'Accept',

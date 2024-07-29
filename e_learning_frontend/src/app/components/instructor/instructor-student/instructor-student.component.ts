@@ -112,11 +112,14 @@ onFilterChange(event: { key: string, term: string }) {
 
   updatePaginatedStudentByCourses() {
     let filteredStudentByCourses = this.userCourses.filter(userCourse =>
-      userCourse.course?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      userCourse.user?.staffId.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      userCourse.user?.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      userCourse.course?.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.team.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      userCourse.user?.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      userCourse.progressOutput?.toLowerCase().includes(this.searchTerm.toLowerCase())  ||
+      userCourse.certificateOutput?.toLowerCase().includes(this.searchTerm.toLowerCase()) || // search in completed field
+      // search in progress field
+  
       userCourse.status.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 

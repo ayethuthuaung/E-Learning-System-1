@@ -55,15 +55,15 @@ public class UserCourseController {
 
   //ATTA
 
-  @PutMapping("/update/{userCourseId}")
-  public ResponseEntity<UserCourseDto> updateUserCourse(
-    @PathVariable Long userCourseId,
-    @RequestBody UserCourseDto userCourseDto
-  ) {
-    UserCourseDto updatedUserCourse = userCourseService.updateUserCourse(userCourseId,
-      userCourseDto.isCompleted(), userCourseDto.getProgress(), userCourseDto.getStatus());
-    return ResponseEntity.ok(updatedUserCourse);
-  }
+//  @PutMapping("/update/{userCourseId}")
+//  public ResponseEntity<UserCourseDto> updateUserCourse(
+//    @PathVariable Long userCourseId,
+//    @RequestBody UserCourseDto userCourseDto
+//  ) {
+//    UserCourseDto updatedUserCourse = userCourseService.updateUserCourse(userCourseId,
+//      userCourseDto.isCompleted(), userCourseDto.getProgress(), userCourseDto.getStatus());
+//    return ResponseEntity.ok(updatedUserCourse);
+//  }
 
   @GetMapping("/user/{userId}")
   public ResponseEntity<User> getUserById(@PathVariable Long userId) {
@@ -93,8 +93,8 @@ public class UserCourseController {
   }
 
   @GetMapping("/check-enrollment-acceptance/{userId}/{courseId}")
-  public ResponseEntity<Boolean> checkEnrollmentAcceptance(@PathVariable Long userId, @PathVariable Long courseId) {
-    boolean isAccepted = userCourseService.checkEnrollmentAcceptance(userId, courseId);
+  public ResponseEntity<Integer> checkEnrollmentAcceptance(@PathVariable Long userId, @PathVariable Long courseId) {
+    int isAccepted = userCourseService.checkEnrollmentAcceptance(userId, courseId);
     return ResponseEntity.ok(isAccepted);
   }
 

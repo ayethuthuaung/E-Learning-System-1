@@ -13,6 +13,7 @@ import { UserCourse } from '../../models/usercourse.model';
 })
 export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isSidebarOpen = true;
+  
   courseCount: number = 0;
   courseNames: string[] = [];
   acceptedStudentCounts: { [courseName: string]: number,  } = {};
@@ -49,6 +50,15 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
     },
     options: {
       responsive: true,
+      layout: {
+        padding: {
+          left: 25, // Adjust this value for space on the left side of the chart
+          right: 25, // Adjust this value for space on the right side of the chart
+          top: 25, // Optional: Adjust top padding if needed
+          bottom: 25 // Optional: Adjust bottom padding if needed
+        }
+      },
+      
       scales: {
         x: {
           stacked: false,
@@ -59,6 +69,9 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
           beginAtZero: true,
           ticks: {
             stepSize: 1 // Ensure y-axis steps are whole numbers
+          },
+          grid: {
+            color: 'rgba(75, 192, 192, 0.2)' // Optional: Make the grid border invisible if needed
           }
         }
       }
@@ -109,34 +122,42 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
   }
 
   private loadStudentCounts(): void {
-    const instructorId = this.authService.getLoggedInUserId();
-    this.userCourseService.getAllUserCourses(instructorId).subscribe(
-      (userCourses: UserCourse[]) => {
-        const courseCounts = new Map<number, { studentCount: number, acceptedCount: number }>();
+  const instructorId = this.authService.getLoggedInUserId();
+  this.userCourseService.getAllUserCourses(instructorId).subscribe(
+    (userCourses: UserCourse[]) => {
+      // Filter to include only courses that are accepted
+      const acceptedCourseIds = this.courseNames.map(courseName => {
+        const userCourse = userCourses.find(uc => uc.course && uc.course.name === courseName);
+        return userCourse ? userCourse.courseId : null;
+      }).filter(id => id !== null) as number[];
 
-        userCourses.forEach(userCourse => {
-          const courseId = userCourse.courseId;
-          if (!courseCounts.has(courseId)) {
-            courseCounts.set(courseId, { studentCount: 0, acceptedCount: 0 });
+      const courseCounts = new Map<number, { studentCount: number, acceptedCount: number }>();
+
+      userCourses.forEach(userCourse => {
+        if (userCourse.course && acceptedCourseIds.includes(userCourse.courseId)) {
+          if (!courseCounts.has(userCourse.courseId)) {
+            courseCounts.set(userCourse.courseId, { studentCount: 0, acceptedCount: 0 });
           }
-          const counts = courseCounts.get(courseId)!;
+          const counts = courseCounts.get(userCourse.courseId)!;
           counts.studentCount++;
           if (userCourse.status === 'Accept') {
             counts.acceptedCount++;
           }
-        });
+        }
+      });
 
-        this.studentCounts = Array.from(courseCounts, ([courseId, counts]) => ({
-          courseId,
-          ...counts
-        }));
-      },
-      (error) => {
-        console.error('Error fetching student counts', error);
-      }
-    );
-  }
+      this.studentCounts = Array.from(courseCounts, ([courseId, counts]) => ({
+        courseId,
+        ...counts
+      }));
+    },
+    (error) => {
+      console.error('Error fetching student counts', error);
+    }
+  );
+}
 
+  
 
   private loadAcceptedStudentCounts(): void {
     this.userCourseService.getAcceptedStudentCounts().subscribe(
@@ -151,12 +172,12 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
   }
 
   private updateChartData(): void {
-    const acceptedStudentData = this.courseNames.map(name =>
-      this.acceptedStudentCounts[name] || 0
-    );
+    // Filter course names to only include those with accepted students
+    const filteredCourseNames = this.courseNames.filter(name => this.acceptedStudentCounts[name] > 0);
+    const filteredAcceptedStudentData = filteredCourseNames.map(name => this.acceptedStudentCounts[name]);
 
-    this.chartConfig.data.labels = this.courseNames;
-    this.chartConfig.data.datasets[0].data = acceptedStudentData.map(count => Math.round(count)); // Round to nearest integer
+    this.chartConfig.data.labels = filteredCourseNames;
+    this.chartConfig.data.datasets[0].data = filteredAcceptedStudentData.map(count => Math.round(count)); // Round to nearest integer
 
     this.renderChart();
   }

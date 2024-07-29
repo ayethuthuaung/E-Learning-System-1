@@ -9,10 +9,7 @@ import com.ai.e_learning.repository.RoleRepository;
 import com.ai.e_learning.repository.UserRepository;
 import com.ai.e_learning.service.ExcelUploadService;
 import com.ai.e_learning.service.UserService;
-import com.ai.e_learning.util.DtoUtil;
-import com.ai.e_learning.util.EntityUtil;
-import com.ai.e_learning.util.GoogleDriveJSONConnector;
-import com.ai.e_learning.util.Helper;
+import com.ai.e_learning.util.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,7 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
     private final Helper helper;
+    private final CloudinaryService cloudinaryService;
 
 
     public void updateExcel(MultipartFile file) {
@@ -65,13 +63,10 @@ public class UserServiceImpl implements UserService {
 
                     User update_user = userRepository.findUserByStaffId(user.getStaffId());
                     if (update_user != null) {
-                        System.out.println("<1> <1>");
 
                         if (!update_user.getDivision().equalsIgnoreCase(user.getDivision())) {
-                            System.out.println("In null");
                             update_user.setDivision(user.getDivision());
                         } else {
-                            System.out.println("null In");
                             update_user.setDivision(update_user.getDivision());
                         }
 
@@ -119,7 +114,9 @@ public class UserServiceImpl implements UserService {
                         }
                         System.out.println(roleList.get(index) + "<>");
                         update_user.setCreatedAt(System.currentTimeMillis());
-                        user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
+                        update_user.setPhoto(update_user.getPhoto());
+
+//                        user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
 
 
                         Role role = roleRepository.findByName(roleList.get(index)).orElse(null);
@@ -130,7 +127,7 @@ public class UserServiceImpl implements UserService {
                     } else {
                         user.setCreatedAt(System.currentTimeMillis());
                         user.setPassword(passwordEncoder.encode("123@dirace"));
-                        user.setPhoto("https://lh3.google.com/u/0/d/14Ir2Jzvm49iR_CpaH6oVKPjWEngDT4Hh");
+                        user.setPhoto("http://res.cloudinary.com/dshrtebct/image/upload/v1722069545/8b208a10-a3f1-4e14-bfcd-b474b9029646.png");
                         Role role = roleRepository.findByName(roleList.get(index)).orElse(null);
 
                         Set<Role> roles = new HashSet<>();
@@ -308,7 +305,7 @@ public class UserServiceImpl implements UserService {
                     "HR",
                     "Admin/HR",
                     "Active",
-                    "userPhoto.png",
+                    "http://res.cloudinary.com/dshrtebct/image/upload/v1722069545/8b208a10-a3f1-4e14-bfcd-b474b9029646.png",
                     passwordEncoder.encode("11111"),
                     System.currentTimeMillis(),
                     new HashSet<>(Collections.singletonList(adminRole)),
@@ -324,22 +321,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public ImageResponse uploadProfile(MultipartFile file,Long userId) throws IOException, GeneralSecurityException {
         User user = EntityUtil.getEntityById(userRepository, userId,"user");
-        File tempFile = File.createTempFile(user.getName() + "_" + Helper.getCurrentTimestamp(), null);
-        file.transferTo(tempFile);
-        String imageUrl = helper.uploadImageToDrive(tempFile, "user");
+//        File tempFile = File.createTempFile(user.getName() + "_" + Helper.getCurrentTimestamp(), null);
+//        file.transferTo(tempFile);
+//        String imageUrl = helper.uploadImageToDrive(tempFile, "user");
+
+        //Cloudinary
+//        MultipartFile photofile = file;
+        String fileUrl = cloudinaryService.uploadFile(file);
+        user.setPhoto(fileUrl);
+
         //boolean isUploaded = helper.uploadImageToDrive(tempFile);
         // return new GoogleDriveJSONConnector().uploadFileToDrive(file, contentType);
-        user.setPhoto(tempFile.getName());
+//        user.setPhoto(tempFile.getName());
         userRepository.save(user);
         ImageResponse imageResponse = new ImageResponse();
         imageResponse.setStatus(200);
         imageResponse.setMessage("File Successfully Uploaded To Drive");
-        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-        String fileId = driveConnector.getFileIdByName(user.getPhoto());
-        System.out.println("fileId"+fileId);
-        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
-        imageResponse.setUrl(thumbnailLink);
-        System.out.println("thumnailLink"+thumbnailLink);
+//        GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//        String fileId = driveConnector.getFileIdByName(user.getPhoto());
+//        System.out.println("fileId"+fileId);
+//        String thumbnailLink = driveConnector.getFileThumbnailLink(fileId);
+        imageResponse.setUrl(fileUrl);
+        System.out.println("fileUrl"+fileUrl);
         return imageResponse;
     }
 
@@ -348,6 +351,14 @@ public class UserServiceImpl implements UserService {
         User user = EntityUtil.getEntityById(userRepository, userId,"User");
         User examOwner = userRepository.findExamOwnerByExamId(examId);
         return user.getStaffId().equals(examOwner.getStaffId());
+    }
+    //NN
+    @Override
+    public long countInstructors() {
+      Role instructorRole = roleRepository.findByName("Instructor")
+        .orElseThrow(() -> new RuntimeException("Instructor role not found"));
+
+      return userRepository.countByRolesContains(instructorRole);
     }
 
 

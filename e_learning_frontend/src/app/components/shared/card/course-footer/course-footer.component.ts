@@ -20,6 +20,8 @@ export class CourseFooterComponent implements OnInit, OnDestroy {
   userId: number | undefined;
   isEnrolled: boolean = false; 
   isAccepted: boolean = false; 
+  isPending: boolean = false;
+  isRejected: boolean = false;
   userCourseId: number | undefined; 
 
   isOwner: boolean = false;
@@ -111,14 +113,14 @@ export class CourseFooterComponent implements OnInit, OnDestroy {
     if (this.course && this.userId) {
       this.userCourseService.checkEnrollmentAcceptance(this.userId, this.course.id).subscribe(
         
-        (isAccepted: boolean) => {
-          this.isAccepted = isAccepted;
-          console.log(this.isAccepted);
-
-        },
-        (error) => {
+        (status: number) => {
+          this.isPending = (status === 0); 
+          this.isAccepted = (status === 1); 
+          this.isRejected = (status === 2);
+      },
+      (error) => {
           console.error('Error checking enrollment acceptance', error);
-        }
+      }
       );
     }
   }
@@ -129,15 +131,15 @@ export class CourseFooterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.isEnrolled) {
-      Swal.fire({
-        title: 'Already Enrolled',
-        text: 'You are already enrolled in this course. Please wait for the instructor to approve your enrollment.',
-        icon: 'info',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
+    // if (this.isEnrolled) {
+    //   Swal.fire({
+    //     title: 'Already Enrolled',
+    //     text: 'You are already enrolled in this course. Please wait for the instructor to approve your enrollment.',
+    //     icon: 'info',
+    //     confirmButtonText: 'OK'
+    //   });
+    //   return;
+    // }
 
     const courseName = this.course.name ?? 'this course';
 

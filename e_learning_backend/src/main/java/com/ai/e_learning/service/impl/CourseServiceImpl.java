@@ -214,15 +214,25 @@ public class CourseServiceImpl implements CourseService {
               if (courseDto.getPhotoInput() == null || courseDto.getPhotoInput().isEmpty()) {
                 courseDto.setPhoto(existingCourse.getPhoto());
               } else {
-                String imageUrl;
-                GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
-
-                try {
-                  imageUrl = driveConnector.uploadImageToDrive2(courseDto.getPhotoInput(), "Course");
-                } catch (IOException | GeneralSecurityException e) {
-                  throw new RuntimeException("Failed to upload file to Google Drive", e);
-                }
-                courseDto.setPhoto("https://lh3.google.com/u/0/d/" + imageUrl);
+//                String imageUrl;
+//                GoogleDriveJSONConnector driveConnector = new GoogleDriveJSONConnector();
+//
+//                try {
+//                  imageUrl = driveConnector.uploadImageToDrive2(courseDto.getPhotoInput(), "Course");
+//                } catch (IOException | GeneralSecurityException e) {
+//                  throw new RuntimeException("Failed to upload file to Google Drive", e);
+//                }
+//                courseDto.setPhoto("https://lh3.google.com/u/0/d/" + imageUrl);
+                //Cloudinary
+                MultipartFile photofile = courseDto.getPhotoInput();
+                  String fileUrl = null;
+                  try {
+                      fileUrl = cloudinaryService.uploadFile(photofile);
+                  } catch (IOException e) {
+                      throw new RuntimeException(e);
+                  }
+                  courseDto.setPhoto(fileUrl);
+                courseDto.setPhotoName(photofile.getOriginalFilename());
               }
               List<Long> categoryIdList = new ArrayList<>();
               for(Category category : courseDto.getCategories()){

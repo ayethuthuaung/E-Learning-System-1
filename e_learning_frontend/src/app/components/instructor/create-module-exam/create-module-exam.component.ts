@@ -43,7 +43,7 @@ export class CreateModuleExamComponent implements OnInit{
   lessonId: number = -1;
   lessons :Lesson[] =[];
   lesson!: { title: ''; };
-  modules: Module[] = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+  modules: Module[] = [{ id: 1, name: '',url: "", file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   moduleList: Module[]=[];
   courseId: number = 0;
 
@@ -67,7 +67,7 @@ course: Course | undefined;
  examTitle: string='';
  examDescription: string= '';
  examDuration: string= '';
- examFinal: boolean | null = null;
+ examFinal: boolean | null = false;
  examPassScore: number = 0;
  formDescription: string = 'Please fill out this form';
  examList: ExamList[]=[];
@@ -128,7 +128,7 @@ course: Course | undefined;
 
 
   addModule() {
-    this.modules.push({ id:1,name: '', file:'',fileInput: null, fileType:'',done:false, createdAt: Date.now()}); // Initialize File as null
+    this.modules.push({ id:1,name: '',url: '', file:'',fileInput: null, fileType:'',done:false, createdAt: Date.now()}); // Initialize File as null
     console.log(this.modules);
     
   }
@@ -200,7 +200,7 @@ course: Course | undefined;
           this.isEditing = false;
           moduleForm.resetForm();
           this.modules = [];
-          this.modules = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+          this.modules = [{ id: 1, name: '',url: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
 
           this.loadModulesByLessonId(this.lessonId);
         },
@@ -256,7 +256,7 @@ course: Course | undefined;
 
                 moduleForm.resetForm();
                 this.modules = [];
-                this.modules = [{ id: 1, name: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+                this.modules = [{ id: 1, name: '',url: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   
                 this.loadModulesByLessonId(this.lessonId);
               },

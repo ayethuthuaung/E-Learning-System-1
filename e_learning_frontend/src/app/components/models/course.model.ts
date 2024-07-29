@@ -16,6 +16,7 @@ export class Course {
   deleted?: boolean;
   photoFile?: File;
   photo?: string;
+  photoName?: string;
   userId: number;
   status: string;
   user: User | undefined;

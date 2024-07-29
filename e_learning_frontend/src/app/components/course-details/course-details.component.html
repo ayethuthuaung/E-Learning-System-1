@@ -85,15 +85,19 @@
     </div>
     <br>
     <ng-container *ngIf="showFinalExam">
-    <div  *ngFor="let exam of filteredExamList" 
-          class="p-4 bg-gray-300 rounded-lg shadow flex items-center justify-between">
-            <button (click)="viewQuestionFormClick(exam.id)" class="text-xl font-bold text-logo-blue hover:text-white">{{ exam.title }}</button>
-      </div>
+        <div *ngFor="let exam of filteredExamList"
+             class="p-4 bg-gray-300 rounded-lg shadow flex items-center justify-between">
+          <button (click)="viewQuestionFormClick(exam.id)" 
+                  class="text-xl font-bold text-logo-blue hover:text-white">
+            {{ exam.title }}
+          </button>
+        </div>
     </ng-container>
+   
   </div>
-</div> 
+</div>  
 
-<button (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-logo-blue text-white p-3 rounded-full shadow-lg hover:bg-dark-blue text-sm">
+<button *ngIf="!isOwner && !hasRole(2)" (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-logo-blue text-white p-3 rounded-full shadow-lg hover:bg-dark-blue text-sm">
   <i class="fas fa-comments"></i>
   <span *ngIf="unreadCount > 0" class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-6 h-6 flex items-center justify-center">
     {{ unreadCount }}

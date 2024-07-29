@@ -31,6 +31,9 @@
     <div class="w-full lg:w-7/12 xl:w-6/12 p-2">
       <div class="bg-white rounded-lg shadow-md p-6">
         <form class="flex flex-col" #lessonForm="ngForm" (ngSubmit)="onSubmit(lessonForm)" method="post">
+          <div *ngIf="lessonForm.submitted && !lesson.title" class="text-red-500 mb-2">
+            Please fill the field.
+          </div>
           <input
             type="text"
             class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"

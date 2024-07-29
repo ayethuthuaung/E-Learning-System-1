@@ -20,7 +20,8 @@ export class InstructorCategoryComponent implements OnInit {
   errorMessage: string = '';
   categories: Category[] = [];
   nameDuplicateError = false;
-  nameRequiredError = false;
+  submitted = false;
+
   createdCategoryName: string = '';
   selectedCategory: Category = new Category();
   currentUserId: string = '';
@@ -62,12 +63,12 @@ export class InstructorCategoryComponent implements OnInit {
 
   validateCategoryName(name: string): void {
     if (!name.trim()) {
-      this.nameRequiredError = true;
+      this.submitted = true;
       this.nameDuplicateError = false;
       return;
     }
 
-    this.nameRequiredError = false;
+    this.submitted = false;
     this.categoryService.isCategoryNameAlreadyExists(name).subscribe(
       (exists: boolean) => {
         this.nameDuplicateError = exists;
@@ -79,15 +80,19 @@ export class InstructorCategoryComponent implements OnInit {
     );
   }
 
+
   onSubmit(form: NgForm): void {
-    if (form.valid && !this.nameDuplicateError) {
-      this.category.id ? this.updateCategory(this.category.id) : this.createCategory();
+    if (form.valid) {
+      this.submitted = false;
+     
+      
     } else {
-      console.log('Form is invalid.');
-      this.nameRequiredError = true;
+      this.submitted = true;
+      console.log('invalid form');
+      this.errorMessage = 'Please fill the required fields';
     }
   }
-
+  
   createCategory(): void {
     this.categoryService.createCategory(this.category).subscribe(
       () => {
@@ -128,22 +133,37 @@ export class InstructorCategoryComponent implements OnInit {
       );
     } else {
       console.log('Form is invalid.');
-      this.nameRequiredError = true;
+      this.submitted = true;
     }
   }
 
   softDeleteCategory(id: number): void {
-    this.categoryService.softDeleteCategory(id).subscribe({
-      next: () => {
-        this.categories = this.categories.filter(category => category.id !== id);
-        this.getCategories();
-      },
-      error: (error) => {
-        console.error('Error deleting category:', error);
-        this.errorMessage = `Error deleting category: ${error}`;
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "This category will be soft deleted and won't be visible in the category list.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        this.categoryService.softDeleteCategory(id).subscribe({
+          next: () => {
+            this.categories = this.categories.filter(category => category.id !== id);
+            this.getCategories();
+            // Optionally show a brief notification or just handle the UI update
+          },
+          error: (error) => {
+            console.error('Error deleting category:', error);
+            this.errorMessage = `Error deleting category: ${error}`;
+          }
+        });
       }
     });
   }
+  
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;

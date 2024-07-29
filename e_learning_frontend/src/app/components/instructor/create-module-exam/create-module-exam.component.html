@@ -35,7 +35,11 @@
               <div class="bg-white rounded-lg shadow-md p-6">
                 <form class="flex flex-col" #moduleForm="ngForm" (ngSubmit)="onSubmit(moduleForm)" method="post">
                   <div *ngFor="let module of modules; let i = index" class="mb-4">
-                    <div class="flex items-center mb-2">
+                    
+                    <div *ngIf="moduleForm.submitted && !module.name" class="text-red-500 mb-2">
+                      Please fill the field.
+                    </div><div class="flex items-center mb-2">
+                      
                       <input
                         type="text"
                         class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 flex-grow"
@@ -52,6 +56,9 @@
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>
+                    <div *ngIf="moduleForm.submitted && !module.url" class="text-red-500 mb-2">
+                      Please fill the field.
+                    </div>
                     <input
                       type="file"
                       class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 w-full"
@@ -60,6 +67,7 @@
                       required
                     />
                   </div>
+                  
           
                   <div class="flex space-x-2">
                     <button
@@ -278,8 +286,10 @@
             <li *ngFor="let exam of examList; let i = index" class="group">
               <div 
                 class="w-full flex justify-between items-center p-3 rounded-lg border border-dark-blue text-logo-blue bg-white font-bold relative">
-                <span (click)="viewQuestionFormClick(exam.id)" class="text-logo-blue font-bold">{{ i + 1 }}. {{ exam.title }} {{ exam.finalExam ? '(Final Exam)' : '' }}</span>
-                <div class="flex space-x-2">
+                <span (click)="viewQuestionFormClick(exam.id)" class="text-logo-blue font-bold">
+                  {{ i + 1 }}. {{ exam.title }} 
+                  <span *ngIf="exam.finalExam">(Final Exam)</span>
+                </span>                <div class="flex space-x-2">
                   <!-- <button class="flex justify-center items-center w-8 h-8 rounded-full bg-green-100 hover:bg-green-300 text-green-800" >
                     <i class="fa-solid fa-edit"></i>
                   </button> -->

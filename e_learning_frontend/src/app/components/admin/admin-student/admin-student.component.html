@@ -103,18 +103,19 @@
                         <thead class="thead-dark">
                             <tr>
                             <th>No</th>
-                            <th>Course Name
-                                <app-filter-sort-dropdown 
-                                (sortChanged)="onSortChange('course.name', $event)" 
-                                (filterChanged)="onFilterChange($event)"
-                                ></app-filter-sort-dropdown>
-                            </th>
                             <th>Student Name
                                 <app-filter-sort-dropdown 
                                 (sortChanged)="onSortChange('user.name', $event)" 
                                 (filterChanged)="onFilterChange($event)"
                                 ></app-filter-sort-dropdown>
                             </th>
+                            <th>Course Name
+                                <app-filter-sort-dropdown 
+                                (sortChanged)="onSortChange('course.name', $event)" 
+                                (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                            </th>
+                            
                             <th>Dept
                                 <app-filter-sort-dropdown 
                                 (sortChanged)="onSortChange('user.department', $event)" 
@@ -133,24 +134,19 @@
                                 (filterChanged)="onFilterChange($event)"
                                 ></app-filter-sort-dropdown>
                             </th>
-                            <th>
-                                Created Date
-                                <app-filter-sort-dropdown (sortChanged)="onSortChange('createdAt', $event)"
-                                  (filterChanged)="onFilterChange($event)">
-                                </app-filter-sort-dropdown>
-                              </th>
+                            
                             <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let userCourse of paginatedUserCourses; let i = index">
                             <td class="center-cell table-cell-height">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                            <td class="table-cell-height">{{ userCourse.user?.name }}</td>                            
                             <td class="table-cell-height">{{ userCourse.course?.name }}</td>
-                            <td class="table-cell-height">{{ userCourse.user?.name }}</td>
                             <td class="table-cell-height">{{ userCourse.user?.department }}</td>
                             <td class="table-cell-height">{{ userCourse.user?.team }}</td>
                             <td class="table-cell-height">{{ userCourse.user?.email }}</td>
-                            <td class="table-cell-height">{{ userCourse.createdAt | date: 'short' }}</td>
+                            
                             <td class="table-cell-height">
 
 

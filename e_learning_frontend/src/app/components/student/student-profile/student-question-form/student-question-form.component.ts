@@ -66,6 +66,7 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   certificateId: number | undefined; 
 
 
+
   constructor(
     private route: ActivatedRoute,
     private examService: ExamService, 
@@ -236,7 +237,7 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
       userId: this.userId,
     }));
 
-    this.studentAnswerService.submitStudentAnswers(answers).subscribe(response => {
+    this.studentAnswerService.submitStudentAnswers(answers).subscribe(response => {      
       this.checkAnswers(response);
       this.showResults = true;
     }, error => {

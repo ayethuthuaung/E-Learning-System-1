@@ -77,6 +77,9 @@ checkExamOwner(examId: number, userId: number): Observable<boolean> {
     params: { examId: examId.toString(), userId: userId.toString() }
   });
 }
+getInstructorCount(): Observable<{ instructorCount: number }> {
+  return this.httpClient.get<{ instructorCount: number }>(`${this.baseURL}/instructor-count`);
+}
 
 }
 

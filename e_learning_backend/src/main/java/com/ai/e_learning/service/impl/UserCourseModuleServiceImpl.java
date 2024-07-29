@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -54,18 +56,19 @@ public class UserCourseModuleServiceImpl implements UserCourseModuleService {
       Course course = courseRepository.findByModuleId(moduleId);
       System.out.println(course.getName());
       Long courseId = course.getId();
-      Optional<UserCourse> userCourseOptional = userCourseRepository.findByUserIdAndCourseId(userId,courseId);
-      UserCourse userCourse = null;
-      if(userCourseOptional.isPresent()){
-        userCourse = userCourseOptional.get();
-      }
+      List<UserCourse> userCourses = userCourseRepository.findByUserIdAndCourseId(userId, courseId);
+      UserCourse userCourse = userCourses.stream()
+              .max(Comparator.comparingLong(UserCourse::getCreatedAt))
+              .orElseThrow();
+//      UserCourse userCourse = null;
+//      if(userCourseOptional.isPresent()){
+//        userCourse = userCourseOptional.get();
+//      }
       Double userCompletionPercentage = courseModuleService.calculateCompletionPercentage(userId,courseId);
 
       if(userCompletionPercentage == 100){
-        if(userCourse != null){
           userCourse.setCompleted(true);
           userCourseRepository.save(userCourse);
-        }
       }
       return mapToDto(savedUserCourseModule);
     }

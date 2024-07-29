@@ -27,6 +27,13 @@
           <div class="flex items-center justify-center bg-gray-100">
             <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
               <form #categoryForm="ngForm" (ngSubmit)="onSubmit(categoryForm)" method="post" class="flex flex-col">
+                
+                <div *ngIf="nameDuplicateError" class="text-red-500">
+                  This category name already exists.
+                </div>
+                <div *ngIf="categoryForm.submitted && !category.name" class="text-red-500 mb-2">
+                  Please fill the field.
+                </div>
                 <input
                   type="text"
                   class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
@@ -38,21 +45,14 @@
                   (input)="validateCategoryName(category.name)"
                   placeholder="Category Name"
                 />
-                <div *ngIf="nameRequiredError" class="text-red-500">
-                  Name is required.
-                </div>
-
-                <div *ngIf="nameDuplicateError" class="text-red-500">
-                  This category name already exists.
-                </div>
-
+                
                 <button
-                  type="submit"
-                  class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded hover:bg-gradient-to-r hover:from-blue-700 hover:to-logo-blue focus:outline-none focus:shadow-outline"
-                  [disabled]="name.invalid || nameDuplicateError"
-                >
-                  {{ category.id ? 'Update Category' : 'Create Category' }}
-                </button>
+                type="submit"
+                class="bg-logo-blue from-dark-blue to-logo-blue text-white font-bold py-2 px-4 rounded hover:bg-gradient-to-r hover:from-blue-700 hover:to-logo-blue focus:outline-none focus:shadow-outline"
+                [disabled]="nameDuplicateError"
+              >
+                Create Category
+              </button>
               </form>
             </div>
           </div>
@@ -155,6 +155,9 @@
           <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative z-10">
             <h2 class="text-2xl font-semibold text-center mb-4">Update Category</h2>
             <form #updateForm="ngForm" (ngSubmit)="onUpdateSubmit(updateForm)" class="space-y-4">
+              <div *ngIf="nameDuplicateError" class="text-red-500">
+                This category name already exists.
+              </div>
               <input
                 type="text"
                 class="w-full bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
@@ -166,12 +169,7 @@
                 (input)="validateCategoryName(selectedCategory.name)"
                 placeholder="Category Name"
               />
-              <div *ngIf="nameRequiredError" class="text-red-500">
-                Name is required.
-              </div>
-              <div *ngIf="nameDuplicateError" class="text-red-500">
-                This category name already exists.
-              </div>
+             
               <div class="flex justify-end space-x-4">
                 <button
                   type="button"

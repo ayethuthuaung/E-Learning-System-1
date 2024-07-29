@@ -1,7 +1,5 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
-
   <!-- Navbar and Sidebar -->
-
   <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
@@ -41,8 +39,11 @@
         <div class="flex-1 min-w-[400px] h-80 mt-4 relative">
           <p class="font-bold text-xl mb-2 text-center absolute top-[-20px] left-0 right-0">Category Count</p>
           <app-admin-pie-chart class="w-full h-full"></app-admin-pie-chart>
+
         </div>
       </div>
     </div>
-  </div>
-</div>
+    
+    
+ 
+

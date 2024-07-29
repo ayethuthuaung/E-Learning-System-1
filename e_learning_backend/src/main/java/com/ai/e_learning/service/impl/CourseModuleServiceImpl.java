@@ -173,21 +173,13 @@ public Double calculateCompletionPercentage(Long userId, Long courseId) {
   Long doneModules = courseModuleRepository.countDoneModulesByUserAndCourse(userId, courseId);
   Long totalModules = courseModuleRepository.countTotalModulesByCourse(courseId);
 
-  System.out.println("User ID: " + userId);
-  System.out.println("Course ID: " + courseId);
-  System.out.println("Done Modules: " + doneModules);
-  System.out.println("Total Modules: " + totalModules);
-
   if (totalModules == 0) {
     return 0.0;
   }
-
-
-  Double completionPercentage = (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
-  System.out.println("Completion Percentage: " + completionPercentage);
-
-  return completionPercentage;
+    return (doneModules.doubleValue() / totalModules.doubleValue()) * 100;
 }
+
+
   @Override
   public Map<String, Map<String, Double>> getAllStudentsProgress() {
     List<UserCourse> userCourses = userCourseRepository.findAll();
@@ -244,22 +236,16 @@ public Double calculateCompletionPercentage(Long userId, Long courseId) {
     return moduleDtos;
   }
 
-  //NN
-  @Override
+  //NN(module and lesson in stu profile)
   public List<LessonDto> getLessonsByModuleId(Long moduleId) {
-    // Find the CourseModule by ID
     CourseModule module = courseModuleRepository.findById(moduleId)
       .orElseThrow(() -> new EntityNotFoundException("CourseModule not found"));
 
-    // Find Lessons by Module ID
     List<Lesson> lessons = lessonRepository.findByCourseModuleId(moduleId);
-
-    // Convert Lessons to LessonDto
     return lessons.stream()
       .map(this::convertToDto)
       .collect(Collectors.toList());
   }
-
   private LessonDto convertToDto(Lesson lesson) {
     LessonDto dto = new LessonDto();
     dto.setId(lesson.getId());
@@ -267,9 +253,6 @@ public Double calculateCompletionPercentage(Long userId, Long courseId) {
     dto.setCourseId(lesson.getCourse().getId());
     return dto;
   }
-
-
-
 
   @Override
   public List<CourseModuleDto> getModulesByCourseId(Long courseId) {

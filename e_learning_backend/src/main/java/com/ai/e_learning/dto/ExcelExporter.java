@@ -135,7 +135,7 @@ public class ExcelExporter {
     }
 
     private void createStudentCells(Row row, UserCourseDto userCourse, CourseDto course, DateTimeFormatter formatter, HSSFWorkbook workbook) {
-        UserDto user = new UserDto(userCourse.getUser());
+//        UserDto user = new UserDto(userCourse.getUser());
         Long userId = userCourse.getUser().getId(); // Ensure you fetch the correct user ID
 
         Cell cell = row.createCell(0);
