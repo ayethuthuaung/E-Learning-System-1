@@ -54,8 +54,8 @@ export class AllCoursesComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.categories = data;
-          this.filteredCategories = this.filterActiveCategories(data); // Filter categories here
-          this.filteredCategories.unshift({
+        
+          this.categories.unshift({
             id: -1, name: 'All',
             deleted: false,
             courses: [],
@@ -66,10 +66,7 @@ export class AllCoursesComponent implements OnInit {
         error: (e) => console.log(e)
       });
   } 
-  private filterActiveCategories(categories: Category[]): Category[] {
-    return categories.filter(category => !category.deleted);
-  }
-
+ 
 
 
   filterCourses(category: string) {

@@ -155,8 +155,14 @@
           <div class="flex flex-wrap w-full">
             <div class="w-full lg:w-1/2 p-2">
               <div class="bg-white rounded-lg shadow-md p-6">
+                <form class="flex flex-col" #examForm="ngForm" (ngSubmit)="onSubmitExam(examForm)">
                 <div class="flex items-center mb-4">
+                 
+                  
                   <label class="block text-sm font-medium text-gray-700 mr-2 w-1/4">Title</label>
+                  <!-- <div *ngIf="examForm.get('title').invalid && examForm.get('title').touched" class="text-red-500 mb-2">
+                    Please fill the field.
+                  </div> -->
                   <input 
                     type="text" 
                     [(ngModel)]="examTitle" 
@@ -221,6 +227,7 @@
             <hr class="border-4 border-logo-blue mb-4">
             <div *ngFor="let question of questions; let qIndex = index" class="mb-6">
               <hr *ngIf="qIndex > 0" class="border-blue-800 mb-4">
+              
               <div class="relative">
                 <div class="relative w-full mb-2">
                   <input 
@@ -277,6 +284,7 @@
                   >
                     Submit Form
             </button>
+          </form>
           </div>
         </div>
 

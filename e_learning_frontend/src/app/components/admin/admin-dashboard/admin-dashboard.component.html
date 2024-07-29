@@ -9,10 +9,10 @@
         <app-notification></app-notification>
       </div> 
 
-      <div class="flex-1 p-3">
+      <div class="flex-1 p-6">
         <!-- Flex container for course and student count cards -->
-        <div class="flex flex-wrap p-6">
-          <div class="bg-purple-170 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> <!-- Increased margin here -->
+        <div class="flex flex-wrap mb-6 space-x-4">
+          <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6"> <!-- Increased margin here -->
             <i class="fas fa-book text-4xl text-purple-500 mr-10"></i>
             <div>
               <h3 class="text-xl font-semibold mb-2">Courses</h3>
@@ -35,7 +35,16 @@
           <p>{{ instructorCount }} instructors</p>
         </div>
       </div>
+
+      <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6">
+        <i class="fas fa-users text-4xl text-purple-500 mr-4"></i>
+        <div>
+          <h3 class="text-xl font-semibold mb-2">Active Users</h3>
+          <p class="text-lg">{{ activeUserCount }} active users</p>
+        </div>
+      </div>
      
+</div>
 </div>
       <!-- Bar Chart within a Bigger Card -->
       <div class="w-full h-80 mt-12">
@@ -64,7 +73,7 @@
             </mat-card-content>
             </mat-card>
           </div>
-        </div>
+      
         
         
 

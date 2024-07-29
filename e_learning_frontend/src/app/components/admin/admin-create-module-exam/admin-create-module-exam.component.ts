@@ -14,6 +14,7 @@ import { ExamCreationDto } from '../../models/examCreationDto.model';
 import { AnswerOptionDTO } from '../../models/answeroptiondto.model';
 import { Location } from '@angular/common';
 import { CourseService } from '../../services/course.service';
+import { Validators } from '@angular/forms';
 
 interface Option {
   label: string;
@@ -43,6 +44,7 @@ export class AdminCreateModuleExamComponent implements OnInit{
   modules: Module[] = [{ id: 1, name: '',url: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   moduleList: Module[]=[];
   courseId: number = 0;
+  submitted = false;
 
   isSidebarOpen = true;
   activeTab: string = 'createModule';
@@ -53,6 +55,12 @@ currentModuleIndex: number = -1;
 isEditing: boolean = false;
 
 course: Course | undefined;
+
+titleError: boolean = false;
+  descriptionError: boolean = false;
+  durationError: boolean = false;
+  passScoreError: boolean = false;
+
 
 
 @ViewChild('formRef') formRef!: ElementRef;
@@ -81,6 +89,7 @@ course: Course | undefined;
  ];
 
  showResults: boolean = false; // Add this property to toggle result display
+  fb: any;
 
 
 
@@ -96,6 +105,7 @@ course: Course | undefined;
    ) {}
 
    ngOnInit(): void {
+    this.initForm();
     const lessonIdParam = this.route.snapshot.paramMap.get('lessonId');
     console.log('Lesson ID Param:', lessonIdParam);
 
@@ -120,6 +130,17 @@ course: Course | undefined;
         // Handle error
       }
     );
+  }
+
+  initForm() {
+    this.examForm = this.fb.group({
+      title: ['', Validators.required],
+      description: [''],
+      duration: [''],
+      passScore: [0, Validators.required],
+      finalExam: [false],
+      questions: this.fb.array([this.addQuestion()])
+    });
   }
 
 
@@ -369,6 +390,23 @@ course: Course | undefined;
   }
 
   onSubmitExam(examForm: any) {
+    this.titleError = !this.examTitle.trim();
+    this.descriptionError = !this.examDescription.trim();
+    this.durationError = !this.examDuration;
+    this.passScoreError = this.examPassScore === undefined || this.examPassScore <= 0;
+  
+    // Check if there are any errors
+    if (this.titleError || this.descriptionError || this.durationError || this.passScoreError) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please fill all required fields.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      return; // Prevent form submission
+    }
+
+
     Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to submit this exam?',
@@ -376,6 +414,7 @@ course: Course | undefined;
       showCancelButton: true,
       confirmButtonText: 'Yes, submit!',
       cancelButtonText: 'No, cancel',
+     
     }).then((result) => {
       if (result.isConfirmed) {
         const examCreationDto: ExamCreationDto = {
@@ -417,7 +456,10 @@ course: Course | undefined;
                 this.loadExamByLessonId(this.lessonId);
                  
           },
+          
           (error) => {
+            this.submitted = true;
+         
             console.error('Error submitting exam', error);
             Swal.fire('Error!', 'There was an error submitting the exam.', 'error');
           }
