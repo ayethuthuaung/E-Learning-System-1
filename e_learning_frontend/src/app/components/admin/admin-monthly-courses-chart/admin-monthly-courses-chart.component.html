@@ -1,4 +1,11 @@
-<div class="w-full h-[80vh] flex justify-center items-center mt-4">
+<div class="w-full h-[80vh] flex flex-col justify-center items-center mt-4 relative">
   <canvas id="barChart" class="w-full h-full"></canvas>
-</div>
 
+  <!-- Step size selector -->
+  <div class="absolute top-[-1.5rem] right-0 mt-2 mr-2">
+    <label for="stepSize" class="mr-2">Select Column:</label>
+    <select id="stepSize" (change)="onStepSizeChange($event)" class="border p-1 rounded">
+      <option *ngFor="let size of [1, 5, 10]" [value]="size">{{ size }}</option>
+    </select>
+  </div>
+</div>

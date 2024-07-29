@@ -4,45 +4,42 @@
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
     <div class="flex-1 p-6">
-      <div class="custom-scroll">
-        <!-- Flex container for course and student count cards -->
-        <div class="flex flex-wrap mb-6 space-x-4">
-          <!-- Courses Count Card -->
-          <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6">
-            <i class="fas fa-book text-4xl text-purple-500 mr-4"></i>
-            <div>
-              <h3 class="text-xl font-semibold mb-2">Courses</h3>
-              <p class="text-lg">{{ courseCount }} courses accepted</p>
-            </div>
-          </div>
 
-          <!-- Students Count Cards -->
-          <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6" *ngFor="let count of studentCounts">
-            <i class="fas fa-user-graduate text-4xl text-purple-500 mr-4"></i>
-            <div>
-              <h3 class="text-xl font-semibold mb-2">Student</h3>
-              <p>{{ count.acceptedCount }} students accepted</p>
-            </div>
+      <!-- Flex container for course and student count cards -->
+      <div class="flex flex-wrap mb-6 space-x-4">
+        <!-- Courses Count Card -->
+        <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6">
+          <i class="fas fa-book text-4xl text-purple-500 mr-4"></i>
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Courses</h3>
+            <p class="text-lg">{{ courseCount }} courses accepted</p>
           </div>
         </div>
 
-        <!-- Chart Section -->
-        <div class="flex justify-center gap-4">
-          <!-- Existing Chart -->
-          <div class="w-full max-w-[600px]">
-            <canvas id="myChart" class="rounded-lg shadow-lg"></canvas>
+        <!-- Students Count Cards -->
+        <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6" *ngFor="let count of studentCounts">
+
+          <i class="fas fa-user-graduate text-4xl text-purple-500 mr-4"></i>
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Student</h3>
+            <p>{{ count.acceptedCount }} students accepted</p>
           </div>
-          <!-- Line Chart for Student Progress -->
-          <mat-card class="w-full max-w-[600px] mb-0">
-            <mat-card-header>
-              <mat-card-title>Course Progress</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
-              <div class="chart-container">
-                <app-instructor-course-completion [chartType]="'line'"></app-instructor-course-completion>
-              </div>
-            </mat-card-content>
-          </mat-card>
+        </div>
+      </div>
+
+ 
+      <!-- Chart Section -->
+      <div class="flex flex-wrap space-x-4">
+        <!-- Line Chart -->
+        <div class="flex-1 min-w-[300px] h-80 mt-4">
+          <canvas id="myChart" class="rounded-lg shadow-lg"></canvas>
+        </div>
+        
+        <!-- Pie Chart -->
+        <div class="flex-1 min-w-[400px] h-80 mt-4 relative">
+          <p class="font-bold text-xl mb-2 text-center absolute top-[-20px] left-0 right-0">Category Count</p>
+          <app-admin-pie-chart class="w-full h-full"></app-admin-pie-chart>
+
         </div>
       </div>
     </div>
