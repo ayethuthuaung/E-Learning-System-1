@@ -90,6 +90,52 @@ public class UserCourseServiceImpl implements UserCourseService {
     return DtoUtil.mapList(userCourseList, UserCourseDto.class, modelMapper);
   }
 
+
+  @Override
+  public List<UserCourseDto> getAllAcceptedUserCourses() {
+    // Assuming the 'Accept' status means the course is in an accepted state
+    List<UserCourse> acceptedCourses = userCourseRepository.findByStatus("Accept");
+
+    // Extract course IDs from the accepted courses
+    List<Long> courseIds = acceptedCourses.stream()
+      .map(userCourse -> userCourse.getCourse().getId())
+      .collect(Collectors.toList());
+
+    // Get courses associated with these IDs
+    List<Course> courses = courseRepository.findByIdIn(courseIds);
+
+    // Prepare the list to hold user courses with progress and certificate details
+    List<UserCourse> userCourses = new ArrayList<>();
+
+    for (Course course : courses) {
+      List<UserCourse> courseUserCourses = userCourseRepository.findByCourseId(course.getId());
+      for (UserCourse userCourse : courseUserCourses) {
+        Double completionPercentage = courseModuleService.calculateCompletionPercentage(userCourse.getUser().getId(), course.getId());
+        userCourse.setProgress(completionPercentage);
+
+        Certificate certificate = certificateRepository.findCertificateByUserIdAndCourseId(userCourse.getUser().getId(), course.getId());
+        userCourse.setCompleted(certificate != null);
+      }
+      userCourses.addAll(courseUserCourses);
+    }
+
+    // Map to DTOs and format output
+    List<UserCourseDto> userCourseDtoList = DtoUtil.mapList(userCourses, UserCourseDto.class, modelMapper);
+    for (UserCourseDto userCourseDto : userCourseDtoList) {
+      String progress = String.format("%.2f%%", userCourseDto.getProgress());
+      userCourseDto.setProgressOutput(progress);
+
+      String certificate = userCourseDto.isCompleted() ? "Available" : "Unavailable";
+      userCourseDto.setCertificateOutput(certificate);
+    }
+
+    return userCourseDtoList;
+  }
+
+
+
+
+
   @Override
   public void changeStatus(Long id, String status) {
     UserCourse userCourse = userCourseRepository.findById(id)
@@ -130,7 +176,7 @@ public class UserCourseServiceImpl implements UserCourseService {
 
     userCourse = userCourseRepository.save(userCourse);
 
-    return modelMapper.map(userCourse, UserCourseDto.class);
+    return modelMapper. map(userCourse, UserCourseDto.class);
   }
 
   @Override

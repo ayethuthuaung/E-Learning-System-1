@@ -1,16 +1,18 @@
-import { CourseService } from '../../services/course.service';
-import { UserCourse } from './../../models/usercourse.model';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserCourseService } from './../../services/user-course.service';
-import { Component, OnInit , OnDestroy} from '@angular/core';
+import { CourseModuleService } from '../../services/course-module.service';
+import { UserCourse } from './../../models/usercourse.model';
+import { Course } from './../../models/course.model';
+import { Subscription } from 'rxjs';
 import { orderBy } from 'lodash';
-declare var Swal: any;
+import { log } from 'console';
 
 @Component({
   selector: 'app-admin-student-list',
   templateUrl: './admin-student-list.component.html',
-  styleUrl: './admin-student-list.component.css'
+  styleUrls: ['./admin-student-list.component.css']
 })
-export class AdminStudentListComponent {
+export class AdminStudentListComponent implements OnInit, OnDestroy {
   activeTab: string = 'attendStudent';
   userCourses: UserCourse[] = [];
   paginatedUserCourses: UserCourse[] = [];
@@ -25,9 +27,45 @@ export class AdminStudentListComponent {
   sortDirection: string = 'asc';
   filterTerm = '';
   filterKey = '';
+  coursePercentages: { [courseId: number]: number} = {};
+  enrolledCourses: Course[] = [];
 
-  constructor(private userCourseService: UserCourseService,private courseService: CourseService) {}
+  private userCoursesSubscription: Subscription = new Subscription();
 
+  constructor(
+    private userCourseService: UserCourseService,
+    private courseModuleService: CourseModuleService
+  ) { }
+
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+
+  ngOnInit(): void {
+    this.loadAcceptedUserCourses();
+  }
+
+  ngOnDestroy(): void {
+    this.userCoursesSubscription.unsubscribe();
+  }
+
+  loadAcceptedUserCourses(): void {
+    this.userCoursesSubscription.add(
+      this.userCourseService.getAllAcceptedUserCourses().subscribe(
+        (courses: UserCourse[]) => {
+          this.userCourses = orderBy(courses, ['createdAt'], ['desc']);
+          this.updatePaginatedStudentByCourses();
+          this.fetchCoursePercentages();  
+          this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
+        },
+        (error: any) => {
+          console.error('Error loading accepted user courses:', error);
+        }
+      )
+    );
+  }
+  
 
   onSearchChange() {
     this.currentPage = 1;
@@ -41,7 +79,8 @@ export class AdminStudentListComponent {
       userCourse.user?.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.team.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-
+      userCourse.progressOutput?.toLowerCase().includes(this.searchTerm.toLowerCase())  ||
+      userCourse.certificateOutput?.toLowerCase().includes(this.searchTerm.toLowerCase()) || // search in completed field
       userCourse.status.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 
@@ -57,6 +96,8 @@ export class AdminStudentListComponent {
     this.totalPages = Math.ceil(filteredStudentByCourses.length / this.itemsPerPage);
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
+    this.paginatedUserCourses = filteredStudentByCourses.slice(start, end);
+  
     this.paginatedUserCourses = filteredStudentByCourses.slice(start, end);
   }
 
@@ -102,4 +143,39 @@ export class AdminStudentListComponent {
     this.filterTerm = event.term;
     this.updatePaginatedStudentByCourses();
   }
+
+  acceptStudent(userCourse: UserCourse) {
+    // Add your acceptance logic here
+  }
+
+  rejectStudent(userCourse: UserCourse) {
+    // Add your rejection logic here
+  }
+
+  exportCoursesByInstructor(userId: any) {
+    // Add your export logic here
+  }
+
+  exportCoursesByInstructorToPdf(userId: any) {
+    // Add your export to PDF logic here
+  }
+
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  fetchCoursePercentages(): void {
+      this.enrolledCourses.forEach(course => {
+
+      this.courseModuleService.getCompletionPercentage(this.loggedUser.id, course.id).subscribe({
+        
+        next: (percentage) => {
+          console.log(`Fetched percentage for course ${course.id}: ${percentage}`);
+          this.coursePercentages[course.id] = percentage;
+        },
+        error: (e) => console.log(e)
+      });
+    });
+  }
+
 }

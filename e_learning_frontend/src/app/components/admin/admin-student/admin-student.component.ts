@@ -62,9 +62,9 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
     this.userCourseService.getAllUserCourses(this.userId).subscribe({
       next: (data) => {
         this.userCourses = orderBy(data, ['createdAt'], ['desc']);
-      this.updatePaginatedStudentByCourses();
-      this.fetchCoursePercentages();
-      this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
+        this.updatePaginatedStudentByCourses();
+        this.fetchCoursePercentages();
+        this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
     },
     error: (err) => console.error('Error fetching UserCourse:', err)
   });
@@ -94,7 +94,8 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
       userCourse.user?.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.team.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-
+      userCourse.progressOutput?.toLowerCase().includes(this.searchTerm.toLowerCase())  ||
+      userCourse.certificateOutput?.toLowerCase().includes(this.searchTerm.toLowerCase()) || // search in completed field
       userCourse.status.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 

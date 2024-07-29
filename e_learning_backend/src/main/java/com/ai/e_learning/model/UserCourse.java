@@ -42,4 +42,6 @@ public class UserCourse {
   protected void onCreate() {
     this.createdAt = System.currentTimeMillis();
   }
+
+
 }
