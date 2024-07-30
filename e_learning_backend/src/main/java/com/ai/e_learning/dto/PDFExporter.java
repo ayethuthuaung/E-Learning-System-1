@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class PDFExporter {
@@ -40,14 +44,13 @@ public class PDFExporter {
 
         document.open();
 
-        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-        titleFont.setSize(18);
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
         Paragraph title = new Paragraph("Courses and Students Report", titleFont);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
 
-        // Create a table with 7 columns
-        PdfPTable table = new PdfPTable(7);
+        // Create a table with 12 columns
+        PdfPTable table = new PdfPTable(12);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
 
@@ -58,31 +61,15 @@ public class PDFExporter {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // Iterate over courses and populate data rows
+        int rowIndex = 1;  // Initialize row index for "No" column
         for (CourseDto course : courses) {
-            // Iterate over user courses for the current course
-            for (UserCourseDto userCourse : userCourses) {
-                if (userCourse.getCourse().getId().equals(course.getId())) {
-                    // Directly retrieve user information from userCourse
-                    String studentName = userCourse.getUser().getName();
-                    String studentEmail = userCourse.getUser().getEmail();
-                    String studentTeam = userCourse.getUser().getTeam();
-                    String studentDivision = userCourse.getUser().getDivision();
-                    String studentDepartment = userCourse.getUser().getDepartment();
+            // Student details rows
+            List<UserCourseDto> courseUserCourses = userCourses.stream()
+                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
+                    .collect(Collectors.toList());
 
-
-                    // Add course and student details to the table
-                    table.addCell(course.getName());
-                    table.addCell(studentName);
-                    table.addCell(studentEmail);
-                    table.addCell(studentTeam);
-                    table.addCell(studentDivision);
-                    table.addCell(studentDepartment);
-
-                    // Completion progress
-                    Double completionPercentage = courseModuleService.calculateCompletionPercentage(userCourse.getUser().getId(), course.getId());
-                    String completionProgress = (completionPercentage != null) ? String.format("%.2f%%", completionPercentage) : "N/A";
-                    table.addCell(completionProgress);
-                }
+            for (UserCourseDto userCourse : courseUserCourses) {
+                createStudentCells(table, userCourse, course, formatter, rowIndex++);
             }
         }
 
@@ -98,28 +85,63 @@ public class PDFExporter {
     }
 
     private void createHeaderCells(PdfPTable table) {
-        PdfPCell cell = new PdfPCell();
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-        font.setSize(12);
-        cell.setPhrase(new Phrase("Course Name", font));
+        String[] headers = {"No", "Staff ID", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+
+        for (String header : headers) {
+            PdfPCell cell = new PdfPCell(new Phrase(header, font));
+            table.addCell(cell);
+        }
+    }
+
+    private void createStudentCells(PdfPTable table, UserCourseDto userCourse, CourseDto course, DateTimeFormatter formatter, int rowIndex) {
+        Long userId = userCourse.getUser().getId(); // Ensure you fetch the correct user ID
+
+        Font font = FontFactory.getFont(FontFactory.HELVETICA, 10);
+
+        PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(rowIndex), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Student Name", font));
+        cell = new PdfPCell(new Phrase(userCourse.getUser().getStaffId(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Email", font));
+        cell = new PdfPCell(new Phrase(course.getName(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Team", font));
+        cell = new PdfPCell(new Phrase(userCourse.getUser().getEmail(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Division", font));
+        cell = new PdfPCell(new Phrase(userCourse.getUser().getTeam(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Department", font));
+        cell = new PdfPCell(new Phrase(userCourse.getUser().getDepartment(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("Completion Progress", font));
+        cell = new PdfPCell(new Phrase(userCourse.getUser().getDivision(), font));
+        table.addCell(cell);
+
+        Double completionPercentage = courseModuleService.calculateCompletionPercentage(userId, course.getId());
+        if (completionPercentage != null) {
+            cell = new PdfPCell(new Phrase(String.format("%.2f%%", completionPercentage), font));
+        } else {
+            cell = new PdfPCell(new Phrase("N/A", font));
+        }
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(userCourse.isCompleted() ? "Available" : "Unavailable", font));
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getCreatedAt()), ZoneId.systemDefault())), font));
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(userCourse.getStatus(), font));
+        table.addCell(cell);
+
+        if (userCourse.getStatusChangeTimestamp() != null) {
+            cell = new PdfPCell(new Phrase(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getStatusChangeTimestamp()), ZoneId.systemDefault())), font));
+        } else {
+            cell = new PdfPCell(new Phrase("N/A", font));
+        }
         table.addCell(cell);
     }
 }
