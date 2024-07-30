@@ -31,28 +31,31 @@ export class CertificateComponent implements OnInit {
       }
     });
   }
-  @HostListener('window:keydown', ['$event'])
-  preventScreenshot(event: KeyboardEvent): void {
-    const screenshotShortcuts = [
-      { key: 'PrintScreen' },
-      { key: 's', ctrlKey: true },
-      { key: 'S', ctrlKey: true },
-      { key: 's', metaKey: true },
-      { key: 'S', metaKey: true },
-      { key: 'Shift', ctrlKey: true, keyCode: 16 },
-      { key: 'Shift', metaKey: true, keyCode: 16 }
-    ];
 
-    if (screenshotShortcuts.some(shortcut => this.isScreenshotShortcut(event, shortcut))) {
+  @HostListener('document:keydown', ['$event'])
+  preventScreenshot(event: KeyboardEvent): void {
+    // Detect common screenshot key combinations
+    const isPrintScreen = event.key === 'PrintScreen';
+    const isCmdShiftS = event.key === 'S' && event.shiftKey && event.metaKey;
+    const isCtrlShiftS = event.key === 'S' && event.shiftKey && event.ctrlKey;
+    const isCmdAltS = event.key === 'S' && event.altKey && event.metaKey;
+    const isCtrlPrintScreen = event.key === 'PrintScreen' && event.ctrlKey;
+
+    if (isPrintScreen || isCmdShiftS || isCtrlShiftS || isCmdAltS || isCtrlPrintScreen) {
       event.preventDefault();
-      alert('Screenshot is disabled for this content.');
+      alert('Screenshots are disabled for this content.');
+      console.warn('Screenshot attempt detected and blocked.');
     }
   }
 
-  private isScreenshotShortcut(event: KeyboardEvent, shortcut: any): boolean {
-    return Object.keys(shortcut).every(key => (event as any)[key] === shortcut[key]);
+  @HostListener('document:visibilitychange')
+  onVisibilityChange(): void {
+    // Detect when the user switches tabs (possible indication of taking a screenshot)
+    if (document.visibilityState === 'hidden') {
+      alert('Please do not attempt to capture screenshots of this content.');
+      console.warn('Tab visibility changed - possible screenshot attempt.');
+    }
   }
-
 
   getCertificateByUserIdAndCourseId(): void {
     if (this.userId && this.courseId) {
@@ -69,5 +72,4 @@ export class CertificateComponent implements OnInit {
       console.error('User ID or Course ID is not defined for fetching certificate');
     }
   }
-
 }

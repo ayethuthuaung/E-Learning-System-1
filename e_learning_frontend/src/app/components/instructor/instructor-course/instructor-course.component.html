@@ -70,7 +70,7 @@
                     id="description" name="description" [(ngModel)]="course.description" required
                     placeholder="Description"></textarea>
 
-                    <div *ngIf="errorMessage && !course.photo " class="text-red-500 mb-2">
+                    <div *ngIf="errorMessage && !course.photo" class="text-red-500 mb-2">
                       Please fill the field.
                     </div>
                   <div
@@ -88,9 +88,9 @@
                         </button>
                       </div>          </div>
 
-                  <div *ngIf="errorMessage && (!course.categorylist || course.categorylist.length === 0)" class="text-red-500 mb-2">
-                    Please fill the field.
-                  </div>
+                      <div *ngIf="errorMessage && (!course.categorylist || course.categorylist.length === 0)" class="text-red-500 mb-2">
+                        Please fill the field.
+                      </div>
                   <div
                     class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
                     <label class="block mb-2 font-medium text-gray-700">Select Categories:</label>

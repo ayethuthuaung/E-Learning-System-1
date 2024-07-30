@@ -388,25 +388,7 @@ titleError: boolean = false;
       }
     );
   }
-
   onSubmitExam(examForm: any) {
-    this.titleError = !this.examTitle.trim();
-    this.descriptionError = !this.examDescription.trim();
-    this.durationError = !this.examDuration;
-    this.passScoreError = this.examPassScore === undefined || this.examPassScore <= 0;
-  
-    // Check if there are any errors
-    if (this.titleError || this.descriptionError || this.durationError || this.passScoreError) {
-      Swal.fire({
-        title: 'Validation Error',
-        text: 'Please fill all required fields.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-      return; // Prevent form submission
-    }
-
-
     Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to submit this exam?',
@@ -414,7 +396,6 @@ titleError: boolean = false;
       showCancelButton: true,
       confirmButtonText: 'Yes, submit!',
       cancelButtonText: 'No, cancel',
-     
     }).then((result) => {
       if (result.isConfirmed) {
         const examCreationDto: ExamCreationDto = {
@@ -456,10 +437,7 @@ titleError: boolean = false;
                 this.loadExamByLessonId(this.lessonId);
                  
           },
-          
           (error) => {
-            this.submitted = true;
-         
             console.error('Error submitting exam', error);
             Swal.fire('Error!', 'There was an error submitting the exam.', 'error');
           }

@@ -105,41 +105,41 @@
         </div>
       </div>
     </div>
-    <div  *ngIf="getModulesGroupedByLessonsKeys().length > 0" id="lessons-modules-section" class="mt-6 w-full">  
-      <div *ngIf="selectedCourse">
-        <h6 class="text-lg font-semibold mb-2">
-          {{ selectedCourse.name }}
-        </h6>
-        </div>
-      <table class="min-w-full bg-white">
-        <thead>
-          <tr>
-            <th class="py-2 px-4 bg-gray-200">Lessons</th>
-            <th class="py-2 px-4 bg-gray-200">Module</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let lessonTitle of getLessonTitles(); let i = index">
-            <td class="border px-4 py-2">{{ lessonTitle }}</td>
-            <td class="border px-4 py-2">
-              <div class="flex flex-wrap">
-                <div *ngFor="let module of modulesGroupedByLessons[lessonTitle]" class="relative flex flex-col items-center mr-2 mb-2" appClickOutside (clickOutside)="handleClickOutside(module.id)">
-                  <div *ngIf="moduleVisibility[module.id]" class="mb-2 bg-gray-200 p-2 text-sm text-gray-700 rounded-md shadow-md">
-                    <p class="font-semibold">{{ module.name }}</p>
-                  </div>
-                  <button (click)="toggleModuleVisibility(module.id)" class="text-sm font-semibold py-1 px-3 rounded-md"
-                  [ngClass]="{
-                    'bg-green-500 text-white': moduleCompletionStatus[module.id],
-                    'bg-white text-gray-900': !moduleCompletionStatus[module.id]
-                  }">
-                  {{ getModuleNumber(module.id) }}
-          </button>
-                </div>
+    <div *ngIf="getModulesGroupedByLessonsKeys().length > 0" id="lessons-modules-section" class="mt-6 w-full">
+  <div *ngIf="selectedCourse">
+    <h6 class="text-lg font-semibold mb-2">
+      {{ selectedCourse.name }}
+    </h6>
+  </div>
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr>
+        <th class="py-2 px-4 bg-gray-200">Lessons</th>
+        <th class="py-2 px-4 bg-gray-200">Module</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let lessonTitle of getLessonTitles(); let i = index">
+        <td class="border px-4 py-2">{{ lessonTitle }}</td>
+        <td class="border px-4 py-2">
+          <div class="flex flex-wrap">
+            <div *ngFor="let module of modulesGroupedByLessons[lessonTitle]" class="relative flex flex-col items-center mr-2 mb-2" appClickOutside (clickOutside)="handleClickOutside(module.id)">
+              <div *ngIf="moduleVisibility[module.id]" class="tooltip-content bg-gray-200 p-2 text-sm text-gray-700 rounded-md shadow-md">
+                <p class="font-semibold">{{ module.name }}</p>
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-   </div>
+              <button (click)="toggleModuleVisibility(module.id)" class="module-button text-sm font-semibold py-1 px-3 rounded-md"
+              [ngClass]="{
+                'bg-green-500 text-white': moduleCompletionStatus[module.id],
+                'bg-gray-200 text-gray-900': !moduleCompletionStatus[module.id]
+              }">
+                {{ getModuleNumber(module.id) }}
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
   </div>
 </div>
