@@ -54,4 +54,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
           "FROM course c " +
           "WHERE c.user_id = :userId", nativeQuery = true)
   Boolean findCourseByUserId(@Param("userId") Long userId);
+
+  @Query("SELECT c FROM Course c WHERE c.id IN :ids")
+  List<Course> findByIdIn(@Param("ids") List<Long> ids);
 }

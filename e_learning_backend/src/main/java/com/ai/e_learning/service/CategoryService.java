@@ -25,6 +25,11 @@ public interface CategoryService {
   void softDeleteCategory(Long id);
   boolean isCategoryNameAlreadyExists(String name);
   Map<String, Long> getCourseCountsPerCategory();
+
+
+
+
+
 }
 
 

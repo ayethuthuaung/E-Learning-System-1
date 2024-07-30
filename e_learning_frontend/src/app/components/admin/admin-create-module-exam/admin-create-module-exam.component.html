@@ -35,6 +35,9 @@
               <div class="bg-white rounded-lg shadow-md p-6">
                 <form class="flex flex-col" #moduleForm="ngForm" (ngSubmit)="onSubmit(moduleForm)" method="post">
                   <div *ngFor="let module of modules; let i = index" class="mb-4">
+                    <div *ngIf="moduleForm.submitted && !module.name" class="text-red-500 mb-2">
+                      Please fill the field.
+                    </div>
                     <div class="flex items-center mb-2">
                       <input
                         type="text"
@@ -51,6 +54,9 @@
                       >
                         <i class="fas fa-trash"></i>
                       </button>
+                    </div>
+                    <div *ngIf="moduleForm.submitted && !module.url" class="text-red-500 mb-2">
+                      Please fill the field.
                     </div>
                     <input
                       type="file"
@@ -149,6 +155,9 @@
               <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="flex items-center mb-4">
                   <label class="block text-sm font-medium text-gray-700 mr-2 w-1/4">Title</label>
+                  <div *ngIf="titleError" class="text-red-500 mb-2">
+                    Please fill the field.
+                  </div>
                   <input 
                     type="text" 
                     [(ngModel)]="examTitle" 
@@ -158,6 +167,9 @@
                 </div>
                 <div class="flex items-center mb-4">
                   <label class="block text-sm font-medium text-gray-700 mr-2 w-1/4">Description</label>
+                  <div *ngIf="descriptionError" class="text-red-500 mb-2">
+                    Please fill the field.
+                  </div>
                   <textarea 
                     [(ngModel)]="examDescription" 
                     placeholder="Exam Description" 
@@ -166,12 +178,18 @@
                 </div>
                 <div class="flex items-center mb-4">
                   <label class="block text-sm font-medium text-gray-700 mr-6 w-1/4">Duration</label>
+                  <div *ngIf="durationError" class="text-red-500 mb-2">
+                    Please fill the field.
+                  </div>
                     <app-timer (durationChange)="onDurationChange($event)"></app-timer>
                     <!-- <app-timer (durationChange)="handleDurationChange($event)"></app-timer> -->
 
                 </div>
                 <div class="flex items-center mb-4">
                   <label class="block text-sm font-medium text-gray-700 mr-2 w-1/4">Pass Score</label>
+                  <div *ngIf="passScoreError" class="text-red-500 mb-2">
+                    Please fill the field.
+                  </div>
                   <input 
                     type="number" 
                     [(ngModel)]="examPassScore" 

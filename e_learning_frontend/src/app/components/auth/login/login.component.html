@@ -2,12 +2,16 @@
     <div class="container" [ngClass]="isSignDivVisiable ? '' : 'active'" id="container">
       <div class="form-container sign-in">
         <form (ngSubmit)="onLogin()">
-          <h1 class="sign-in-header">Sign In</h1>
-          <!-- Message Display -->
-          <div class="error-message" *ngIf="messageType === 'error'">{{ errormessage }}</div>
-          <div class="success-message" *ngIf="messageType === 'success'">{{ successmessage }}</div>
-  
-          <input type="text" name="staffId" [(ngModel)]="loginObj.staffId" (input)="onInputChange()" placeholder="Staff ID">
+          <h1 class="sign-in-header mb-3">Sign In</h1>
+        <!-- Message Display -->
+        <div class="error-message mb-3" *ngIf="messageType === 'error'">{{ errormessage }}</div>
+        <div class="success-message mb-3" *ngIf="messageType === 'success'">{{ successmessage }}</div>
+
+        <div class="error-message " *ngIf="staffIdError">{{ staffIdError }}</div>
+        <input type="text" name="staffId" [(ngModel)]="loginObj.staffId" (input)="onInputChange()" placeholder="Staff ID">
+          
+
+          <div class="error-message " *ngIf="passwordError">{{ passwordError }}</div>
           <div class="password-container">
             <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="loginObj.password" (input)="onInputChange()" placeholder="Password">
             <div class="show">
@@ -16,6 +20,9 @@
               </button>
             </div>
           </div>
+          
+
+
           <a [routerLink]="['/forget-password']">→ Forget Your Password? ←</a>
           <button type="submit">Sign In</button>
         </form>

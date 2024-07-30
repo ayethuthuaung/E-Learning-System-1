@@ -2,6 +2,7 @@ import { Component, OnInit ,OnDestroy} from '@angular/core';
 import { UserCourseService } from '../../services/user-course.service';
 import { CourseService } from '../../services/course.service';
 import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -15,7 +16,7 @@ export class AdminDashboardComponent implements OnInit,OnDestroy {
   studentCounts: { courseName: string, acceptedCount: number }[] = [];
   acceptedCourseCount: number = 0;
   instructorCount: number = 0;
-
+  activeUserCount: number = 0;
   private pollingInterval: any;
   private pollingIntervalMs: number = 3000; //3 sec
 
@@ -35,6 +36,7 @@ export class AdminDashboardComponent implements OnInit,OnDestroy {
     this.fetchInstructorCount(); 
     this.fetchAcceptedCounts();
     this.fetchAcceptedCourses();
+    this.loadActiveUserCount();
     this.startPolling();
   }
 
@@ -74,6 +76,16 @@ export class AdminDashboardComponent implements OnInit,OnDestroy {
       });
     }
 
+    private loadActiveUserCount(): void {
+      this.userService.getUserLists().subscribe(
+        (users: User[]) => {
+          this.activeUserCount = users.filter(user => user.status === 'Active').length;
+        },
+        (error) => {
+          console.error('Error fetching user list:', error);
+        }
+      );
+    }
     
   }
  

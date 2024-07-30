@@ -42,6 +42,14 @@ public class UserCourseController {
     return userCourseService.getAllUserCourseByUserId(userId);
   }
 
+  //PK
+  @GetMapping(value = "/accepted-UserCourses", produces = "application/json")
+  public List<UserCourseDto> getAllAcceptedUserCourses() {
+    return userCourseService.getAllAcceptedUserCourses();
+  }
+
+
+
   @PostMapping(value = "/change-status/{id}", produces = "application/json")
   public ResponseEntity<?> changeStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
     String status = payload.get("status");

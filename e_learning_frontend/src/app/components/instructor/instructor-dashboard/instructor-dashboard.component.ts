@@ -5,6 +5,8 @@ import { UserCourseService } from '../../services/user-course.service';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
 import { Course } from '../../models/course.model';
 import { UserCourse } from '../../models/usercourse.model';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-instructor-dashboard',
@@ -19,6 +21,8 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
   acceptedStudentCounts: { [courseName: string]: number,  } = {};
   studentCounts: { courseId: number, studentCount: number, acceptedCount: number }[] = [];
   chartInstance: Chart<'bar'> | null = null;
+  instructorCount: number = 0;
+  activeUserCount: number = 0;
   chartConfig: ChartConfiguration<'bar'> = {
     type: 'bar',
     data: {
@@ -80,13 +84,16 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
   constructor(
     private authService: AuthService,
     private courseService: CourseService,
-    private userCourseService: UserCourseService
+    private userCourseService: UserCourseService,
+    private userService:UserService
   ) {}
 
   ngOnInit(): void {
+    this.fetchInstructorCount(); 
     this.loadAcceptedCourses();
     this.loadStudentCounts();
-    this.loadAcceptedStudentCounts
+    this.loadActiveUserCount();
+    this.loadAcceptedStudentCounts();
   }
 
   ngAfterViewInit(): void {
@@ -170,6 +177,23 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
       }
     );
   }
+  fetchInstructorCount() {
+    this.userService.getInstructorCount().subscribe(count => {
+      console.log('Instructor Count Response:', count); // Check the response structure
+      this.instructorCount = count['instructorCount']; // Ensure this line matches the response structure
+    });
+  }
+
+  private loadActiveUserCount(): void {
+    this.userService.getUserLists().subscribe(
+      (users: User[]) => {
+        this.activeUserCount = users.filter(user => user.status === 'Active').length;
+      },
+      (error) => {
+        console.error('Error fetching user list:', error);
+      }
+    );
+  }
 
   private updateChartData(): void {
     // Filter course names to only include those with accepted students
@@ -191,4 +215,6 @@ export class InstructorDashboardComponent implements OnInit, AfterViewInit, OnDe
 
     this.chartInstance = new Chart(ctx, this.chartConfig);
   }
+
+
 }

@@ -47,7 +47,7 @@
                   <select
                     class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
                     id="level" name="level" [(ngModel)]="course.level" required>
-                    <option value="" disabled selected>Select Level</option>
+                    <option value=""  selected>Select Level</option>
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Advanced">Advanced</option>
@@ -73,21 +73,20 @@
                     <div *ngIf="errorMessage && !course.photo " class="text-red-500 mb-2">
                       Please fill the field.
                     </div>
-                  <div
-                    class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
-                    <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload
-                      Photo</label>
-                      <div class="relative">
-                        <input type="file" id="photo" name="photo" (change)="onFileChange($event)"
-                               class="hidden" />
-                        <input type="text" [value]="course.photoName || 'No file chosen'" readonly
-                               class="block w-full text-sm text-gray-800 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    <div class="bg-gray-100 text-gray-800 border-0 rounded-md p-4 mb-4 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150">
+                      <label class="block mb-2 font-medium text-gray-700" for="file_input">Upload Photo</label>
+                      <div class="flex items-center space-x-2">
                         <button type="button" (click)="triggerFileInput()"
-                                class="absolute inset-y-0 right-0 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                          Choose File
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                          Browse...
                         </button>
-                      </div>          </div>
-
+                        <input type="file" id="photo" name="photo" (change)="onFileChange($event)" accept="image/*" class="hidden" />
+                        <input type="text" [value]="course.photoName || 'No file selected.'" readonly
+                               class="px-4 py-2 flex-1 block w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      </div>
+                    </div>
+                    
+                    
                   <div *ngIf="errorMessage && (!course.categorylist || course.categorylist.length === 0)" class="text-red-500 mb-2">
                     Please fill the field.
                   </div>
@@ -222,7 +221,8 @@
                       </th>
                       <th class="p-2 border">
                         Level
-                        <app-filter-sort-dropdown (sortChanged)="onSortChange('level', $event)"
+                        <app-filter-sort-dropdown  filterKey="level" 
+                        [availableNames]="availableNames" (sortChanged)="onSortChange('level', $event)"
                           (filterChanged)="onFilterChange($event)">
                         </app-filter-sort-dropdown>
                       </th>

@@ -20,7 +20,7 @@ export class InstructorCategoryComponent implements OnInit {
   errorMessage: string = '';
   categories: Category[] = [];
   nameDuplicateError = false;
-  submitted = false;
+ submitted= false;
 
   createdCategoryName: string = '';
   selectedCategory: Category = new Category();
@@ -30,6 +30,10 @@ export class InstructorCategoryComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
+
+  loggedUser: any = '';
+ userId: any;
+ isEditing : boolean =  false;
 
   @ViewChild('updateCategoryDialog') updateCategoryDialog!: TemplateRef<any>;
 
@@ -43,6 +47,13 @@ export class InstructorCategoryComponent implements OnInit {
   ngOnInit(): void {
     this.getCurrentUserId();
     this.getCategories();
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      if (this.loggedUser) {
+        this.userId = this.loggedUser.id;
+      }
+    }
   }
 
   getCurrentUserId(): void {
@@ -60,6 +71,7 @@ export class InstructorCategoryComponent implements OnInit {
       }
     );
   }
+
 
   validateCategoryName(name: string): void {
     if (!name.trim()) {
@@ -81,18 +93,18 @@ export class InstructorCategoryComponent implements OnInit {
   }
 
 
-  onSubmit(form: NgForm): void {
+  onSubmit(form: NgForm) {
     if (form.valid) {
-      this.submitted = false;
-     
-      
+      if (this.isEditing) {
+        this.updateCategory();
+      } else {
+        this.createCategory();
+      }
     } else {
-      this.submitted = true;
-      console.log('invalid form');
-      this.errorMessage = 'Please fill the required fields';
+      this.errorMessage = 'Please fill the field.';
     }
   }
-  
+
   createCategory(): void {
     this.categoryService.createCategory(this.category).subscribe(
       () => {
@@ -108,35 +120,55 @@ export class InstructorCategoryComponent implements OnInit {
       }
     );
   }
-
-  updateCategory(id: number): void {
-    this.router.navigate(['/category', id, 'update']);
+  editCategory(category: Category): void {
+    this.isEditing = true;
+    this.category = { ...category };
   }
 
-  openUpdateDialog(category: Category): void {
-    this.selectedCategory = { ...category };
-    this.dialog.open(this.updateCategoryDialog);
+  confirmUpdateCategory(): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to update this category?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel'
+    }).then((result: { isConfirmed: any; }) => {
+      if (result.isConfirmed) {
+        this.updateCategory();
+      }
+    });
   }
 
-  onUpdateSubmit(form: NgForm): void {
-    if (form.valid && !this.nameDuplicateError) {
-      this.categoryService.updateCategory(this.selectedCategory.id!, this.selectedCategory).subscribe(
-        () => {
-          console.log('Category updated successfully');
-          this.showSuccessAlert('Category updated successfully.');
+  updateCategory(): void {
+    if (this.category.id) {
+      this.categoryService.updateCategory(this.category.id, this.category).subscribe(
+        (updatedCategory: Category) => {
+          console.log('Category updated successfully:', updatedCategory);
+          this.category = new Category();
+          this.isEditing = false;
+          this.showSuccessAlert1();
           this.getCategories();
-          this.dialog.closeAll();
         },
         (error) => {
+          console.error('Error updating category:', error);
           this.errorMessage = `Error updating category: ${error}`;
         }
       );
-    } else {
-      console.log('Form is invalid.');
-      this.submitted = true;
     }
   }
 
+
+  showSuccessAlert1(): void {
+    Swal.fire({
+      title: 'Updated!',
+      text: 'Category updated successfully.',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
+
+  
   softDeleteCategory(id: number): void {
     Swal.fire({
       title: 'Are you sure?',
@@ -163,9 +195,8 @@ export class InstructorCategoryComponent implements OnInit {
       }
     });
   }
-  
 
-  toggleSidebar(): void {
+  toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 

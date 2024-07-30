@@ -38,10 +38,22 @@ public class CourseController {
     private ExcelExporter excelExporter;
 
     @Autowired
+    private ExcelExporterAttendStudentForAdmin excelExporterAttendStudentForAdmin;
+
+    @Autowired
+    private PdfExporterAttendStudentForAdmin pdfExporterAttendStudentForAdmin;
+
+    @Autowired
     private PdfExporterCoursesForInstructor pdfExporterCoursesForInstructor;
 
     @Autowired
     private ExcelExporterCoursesForInstructor excelExporterCoursesForInstructor;
+
+    @Autowired
+    private ExcelExporterStudentListForAdmin excelExporterStudentListForAdmin;
+
+    @Autowired
+    private PdfExporterStudentListForAdmin pdfExporterStudentListForAdmin;
 
 
     @Autowired
@@ -229,7 +241,28 @@ public class CourseController {
         pdfExporterCoursesForInstructor.exportCoursesForInstructor(userId, response);
     }
 
+    @GetMapping("/export/student-list/excel")
+    public void exportStudentList(HttpServletResponse response) throws IOException {
+        excelExporterStudentListForAdmin.exportStudentList(response);
+    }
+    @GetMapping("/export/student-list/pdf")
+    public void exportStudentListPdf(HttpServletResponse response) throws IOException {
+        pdfExporterStudentListForAdmin.exportStudentList(response);
+    }
 
+    @GetMapping("/export/attended-students/excel")
+    public void exportAttendedStudents(HttpServletResponse response) throws IOException {
+        excelExporterAttendStudentForAdmin.exportAttendStudentList(response);
+    }
 
+    @GetMapping("/export/attend-students/pdf")
+    public void exportAttendStudentReport(HttpServletResponse response) throws IOException {
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Attend_Student_List_Report.pdf";
+        response.setHeader(headerKey, headerValue);
+
+        pdfExporterAttendStudentForAdmin.exportStudentList(response);
+    }
 
 }

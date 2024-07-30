@@ -8,6 +8,8 @@ export class Category {
     courses: Course[];
     instructorName: string;
     createdBy: string;
+    checked?: boolean; // Add this property
+
 
     constructor() {
         this.id=0
