@@ -79,18 +79,30 @@ private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
     });
   }
   
+  // fetchAllStudentByCourse() {
+  //   console.log(this.userId);
+  //   console.log(this.loggedUser.id);
+  //   this.userCourseService.getAllUserCourses(this.userId).subscribe({
+  //     next: (data) => {
+  //       this.userCourses = data.sort((a, b) => b.createdAt - a.createdAt);
+  //       this.updatePaginatedStudentByCourses();
+  //       this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
+  //     },
+  //     error: (err) => console.error('Error fetching UserCourse:', err)
+  //   });
+  // }
+
   fetchAllStudentByCourse() {
-    console.log(this.userId);
-    console.log(this.loggedUser.id);
     this.userCourseService.getAllUserCourses(this.userId).subscribe({
-      next: (data) => {
-        this.userCourses = data.sort((a, b) => b.createdAt - a.createdAt);
-        this.updatePaginatedStudentByCourses();
-        this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
-      },
-      error: (err) => console.error('Error fetching UserCourse:', err)
+        next: (data) => {
+            this.userCourses = data.sort((a, b) => b.createdAt - a.createdAt);
+            console.log(this.userCourses); // Add this to debug
+            this.updatePaginatedStudentByCourses();
+        },
+        error: (err) => console.error('Error fetching UserCourse:', err)
     });
-  }
+}
+
 
   onSearchChange() {
     this.currentPage = 1;

@@ -1,7 +1,8 @@
 package com.ai.e_learning.dto;
 
-import com.ai.e_learning.service.CourseModuleService;
+import com.ai.e_learning.dto.UserCourseDto;
 import com.ai.e_learning.service.CourseService;
+import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.service.UserCourseService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,30 +18,34 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class ExcelExporter {
-
-    @Autowired
-    private CourseService courseService;
+public class ExcelExporterStudentListForAdmin {
 
     @Autowired
     private UserCourseService userCourseService;
 
     @Autowired
+    private CourseService courseService;
+
+    @Autowired
     private CourseModuleService courseModuleService;
 
-    public void exportCoursesByInstructor(Long instructorId, HttpServletResponse response) throws IOException {
-        // Fetch courses by instructor ID
-        List<CourseDto> courses = courseService.getCoursesByUserId(instructorId);
+    public void exportStudentList(HttpServletResponse response) throws IOException {
+        // Fetch all user courses
+        List<UserCourseDto> userCourses = userCourseService.getAllUserCourses();
 
-        // Fetch user courses by instructor ID
-        List<UserCourseDto> userCourses = userCourseService.getAllUserCourseByUserId(instructorId);
+        // Debugging statement
+        System.out.println("User Courses Retrieved: " + userCourses.size());
+
+        if (userCourses.isEmpty()) {
+            System.out.println("No user courses found.");
+            return;
+        }
 
         // Create a new workbook
         HSSFWorkbook workbook = new HSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Courses");
+        Sheet sheet = workbook.createSheet("Student List");
 
         int rowCount = 0;
 
@@ -57,18 +62,11 @@ public class ExcelExporter {
         // Date formatter
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // Iterate over courses and populate data rows
+        // Iterate over user courses and populate data rows
         int rowIndex = 1;  // Initialize row index for "No" column
-        for (CourseDto course : courses) {
-            // Student details rows
-            List<UserCourseDto> courseUserCourses = userCourses.stream()
-                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
-                    .collect(Collectors.toList());
-
-            for (UserCourseDto userCourse : courseUserCourses) {
-                Row row = sheet.createRow(rowCount++);
-                createStudentCells(row, userCourse, course, formatter, workbook, rowIndex++);
-            }
+        for (UserCourseDto userCourse : userCourses) {
+            Row row = sheet.createRow(rowCount++);
+            createStudentCells(row, userCourse, formatter, workbook, rowIndex++);
         }
 
         // Apply auto-filter to the header row
@@ -82,15 +80,15 @@ public class ExcelExporter {
         response.setContentType("application/octet-stream");
         String currentDateTime = java.time.LocalDateTime.now().toString().replace(":", "-");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=students_" + currentDateTime + ".xls";
+        String headerValue = "attachment; filename=student_list_" + currentDateTime + ".xls";
         response.setHeader(headerKey, headerValue);
 
         // Write workbook to the response output stream
-        ServletOutputStream outputStream = response.getOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
-
-        outputStream.close();
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
+            workbook.write(outputStream);
+        } finally {
+            workbook.close();
+        }
     }
 
     private void createHeaderCells(Row headerRow, CellStyle style) {
@@ -102,9 +100,7 @@ public class ExcelExporter {
         }
     }
 
-    private void createStudentCells(Row row, UserCourseDto userCourse, CourseDto course, DateTimeFormatter formatter, HSSFWorkbook workbook, int rowIndex) {
-        Long userId = userCourse.getUser().getId(); // Ensure you fetch the correct user ID
-
+    private void createStudentCells(Row row, UserCourseDto userCourse, DateTimeFormatter formatter, HSSFWorkbook workbook, int rowIndex) {
         Cell cell = row.createCell(0);
         cell.setCellValue(rowIndex);  // Row index as "No"
 
@@ -112,7 +108,7 @@ public class ExcelExporter {
         cell.setCellValue(userCourse.getUser().getStaffId());  // Add getter for Staff ID
 
         cell = row.createCell(2);
-        cell.setCellValue(course.getName());
+        cell.setCellValue(userCourse.getCourse().getName());  // Add getter for Course name
 
         cell = row.createCell(3);
         cell.setCellValue(userCourse.getUser().getEmail());  // Add getter for Email
@@ -127,7 +123,7 @@ public class ExcelExporter {
         cell.setCellValue(userCourse.getUser().getDivision());  // Add getter for Division
 
         cell = row.createCell(7);
-        Double completionPercentage = courseModuleService.calculateCompletionPercentage(userId, course.getId());
+        Double completionPercentage = courseModuleService.calculateCompletionPercentage(userCourse.getUser().getId(), userCourse.getCourse().getId());
         if (completionPercentage != null) {
             cell.setCellValue(completionPercentage / 100); // Adjust as needed based on the range of your completionPercentage
             CellStyle cellStyle = workbook.createCellStyle();
@@ -146,7 +142,7 @@ public class ExcelExporter {
         cell = row.createCell(10);
         cell.setCellValue(userCourse.getStatus());
 
-        cell = row.createCell(11); // Adjust cell index based on your layout
+        cell = row.createCell(11);
         if (userCourse.getStatusChangeTimestamp() != null) {
             cell.setCellValue(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getStatusChangeTimestamp()), ZoneId.systemDefault())));
         } else {

@@ -30,12 +30,9 @@ public class ExcelExporterForAdmin {
         // Fetch all courses
         List<CourseDto> courses = courseService.getAllCourseList();
 
-        // Fetch all user courses
-        List<UserCourseDto> userCourses = userCourseService.getAllUserCourses();
-
         // Create a new workbook
         HSSFWorkbook workbook = new HSSFWorkbook();
-        Sheet sheet = workbook.createSheet("All Courses");
+        Sheet sheet = workbook.createSheet("Courses");
 
         int rowCount = 0;
 
@@ -53,47 +50,16 @@ public class ExcelExporterForAdmin {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // Iterate over courses and populate data rows
-        int index = 1; // For numbering rows
+        int rowIndex = 1;  // Initialize row index for "No" column
         for (CourseDto course : courses) {
             Row row = sheet.createRow(rowCount++);
-
-            Cell cell = row.createCell(0);
-            cell.setCellValue(index++);
-
-            cell = row.createCell(1);
-            cell.setCellValue(course.getName());
-
-            cell = row.createCell(2);
-            cell.setCellValue(course.getLevel());
-
-            cell = row.createCell(3);
-            cell.setCellValue(course.getDuration());
-
-            cell = row.createCell(4);
-            cell.setCellValue(course.getUser().getName()); // Assuming CourseDto contains instructor details
-
-            // Calculate student count for the course
-            long studentCount = userCourses.stream()
-                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
-                    .count();
-
-            cell = row.createCell(5);
-            cell.setCellValue(studentCount);
-
-            // Convert createdAt timestamp to formatted date string
-            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
-            cell = row.createCell(6);
-            cell.setCellValue(createdAt.format(formatter));
-
-            cell = row.createCell(7);
-            cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
+            createCourseCells(row, course, formatter, rowIndex++);
         }
 
-        // Apply filter to the header row
-        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 7)); // Adjust range according to your columns
+        // Apply auto-filter to the header row
+        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 5)); // Apply filter to the first row, covering columns 0 to 5
 
-        // Auto size all columns
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 6; i++) { // Adjust the loop limit to account for all columns
             sheet.autoSizeColumn(i);
         }
 
@@ -113,36 +79,31 @@ public class ExcelExporterForAdmin {
     }
 
     private void createHeaderCells(Row headerRow, CellStyle style) {
-        Cell cell = headerRow.createCell(0);
-        cell.setCellValue("No");
-        cell.setCellStyle(style);
+        String[] headers = {"No", "Course Name", "Course Level", "Course Duration", "Instructor", "Status"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(style);
+        }
+    }
 
-        cell = headerRow.createCell(1);
-        cell.setCellValue("Course Name");
-        cell.setCellStyle(style);
+    private void createCourseCells(Row row, CourseDto course, DateTimeFormatter formatter, int rowIndex) {
+        Cell cell = row.createCell(0);
+        cell.setCellValue(rowIndex);  // Row index as "No"
 
-        cell = headerRow.createCell(2);
-        cell.setCellValue("Course Level");
-        cell.setCellStyle(style);
+        cell = row.createCell(1);
+        cell.setCellValue(course.getName());
 
-        cell = headerRow.createCell(3);
-        cell.setCellValue("Course Duration");
-        cell.setCellStyle(style);
+        cell = row.createCell(2);
+        cell.setCellValue(course.getLevel());
 
-        cell = headerRow.createCell(4);
-        cell.setCellValue("Instructor");
-        cell.setCellStyle(style);
+        cell = row.createCell(3);
+        cell.setCellValue(course.getDuration());
 
-        cell = headerRow.createCell(5);
-        cell.setCellValue("Students");
-        cell.setCellStyle(style);
+        cell = row.createCell(4);
+        cell.setCellValue(course.getUser().getName()); // Assuming CourseDto contains instructor details
 
-        cell = headerRow.createCell(6);
-        cell.setCellValue("Created Date");
-        cell.setCellStyle(style);
-
-        cell = headerRow.createCell(7);
-        cell.setCellValue("Status");
-        cell.setCellStyle(style);
+        cell = row.createCell(5);
+        cell.setCellValue(course.getStatus()); // Assuming CourseDto contains course status
     }
 }

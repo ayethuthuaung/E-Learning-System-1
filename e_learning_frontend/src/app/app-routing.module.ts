@@ -107,8 +107,7 @@ const routes: Routes = [
    {path:'all-courses', component: AllCoursesComponent},
 
    {path:'certificate', component: CertificateComponent},
-   {path:'createModule', component: CreateModuleComponent},   
-   {path:'createExam', component: CreateExamComponent},
+
    {
     path: 'instructor/module-exam/:lessonId',
     component: CreateModuleExamComponent,
