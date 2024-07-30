@@ -48,6 +48,7 @@ import { FooterComponent } from './components/shared/footer/footer.component';
 import { CertificateComponent } from './components/shared/certificate/certificate.component';
 import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
 import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
+import { AdminCourseListComponent } from './components/admin/admin-course-list/admin-course-list.component';
 
 
 
@@ -86,6 +87,8 @@ const routes: Routes = [
    {path:'admin/dashboard', component: AdminDashboardComponent},
    {path:'admin/upload-user-data', component: UserUploadComponent },
    {path:'admin/course', component: AdminCourseComponent},
+   {path:'admin/courseList', component: AdminCourseListComponent},
+
    {path:'admin/category', component: AdminCategoryComponent},
    {path:'admin/lesson/:courseId', component: AdminLessonComponent},
    {path:'admin/student', component: AdminStudentComponent},
