@@ -261,7 +261,11 @@ export class AdminCourseComponent implements OnInit {
     if (file) {
       this.course.photoName = file.name;
       this.course.photoFile = file;
+      this.clearErrorMessage()
     }
+  }
+  clearErrorMessage() {
+    this.errorMessage = '';
   }
 
 

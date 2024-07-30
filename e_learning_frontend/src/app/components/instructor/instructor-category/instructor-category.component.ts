@@ -93,15 +93,25 @@ export class InstructorCategoryComponent implements OnInit {
   }
 
 
-  onSubmit(form: NgForm) {
+  onSubmit(form: NgForm): void {
     if (form.valid) {
+      this.submitted = false;
+     
+  
       if (this.isEditing) {
         this.updateCategory();
       } else {
         this.createCategory();
       }
+  
+      // Call to display confirmation or alert, if needed
+     
+  
     } else {
-      this.errorMessage = 'Please fill the field.';
+      this.submitted = true;
+     
+      console.log('Invalid form');
+      this.errorMessage = 'Please fill all the required fields';
     }
   }
 
@@ -117,8 +127,13 @@ export class InstructorCategoryComponent implements OnInit {
       (error) => {
         console.error('Error creating category:', error);
         this.errorMessage = `Error creating category: ${error}`;
+        this.clearErrorMessage()
       }
     );
+  }
+
+  clearErrorMessage() {
+    this.errorMessage = '';
   }
   editCategory(category: Category): void {
     this.isEditing = true;

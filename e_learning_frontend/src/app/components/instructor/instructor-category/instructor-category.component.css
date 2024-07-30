@@ -46,17 +46,16 @@
 .category-card {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   background-color: white;
   padding: 0.75rem; /* Reduced padding */
   border-radius: 0.375rem; /* Rounded corners */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  margin-bottom: 0.25rem; /* Reduced bottom margin */
   border: 1px solid #e5e7eb; /* Light gray border */
 }
 
 .category-name {
-  font-size: 0.875rem; /* Default font size */
+  font-size: 1rem; /* Default font size */
   font-weight: 600;
   color: #1a202c; /* Dark gray color */
 }
