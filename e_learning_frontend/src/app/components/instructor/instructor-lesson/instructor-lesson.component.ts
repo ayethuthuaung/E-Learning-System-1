@@ -201,9 +201,10 @@ export class InstructorLessonComponent implements OnInit {
 
 
 
-    goBack() {
-      this.location.back();
-    }
+    
+  goBack() {
+    this.router.navigate([`instructor/course`]);
+  }
 
     getLessonsByCourseId(): void {
       this.lessonService.getLessonsByCourseId(this.courseId, 1).subscribe(
@@ -216,7 +217,7 @@ export class InstructorLessonComponent implements OnInit {
       );
     }
 
-    navigateToLesson(lessonId: number) {
+    navigateToLesson(lessonId: any) {
       console.log("Lesson Id :", lessonId);
 
       this.router.navigate([`../instructor/module-exam/${lessonId}`]);

@@ -13,8 +13,8 @@ export class AdminMonthlyCoursesChartComponent implements AfterViewInit, OnDestr
 
   private chartInstance: Chart | null = null;
   private labels: string[] = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
   private data: number[] = new Array(12).fill(0); // Initialize with zeros
 
@@ -27,7 +27,7 @@ export class AdminMonthlyCoursesChartComponent implements AfterViewInit, OnDestr
 
       // Populate data with counts
       Object.entries(data).forEach(([month, count]) => {
-        const monthIndex = this.labels.indexOf(month);
+        const monthIndex = this.labels.indexOf(month.slice(0, 3));
         if (monthIndex !== -1) {
           this.data[monthIndex] = count;
         }

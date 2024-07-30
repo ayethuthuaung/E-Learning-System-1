@@ -30,9 +30,6 @@ public class PDFExporterForAdmin {
         // Fetch all courses
         List<CourseDto> courses = courseService.getAllCourseList();
 
-        // Fetch all user courses
-        List<UserCourseDto> userCourses = userCourseService.getAllUserCourses();
-
         // Create a PDF document
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
@@ -46,8 +43,8 @@ public class PDFExporterForAdmin {
 
         document.add(title);
 
-        // Create a table with 8 columns
-        PdfPTable table = new PdfPTable(8);
+        // Create a table with 6 columns
+        PdfPTable table = new PdfPTable(6);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
 
@@ -66,17 +63,6 @@ public class PDFExporterForAdmin {
             table.addCell(course.getLevel());
             table.addCell(course.getDuration());
             table.addCell(course.getUser().getName()); // Assuming CourseDto contains instructor details
-
-            // Calculate student count for the course
-            long studentCount = userCourses.stream()
-                    .filter(userCourse -> userCourse.getCourse().getId().equals(course.getId()))
-                    .count();
-
-            table.addCell(String.valueOf(studentCount));
-
-            // Convert createdAt timestamp to formatted date string
-            LocalDateTime createdAt = LocalDateTime.ofInstant(Instant.ofEpochMilli(course.getCreatedAt()), ZoneId.systemDefault());
-            table.addCell(createdAt.format(formatter));
 
             table.addCell(course.getStatus()); // Assuming CourseDto contains course status
         }
@@ -109,12 +95,6 @@ public class PDFExporterForAdmin {
         table.addCell(cell);
 
         cell.setPhrase(new Phrase("Instructor", font));
-        table.addCell(cell);
-
-        cell.setPhrase(new Phrase("Students", font));
-        table.addCell(cell);
-
-        cell.setPhrase(new Phrase("Created Date", font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase("Status", font));

@@ -81,4 +81,14 @@ export class UserCourseService {
     return this.httpClient.get<{ [key: string]: number }>(`${this.baseURL}/monthly-student-counts`);
   }
 
+  getAllAcceptedUserCourses(): Observable<UserCourse[]> {
+    return this.httpClient.get<UserCourse[]>(`${this.baseURL}/accepted-UserCourses`)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error fetching accepted user courses:', error);
+          return throwError('Something went wrong while fetching accepted user courses.');
+        })
+      );
+  }
+
 }

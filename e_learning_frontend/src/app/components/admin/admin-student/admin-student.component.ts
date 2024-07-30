@@ -58,13 +58,35 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
     this.activeTab = tab;
   }
 
+  exportAttendStudentList(): void {
+    this.courseService.exportAttendStudentList().subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'Attend_Student_List.xls';
+      link.click();
+    }, error => {
+      console.error('Error exporting student list:', error);
+    });
+  }
+
+  exportAttendStudentListPdf(): void {
+    this.courseService.exportAttendStudentListPdf().subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'Attend-Student-List.pdf';
+      link.click();
+    }, error => {
+      console.error('Error exporting attend student list PDF:', error);
+    });
+  }
+
   fetchAllStudentByCourse() {
     this.userCourseService.getAllUserCourses(this.userId).subscribe({
       next: (data) => {
         this.userCourses = orderBy(data, ['createdAt'], ['desc']);
-      this.updatePaginatedStudentByCourses();
-      this.fetchCoursePercentages();
-      this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
+        this.updatePaginatedStudentByCourses();
+        this.fetchCoursePercentages();
+        this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
     },
     error: (err) => console.error('Error fetching UserCourse:', err)
   });
@@ -94,7 +116,8 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
       userCourse.user?.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.team.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       userCourse.user?.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-
+      userCourse.progressOutput?.toLowerCase().includes(this.searchTerm.toLowerCase())  ||
+      userCourse.certificateOutput?.toLowerCase().includes(this.searchTerm.toLowerCase()) || // search in completed field
       userCourse.status.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 
@@ -192,27 +215,7 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  exportCoursesByInstructor(instructorId: number): void {
-    this.courseService.exportCoursesByInstructor(instructorId).subscribe(blob => {
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `courses_${instructorId}.xls`;
-      link.click();
-    }, error => {
-      console.error('Error exporting courses:', error);
-    });
-  }
-
-  exportCoursesByInstructorToPdf(instructorId: number): void {
-    this.courseService.exportCoursesByInstructorToPdf(instructorId).subscribe(blob => {
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `courses_${instructorId}.pdf`;
-      link.click();
-    }, error => {
-      console.error('Error exporting courses to PDF:', error);
-    });
-  }
+ 
 
    fetchCoursePercentages(): void {
     this.enrolledCourses.forEach(course => {

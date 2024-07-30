@@ -15,19 +15,24 @@ export class LoginComponent {
   successmessage: string = ''; // Added property for message
   errormessage: string ='';
   messageType: string = ''; // To differentiate between success and error
-
+  staffIdError: string = '';
+  passwordError: string = '';
 
   constructor(private authService: AuthService, private router: Router) { }
 
   onInputChange(): void {
     this.errormessage = ''; 
     this.successmessage = ''; 
+    this.staffIdError = '';
+    this.passwordError = '';
   }
 
   onLogin() {
 
-    if (!this.loginObj.staffId || !this.loginObj.password) {
-      this.errormessage = 'Fill the fields';
+    this.staffIdError = !this.loginObj.staffId ? 'Staff ID is required' : '';
+    this.passwordError = !this.loginObj.password ? 'Password is required' : '';
+
+    if (this.staffIdError || this.passwordError) {
       this.messageType = 'error';
       return;
     }

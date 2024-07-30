@@ -352,7 +352,7 @@ export class AdminCourseComponent implements OnInit {
 
   showSuccessAlert(): void {
     Swal.fire({
-      icon: 'info',
+      icon: 'success',
       title: 'Successful',
       text: 'Course has been created successfully.',
       confirmButtonText: 'OK'

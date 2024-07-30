@@ -11,6 +11,8 @@ import java.util.Map;
 public interface UserCourseService {
   //AT
   List<UserCourseDto> getAllUserCourses();
+  //PK
+  List<UserCourseDto> getAllAcceptedUserCourses();
   void changeStatus(Long id, String status);
   //AT
   UserCourseDto enrollUserInCourse(Long userId, Long courseId);

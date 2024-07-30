@@ -42,4 +42,11 @@ public class UserCourse {
   protected void onCreate() {
     this.createdAt = System.currentTimeMillis();
   }
+
+
+  public void setStatus(String status) {
+    this.status = status;
+    this.statusChangeTimestamp = System.currentTimeMillis();
+  }
+
 }
