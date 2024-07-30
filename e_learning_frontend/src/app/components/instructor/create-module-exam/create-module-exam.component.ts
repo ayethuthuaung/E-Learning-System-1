@@ -58,9 +58,6 @@ export class CreateModuleExamComponent implements OnInit {
   }
   
 
-  
-
- 
 
   goBack() {
     this.router.navigate([`instructor/lesson/${this.courseId}`]);
