@@ -173,6 +173,10 @@
   transition: opacity 0.3s;
 }
 
+.relative:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+}
 
 .hover-overlay {
   opacity: 0;
