@@ -26,18 +26,17 @@
   left: 20px;
 }
 
+.certificate-container {
+  position: relative;
+}
+
 .certificate-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
-  color: red; /* Text color */
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.1); /* semi-transparent overlay */
   pointer-events: none; /* Allow clicks to pass through */
 }
 
@@ -76,6 +75,23 @@
   font-weight: bold; /* Make text bold */
   text-align: center; /* Center the text */
   white-space: nowrap; /* Prevent text wrapping */
+}
+:host {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera, and Edge */
+  cursor: not-allowed;
+}
+
+.hidden-screenshot {
+  visibility: hidden;
+}
+
+@media print {
+  .certificate-container {
+    display: none;
+  }
 }
 
 

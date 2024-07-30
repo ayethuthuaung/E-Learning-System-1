@@ -252,7 +252,11 @@ export class AdminCourseComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.course.photoFile = file;
+      this.clearErrorMessage()
     }
+  }
+  clearErrorMessage() {
+    this.errorMessage = '';
   }
 
   goToCourseList(): void {

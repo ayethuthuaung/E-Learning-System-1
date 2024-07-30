@@ -29,34 +29,16 @@ export class CertificateComponent implements OnInit {
       } else {
         console.error('User ID or Course ID is not defined for fetching certificate');
       }
+      
     });
+    document.addEventListener('keydown', this.handleKeyboardEvent.bind(this));
   }
 
-  @HostListener('document:keydown', ['$event'])
-  preventScreenshot(event: KeyboardEvent): void {
-    // Detect common screenshot key combinations
-    const isPrintScreen = event.key === 'PrintScreen';
-    const isCmdShiftS = event.key === 'S' && event.shiftKey && event.metaKey;
-    const isCtrlShiftS = event.key === 'S' && event.shiftKey && event.ctrlKey;
-    const isCmdAltS = event.key === 'S' && event.altKey && event.metaKey;
-    const isCtrlPrintScreen = event.key === 'PrintScreen' && event.ctrlKey;
-
-    if (isPrintScreen || isCmdShiftS || isCtrlShiftS || isCmdAltS || isCtrlPrintScreen) {
-      event.preventDefault();
-      alert('Screenshots are disabled for this content.');
-      console.warn('Screenshot attempt detected and blocked.');
-    }
+  ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.handleKeyboardEvent.bind(this));
   }
 
-  @HostListener('document:visibilitychange')
-  onVisibilityChange(): void {
-    // Detect when the user switches tabs (possible indication of taking a screenshot)
-    if (document.visibilityState === 'hidden') {
-      alert('Please do not attempt to capture screenshots of this content.');
-      console.warn('Tab visibility changed - possible screenshot attempt.');
-    }
-  }
-
+  
   getCertificateByUserIdAndCourseId(): void {
     if (this.userId && this.courseId) {
       this.certificateService.getCertificateByUserIdAndCourseId(this.userId, this.courseId).subscribe(
@@ -70,6 +52,14 @@ export class CertificateComponent implements OnInit {
       );
     } else {
       console.error('User ID or Course ID is not defined for fetching certificate');
+    }
+  }
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    // Block PrintScreen key and common screenshot shortcuts
+    if (event.key === 'PrintScreen' || (event.ctrlKey && (event.key === 's' || event.key === 'S'))) {
+      event.preventDefault();
+      console.log('Screenshot attempt blocked');
     }
   }
 }

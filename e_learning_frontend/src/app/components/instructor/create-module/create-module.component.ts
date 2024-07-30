@@ -33,7 +33,7 @@ export class CreateModuleComponent implements OnInit{
   modules: Module[] = [{ id: 1, name: '',url: "", file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   moduleList: Module[]=[];
   courseId: number = 0;
-
+  errorMessage: string = '';
   isSidebarOpen = true;
   activeTab: string = 'createModule';
 examForm: any;
@@ -239,11 +239,12 @@ moduleForm: FormGroup | undefined;
             );
           }
         });
-      }    
+      }  else {
+        this.errorMessage = 'Please fill the required fields';
+      }   
     }
    
   }
-  
   deleteModule(moduleId: number) {
     Swal.fire({
       title: 'Are you sure?',
@@ -279,7 +280,12 @@ moduleForm: FormGroup | undefined;
    onFileSelected(event: any, index: number) {
      const file: File = event.target.files[0];
      this.modules[index].fileInput = file;
+     this.clearErrorMessage()
    }
+
+   clearErrorMessage() {
+    this.errorMessage = '';
+  }
 
   goBack() {
     this.location.back();
