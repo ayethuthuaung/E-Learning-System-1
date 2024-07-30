@@ -13,6 +13,7 @@ import { Course } from '../../models/course.model';
 import { TimerComponent } from '../../shared/timer/timer.component';
 import { Lesson } from '../../models/lesson.model';
 import { Location } from '@angular/common';
+import { FormBuilder, Validators } from '@angular/forms';
 
 
 interface Option {
@@ -79,8 +80,13 @@ export class CreateExamComponent implements OnInit {
   private courseModuleService:CourseModuleService,
   private location: Location,
   private router:Router,
-  private cdr: ChangeDetectorRef
- ) {}
+  private cdr: ChangeDetectorRef,
+  private fb: FormBuilder
+ ) {
+  this.examForm = this.fb.group({
+    questionMarks: ['', [Validators.required, Validators.pattern('^[1-9][0-9]*$')]]
+  });
+ }
 
  ngOnInit(): void {
   const lessonIdParam = this.route.snapshot.paramMap.get('lessonId');
@@ -114,6 +120,7 @@ handleOptionClick(questionIndex: number, optionIndex: number) {
 }
 
 deleteOption(qIndex: number, oIndex: number) {
+  event?.preventDefault();
   if (this.questions[qIndex].options.length > 1) {
     this.questions[qIndex].options.splice(oIndex, 1);
   }
@@ -121,6 +128,7 @@ deleteOption(qIndex: number, oIndex: number) {
 
 
 addQuestion() {
+  event?.preventDefault();
   this.questions.push({
     text: 'New Question',
     type: 'multiple-choice',
@@ -133,6 +141,7 @@ addQuestion() {
 }
 
 deleteNewQuestion(questionIndex: number) {
+  event?.preventDefault();
   if (this.questions.length > 1) {
     this.questions.splice(questionIndex, 1);
   }
@@ -159,6 +168,16 @@ loadExamByLessonId(lessonId: number) {
 }
 
 onSubmitExam(examForm: any) {
+  if (examForm.invalid) {
+    // Mark all controls as touched to trigger validation messages
+    Object.keys(examForm.controls).forEach((control) => {
+      examForm.controls[control].markAsTouched();
+    });
+
+   
+    return;
+  }
+
   Swal.fire({
     title: 'Are you sure?',
     text: 'Do you want to submit this exam?',
