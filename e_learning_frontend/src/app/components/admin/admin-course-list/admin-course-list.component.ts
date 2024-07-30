@@ -4,6 +4,7 @@ import { Course } from '../../models/course.model';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 import { WebSocketService } from '../../services/websocket.service';
+
 import { orderBy } from 'lodash';
 import { Router } from '@angular/router';
 
@@ -223,6 +224,8 @@ export class AdminCourseListComponent implements OnInit, OnDestroy {
       link.href = window.URL.createObjectURL(blob);
       link.download = 'all_courses.pdf';
       link.click();
+    },error =>{
+      console.error('Error exporting pdf:' , error);
     });
   }
   exportAllCourses() {
@@ -238,6 +241,5 @@ export class AdminCourseListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/course-detail', courseId]);
   }
 
-  
 }
 

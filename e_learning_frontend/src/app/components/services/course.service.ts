@@ -98,7 +98,9 @@ export class CourseService {
   }
   exportCoursesByInstructorToPdf(instructorId: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/instructor/pdf?instructorId=${instructorId}`, { responseType: 'blob' });
-  }
+}
+
+
   exportAllCoursesPDF(): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
   }
@@ -120,8 +122,30 @@ export class CourseService {
     });
   }
   
-  
-  
+ // In your Angular service
+ exportStudentListByAdmin(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/student-list/excel`, {
+    responseType: 'blob'  // Specify the response type as blob
+  });
+}
+
+exportStudentListByAdminPdf(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/student-list/pdf`, {
+    responseType: 'blob'  // Specify the response type as blob
+  });
+}
+
+exportAttendStudentList(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/attended-students/excel`, {
+    responseType: 'blob' // Specify the response type as blob
+  });
+}
+
+exportAttendStudentListPdf(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/attend-students/pdf`, {
+    responseType: 'blob'
+  });
+}
   
  
 }

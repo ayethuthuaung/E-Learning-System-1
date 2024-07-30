@@ -28,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/courses")
+@CrossOrigin(origins = "*") // Change this to your frontend URL
 public class CourseController {
 
     @Autowired
@@ -37,10 +38,22 @@ public class CourseController {
     private ExcelExporter excelExporter;
 
     @Autowired
+    private ExcelExporterAttendStudentForAdmin excelExporterAttendStudentForAdmin;
+
+    @Autowired
+    private PdfExporterAttendStudentForAdmin pdfExporterAttendStudentForAdmin;
+
+    @Autowired
     private PdfExporterCoursesForInstructor pdfExporterCoursesForInstructor;
 
     @Autowired
     private ExcelExporterCoursesForInstructor excelExporterCoursesForInstructor;
+
+    @Autowired
+    private ExcelExporterStudentListForAdmin excelExporterStudentListForAdmin;
+
+    @Autowired
+    private PdfExporterStudentListForAdmin pdfExporterStudentListForAdmin;
 
 
     @Autowired
@@ -48,11 +61,16 @@ public class CourseController {
 
     @Autowired
     private PDFExporterForAdmin pdfExporterForAdmin;
-    @Autowired
-    private ModelMapper modelMapper;
+
 
     @Autowired
     private PDFExporter pdfExporter;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+
+
 
     @GetMapping(value = "/courselist", produces = "application/json")
     public ResponseEntity<List<CourseDto>> displayCourse(ModelMap model, @RequestParam(value = "status", required = false) String status) {
@@ -208,6 +226,7 @@ public class CourseController {
         pdfExporterForAdmin.exportAllCourses(response);
     }
 
+
     @GetMapping("/export/courses")
     public void exportCoursesForInstructor(
             @RequestParam("userId") Long userId,
@@ -222,6 +241,28 @@ public class CourseController {
         pdfExporterCoursesForInstructor.exportCoursesForInstructor(userId, response);
     }
 
+    @GetMapping("/export/student-list/excel")
+    public void exportStudentList(HttpServletResponse response) throws IOException {
+        excelExporterStudentListForAdmin.exportStudentList(response);
+    }
+    @GetMapping("/export/student-list/pdf")
+    public void exportStudentListPdf(HttpServletResponse response) throws IOException {
+        pdfExporterStudentListForAdmin.exportStudentList(response);
+    }
 
+    @GetMapping("/export/attended-students/excel")
+    public void exportAttendedStudents(HttpServletResponse response) throws IOException {
+        excelExporterAttendStudentForAdmin.exportAttendStudentList(response);
+    }
+
+    @GetMapping("/export/attend-students/pdf")
+    public void exportAttendStudentReport(HttpServletResponse response) throws IOException {
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Attend_Student_List_Report.pdf";
+        response.setHeader(headerKey, headerValue);
+
+        pdfExporterAttendStudentForAdmin.exportStudentList(response);
+    }
 
 }

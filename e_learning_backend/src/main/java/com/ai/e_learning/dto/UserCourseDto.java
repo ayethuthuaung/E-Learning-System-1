@@ -16,6 +16,6 @@ public class UserCourseDto {
     private String status;
     private Long createdAt;
     private Long statusChangeTimestamp;
-    private String progressOutput, certificateOutput;
-
+    private String progressOutput;
+    private String certificateOutput;
 }
