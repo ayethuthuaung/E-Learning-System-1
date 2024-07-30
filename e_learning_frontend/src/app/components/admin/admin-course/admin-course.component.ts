@@ -73,6 +73,10 @@ export class AdminCourseComponent implements OnInit {
     if (form.valid) {
       this.submitted = false;
       this.loading = true;
+    setTimeout(() => {
+      this.loading = false;
+      // Your submit logic
+    }, 7000); 
       this.sureAlert();
       
     } else {
@@ -160,6 +164,10 @@ export class AdminCourseComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  triggerFileInput(): void {
+    document.getElementById('photo')?.click();
   }
 
   editCourse(course: Course): void {

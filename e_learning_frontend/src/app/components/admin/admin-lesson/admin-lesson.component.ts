@@ -219,7 +219,7 @@ export class AdminLessonComponent implements OnInit {
     navigateToLesson(lessonId: number) {
       console.log("Lesson Id :", lessonId);
 
-      this.router.navigate([`../instructor/module-exam/${lessonId}`]);
+      this.router.navigate([`../module-exam/${lessonId}`]);
     }
 
     deleteLesson(id: number): void {

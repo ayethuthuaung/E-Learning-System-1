@@ -243,26 +243,11 @@ public class CourseServiceImpl implements CourseService {
               List<Long> categoryIdList = new ArrayList<>();
               for(Category category : courseDto.getCategories()){
                 Long categoryId = category.getId();
+                System.out.println(categoryId);
                 categoryIdList.add(categoryId);
               }
               Set<Category> updatedCategories = new HashSet<>(categoryRepository.findAllById(categoryIdList));
               courseDto.setCategories(updatedCategories);
-              // Clear existing categories
-//              for(Category category : existingCourse.getCategories()){
-//                System.out.println(category.toString());
-//              }
-//              existingCourse.getCategories().clear();
-//
-//              courseRepository.saveAndFlush(existingCourse); // Save to ensure categories are cleared
-
-              // Add updated categories
-//              Set<Category> updatedCategories = new HashSet<>();
-//              for (Long categoryId : courseDto.getCategorylist()) {
-//                Category category = categoryRepository.findById(categoryId)
-//                        .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId));
-//                updatedCategories.add(category);
-//              }
-//              existingCourse.getCategories().addAll(updatedCategories);
 
               // Map other fields
               modelMapper.map(courseDto, existingCourse);

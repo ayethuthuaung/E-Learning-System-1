@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User } from '../models/user';
+import { User } from '../models/user.model';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -54,6 +54,9 @@ export class UserService {
 
   getUserList(): Observable<Student[]> {
     return this.httpClient.get<Student[]>(`${this.baseURL}/userList`);
+  }
+  getUserLists(): Observable<User[]> {
+    return this.httpClient.get<User[]>(`${this.baseURL}/userList`);
   }
 
   getUserById(id: number): Observable<Student> {

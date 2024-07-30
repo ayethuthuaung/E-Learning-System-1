@@ -14,33 +14,22 @@ import { ExamCreationDto } from '../../models/examCreationDto.model';
 import { AnswerOptionDTO } from '../../models/answeroptiondto.model';
 import { Location } from '@angular/common';
 import { CourseService } from '../../services/course.service';
+import { TimerComponent } from '../../shared/timer/timer.component';
 
-interface Option {
-  label: string;
-  value: string;
-  isAnswered: boolean;
-  isCorrect?: boolean; 
-}
 
-interface Question {
-  text: string;
-  type: string;
-  marks: number;
-  options: Option[];
-  correctAnswer?: string; 
-  isNew?: boolean;
-}
+
 
 @Component({
-  selector: 'app-admin-create-module-exam',
-  templateUrl: './admin-create-module-exam.component.html',
-  styleUrl: './admin-create-module-exam.component.css'
+  selector: 'app-create-module',
+  templateUrl: './create-module.component.html',
+  styleUrl: './create-module.component.css'
 })
-export class AdminCreateModuleExamComponent implements OnInit{
+export class CreateModuleComponent implements OnInit{
+
   lessonId: number = -1;
   lessons :Lesson[] =[];
   lesson!: { title: ''; };
-  modules: Module[] = [{ id: 1, name: '',url: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+  modules: Module[] = [{ id: 1, name: '',url: "", file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   moduleList: Module[]=[];
   courseId: number = 0;
 
@@ -56,31 +45,9 @@ course: Course | undefined;
 
 
 @ViewChild('formRef') formRef!: ElementRef;
+@ViewChild(TimerComponent) timerComponent!: TimerComponent;
 
 
- //Create Exam
- examId: number = 1; // Example exam ID
- examTitle: string='';
- examDescription: string= '';
- examDuration: string= '';
- examFinal: boolean = false;
- examPassScore: number = 0;
- formDescription: string = 'Please fill out this form';
- examList: ExamList[]=[];
-
-
- questions: Question[] = [
-   {
-     text: '',
-     type: 'multiple-choice',
-     options: [
-       { label: 'Option 1', value: 'option1', isAnswered: false }
-     ],
-     marks:0
-   }
- ];
-
- showResults: boolean = false; // Add this property to toggle result display
 
 
 
@@ -102,10 +69,11 @@ course: Course | undefined;
     if (lessonIdParam !== null) {
       this.lessonId = +lessonIdParam; // Convert courseIdParam to number if not null
       this.loadModulesByLessonId(this.lessonId);
-      this.loadExamByLessonId(this.lessonId);
+
        this.getCourseId(this.lessonId);
        
     }
+    
 
   }
 
@@ -252,7 +220,7 @@ course: Course | undefined;
 
                 moduleForm.resetForm();
                 this.modules = [];
-                this.modules = [{ id: 1, name: '',url:'', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
+                this.modules = [{ id: 1, name: '',url: '', file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   
                 this.loadModulesByLessonId(this.lessonId);
               },
@@ -306,178 +274,14 @@ course: Course | undefined;
     this.modules[index].fileInput = file;
   }
 
- 
-//Create Exam
-  addOption(questionIndex: number) {
-    this.questions[questionIndex].options.push({
-      label: `Option ${this.questions[questionIndex].options.length + 1}`,
-      value: `option${this.questions[questionIndex].options.length + 1}`,
-      isAnswered: false
-    });
-  }
-
-  handleOptionClick(questionIndex: number, optionIndex: number) {
-    const question = this.questions[questionIndex];
-    if (optionIndex === question.options.length - 1) {
-      this.addOption(questionIndex);
-    }
-  }
-
-  deleteOption(qIndex: number, oIndex: number) {
-    if (this.questions[qIndex].options.length > 1) {
-      this.questions[qIndex].options.splice(oIndex, 1);
-    }
-  }
-
-
-  addQuestion() {
-    this.questions.push({
-      text: 'New Question',
-      type: 'multiple-choice',
-      options: [
-        { label: 'Option 1', value: 'option1', isAnswered: false }
-      ],
-      marks:0,
-      isNew: true // Mark this question as new
-    });
-  }
-
-  deleteNewQuestion(questionIndex: number) {
-    if (this.questions.length > 1) {
-      this.questions.splice(questionIndex, 1);
-    }
-  }
-
-  selectOption(questionIndex: number, optionIndex: number) {
-    const question = this.questions[questionIndex];
-    question.options.forEach((option, idx) => {
-      option.isAnswered = (idx === optionIndex);
-    });
-  }
-
-  loadExamByLessonId(lessonId: number) {
-    this.examService.getExamByLessonId(lessonId).subscribe(
-      exams => {
-        this.examList = exams;
-        
-      },
-      error => {
-        console.error('Error fetching modules:', error);
-        // Handle error
-      }
-    );
-  }
-
-  onSubmitExam(examForm: any) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to submit this exam?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, submit!',
-      cancelButtonText: 'No, cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const examCreationDto: ExamCreationDto = {
-          lessonId: this.lessonId,
-          title: this.examTitle,
-          description: this.examDescription,
-          duration: this.examDuration,
-          finalExam: this.examFinal,
-          passScore: this.examPassScore,
-          questionList: this.questions.map(question => ({
-            content: question.text,
-            questionTypeId: question.type === 'multiple-choice' ? 1 : 2, // Map types to IDs
-            answerList: question.options.map(option => ({
-              answer: option.label,
-              isAnswered: option.isAnswered
-            } as AnswerOptionDTO)),
-            marks: question.marks
-          } as QuestionDto))
-        };
-
-        this.examService.createExam(examCreationDto).subscribe(
-          (response) => {
-            console.log('Exam submitted successfully', response);
-            Swal.fire('Success!', 'The exam has been submitted successfully.', 'success');
-                this.examTitle= '';  
-                this.examDescription='';
-                this.examDuration = '';
-                 this.questions = [];
-                this.questions = [
-                  {
-                    text: '',
-                    type: 'multiple-choice',
-                    options: [
-                      { label: 'Option 1', value: 'option1', isAnswered: false }
-                    ],
-                    marks:0
-                  }
-                ];
-                this.loadExamByLessonId(this.lessonId);
-                 
-          },
-          (error) => {
-            console.error('Error submitting exam', error);
-            Swal.fire('Error!', 'There was an error submitting the exam.', 'error');
-          }
-        );
-      } 
-    });
-  }
-
-  deleteExam(examId: number) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to delete this exam?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, keep it',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.examService.deleteExam(examId).subscribe(
-          () => {
-            this.examList = this.examList.filter(exam => exam.id !== examId);
-            Swal.fire('Deleted!', 'The exam has been deleted.', 'success');
-          },
-          error => {
-            console.error('Error deleting exam:', error);
-            Swal.fire('Error!', 'Failed to delete the exam.', 'error');
-          }
-        );
-      }
-    });
-  }
-
   goBack() {
     this.location.back();
-  }
-
-  onDurationChange(duration: string) {
-    console.log(duration);
-    
-    this.examDuration = duration;
   }
 
   goToCourseDetails():void {
     this.router.navigate(['/course-detail', this.courseId]);
   }
 
-  viewQuestionFormClick(examId: number): void {
-    // if (this.lesson?.examListDto.id) {
-      this.examService.getExamById(examId).subscribe(
-        (exam) => {
-          console.log("exam:", exam);
-          
-          this.router.navigate([`/question-form/${examId}`], { state: { exam } });
-        },
-        (error) => {
-          console.error('Error fetching course video view', error);
-        }
-      );
-    // }
-  }
 
   getCourseId(lessonId: number): void {
     this.courseService.getCourseIdByLessonId(lessonId).subscribe(
@@ -508,3 +312,4 @@ course: Course | undefined;
  
 
  }
+
