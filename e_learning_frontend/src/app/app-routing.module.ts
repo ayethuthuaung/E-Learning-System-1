@@ -46,6 +46,8 @@ import { AdminProfileComponent } from './components/admin/admin-profile/admin-pr
 import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
 import { CertificateComponent } from './components/shared/certificate/certificate.component';
+import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
+import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
 
 
 
@@ -99,13 +101,22 @@ const routes: Routes = [
    {path:'course-detail/:courseId', component: CourseDetailsComponent},
    {path:'instructor/lesson/:courseId', component: InstructorLessonComponent},
    {path:'instructor/student', component: InstructorStudentComponent},
-   {path:'instructor/module-exam/:lessonId', component: CreateModuleExamComponent},
+  //  {path:'instructor/module-exam/:lessonId', component: CreateModuleExamComponent},
 
    {path:'question-form/:examId', component: StudentQuestionFormComponent},
    {path:'all-courses', component: AllCoursesComponent},
 
    {path:'certificate', component: CertificateComponent},
-
+   {path:'createModule', component: CreateModuleComponent},   
+   {path:'createExam', component: CreateExamComponent},
+   {
+    path: 'instructor/module-exam/:lessonId',
+    component: CreateModuleExamComponent,
+    children: [
+      { path: 'createModule/:lessonId', component: CreateModuleComponent },
+      { path: 'createExam/:lessonId', component: CreateExamComponent }
+    ]
+  },
 
 ];
 

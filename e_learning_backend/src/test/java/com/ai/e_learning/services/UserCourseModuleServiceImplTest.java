@@ -115,6 +115,7 @@ public class UserCourseModuleServiceImplTest {
 
     @Test
     void testGetModuleCompletionStatus_WhenModuleIsCompleted() {
+        userCourseModule.setDone(true);
         when(userCourseModuleRepository.findByUserIdAndCourseModuleId(any(Long.class), any(Long.class)))
                 .thenReturn(Optional.of(userCourseModule));
 

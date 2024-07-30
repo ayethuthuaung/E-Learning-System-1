@@ -36,7 +36,7 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
 
   courses: Course[] = [];
   status: string = 'Accept,Pending'; 
-
+  availableNames: string[] = [];
   private pollingInterval: any;
   private pollingIntervalMs: number = 3000; // Polling interval in milliseconds
 
@@ -90,6 +90,8 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  
 
   onSubmit(form: NgForm): void {
     if (form.valid) {
@@ -230,10 +232,12 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.getInstructorCourses(); // Refresh courses list after updating the course
         this.course = new Course(); // Clear the form
-        this.course.categorylist = [];
-        this.course.categories = [];
-        this.categories = [];
-        this.categoryList=[];
+        // this.categories.forEach(category => category.checked = false);
+
+        // this.course.categorylist = [];
+        // this.course.categories = [];
+        this.categories = [];// I don't want to remove all Categories I just want to false checked check box
+        this.loadCategories();
         console.log(this.course.categories);
         console.log(this.course.categorylist);
         console.log(this.categories);
@@ -288,10 +292,16 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      this.course.photoName = file.name;
       this.course.photoFile = file;
+      this.clearErrorMessage1(); 
     }
   }
-
+ 
+  clearErrorMessage1() {
+    this.errorMessage = '';
+  }
+ 
   goToCourseList(): void {
     this.router.navigate(['/courses']);
   }
@@ -305,9 +315,10 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
   }
 
   toggleCategories(event: any, category: Category) {
-
-    if (event.target.checked) {
-
+    category.checked = event.target.checked;
+    if (category.checked) {
+      console.log(category.checked);
+      
       this.course.categories.push(category);
     } else {
       const index = this.course.categories.findIndex(cat => cat.id === category.id);
@@ -319,7 +330,11 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
     console.log(this.course.categories);
     console.log(this.course);
     
-    
+    this.clearErrorMessage(); 
+  }
+
+  clearErrorMessage() {
+    this.errorMessage = '';
   }
 
   getInstructorCourses(): void {
@@ -330,6 +345,7 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
         
         this.courses = data;
         this.courses = data.sort((a, b) => b.createdAt - a.createdAt);
+        this.availableNames = [...new Set(this.courses.map(course => course.level))];
         this.updatePaginatedInstructorCourses();
         this.totalPages = Math.ceil(this.courses.length / this.itemsPerPage);
    

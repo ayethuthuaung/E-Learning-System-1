@@ -42,13 +42,13 @@
 
                         <!-- Export Courses Button -->
                         <button 
-                            class="btn btn-primary ml-4"
+                            class="btn bg-logo-blue hover:bg-dark-blue text-white ml-4"
                             (click)="exportCoursesByInstructor(userId)"
                             >
                             Excel
                         </button>
                         <button 
-                            class="btn btn-primary ml-4"
+                            class="btn bg-logo-blue hover:bg-dark-blue text-white ml-4"
                             (click)="exportCoursesByInstructorToPdf(userId)"
                             >
                             PDF
@@ -102,55 +102,90 @@
                         <table class="table table-bordered table-hover">
                         <thead class="thead-dark">
                             <tr>
-                            <th>No</th>
-                            <th>Student Name
-                                <app-filter-sort-dropdown 
-                                (sortChanged)="onSortChange('user.name', $event)" 
-                                (filterChanged)="onFilterChange($event)"
+                                <th>No</th>
+                                <th>
+                                  StaffId
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('user.staffId', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
                                 ></app-filter-sort-dropdown>
-                            </th>
-                            <th>Course Name
-                                <app-filter-sort-dropdown 
-                                (sortChanged)="onSortChange('course.name', $event)" 
-                                (filterChanged)="onFilterChange($event)"
+                               
+                                <th>
+                                  Student
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('user.name', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
                                 ></app-filter-sort-dropdown>
-                            </th>
-                            
-                            <th>Dept
-                                <app-filter-sort-dropdown 
-                                (sortChanged)="onSortChange('user.department', $event)" 
-                                (filterChanged)="onFilterChange($event)"
+                                </th>
+                                <th>
+                                  Course
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('course.name', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
+                                  ></app-filter-sort-dropdown>
+                                </th>
+                                
+                                <th>
+                                  Team
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('user.team', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
                                 ></app-filter-sort-dropdown>
-                            </th>
-                            <th>Team
-                                <app-filter-sort-dropdown 
-                                (sortChanged)="onSortChange('user.team', $event)" 
-                                (filterChanged)="onFilterChange($event)"
+                                </th>
+                                <th>
+                                  Progress
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('progressOutput', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
                                 ></app-filter-sort-dropdown>
-                            </th>
-                            <th>Email
-                                <app-filter-sort-dropdown 
-                                (sortChanged)="onSortChange('user.email', $event)" 
-                                (filterChanged)="onFilterChange($event)"
+                                </th>
+                                <th>
+                                  Certificate
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('certificateOutput', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
                                 ></app-filter-sort-dropdown>
-                            </th>
-                            
-                            <th>Status</th>
-                            </tr>
+                                </th>
+                                
+                                <th>
+                                  Req Date
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('createdAt', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                                </th>
+                                
+                                <th>
+                                  Status
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('status', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                                </th>
+                                <th>
+                                  Acc/Rej Date
+                                  <app-filter-sort-dropdown 
+                                  (sortChanged)="onSortChange('statusChangeTimestamp', $event)" 
+                                  (filterChanged)="onFilterChange($event)"
+                                ></app-filter-sort-dropdown>
+                                </th>
+                              </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let userCourse of paginatedUserCourses; let i = index">
-                            <td class="center-cell table-cell-height">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-                            <td class="table-cell-height">{{ userCourse.user?.name }}</td>                            
-                            <td class="table-cell-height">{{ userCourse.course?.name }}</td>
-                            <td class="table-cell-height">{{ userCourse.user?.department }}</td>
-                            <td class="table-cell-height">{{ userCourse.user?.team }}</td>
-                            <td class="table-cell-height">{{ userCourse.user?.email }}</td>
-                            
-                            <td class="table-cell-height">
-
-
-                                <div class="icon-container status-cell">
+                            <tr *ngFor="let userCourse of paginatedUserCourses; let i = index" class="hover:bg-gray-100">
+                                <td class="table-cell-height">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                                <td class="table-cell-height">{{ userCourse.user?.staffId }}</td>
+                                <td class="table-cell-height">{{ userCourse.user?.name }}</td>
+                                <td class="table-cell-height">{{ userCourse.course?.name }}</td>
+                                
+                                <td class="table-cell-height">{{ userCourse.user?.team }}</td>
+                                <td class="table-cell-height">{{ userCourse.progressOutput}}</td>
+                                
+                                <td class="table-cell-height">{{ userCourse.certificateOutput}}</td>
+                
+                                <td class="table-cell-height">{{ userCourse.createdAt | date:'dd-MMMM-yy' }}</td>
+                                <td class="table-cell-height">
+                                  <div class="icon-container status-cell">
                                     <i *ngIf="userCourse.status === 'Accept'" class="fa-solid fa-circle-check" style="color: green; font-size: 24px;"></i>
                                     <i *ngIf="userCourse.status === 'Reject'" class="fa-solid fa-circle-xmark" style="color: red; font-size: 24px;"></i>
                       
@@ -165,8 +200,21 @@
                                     </div>
                                     
                                   </div>
-                                </td>
-                            </tr>
+                                  </td>
+                                  <td class="table-cell-height">{{ userCourse.statusChangeTimestamp | date:'dd-MMMM-yy' }}</td>
+                
+                                  <!-- <td class="p-2 border">
+                                    <span 
+                                      [ngClass]="{
+                                        'text-green-700': userCourse.status === 'Accept',
+                                        'text-red-500': userCourse.status === 'Reject',
+                                        'text-yellow-500': userCourse.status === 'Pending'
+                                      }"
+                                    >
+                                      {{ userCourse.status }}
+                                    </span>
+                                  </td> -->
+                              </tr>
                         </tbody>
                         </table>
                     </div>
