@@ -1,3 +1,4 @@
+
 <div class="min-h-screen bg-gray-100 flex flex-col">
   <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar> 
 
@@ -19,50 +20,12 @@
               <p>{{ acceptedCourseCount }} courses accepted</p>
             </div>
           </div>
-
-      <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6">
-        <i class="fas fa-user-graduate text-4xl text-purple-500 mr-4"></i>
-        <div>
-          <h3 class="text-xl font-semibold mb-2">Students</h3>
-          <p>{{ totalStudentCount }} students accepted</p>
-        </div>
-      </div>
-
-      <div class="bg-purple-200 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-6">
-        <i class="fas fa-chalkboard-teacher text-4xl text-purple-500 mr-4"></i>
-        <div>
-          <h3 class="text-xl font-semibold mb-2">Instructors</h3>
-          <p>{{ instructorCount }} instructors</p>
-        </div>
-      </div>
-     
-</div>
-      <!-- Bar Chart within a Bigger Card -->
-      <div class="w-full h-80 mt-12">
-        <mat-card class="w-full max-w-[600px] mx-auto">
-          <mat-card-header>
-            <mat-card-title>Course</mat-card-title>
-            <!-- <mat-card-subtitle>Monthly Data</mat-card-subtitle> -->
-          </mat-card-header>
-          <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
-            <app-admin-chart [chartType]="'bar'"></app-admin-chart>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-      
-      <!-- Line Chart for Student Progress -->
-      <div class="my-4">
-        <mat-card class="w-full max-w-[600px] mx-auto">
-          <mat-card-header>
-            <mat-card-title>Student Progress</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
-            <div class="chart-container">
-              <app-admin-course-completion [chartType]="'line'"></app-admin-course-completion>
+          <div class="bg-purple-170 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8"> 
+            <i class="fas fa-user-graduate text-4xl text-purple-500 mr-10"></i>
+            <div>
+              <h3 class="text-xl font-semibold mb-2">Students</h3>
+              <p>{{ totalStudentCount }} students accepted</p>
             </div>
-            </mat-card-content>
-            </mat-card>
           </div>
         </div>
         
@@ -103,7 +66,8 @@
             </mat-card-content>
           </mat-card>
         </div>
-      </main>
+      
       </div>
+    </main>
   </div>
-  
+</div>
