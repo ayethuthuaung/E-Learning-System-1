@@ -45,6 +45,7 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
     if (storedUser) {
       this.loggedUser = JSON.parse(storedUser);
       this.userId = this.loggedUser.id;
+      
     }
     this.fetchAllStudentByCourse();
     this.startPolling(); // Start polling for updates
@@ -66,6 +67,17 @@ export class AdminStudentComponent implements OnInit, OnDestroy {
       link.click();
     }, error => {
       console.error('Error exporting student list:', error);
+    });
+  }
+
+  exportCoursesByInstructor(userId: number): void {
+    this.courseService.exportCoursesByInstructor(userId).subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `courses_${userId}.xls`;
+      link.click();
+    }, error => {
+      console.error('Error exporting courses:', error);
     });
   }
 

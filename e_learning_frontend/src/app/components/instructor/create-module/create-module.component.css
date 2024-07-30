@@ -1,149 +1,45 @@
+/* admin-create-module-exam.component.css */
+
+/* loader styles */
+.loader {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  /* --c: no-repeat linear-gradient(rgb(98, 187, 222) 0%, rgb(92, 179, 194) 100%); */
+  --c: no-repeat linear-gradient(#66beee 0 0);
+  background:
+    var(--c) center/100% 10px,
+    var(--c) center/10px 100%;
+}
+
+.loader:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    var(--c) 0 0,
+    var(--c) 100% 0,
+    var(--c) 0 100%,
+    var(--c) 100% 100%;
+  background-size: 15.5px 15.5px;
+  animation: l16 1.5s infinite cubic-bezier(0.3, 1, 0, 1);
+}
+
+@keyframes l16 {
+  33% { inset: -10px; transform: rotate(0deg); }
+  66% { inset: -10px; transform: rotate(90deg); }
+  100% { inset: 0; transform: rotate(90deg); }
+}
+
 .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-  }
-  
-  /* 
-  @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  
-    
-    .spinner {
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid #3498db;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-    } */
-  
-    .loading-overlay .container {
-      width: 200px;
-      height: 200px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      margin: auto;
-      filter: url("#goo");
-      animation: rotate-move 2s ease-in-out infinite;
-    }
-    
-    .dot {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background-color: #000;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
-    }
-    
-    .dot-3 {
-      background-color: #ff1717;
-      animation: dot-3-move 2s ease infinite, index 6s ease infinite;
-    }
-    
-    .dot-2 {
-      background-color: #0051ff;
-      animation: dot-2-move 2s ease infinite, index 6s -4s ease infinite;
-    }
-    
-    .dot-1 {
-      background-color: #ffc400;
-      animation: dot-1-move 2s ease infinite, index 6s -2s ease infinite;
-    }
-    
-    @keyframes dot-3-move {
-      20% {
-        transform: scale(1);
-      }
-      45% {
-        transform: translateY(-18px) scale(0.45);
-      }
-      60% {
-        transform: translateY(-90px) scale(0.45);
-      }
-      80% {
-        transform: translateY(-90px) scale(0.45);
-      }
-      100% {
-        transform: translateY(0px) scale(1);
-      }
-    }
-    
-    @keyframes dot-2-move {
-      20% {
-        transform: scale(1);
-      }
-      45% {
-        transform: translate(-16px, 12px) scale(0.45);
-      }
-      60% {
-        transform: translate(-80px, 60px) scale(0.45);
-      }
-      80% {
-        transform: translate(-80px, 60px) scale(0.45);
-      }
-      100% {
-        transform: translateY(0px) scale(1);
-      }
-    }
-    
-    @keyframes dot-1-move {
-      20% {
-        transform: scale(1);
-      }
-      45% {
-        transform: translate(16px, 12px) scale(0.45);
-      }
-      60% {
-        transform: translate(80px, 60px) scale(0.45);
-      }
-      80% {
-        transform: translate(80px, 60px) scale(0.45);
-      }
-      100% {
-        transform: translateY(0px) scale(1);
-      }
-    }
-    
-    @keyframes rotate-move {
-      55% {
-        transform: translate(-50%, -50%) rotate(0deg);
-      }
-      80% {
-        transform: translate(-50%, -50%) rotate(360deg);
-      }
-      100% {
-        transform: translate(-50%, -50%) rotate(360deg);
-      }
-    }
-    
-    @keyframes index {
-      0%,
-      100% {
-        z-index: 3;
-      }
-      33.3% {
-        z-index: 2;
-      }
-      66.6% {
-        z-index: 1;
-      }
-    }
-    
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}

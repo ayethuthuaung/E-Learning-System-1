@@ -33,6 +33,9 @@ export class AdminStudentListComponent implements OnInit, OnDestroy {
 
   private userCoursesSubscription: Subscription = new Subscription();
 
+  private pollingInterval: any;
+  private pollingIntervalMs: number = 3000;
+
   constructor(
     private userCourseService: UserCourseService,
     private courseService: CourseService,
@@ -50,10 +53,13 @@ export class AdminStudentListComponent implements OnInit, OnDestroy {
       this.loggedUser = JSON.parse(storedUser);
       this.userId = this.loggedUser.id;
     this.loadAcceptedUserCourses();
-  }}
+    this.startPolling();
+  }
+  }
 
   ngOnDestroy(): void {
     this.userCoursesSubscription.unsubscribe();
+    this.stopPolling(); // Clean up polling when component is destroyed
   }
 //excel
 exportStudentListByAdmin(): void {
@@ -82,7 +88,11 @@ exportStudentListPdf(): void {
     this.userCoursesSubscription.add(
       this.userCourseService.getAllAcceptedUserCourses().subscribe(
         (courses: UserCourse[]) => {
-          this.userCourses = orderBy(courses, ['createdAt'], ['desc']);
+          this.userCourses = orderBy(
+            courses.filter(course => course.status.toLowerCase() === 'accept'),
+            ['createdAt'],
+            ['desc']
+          );
           this.updatePaginatedStudentByCourses();
           this.fetchCoursePercentages();  
           this.totalPages = Math.ceil(this.userCourses.length / this.itemsPerPage);
@@ -172,15 +182,6 @@ exportStudentListPdf(): void {
     this.updatePaginatedStudentByCourses();
   }
 
-  acceptStudent(userCourse: UserCourse) {
-    // Add your acceptance logic here
-  }
-
-  rejectStudent(userCourse: UserCourse) {
-    // Add your rejection logic here
-  }
-
-  
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
@@ -198,6 +199,18 @@ exportStudentListPdf(): void {
         error: (e) => console.log(e)
       });
     });
+  }
+
+  private startPolling() {
+    this.pollingInterval = setInterval(() => {
+      this.loadAcceptedUserCourses(); // Poll for student course updates
+    }, this.pollingIntervalMs);
+  }
+
+  private stopPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
   }
 
 }
