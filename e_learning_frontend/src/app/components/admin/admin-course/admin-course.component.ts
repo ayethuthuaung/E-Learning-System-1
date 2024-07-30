@@ -259,9 +259,11 @@ export class AdminCourseComponent implements OnInit {
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      this.course.photoName = file.name;
       this.course.photoFile = file;
     }
   }
+
 
   goToCourseList(): void {
     this.router.navigate(['/courses']);

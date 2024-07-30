@@ -123,6 +123,7 @@ import { CertificateComponent } from './components/shared/certificate/certificat
 import { LoadingComponent } from './components/loading/loading.component';
 import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
 import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
+import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
@@ -240,7 +241,8 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     CertificateComponent,
     LoadingComponent,
     CreateExamComponent,
-    CreateModuleComponent
+    CreateModuleComponent,
+    AdminModuleExamComponent
   ],
   imports: [
     BrowserModule,

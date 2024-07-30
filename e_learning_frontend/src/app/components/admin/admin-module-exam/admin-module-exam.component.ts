@@ -2,15 +2,14 @@ import { CourseService } from './../../services/course.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { TabService } from '../../services/tab.service'; // Adjust the import path as necessary
-import { Course } from '../../models/course.model';
+import { TabService } from '../../services/tab.service';
 
 @Component({
-  selector: 'app-create-module-exam',
-  templateUrl: './create-module-exam.component.html',
-  styleUrl: './create-module-exam.component.css',
+  selector: 'app-admin-module-exam',
+  templateUrl: './admin-module-exam.component.html',
+  styleUrl: './admin-module-exam.component.css'
 })
-export class CreateModuleExamComponent implements OnInit {
+export class AdminModuleExamComponent implements OnInit {
   lessonId: any;
   isSidebarOpen = true;
   activeTab: string = 'createModule';
@@ -60,6 +59,6 @@ export class CreateModuleExamComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate([`instructor/lesson/${this.courseId}`]);
+    this.router.navigate([`admin/lesson/${this.courseId}`]);
   }
 }

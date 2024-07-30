@@ -1,11 +1,12 @@
 /* admin-create-module-exam.component.css */
 
-/* Loader styles */
+/* loader styles */
 .loader {
   width: 40px;
   height: 40px;
   position: relative;
-  --c: no-repeat linear-gradient(#e1f819 0 0);
+  /* --c: no-repeat linear-gradient(rgb(98, 187, 222) 0%, rgb(92, 179, 194) 100%); */
+  --c: no-repeat linear-gradient(#66beee 0 0);
   background:
     var(--c) center/100% 10px,
     var(--c) center/10px 100%;

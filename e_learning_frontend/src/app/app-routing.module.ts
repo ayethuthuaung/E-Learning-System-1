@@ -47,6 +47,7 @@ import { FooterComponent } from './components/shared/footer/footer.component';
 import { CertificateComponent } from './components/shared/certificate/certificate.component';
 import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
 import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
+import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
 
 
 
@@ -105,11 +106,19 @@ const routes: Routes = [
    {path:'all-courses', component: AllCoursesComponent},
 
    {path:'certificate', component: CertificateComponent},
-   {path:'createModule', component: CreateModuleComponent},   
-   {path:'createExam', component: CreateExamComponent},
+
    {
     path: 'module-exam/:lessonId',
     component: CreateModuleExamComponent,
+    children: [
+      { path: 'createModule/:lessonId', component: CreateModuleComponent },
+      { path: 'createExam/:lessonId', component: CreateExamComponent }
+    ]
+  },
+
+  {
+    path: 'admin-module-exam/:lessonId',
+    component: AdminModuleExamComponent,
     children: [
       { path: 'createModule/:lessonId', component: CreateModuleComponent },
       { path: 'createExam/:lessonId', component: CreateExamComponent }

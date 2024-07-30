@@ -9,6 +9,17 @@
                         (ngModelChange)="onSearchChange()" 
                         />
 
+                        <!-- Export Courses Button -->
+                        <button class="btn bg-logo-blue hover:bg-dark-blue text-white ml-4"
+                         (click)="exportStudentListByAdmin()">Excel</button>
+                        <button 
+                            class="btn bg-logo-blue hover:bg-dark-blue text-white ml-4"
+                            (click)="exportStudentListPdf()"
+                            >
+                            PDF
+                        </button>
+            
+
                     
             
                         <div class="pagination-controls">

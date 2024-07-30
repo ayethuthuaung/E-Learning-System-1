@@ -35,7 +35,10 @@ public class NotificationServiceImpl implements NotificationService {
             notificationList = notificationRepository.findByIsDeletedFalse();
         } else if ("Instructor".equals(roleName) && userId != null) {
             notificationList = notificationRepository.findByIsDeletedFalseAndUserId(userId);
-        } else {
+        }else if ("Student".equals(roleName) && userId != null) {
+            notificationList = notificationRepository.findByIsDeletedFalseAndUserId(userId);
+        }
+        else {
             notificationList = new ArrayList<>();
 
         }
@@ -99,6 +102,9 @@ public class NotificationServiceImpl implements NotificationService {
         if ("Admin".equals(roleName)) {
             return notificationRepository.countByIsDeletedFalseAndIsReadFalse();
         } else if ("Instructor".equals(roleName) && userId != null) {
+            return notificationRepository.countByIsDeletedFalseAndIsReadFalseAndUserId(userId);
+        }
+        else if ("Student".equals(roleName) && userId != null) {
             return notificationRepository.countByIsDeletedFalseAndIsReadFalseAndUserId(userId);
         }
         return 0;

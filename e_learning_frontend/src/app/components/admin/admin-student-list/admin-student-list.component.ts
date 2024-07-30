@@ -6,6 +6,7 @@ import { Course } from './../../models/course.model';
 import { Subscription } from 'rxjs';
 import { orderBy } from 'lodash';
 import { log } from 'console';
+import { CourseService } from '../../services/course.service';
 
 @Component({
   selector: 'app-admin-student-list',
@@ -37,6 +38,7 @@ export class AdminStudentListComponent implements OnInit, OnDestroy {
 
   constructor(
     private userCourseService: UserCourseService,
+    private courseService: CourseService,
     private courseModuleService: CourseModuleService
   ) { }
 
@@ -46,14 +48,41 @@ export class AdminStudentListComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      this.userId = this.loggedUser.id;
     this.loadAcceptedUserCourses();
     this.startPolling();
+  }
   }
 
   ngOnDestroy(): void {
     this.userCoursesSubscription.unsubscribe();
     this.stopPolling(); // Clean up polling when component is destroyed
   }
+//excel
+exportStudentListByAdmin(): void {
+  this.courseService.exportStudentListByAdmin().subscribe(blob => {
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `Student-List.xls`;
+    link.click();
+  }, error => {
+    console.error('Error exporting student list:', error);
+  });
+}
+//pdf
+exportStudentListPdf(): void {
+  this.courseService.exportStudentListByAdminPdf().subscribe(blob => {
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `Student-List.pdf`;
+    link.click();
+  }, error => {
+    console.error('Error exporting student list PDF:', error);
+  });
+}
 
   loadAcceptedUserCourses(): void {
     this.userCoursesSubscription.add(
@@ -153,7 +182,6 @@ export class AdminStudentListComponent implements OnInit, OnDestroy {
     this.updatePaginatedStudentByCourses();
   }
 
-  
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
