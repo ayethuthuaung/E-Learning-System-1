@@ -29,7 +29,7 @@ export class AdminCategoryComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
-  submitted = false;
+//submitted = false;
   @ViewChild('updateCategoryDialog') updateCategoryDialog!: TemplateRef<any>;
 
   constructor(
@@ -81,14 +81,12 @@ export class AdminCategoryComponent implements OnInit {
 
 
   onSubmit(form: NgForm): void {
-    if (form.valid) {
-      this.createCategory();  // Assuming you have this method to handle the form submission
-      
-      this.submitted = false;
+    this.nameRequiredError = !form.controls['name'].valid;
+    if (form.valid && !this.nameDuplicateError) {
+      this.createCategory();
     } else {
-      this.submitted = true;
-      console.log('invalid form');
-      this.errorMessage = 'Please fill the required fields';
+      console.log('Form is invalid');
+      this.errorMessage = 'Please fill in the required fields';
     }
   }
 
@@ -100,6 +98,7 @@ export class AdminCategoryComponent implements OnInit {
         this.createdCategoryName = this.category.name;
         this.getCategories();
         this.category = new Category();
+        this.clearErrorMessages();
       },
       (error) => {
         console.error('Error creating category:', error);
@@ -107,7 +106,11 @@ export class AdminCategoryComponent implements OnInit {
       }
     );
   }
-
+  clearErrorMessages(): void {
+    this.nameDuplicateError = false;
+    this.nameRequiredError = false;
+    this.errorMessage = '';
+  }
   updateCategory(id: number): void {
     this.router.navigate(['/category', id, 'update']);
   }
@@ -132,7 +135,7 @@ export class AdminCategoryComponent implements OnInit {
       );
     } else {
       console.log('Form is invalid.');
-      this.submitted = true;
+     // this.submitted = true;
     }
   }
   softDeleteCategory(id: number): void {

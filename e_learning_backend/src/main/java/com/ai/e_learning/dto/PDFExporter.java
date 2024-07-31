@@ -50,7 +50,7 @@ public class PDFExporter {
         document.add(title);
 
         // Create a table with 12 columns
-        PdfPTable table = new PdfPTable(12);
+        PdfPTable table = new PdfPTable(13);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
 
@@ -85,7 +85,7 @@ public class PDFExporter {
     }
 
     private void createHeaderCells(PdfPTable table) {
-        String[] headers = {"No", "Staff ID", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
+        String[] headers = {"No", "Staff ID","Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
         for (String header : headers) {
@@ -103,6 +103,9 @@ public class PDFExporter {
         table.addCell(cell);
 
         cell = new PdfPCell(new Phrase(userCourse.getUser().getStaffId(), font));
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase(userCourse.getUser().getName(), font));
         table.addCell(cell);
 
         cell = new PdfPCell(new Phrase(course.getName(), font));

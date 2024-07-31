@@ -55,11 +55,11 @@ public class PdfExporterStudentListForAdmin {
             document.add(title);
 
             // Create a table with 12 columns
-            PdfPTable table = new PdfPTable(12);
+            PdfPTable table = new PdfPTable(13);
             table.setWidthPercentage(100);
 
             // Add table header
-            String[] headers = {"No", "Staff ID", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
+            String[] headers = {"No", "Staff ID","Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
             Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
             for (String header : headers) {
@@ -75,6 +75,7 @@ public class PdfExporterStudentListForAdmin {
             for (UserCourseDto userCourse : userCourses) {
                 table.addCell(String.valueOf(rowIndex++)); // No
                 table.addCell(userCourse.getUser().getStaffId()); // Staff ID
+                table.addCell(userCourse.getUser().getName());
                 table.addCell(userCourse.getCourse().getName()); // Course
                 table.addCell(userCourse.getUser().getEmail()); // Email
                 table.addCell(userCourse.getUser().getTeam()); // Team
