@@ -43,11 +43,13 @@ import { AdminStudentComponent } from './components/admin/admin-student/admin-st
 import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
-import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
 import { CertificateComponent } from './components/shared/certificate/certificate.component';
 import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
 import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
+import { AdminCourseListComponent } from './components/admin/admin-course-list/admin-course-list.component';
+
+import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
 
 
 
@@ -86,11 +88,12 @@ const routes: Routes = [
    {path:'admin/dashboard', component: AdminDashboardComponent},
    {path:'admin/upload-user-data', component: UserUploadComponent },
    {path:'admin/course', component: AdminCourseComponent},
+   {path:'admin/courseList', component: AdminCourseListComponent},
+
    {path:'admin/category', component: AdminCategoryComponent},
    {path:'admin/lesson/:courseId', component: AdminLessonComponent},
    {path:'admin/student', component: AdminStudentComponent},
    {path:'admin/profile', component: AdminProfileComponent},
-   {path:'admin/module-exam/:lessonId', component: AdminCreateModuleExamComponent},
 
 
 
@@ -109,8 +112,17 @@ const routes: Routes = [
    {path:'certificate', component: CertificateComponent},
 
    {
-    path: 'instructor/module-exam/:lessonId',
+    path: 'module-exam/:lessonId',
     component: CreateModuleExamComponent,
+    children: [
+      { path: 'createModule/:lessonId', component: CreateModuleComponent },
+      { path: 'createExam/:lessonId', component: CreateExamComponent }
+    ]
+  },
+
+  {
+    path: 'admin-module-exam/:lessonId',
+    component: AdminModuleExamComponent,
     children: [
       { path: 'createModule/:lessonId', component: CreateModuleComponent },
       { path: 'createExam/:lessonId', component: CreateExamComponent }
