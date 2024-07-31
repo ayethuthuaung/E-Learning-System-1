@@ -155,7 +155,7 @@ public class CourseServiceImpl implements CourseService {
     course.setCategories(mergedCategories);
     Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
     // Send notifications
-    sendAdminNotifications(savedCourse);
+//    sendAdminNotifications(savedCourse);
     return convertToDto(savedCourse);
   }
 
@@ -179,16 +179,18 @@ public class CourseServiceImpl implements CourseService {
   public void changeStatus(Long id,String status){
     Course course = EntityUtil.getEntityById(courseRepository,id,"Course");
     course.setStatus(status);
-    if("Pending".equals(status))
+    if("Pending".equals(status)) {
       course.setRequestedAt(System.currentTimeMillis());
-    else
+      sendAdminNotifications(course);
+    }else {
       course.setAcceptedAt(System.currentTimeMillis());
-
+      sendInstructorNotification(course, status);
+    }
     Course updatedCourse = EntityUtil.saveEntity(courseRepository, course, "Course");
 
     Hibernate.initialize(updatedCourse.getUser());
     // Send notifications
-    sendInstructorNotification(updatedCourse, status);
+   // sendInstructorNotification(updatedCourse, status);
   }
 
   private void sendInstructorNotification(Course course, String action) {
