@@ -25,8 +25,8 @@
                   <div *ngIf="nameDuplicateError" class="text-red-500">
                     This category name already exists.
                   </div>
-                  <div *ngIf="errorMessage && !category.name " class="text-red-500 mb-2">
-                    Please fill the field.
+                  <div *ngIf="nameRequiredError" class="text-red-500 mb-4">
+                    Category name is required.
                   </div>
                   <input
                     type="text"
