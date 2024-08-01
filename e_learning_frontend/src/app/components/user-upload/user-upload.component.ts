@@ -14,6 +14,7 @@ export class UserUploadComponent {
   selectedFile: File | null = null;
   successmessage: string = '';
   errormessage: string = '';
+  loading: boolean = false;
 
   constructor(private userService: UserService, private router: Router) { }
 
@@ -35,11 +36,13 @@ export class UserUploadComponent {
     this.errormessage = '';
 
     if (this.selectedFile) {
+      this.loading = true;
       this.userService.uploadUserData(this.selectedFile).subscribe(
         response => {
           this.showSuccessAlert(); // Call the success alert and navigate to login
         },
         error => {
+          this.loading = false;
           this.errormessage = 'File upload failed';
           this.successmessage = ''; // Clear success message
         }
