@@ -1,4 +1,4 @@
-import { User } from './user.model';
+import { Role, User } from './user.model';
 import { Category } from "./category.model";
 import { Lesson } from './lesson.model';
 import Module from 'module';
@@ -34,7 +34,7 @@ export class Course {
   completion: any;
   showDetails: any;
  
-  
+  userRole?: string;
 
   constructor() {
     this.id = 1;
@@ -59,5 +59,6 @@ export class Course {
     this.createdDate = '';
     this.createdAt = 0;
 
+    this.userRole = ''; 
   }
 }

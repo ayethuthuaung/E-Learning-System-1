@@ -12,7 +12,7 @@ export class NavProfileComponent implements OnInit{
   photo:any= '';
   loggedUser: any = '';
   roles: Role[] = [];
-
+name:any='';
   constructor(private router: Router) {} // Inject Router
 
   ngOnInit(): void {
@@ -23,6 +23,7 @@ export class NavProfileComponent implements OnInit{
 
       if (this.loggedUser) {
         this.photo = this.loggedUser.photo;
+        this.name = this.loggedUser.name;
         this.roles = this.loggedUser.roles;
 
         // Access role IDs

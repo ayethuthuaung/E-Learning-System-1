@@ -1,5 +1,16 @@
 <!-- Profile Picture -->
 <div class="relative inline-block text-left">
+
+
+  <div class="flex flex-col items-start absolute -left-40 top-1 bg-white p-2 z-10">
+    <div class="text-sm font-semibold text-gray-800">
+      {{ name }}
+    </div>
+    <div *ngIf="roles.length > 0" class="roles-list text-sm">
+      {{ roles[0].name }}
+    </div>
+  </div>
+
   <img [src]="photo" class="w-14 h-14 rounded-full cursor-pointer border-2 border-logo-blue" (click)="toggleDropdown()">
 
   <!-- Dropdown Menu -->
