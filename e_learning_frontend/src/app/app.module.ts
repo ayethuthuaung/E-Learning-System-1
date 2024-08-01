@@ -103,7 +103,6 @@ import { InstructorStudentComponent } from './components/instructor/instructor-s
 import { AdminLessonComponent } from './components/admin/admin-lesson/admin-lesson.component';
 import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
 import { AdminStudentListComponent } from './components/admin/admin-student-list/admin-student-list.component';
-import { AdminPiechartComponent } from './components/admin/admin-piechart/admin-piechart.component';
 import { AdminBarchartComponent } from './components/admin/admin-barchart/admin-barchart.component';
 
 import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
@@ -112,7 +111,6 @@ import { ClickOutsideDirective } from './components/click-outside.directive';
 import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
 import { UserCourseModuleService } from './components/services/usercoursemodule.service';
 import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
-import { AdminCreateModuleExamComponent } from './components/admin/admin-create-module-exam/admin-create-module-exam.component';
 import { TimerComponent } from './components/shared/timer/timer.component';
 import { ChangePasswordModalComponent } from './components/change-password-modal/change-password-modal.component';
 
@@ -124,6 +122,8 @@ import { CertificateComponent } from './components/shared/certificate/certificat
 import { LoadingComponent } from './components/loading/loading.component';
 import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
 import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
+import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
+import { MyCoursesComponent } from './components/my-courses/my-courses.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
@@ -223,7 +223,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AdminLessonComponent,
     AdminStudentComponent,
     AdminStudentListComponent,
-    AdminPiechartComponent,
     AdminBarchartComponent,
 
     CreateModuleExamComponent,
@@ -231,7 +230,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     ClickOutsideDirective,
     StudentQuestionFormComponent,
     AdminProfileComponent,
-    AdminCreateModuleExamComponent,
     TimerComponent,
     ChangePasswordModalComponent,
     TimerComponent,
@@ -242,7 +240,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     CertificateComponent,
     LoadingComponent,
     CreateExamComponent,
-    CreateModuleComponent
+    CreateModuleComponent,
+    AdminModuleExamComponent,
+    MyCoursesComponent
   ],
   imports: [
     BrowserModule,

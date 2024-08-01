@@ -220,7 +220,7 @@ export class InstructorLessonComponent implements OnInit {
     navigateToLesson(lessonId: any) {
       console.log("Lesson Id :", lessonId);
 
-      this.router.navigate([`../instructor/module-exam/${lessonId}`]);
+      this.router.navigate([`../module-exam/${lessonId}`]);
     }
 
     deleteLesson(id: number): void {

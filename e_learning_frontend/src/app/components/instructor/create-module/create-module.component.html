@@ -9,7 +9,10 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                   <form class="flex flex-col" #moduleForm="ngForm" (ngSubmit)="onSubmit(moduleForm)" method="post">
                     <div *ngFor="let module of modules; let i = index" class="mb-4">
-                      <div class="flex items-center mb-2">
+                      
+                        <div *ngIf="moduleForm.submitted && !module.name" class="text-red-500 mb-2">
+                          Please fill the field.
+                        </div><div class="flex items-center mb-2">
                         <input
                           type="text"
                           class="bg-gray-100 text-gray-800 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 flex-grow"
@@ -25,6 +28,9 @@
                         >
                           <i class="fas fa-trash"></i>
                         </button>
+                      </div>
+                      <div *ngIf="errorMessage && !module.url" class="text-red-500 mb-2">
+                        Please fill the field.
                       </div>
                       <input
                         type="file"
@@ -61,30 +67,7 @@
                     </div>
                   </form>
                   <div *ngIf="loading" class="loading-overlay">
-                    <!-- <div class="spinner"></div> -->
-                    <div class="container">
-                      <div class="dot dot-1"></div>
-                      <div class="dot dot-2"></div>
-                      <div class="dot dot-3"></div>
-                    </div>
-                    
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
-                      <defs>
-                        <filter id="goo">
-                          <feGaussianBlur
-                            result="blur"
-                            stdDeviation="10"
-                            in="SourceGraphic"
-                          ></feGaussianBlur>
-                          <feColorMatrix
-                            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7"
-                            mode="matrix"
-                            in="blur"
-                          ></feColorMatrix>
-                        </filter>
-                      </defs>
-                    </svg>
-                    
+                    <div class="loader"></div>
                   </div>
                 </div>
               </div>

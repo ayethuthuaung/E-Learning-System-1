@@ -15,6 +15,7 @@ import { AnswerOptionDTO } from '../../models/answeroptiondto.model';
 import { Location } from '@angular/common';
 import { CourseService } from '../../services/course.service';
 import { TimerComponent } from '../../shared/timer/timer.component';
+import { FormGroup } from '@angular/forms';
 
 
 
@@ -32,7 +33,7 @@ export class CreateModuleComponent implements OnInit{
   modules: Module[] = [{ id: 1, name: '',url: "", file: '', fileInput: null, fileType: '' ,done:false, createdAt: Date.now()}];
   moduleList: Module[]=[];
   courseId: number = 0;
-
+  errorMessage: string = '';
   isSidebarOpen = true;
   activeTab: string = 'createModule';
 examForm: any;
@@ -42,7 +43,9 @@ currentModuleIndex: number = -1;
 isEditing: boolean = false;
 
 course: Course | undefined;
-
+moduleForm: FormGroup | undefined;
+  
+  moduleFormSubmitted = false;
 
 @ViewChild('formRef') formRef!: ElementRef;
 @ViewChild(TimerComponent) timerComponent!: TimerComponent;
@@ -60,6 +63,7 @@ course: Course | undefined;
     private location: Location,
     private router:Router,
     private cdr: ChangeDetectorRef
+    
    ) {}
 
    ngOnInit(): void {
@@ -119,6 +123,9 @@ course: Course | undefined;
       formElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
+
+  
+ 
 
   onSubmit(moduleForm: any) {
     if (this.currentModuleIndex !== -1) {      
@@ -232,11 +239,12 @@ course: Course | undefined;
             );
           }
         });
-      }    
+      }  else {
+        this.errorMessage = 'Please fill the required fields';
+      }   
     }
    
   }
-  
   deleteModule(moduleId: number) {
     Swal.fire({
       title: 'Are you sure?',
@@ -269,9 +277,14 @@ course: Course | undefined;
     this.activeTab = tab;
   }
 
-  onFileSelected(event: any, index: number) {
-    const file: File = event.target.files[0];
-    this.modules[index].fileInput = file;
+   onFileSelected(event: any, index: number) {
+     const file: File = event.target.files[0];
+     this.modules[index].fileInput = file;
+     this.clearErrorMessage()
+   }
+
+   clearErrorMessage() {
+    this.errorMessage = '';
   }
 
   goBack() {

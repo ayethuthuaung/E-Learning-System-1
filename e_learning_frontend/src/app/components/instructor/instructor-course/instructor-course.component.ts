@@ -91,6 +91,8 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
     );
   }
 
+  
+
   onSubmit(form: NgForm): void {
     if (form.valid) {
       this.submitted = false;
@@ -292,9 +294,14 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
     if (file) {
       this.course.photoName = file.name;
       this.course.photoFile = file;
+      this.clearErrorMessage1(); 
     }
   }
-
+ 
+  clearErrorMessage1() {
+    this.errorMessage = '';
+  }
+ 
   goToCourseList(): void {
     this.router.navigate(['/courses']);
   }
@@ -323,7 +330,11 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
     console.log(this.course.categories);
     console.log(this.course);
     
-    
+    this.clearErrorMessage(); 
+  }
+
+  clearErrorMessage() {
+    this.errorMessage = '';
   }
 
   getInstructorCourses(): void {

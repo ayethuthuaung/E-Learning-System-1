@@ -145,5 +145,15 @@
         z-index: 1;
       }
     }
+
+    .has-error input,
+.has-error textarea {
+  border-color: red;
+}
+
+.has-error .text-red-500 {
+  display: block;
+}
+
     
   

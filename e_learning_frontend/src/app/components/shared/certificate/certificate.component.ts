@@ -29,31 +29,16 @@ export class CertificateComponent implements OnInit {
       } else {
         console.error('User ID or Course ID is not defined for fetching certificate');
       }
+      
     });
-  }
-  @HostListener('window:keydown', ['$event'])
-  preventScreenshot(event: KeyboardEvent): void {
-    const screenshotShortcuts = [
-      { key: 'PrintScreen' },
-      { key: 's', ctrlKey: true },
-      { key: 'S', ctrlKey: true },
-      { key: 's', metaKey: true },
-      { key: 'S', metaKey: true },
-      { key: 'Shift', ctrlKey: true, keyCode: 16 },
-      { key: 'Shift', metaKey: true, keyCode: 16 }
-    ];
-
-    if (screenshotShortcuts.some(shortcut => this.isScreenshotShortcut(event, shortcut))) {
-      event.preventDefault();
-      alert('Screenshot is disabled for this content.');
-    }
+    document.addEventListener('keydown', this.handleKeyboardEvent.bind(this));
   }
 
-  private isScreenshotShortcut(event: KeyboardEvent, shortcut: any): boolean {
-    return Object.keys(shortcut).every(key => (event as any)[key] === shortcut[key]);
+  ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.handleKeyboardEvent.bind(this));
   }
 
-
+  
   getCertificateByUserIdAndCourseId(): void {
     if (this.userId && this.courseId) {
       this.certificateService.getCertificateByUserIdAndCourseId(this.userId, this.courseId).subscribe(
@@ -69,5 +54,12 @@ export class CertificateComponent implements OnInit {
       console.error('User ID or Course ID is not defined for fetching certificate');
     }
   }
-
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    // Block PrintScreen key and common screenshot shortcuts
+    if (event.key === 'PrintScreen' || (event.ctrlKey && (event.key === 's' || event.key === 'S'))) {
+      event.preventDefault();
+      console.log('Screenshot attempt blocked');
+    }
+  }
 }

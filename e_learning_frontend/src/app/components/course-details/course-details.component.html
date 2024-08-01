@@ -58,12 +58,19 @@
       <div *ngIf="isDropdownOpen[i]" class="mt-2 space-y-2 p-4">
         <div *ngFor="let module of lesson.modules " class="p-4  bg-gray-50 rounded-lg shadow flex items-center justify-between">
           <!-- <p>{{ module.name }}</p> -->
-          <ng-container *ngIf="module.fileType === 'video/mp4'"> 
-            <button (click)="viewVideoDetailClick(module.id)" class=" hover:text-logo-blue" >{{ module.name }}</button>
-          </ng-container> 
-          <ng-container *ngIf="module.fileType !== 'video/mp4'"> 
-            <a [href]="module.file"  target="_blank" class=" hover:text-logo-blue">{{ module.name }}</a>
-          </ng-container>  
+          <ng-container *ngIf="module.fileType === 'video/mp4'">
+            <button (click)="viewVideoDetailClick(module.id)" class="hover:text-logo-blue flex items-center">
+              <i class="fa-solid fa-video fa-xl text-logo-blue mr-4"></i>
+              {{ module.name }}
+            </button>
+          </ng-container>
+          <ng-container *ngIf="module.fileType !== 'video/mp4'">
+            <a [href]="module.file" target="_blank" class="hover:text-logo-blue flex items-center">
+              <i class="fa-solid fa-file fa-xl text-logo-blue mr-4"></i>
+              {{ module.name }}
+            </a>
+          </ng-container>
+          
         <div class="flex justify-end">
             <button *ngIf="!isOwner && !hasRole(2)"
                 id="mark-as-done-{{i}}"

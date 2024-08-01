@@ -20,8 +20,7 @@ export class InstructorCategoryComponent implements OnInit {
   errorMessage: string = '';
   categories: Category[] = [];
   nameDuplicateError = false;
- submitted= false;
-
+  nameRequiredError = false;
   createdCategoryName: string = '';
   selectedCategory: Category = new Category();
   currentUserId: string = '';
@@ -30,11 +29,7 @@ export class InstructorCategoryComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
-
-  loggedUser: any = '';
- userId: any;
- isEditing : boolean =  false;
-
+//submitted = false;
   @ViewChild('updateCategoryDialog') updateCategoryDialog!: TemplateRef<any>;
 
   constructor(
@@ -47,13 +42,6 @@ export class InstructorCategoryComponent implements OnInit {
   ngOnInit(): void {
     this.getCurrentUserId();
     this.getCategories();
-    const storedUser = localStorage.getItem('loggedUser');
-    if (storedUser) {
-      this.loggedUser = JSON.parse(storedUser);
-      if (this.loggedUser) {
-        this.userId = this.loggedUser.id;
-      }
-    }
   }
 
   getCurrentUserId(): void {
@@ -72,15 +60,14 @@ export class InstructorCategoryComponent implements OnInit {
     );
   }
 
-
   validateCategoryName(name: string): void {
     if (!name.trim()) {
-      this.submitted = true;
+      this.nameRequiredError = true;
       this.nameDuplicateError = false;
       return;
     }
 
-    this.submitted = false;
+    this.nameRequiredError = false;
     this.categoryService.isCategoryNameAlreadyExists(name).subscribe(
       (exists: boolean) => {
         this.nameDuplicateError = exists;
@@ -93,15 +80,13 @@ export class InstructorCategoryComponent implements OnInit {
   }
 
 
-  onSubmit(form: NgForm) {
-    if (form.valid) {
-      if (this.isEditing) {
-        this.updateCategory();
-      } else {
-        this.createCategory();
-      }
+  onSubmit(form: NgForm): void {
+    this.nameRequiredError = !form.controls['name'].valid;
+    if (form.valid && !this.nameDuplicateError) {
+      this.createCategory();
     } else {
-      this.errorMessage = 'Please fill the field.';
+      console.log('Form is invalid');
+      this.errorMessage = 'Please fill in the required fields';
     }
   }
 
@@ -113,6 +98,7 @@ export class InstructorCategoryComponent implements OnInit {
         this.createdCategoryName = this.category.name;
         this.getCategories();
         this.category = new Category();
+        this.clearErrorMessages();
       },
       (error) => {
         console.error('Error creating category:', error);
@@ -120,55 +106,38 @@ export class InstructorCategoryComponent implements OnInit {
       }
     );
   }
-  editCategory(category: Category): void {
-    this.isEditing = true;
-    this.category = { ...category };
+  clearErrorMessages(): void {
+    this.nameDuplicateError = false;
+    this.nameRequiredError = false;
+    this.errorMessage = '';
+  }
+  updateCategory(id: number): void {
+    this.router.navigate(['/category', id, 'update']);
   }
 
-  confirmUpdateCategory(): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to update this category?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, update it!',
-      cancelButtonText: 'No, cancel'
-    }).then((result: { isConfirmed: any; }) => {
-      if (result.isConfirmed) {
-        this.updateCategory();
-      }
-    });
+  openUpdateDialog(category: Category): void {
+    this.selectedCategory = { ...category };
+    this.dialog.open(this.updateCategoryDialog);
   }
 
-  updateCategory(): void {
-    if (this.category.id) {
-      this.categoryService.updateCategory(this.category.id, this.category).subscribe(
-        (updatedCategory: Category) => {
-          console.log('Category updated successfully:', updatedCategory);
-          this.category = new Category();
-          this.isEditing = false;
-          this.showSuccessAlert1();
+  onUpdateSubmit(form: NgForm): void {
+    if (form.valid && !this.nameDuplicateError) {
+      this.categoryService.updateCategory(this.selectedCategory.id!, this.selectedCategory).subscribe(
+        () => {
+          console.log('Category updated successfully');
+          this.showSuccessAlert('Category updated successfully.');
           this.getCategories();
+          this.dialog.closeAll();
         },
         (error) => {
-          console.error('Error updating category:', error);
           this.errorMessage = `Error updating category: ${error}`;
         }
       );
+    } else {
+      console.log('Form is invalid.');
+     // this.submitted = true;
     }
   }
-
-
-  showSuccessAlert1(): void {
-    Swal.fire({
-      title: 'Updated!',
-      text: 'Category updated successfully.',
-      icon: 'success',
-      confirmButtonText: 'OK'
-    });
-  }
-
-  
   softDeleteCategory(id: number): void {
     Swal.fire({
       title: 'Are you sure?',

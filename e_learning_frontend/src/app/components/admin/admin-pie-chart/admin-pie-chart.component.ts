@@ -14,7 +14,9 @@ export class AdminPieChartComponent implements AfterViewInit, OnDestroy{
     '#ff69b4', // Pink
     '#28a745', // Green
     '#fd7e14', // Orange
-    '#ffc107'  // Yellow
+    '#ffc107',  // Yellow
+    '#fffff',
+    '#3085d6'
   ];
   private usedColors: Set<string> = new Set();
 

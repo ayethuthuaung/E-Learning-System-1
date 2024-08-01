@@ -155,7 +155,8 @@ public class CourseServiceImpl implements CourseService {
     course.setCategories(mergedCategories);
     Course savedCourse = EntityUtil.saveEntity( courseRepository, course,"Course");
     // Send notifications
-//    sendAdminNotifications(savedCourse);
+
+  //  sendAdminNotifications(savedCourse);
     return convertToDto(savedCourse);
   }
 
@@ -190,7 +191,8 @@ public class CourseServiceImpl implements CourseService {
 
     Hibernate.initialize(updatedCourse.getUser());
     // Send notifications
-   // sendInstructorNotification(updatedCourse, status);
+
+//    sendInstructorNotification(updatedCourse, status);
   }
 
   private void sendInstructorNotification(Course course, String action) {
@@ -296,7 +298,16 @@ public class CourseServiceImpl implements CourseService {
   public boolean isCourseNameAlreadyExists(String name) {
     return courseRepository.existsByName(name);
   }
-
+  @Override
+  public List<CourseDto> getAcceptCoursesByUserId(Long userId) {
+    List<Course> courses = courseRepository.findByUserIdAndIsDeletedFalseAndStatusAccepted(userId);
+    List<CourseDto> courseDtos = DtoUtil.mapList(courses, CourseDto.class, modelMapper);
+    for (CourseDto courseDto : courseDtos) {
+      List<UserCourse> userCourses = userCourseRepository.findByCourseId(courseDto.getId());
+      courseDto.setStudentCount(userCourses.size());
+    }
+    return courseDtos;
+  }
   @Override
   public List<CourseDto> getCoursesByUserId(Long userId) {
     List<Course> courses = courseRepository.findByUserIdAndIsDeletedFalse(userId);

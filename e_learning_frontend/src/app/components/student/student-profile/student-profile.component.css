@@ -150,3 +150,39 @@
 .education-badge-icon:hover {
   color: #3B82F6; /* Change color on hover */
 }
+.module-button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px;
+  border-radius: 4px;
+}
+
+.tooltip-content {
+  position: absolute;
+  top: -40px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 150px; /* Adjust as needed */
+  text-align: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.relative:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+}
+
+.hover-overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.hover-overlay:hover {
+  opacity: 1;
+}

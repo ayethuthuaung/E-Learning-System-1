@@ -70,9 +70,9 @@ public class ExcelExporterStudentListForAdmin {
         }
 
         // Apply auto-filter to the header row
-        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 11)); // Apply filter to the first row, covering columns 0 to 11
+        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 12)); // Apply filter to the first row, covering columns 0 to 11
 
-        for (int i = 0; i < 12; i++) { // Adjust the loop limit to account for all columns
+        for (int i = 0; i < 13; i++) { // Adjust the loop limit to account for all columns
             sheet.autoSizeColumn(i);
         }
 
@@ -92,7 +92,7 @@ public class ExcelExporterStudentListForAdmin {
     }
 
     private void createHeaderCells(Row headerRow, CellStyle style) {
-        String[] headers = {"No", "Staff ID", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
+        String[] headers = {"No", "Staff ID","Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
@@ -108,21 +108,24 @@ public class ExcelExporterStudentListForAdmin {
         cell.setCellValue(userCourse.getUser().getStaffId());  // Add getter for Staff ID
 
         cell = row.createCell(2);
-        cell.setCellValue(userCourse.getCourse().getName());  // Add getter for Course name
+        cell.setCellValue(userCourse.getUser().getName());
 
         cell = row.createCell(3);
-        cell.setCellValue(userCourse.getUser().getEmail());  // Add getter for Email
+        cell.setCellValue(userCourse.getCourse().getName());  // Add getter for Course name
 
         cell = row.createCell(4);
-        cell.setCellValue(userCourse.getUser().getTeam());  // Add getter for Team
+        cell.setCellValue(userCourse.getUser().getEmail());  // Add getter for Email
 
         cell = row.createCell(5);
-        cell.setCellValue(userCourse.getUser().getDepartment());  // Add getter for Department
+        cell.setCellValue(userCourse.getUser().getTeam());  // Add getter for Team
 
         cell = row.createCell(6);
-        cell.setCellValue(userCourse.getUser().getDivision());  // Add getter for Division
+        cell.setCellValue(userCourse.getUser().getDepartment());  // Add getter for Department
 
         cell = row.createCell(7);
+        cell.setCellValue(userCourse.getUser().getDivision());  // Add getter for Division
+
+        cell = row.createCell(8);
         Double completionPercentage = courseModuleService.calculateCompletionPercentage(userCourse.getUser().getId(), userCourse.getCourse().getId());
         if (completionPercentage != null) {
             cell.setCellValue(completionPercentage / 100); // Adjust as needed based on the range of your completionPercentage
@@ -133,16 +136,16 @@ public class ExcelExporterStudentListForAdmin {
             cell.setCellValue("N/A");
         }
 
-        cell = row.createCell(8);
+        cell = row.createCell(9);
         cell.setCellValue(userCourse.isCompleted() ? "Available" : "Unavailable");
 
-        cell = row.createCell(9);
+        cell = row.createCell(10);
         cell.setCellValue(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getCreatedAt()), ZoneId.systemDefault())));  // Convert createdAt to LocalDateTime
 
-        cell = row.createCell(10);
+        cell = row.createCell(11);
         cell.setCellValue(userCourse.getStatus());
 
-        cell = row.createCell(11);
+        cell = row.createCell(12);
         if (userCourse.getStatusChangeTimestamp() != null) {
             cell.setCellValue(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getStatusChangeTimestamp()), ZoneId.systemDefault())));
         } else {

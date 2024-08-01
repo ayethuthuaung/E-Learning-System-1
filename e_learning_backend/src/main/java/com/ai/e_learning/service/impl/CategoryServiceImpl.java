@@ -79,7 +79,11 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public Map<String, Long> getCourseCountsPerCategory() {
     return categoryRepository.findAll().stream()
-            .collect(Collectors.toMap(Category::getName, category -> (long) category.getCourses().size()));
+            .collect(Collectors.toMap(Category::getName, category ->
+                    category.getCourses().stream()
+                            .filter(course -> "Accept".equalsIgnoreCase(course.getStatus()))
+                            .count()
+            ));
   }
   private Category convertToEntity(CategoryDto dto) {
     return modelMapper.map(dto, Category.class);

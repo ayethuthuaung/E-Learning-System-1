@@ -202,7 +202,7 @@ export class AdminLessonComponent implements OnInit {
 
 
     goBack() {
-      this.location.back();
+      this.router.navigate([`admin/course`]);
     }
 
     getLessonsByCourseId(): void {
@@ -219,7 +219,7 @@ export class AdminLessonComponent implements OnInit {
     navigateToLesson(lessonId: number) {
       console.log("Lesson Id :", lessonId);
 
-      this.router.navigate([`../instructor/module-exam/${lessonId}`]);
+      this.router.navigate([`../admin-module-exam/${lessonId}`]);
     }
 
     deleteLesson(id: number): void {

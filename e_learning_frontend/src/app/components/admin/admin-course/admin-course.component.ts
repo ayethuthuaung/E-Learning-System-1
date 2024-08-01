@@ -73,6 +73,10 @@ export class AdminCourseComponent implements OnInit {
     if (form.valid) {
       this.submitted = false;
       this.loading = true;
+    setTimeout(() => {
+      this.loading = false;
+      // Your submit logic
+    }, 7000); 
       this.sureAlert();
       
     } else {
@@ -160,6 +164,10 @@ export class AdminCourseComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  triggerFileInput(): void {
+    document.getElementById('photo')?.click();
   }
 
   editCourse(course: Course): void {
@@ -251,9 +259,15 @@ export class AdminCourseComponent implements OnInit {
   onFileChange(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      this.course.photoName = file.name;
       this.course.photoFile = file;
+      this.clearErrorMessage()
     }
   }
+  clearErrorMessage() {
+    this.errorMessage = '';
+  }
+
 
   goToCourseList(): void {
     this.router.navigate(['/courses']);

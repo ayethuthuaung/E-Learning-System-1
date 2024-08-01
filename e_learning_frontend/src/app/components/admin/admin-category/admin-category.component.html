@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
-  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
+  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar>
   <div class="flex flex-1">
-    <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
+    <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
 
     <main class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
       <section>
@@ -25,8 +25,8 @@
                   <div *ngIf="nameDuplicateError" class="text-red-500">
                     This category name already exists.
                   </div>
-                  <div *ngIf="errorMessage" class="text-red-500 mb-2">
-                    {{ errorMessage }}
+                  <div *ngIf="nameRequiredError" class="text-red-500 mb-4">
+                    Category name is required.
                   </div>
                   <input
                     type="text"
@@ -52,9 +52,11 @@
                 </div>
                 
         
-                <div class="w-1/2 p-4">
-                  <div *ngFor="let category of categories" class="category-card">
-                    <span class="category-name">{{ category.name }}</span>
+                <div class="w-full p-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div *ngFor="let category of categories" class="category-card">
+                      <span class="category-name">{{ category.name }}</span>
+                    </div>
                   </div>
                 </div>
         </div>
