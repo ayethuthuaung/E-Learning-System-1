@@ -10,15 +10,8 @@ import { ForgetPasswordComponent } from './components/auth/forget-password/forge
 import { BlogsComponent } from './components/home/blogs/blogs.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { StudentProfileComponent } from './components/student/student-profile/student-profile.component';
-
-
 import { NotificationComponent } from './components/notification/notification.component';
-
-
-
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
-
-
 import { ConservationListComponent } from './components/instructor/instructor-conservation-list/conservation-list.component';
 
 import { InstructorProfileComponent } from './components/instructor/instructor-profile/instructor-profile.component';
@@ -27,9 +20,6 @@ import { InstructorCourseComponent } from './components/instructor/instructor-co
 import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
 
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
-
-
-
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
 import { AdminCourseComponent } from './components/admin/admin-course/admin-course.component';
 import { AdminCategoryComponent } from './components/admin/admin-category/admin-category.component';
@@ -50,6 +40,7 @@ import { CreateExamComponent } from './components/instructor/create-exam/create-
 import { AdminCourseListComponent } from './components/admin/admin-course-list/admin-course-list.component';
 
 import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
+import { ViewQuestionFormComponent } from './components/view-question-form/view-question-form.component';
 
 
 
@@ -128,6 +119,9 @@ const routes: Routes = [
       { path: 'createExam/:lessonId', component: CreateExamComponent }
     ]
   },
+
+  {path:'view-question-form/:examId', component: ViewQuestionFormComponent}
+
 
 ];
 

@@ -58,4 +58,14 @@ export class ExamService {
         return this.httpClient.get<ExamList[]>(`${this.baseURL}/byLesson/${lessonId}`);
     }
 
+    getExamsByCourseId(courseId: number): Observable<ExamList[]> {
+        return this.httpClient.get<ExamList[]>(`${this.baseURL}/exams/course/${courseId}`);
+    }
+
+    hasFinalExam(courseId: number): Observable<boolean> {
+        return this.httpClient.get<boolean>(`${this.baseURL}/has-final-exam`, {
+            params: { courseId: courseId.toString() }
+        });
+    }
+
 }

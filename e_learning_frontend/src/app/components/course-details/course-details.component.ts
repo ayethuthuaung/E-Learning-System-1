@@ -239,8 +239,11 @@ viewQuestionFormClick(examId: number): void {
     this.examService.getExamById(examId).subscribe(
       (exam) => {
         console.log("exam:", exam);
-        
-        this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+        if(this.isOwner|| this.hasRole(2))
+          this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
+        else
+          this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+
       },
       (error) => {
         console.error('Error fetching course video view', error);

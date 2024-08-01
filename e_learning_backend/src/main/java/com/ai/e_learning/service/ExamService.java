@@ -38,4 +38,6 @@ public interface ExamService {
 
 
     List<ExamListDto> getExamByLessonId(Long lessonId);
+
+    boolean hasFinalExam(Long courseId);
 }
