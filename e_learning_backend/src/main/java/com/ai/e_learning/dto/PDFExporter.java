@@ -39,20 +39,24 @@ public class PDFExporter {
         List<UserCourseDto> userCourses = userCourseService.getAllUserCourseByUserId(instructorId);
 
         // Create PDF document
-        Document document = new Document(PageSize.A4.rotate());
+        Document document = new Document(PageSize.TABLOID);
         PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();
 
-        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
         Paragraph title = new Paragraph("Courses and Students Report", titleFont);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
 
-        // Create a table with 12 columns
+        // Create a table with 13 columns
         PdfPTable table = new PdfPTable(13);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
+
+        // Set column widths
+        float[] columnWidths = {1f, 1.5f, 2f, 2f, 2.5f, 1.5f, 2.7f, 2f, 2.5f, 2.5f, 2.5f, 1.9f, 2.5f};
+        table.setWidths(columnWidths);
 
         // Create header cells
         createHeaderCells(table);
@@ -85,11 +89,12 @@ public class PDFExporter {
     }
 
     private void createHeaderCells(PdfPTable table) {
-        String[] headers = {"No", "Staff ID","Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
+        String[] headers = {"No", "Staff ID", "Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Req Date", "Status", "Acc/Rej Date"};
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
         for (String header : headers) {
             PdfPCell cell = new PdfPCell(new Phrase(header, font));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);
         }
     }
