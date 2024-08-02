@@ -85,8 +85,12 @@ public class CourseController {
     public List<CourseDto> allCourses() {
         return courseService.getAllCourses();
     }
+    //SN
+    @GetMapping(value = "/instructorAcceptCourseList", produces = "application/json")
+    public List<CourseDto> displayAcceptInstructorCourse(ModelMap model, @RequestParam(value = "userId") Long userId) {
+        return courseService.getAcceptCoursesByUserId(userId);
+    }
     //AT
-
     @GetMapping(value = "/instructorcourselist", produces = "application/json")
     public List<CourseDto> displayInstructorCourse(ModelMap model, @RequestParam(value = "userId") Long userId) {
         return courseService.getCoursesByUserId(userId);

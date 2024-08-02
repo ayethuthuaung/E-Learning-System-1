@@ -12,8 +12,8 @@
     <div class="flex items-center ml-auto relative space-x-6"> <!-- Added space-x-4 for spacing -->
       
       <div class="relative" (clickOutside)="showNotifications = false">
-        <button class="text-gray-500 focus:outline-none" (click)="toggleNotifications()">
-          <i class="fas fa-bell text-lg"></i>
+        <button class="text-dark-blue focus:outline-none" (click)="toggleNotifications()">
+          <i class="fas fa-bell text-2xl"></i>
           <span *ngIf="unreadNotiCount > 0"
                 class="absolute top-0 right-2 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
             {{ unreadNotiCount }}

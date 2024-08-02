@@ -54,8 +54,9 @@
                   [(ngModel)]="examFinal" 
                   [value]="true" 
                   class="form-radio text-blue-600 border-gray-300 focus:ring-blue-500 mr-1"
-                >
-                <label for="finalYes" class="text-gray-700">Yes</label>
+                  [disabled]="finalExamExists"
+                  >
+                <label for="finalYes" class="text-gray-700" >Yes</label>
               </div>
               <div class="flex items-center mr-4">
                 <input 
@@ -146,8 +147,8 @@
             </div>
             <div class="mb-4">
               <div *ngFor="let option of question.options; let oIndex = index" class="flex items-center mb-2">
-                <input *ngIf="question.type === 'multiple-choice'" type="radio" [id]="'q' + qIndex + 'o' + oIndex" [name]="'question' + qIndex" [checked]="option.isAnswered" (change)="selectOption(qIndex, oIndex)" class="mr-2">
-                <input *ngIf="question.type === 'checkbox'" type="checkbox" [id]="'q' + qIndex + 'o' + oIndex" [(ngModel)]="option.isAnswered" class="mr-2">
+                <input *ngIf="question.type === 'multiple-choice'" type="radio" [id]="'q' + qIndex + 'o' + oIndex" name="question{{ qIndex }}" [checked]="option.isAnswered" (change)="selectOption(qIndex, oIndex)" class="mr-2">
+                <input *ngIf="question.type === 'checkbox'" type="checkbox" [id]="'q' + qIndex + 'o' + oIndex" [(ngModel)]="option.isAnswered" class="mr-2" name="question{{ qIndex }}[]">
                 <div *ngIf="showResults" class="ml-2">
                   <span *ngIf="option.isCorrect" class="text-green-500">Correct</span>
                   <span *ngIf="!option.isCorrect && option.isAnswered" class="text-red-500">

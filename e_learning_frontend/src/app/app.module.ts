@@ -103,7 +103,6 @@ import { InstructorStudentComponent } from './components/instructor/instructor-s
 import { AdminLessonComponent } from './components/admin/admin-lesson/admin-lesson.component';
 import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
 import { AdminStudentListComponent } from './components/admin/admin-student-list/admin-student-list.component';
-import { AdminPiechartComponent } from './components/admin/admin-piechart/admin-piechart.component';
 import { AdminBarchartComponent } from './components/admin/admin-barchart/admin-barchart.component';
 
 import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
@@ -124,6 +123,8 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
 import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
 import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
+import { ViewQuestionFormComponent } from './components/view-question-form/view-question-form.component';
+import { MyCoursesComponent } from './components/my-courses/my-courses.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
@@ -137,10 +138,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AppStoreComponent,
   
     ForgetPasswordComponent,
-
-
-
-
         HomeComponent,
 
        
@@ -223,7 +220,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AdminLessonComponent,
     AdminStudentComponent,
     AdminStudentListComponent,
-    AdminPiechartComponent,
+
     AdminBarchartComponent,
 
     CreateModuleExamComponent,
@@ -242,7 +239,9 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     LoadingComponent,
     CreateExamComponent,
     CreateModuleComponent,
-    AdminModuleExamComponent
+    AdminModuleExamComponent,
+    ViewQuestionFormComponent,
+    MyCoursesComponent
   ],
   imports: [
     BrowserModule,
@@ -259,7 +258,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
-   
+    
     SocketIoModule.forRoot(config)
     
   ],

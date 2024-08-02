@@ -16,6 +16,7 @@ import { Location } from '@angular/common';
 import { UnreadMessageService } from '../services/unread-message.service';
 import { WebSocketService } from '../services/websocket.service';
 import { Role } from '../models/user.model';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -235,19 +236,54 @@ export class CourseDetailsComponent implements OnInit {
 }
 
 viewQuestionFormClick(examId: number): void {
-  // if (this.lesson?.examListDto.id) {
-    this.examService.getExamById(examId).subscribe(
-      (exam) => {
-        console.log("exam:", exam);
-        
-        this.router.navigate([`/question-form/${examId}`], { state: { exam } });
-      },
-      (error) => {
-        console.error('Error fetching course video view', error);
-      }
-    );
-  // }
+  this.examService.getExamById(examId).subscribe(
+    (exam) => {
+      
+      const duration = exam.duration; // e.g., '01:30:00'
+      
+
+      // Format the duration (optional)
+      const formattedDuration = this.formatDuration(duration);
+
+      Swal.fire({
+        title: 'Are you sure?',
+        html: `
+        <div>
+          
+          <span>You want to go to the question form.<br><br>
+          <i class="fa-regular fa-clock" style="font-size: 24px;"></i>
+          Time Allowed: ${formattedDuration}</span>
+        </div>
+      `,
+        iconHtml: '<i class="fa fa-clipboard-list" style="font-size: 50px; color: #3085d6;"></i>',
+        showCancelButton: true,
+        confirmButtonColor: '#003366',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Go To Form',
+        cancelButtonText: 'Cancel  '
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // If confirmed, navigate to the question form
+          if(this.isOwner|| this.hasRole(2))
+            this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
+          else
+            this.router.navigate([`/question-form/${examId}`], { state: { exam } });        }
+      });
+    },
+    (error) => {
+      console.error('Error fetching exam:', error);
+    }
+  );
 }
+
+formatDuration(duration: string): string {
+  const parts = duration.split(':');
+  const hours = parseInt(parts[0], 10);
+  const minutes = parseInt(parts[1], 10);
+  const seconds = parseInt(parts[2], 10);
+  return `${hours} h ${minutes} m ${seconds} s`;
+}
+
 
 markAsDone(moduleId: number, lessonIndex: number): void {
   if (!this.userId || !this.courseId) {
