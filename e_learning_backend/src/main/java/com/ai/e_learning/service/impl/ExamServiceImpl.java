@@ -174,6 +174,11 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
+    @Override
+    public boolean hasFinalExam(Long courseId) {
+        return examRepository.hasFinalExam(courseId);
+    }
+
 
     private Exam convertToEntity(ExamDto examDTO) {
         return modelMapper.map(examDTO, Exam.class);
@@ -183,5 +188,7 @@ public class ExamServiceImpl implements ExamService {
     private ExamDto convertToDto(Exam exam) {
         return modelMapper.map(exam, ExamDto.class);
     }
+
+
 
 }

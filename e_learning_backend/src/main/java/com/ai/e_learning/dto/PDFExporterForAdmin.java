@@ -31,7 +31,7 @@ public class PDFExporterForAdmin {
         List<CourseDto> courses = courseService.getAllCourseList();
 
         // Create a PDF document
-        Document document = new Document(PageSize.A4);
+        Document document = new Document(PageSize.TABLOID);
         PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();

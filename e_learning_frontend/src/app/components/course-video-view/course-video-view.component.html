@@ -1,28 +1,28 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <app-navbar></app-navbar>
 
-<div class="flex-grow container mx-auto pt-48 relative">
 
-  <div class="flex-grow container mx-auto pt-48 flex flex-col items-center">
-    <!-- Go Back Button -->
-    <div class="mt-4 w-full flex justify-start">
-      <button class="bg-logo-blue text-white px-4 py-2 rounded-md shadow-md flex items-center ml-8" (click)="goBack()">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
-        Go Back
-      </button>
-    </div>
+<div class="flex-grow container mx-auto pt-20 relative">
 
-    <!-- Module name -->
-    <h1 class="text-xl font-bold text-logo-blue mt-4">{{ module?.name }}</h1>
-
-    <!-- Centered Video -->
-    <div class="mt-4 flex justify-center w-full">
-      <video width="640" height="480" controls>
-        <source [src]="module?.file" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-    </div>
+<div class="flex-grow container mx-auto pt-20 flex flex-col items-center">
+  <!-- Go Back Button -->
+  <div class="mt-4 w-full flex justify-start">
+    <button class="bg-logo-blue text-white px-4 py-2 rounded-md shadow-md flex items-center ml-8" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Go Back
+    </button>
   </div>
-<div></div>
+
+  <!-- Module name -->
+  <h1 class="text-xl font-bold text-logo-blue mt-2">{{ module?.name }}</h1>
+
+  <!-- Centered Video -->
+  <div class="mt-4 flex justify-center w-full">
+    <video class="mx-auto mb-4" width="640" height="480" controls>
+      <source [src]="module?.file" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</div>

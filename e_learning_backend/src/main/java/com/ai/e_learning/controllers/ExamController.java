@@ -84,4 +84,12 @@ public ResponseEntity<ExamDto> getExamWithQuestions(@PathVariable("examId") Long
         List<ExamListDto> exams = examService.getExamByLessonId(lessonId);
         return ResponseEntity.ok(exams);
     }
+
+    @GetMapping("/has-final-exam")
+    public ResponseEntity<Boolean> hasFinalExam(@RequestParam Long courseId) {
+        boolean hasFinalExam = examService.hasFinalExam(courseId);
+        return ResponseEntity.ok(hasFinalExam);
+    }
+
+
 }

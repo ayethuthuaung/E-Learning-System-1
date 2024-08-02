@@ -18,6 +18,7 @@ public interface CourseService {
   void addCategoryToCourse(Long courseId, Long categoryId);
   boolean isCourseNameAlreadyExists(String name);
   void changeStatus(Long id, String status);
+  List<CourseDto> getAcceptCoursesByUserId(Long userId);
   List<CourseDto> getCoursesByUserId(Long userId);
   List<CourseDto> getAllCourses();
   List<CourseDto> getCoursesByInstructorId(Long instructorId);

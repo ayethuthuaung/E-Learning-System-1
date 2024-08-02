@@ -9,4 +9,6 @@ aside {
   aside ul li a.justify-center {
     justify-content: center;
   }
-  
+  .custom-font-size {
+    font-size: 1.125rem; /* Equivalent to 18px */
+  }
