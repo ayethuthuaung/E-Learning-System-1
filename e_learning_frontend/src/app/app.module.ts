@@ -138,10 +138,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     AppStoreComponent,
   
     ForgetPasswordComponent,
-
-
-
-
         HomeComponent,
 
        
@@ -262,7 +258,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
-   
+    
     SocketIoModule.forRoot(config)
     
   ],

@@ -1,9 +1,9 @@
 <ul class="lg:flex font-semibold text-slate-700 text-lg gap-8 xl:gap-14">
   <li class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/home']">Home</a>
+    <a [routerLink]="['/home']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">Home</a>
   </li>
   <li class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/all-courses']">All Courses</a>
+    <a [routerLink]="['/all-courses']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">All Courses</a>
   </li>
   <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
     <a [routerLink]="['/mycourses']">My Courses</a>
@@ -12,10 +12,10 @@
     <a [routerLink]="['/mycourses']">My Courses</a>
   </li>
   <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/admin/dashboard']">Dashboard</a>
+    <a [routerLink]="['/admin/dashboard']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
   </li>
   <li *ngIf="hasRole(3)" class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/instructor/dashboard']">Dashboard</a>
+    <a [routerLink]="['/instructor/dashboard']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
   </li>
   <!-- <li class="p-3 border-t lg:border-0">
     <a [routerLink]="['/blog']">Blog</a>
