@@ -4,10 +4,7 @@ import com.ai.e_learning.controllers.NotificationController;
 import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.UserCourseDto;
 import com.ai.e_learning.model.*;
-import com.ai.e_learning.repository.CertificateRepository;
-import com.ai.e_learning.repository.CourseRepository;
-import com.ai.e_learning.repository.UserCourseRepository;
-import com.ai.e_learning.repository.UserRepository;
+import com.ai.e_learning.repository.*;
 import com.ai.e_learning.service.CourseModuleService;
 import com.ai.e_learning.service.RoleService;
 import com.ai.e_learning.service.UserCourseService;
@@ -31,6 +28,7 @@ public class UserCourseServiceImpl implements UserCourseService {
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
   private final UserCourseRepository userCourseRepository;
+  private final RoleRepository roleRepository;
   private final CertificateRepository certificateRepository;
 
   private final ModelMapper modelMapper;
@@ -60,26 +58,29 @@ public class UserCourseServiceImpl implements UserCourseService {
     userCourse.setCompleted(false);
     userCourse.setProgress(0);
     userCourse.setStatus("Pending");
-
+    userCourse = userCourseRepository.save(userCourse);
 
     sendInstructorNotification(course, user);
-    userCourse = userCourseRepository.save(userCourse);
+
 
     return modelMapper.map(userCourse, UserCourseDto.class);
   }
 
   private void sendInstructorNotification(Course course, User student) {
-    Optional<Role> instructorRoleOptional = roleService.getRoleByName("Instructor");
-    if (instructorRoleOptional.isPresent()) {
-      Role instructorRole = instructorRoleOptional.get();
+//    Optional<Role> instructorRoleOptional = roleService.getRoleByName("Instructor");
+//    if (instructorRoleOptional.isPresent()) {
+//      Role instructorRole = instructorRoleOptional.get();
+    List<User> users = new ArrayList<>();
+    users.add(course.getUser());
+      Role ownerRole = roleRepository.findByUsers(users);
       Notification instructorNotification = new Notification();
       instructorNotification.setMessage("Student " + student.getName() + " has enrolled in your course " + course.getName());
-      instructorNotification.setRole(instructorRole);
+      instructorNotification.setRole(ownerRole);
       instructorNotification.setUser(course.getUser()); // Assuming 'getInstructor()' gives you the instructor of the course
       notificationController.sendNotificationToUser(instructorNotification, course.getUser());
-    } else {
-      System.out.println("Instructor role not found");
-    }
+//    } else {
+//      System.out.println("Instructor role not found");
+//    }
   }
   //AT
   @Override

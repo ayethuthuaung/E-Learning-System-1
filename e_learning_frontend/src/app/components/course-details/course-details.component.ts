@@ -17,6 +17,7 @@ import { UnreadMessageService } from '../services/unread-message.service';
 import { WebSocketService } from '../services/websocket.service';
 import { Role } from '../models/user.model';
 import Swal from 'sweetalert2';
+import { Base64 } from 'js-base64';
 
 
 @Component({
@@ -75,7 +76,10 @@ export class CourseDetailsComponent implements OnInit {
       this.unreadCount = count;
     });
     this.route.paramMap.subscribe(params => {
-      this.courseId = +params.get('id')!;
+      const encodedId = params.get('id');
+      if (encodedId) {
+        this.courseId = this.decodeId(encodedId);
+        console.log('Decoded course ID:', this.courseId);
 
       
       console.log(this.courseId);
@@ -103,8 +107,9 @@ export class CourseDetailsComponent implements OnInit {
           }
         );
       }
-
+    }
     });
+    
 
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
@@ -122,7 +127,28 @@ export class CourseDetailsComponent implements OnInit {
       }
     }
   }
- 
+  decodeId(encodedId: string): number {
+    try {
+      // Extract the Base64 encoded ID part
+      const parts = encodedId.split('-');
+      if (parts.length !== 6) {
+        throw new Error('Invalid encoded ID format');
+      }
+      const base64EncodedId = parts[5];
+      // Decode the Base64 string
+      const decodedString = Base64.decode(base64EncodedId);
+      // Convert the decoded string to a number
+      const decodedNumber = Number(decodedString);
+      if (isNaN(decodedNumber)) {
+        throw new Error('Decoded ID is not a valid number');
+      }
+      return decodedNumber;
+    } catch (error) {
+      console.error('Error decoding ID:', error);
+      throw new Error('Invalid ID');
+    }
+  }
+  
   checkIsOwner(): boolean{return this.userId===this.instructorId}
 
   @HostListener('document:click', ['$event'])
