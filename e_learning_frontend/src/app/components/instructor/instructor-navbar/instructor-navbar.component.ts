@@ -1,8 +1,6 @@
 import { Component, Output, EventEmitter, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { UnreadMessageService } from '../../services/unread-message.service';
 import { WebSocketService } from '../../services/websocket.service';
 
 

@@ -59,5 +59,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   List<Course> findByIdIn(@Param("ids") List<Long> ids);
 
 
+  @Query("SELECT c FROM Course c WHERE c.user.id = :userId AND c.isDeleted = false AND c.status = 'Accept'")
+  List<Course> findByUserIdAndIsDeletedFalseAndStatusAccepted(@Param("userId") Long userId);
 
 }

@@ -39,12 +39,12 @@ public class PDFExporter {
         List<UserCourseDto> userCourses = userCourseService.getAllUserCourseByUserId(instructorId);
 
         // Create PDF document
-        Document document = new Document(PageSize.A4);
+        Document document = new Document(PageSize.A4.rotate());
         PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();
 
-        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
         Paragraph title = new Paragraph("Courses and Students Report", titleFont);
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);

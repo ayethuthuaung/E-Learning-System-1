@@ -41,6 +41,7 @@ import { AdminCourseListComponent } from './components/admin/admin-course-list/a
 
 import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
 import { ViewQuestionFormComponent } from './components/view-question-form/view-question-form.component';
+import { MyCoursesComponent } from './components/my-courses/my-courses.component';
 
 
 
@@ -101,7 +102,7 @@ const routes: Routes = [
    {path:'all-courses', component: AllCoursesComponent},
 
    {path:'certificate', component: CertificateComponent},
-
+   {path:'mycourses', component: MyCoursesComponent},
    {
     path: 'module-exam/:lessonId',
     component: CreateModuleExamComponent,
