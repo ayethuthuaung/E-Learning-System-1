@@ -15,9 +15,7 @@
   <!-- <li class="p-3 border-t lg:border-0">
     <a [routerLink]="['/blog']">Blog</a>
   </li> -->
-  <li class="p-3 border-y lg:border-0">
-    <button (click)="scrollToFooter()" class="text-left text-lg text-slate-700 font-semibold focus:outline-none">Contact</button>
-  </li>
+ 
   <li *ngIf="hasRole(1)" class="p-3 border-t lg:border-0 relative" (clickOutside)="showNotifications = false">
     <button class="text-gray-500 focus:outline-none" (click)="toggleNotifications()">
       <i class="fas fa-bell text-lg"></i>
@@ -31,5 +29,8 @@
       <app-notification (unreadCountChange)="UnreadNotiCount($event)"></app-notification>
     </div>
   </li>
+
+
+ 
   
 </ul>

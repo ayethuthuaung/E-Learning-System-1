@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { UnreadMessageService } from '../../services/unread-message.service';
 import { WebSocketService } from '../../services/websocket.service';
+import { Role } from '../../models/user.model';
 
 
 @Component({
@@ -17,12 +18,35 @@ export class InstructorNavbarComponent implements OnInit {
   unreadNotiCount: number = 0;
   showNotifications: boolean = false;
 
+  loggedUser: any = '';
+  id: number = 0;
+  name: any='';
+  roles: Role[] = [];
+
   constructor( private router: Router,
     private authService: AuthService,
     private webSocketService: WebSocketService ) {}
 
   ngOnInit(): void {
-    this.loadUnreadCount();
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      console.log(this.loggedUser);
+
+      if (this.loggedUser) {
+        this.id = this.loggedUser.id;
+        this.name = this.loggedUser.name;
+        this.roles = this.loggedUser.roles;
+
+        // Access role IDs
+        if (this.roles.length > 0) {
+          this.roles.forEach(role => {
+            console.log(role.id); // Print each role ID
+            this.loadUnreadCount();
+          });
+        }
+      }
+    }
   }
   loadUnreadCount(): void {
     const roleName = this.authService.getLoggedInUserRole();

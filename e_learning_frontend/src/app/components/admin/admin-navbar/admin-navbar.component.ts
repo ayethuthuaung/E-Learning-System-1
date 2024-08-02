@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { WebSocketService } from '../../services/websocket.service';
+import { Role } from '../../models/user.model';
 
 @Component({
   selector: 'app-admin-navbar',
@@ -17,6 +18,13 @@ export class AdminNavbarComponent implements OnInit {
   dropdownOpen = false;
   unreadCount: number = 0;
   showNotifications: boolean = false;
+
+
+  loggedUser: any = '';
+  id: number = 0;
+  name: any='';
+  roles: Role[] = [];
+
   constructor(
     private http: HttpClient, 
     private router: Router, 
@@ -24,8 +32,26 @@ export class AdminNavbarComponent implements OnInit {
     private webSocketService: WebSocketService
   ){}
   ngOnInit(): void {
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      console.log(this.loggedUser);
+
+      if (this.loggedUser) {
+        this.id = this.loggedUser.id;
+        this.name = this.loggedUser.name;
+        this.roles = this.loggedUser.roles;
+
+        // Access role IDs
+        if (this.roles.length > 0) {
+          this.roles.forEach(role => {
+            console.log(role.id); // Print each role ID
     this.loadUnreadCount();
-  }
+  });
+}
+}
+}
+}
   loadUnreadCount(): void {
     const roleName = this.authService.getLoggedInUserRole();
     const userId = this.authService.getLoggedInUserId();

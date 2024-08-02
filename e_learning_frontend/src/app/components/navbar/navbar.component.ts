@@ -11,6 +11,7 @@ export class NavbarComponent {
 
   loggedUser: any = '';
   id: number = 0;
+  name: string = '';
   roles: string[] = [];
   showRoleName: { [key: string]: boolean } = {};
   ngOnInit(): void {
@@ -22,6 +23,7 @@ export class NavbarComponent {
       if (this.loggedUser) {
        
         this.id = this.loggedUser.id;
+        this.name = this.loggedUser.name;
         this.roles = this.loggedUser.roles.map((role: any) => role.name);
         console.log(this.id);
 
