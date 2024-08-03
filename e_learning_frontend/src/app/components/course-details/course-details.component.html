@@ -96,13 +96,14 @@
     </div>
     <br>
     <ng-container *ngIf="showFinalExam">
-        <div *ngFor="let exam of filteredExamList"
+        <div (click)="viewQuestionFormClick(exam.id)" *ngFor="let exam of filteredExamList"
              class="p-4 bg-blue-200 hover:bg-blue-300 rounded-lg shadow flex items-center justify-between hover:scale-105">
-          <button (click)="viewQuestionFormClick(exam.id)" 
+          <button 
                   class="text-xl font-bold text-dark-blue hover:text-black">
                   <i class="fa-solid fa-book-open-reader fa-xl mr-4"></i>
             {{ exam.title }}
           </button>
+          <p class="text-dark-blue text-xl font-bold">Final Exam</p>
         </div>
     </ng-container>
    

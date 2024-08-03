@@ -20,13 +20,13 @@ public class CertificateServiceImpl implements CertificateService {
     private final CourseRepository courseRepository;
     private final ModelMapper modelMapper;
     @Override
-    public void saveCertificate(CertificateDto certificateDto) {
+    public CertificateDto saveCertificate(CertificateDto certificateDto) {
         Certificate certificate = new Certificate();
         certificate.setUser(certificateDto.getUser());
         certificate.setCourse(certificateDto.getCourse());
         Certificate savedCertificate = EntityUtil.saveEntity(certificateRepository, certificate, "Certificate");
 
-        DtoUtil.map(savedCertificate, CertificateDto.class, modelMapper);
+        return DtoUtil.map(savedCertificate, CertificateDto.class, modelMapper);
     }
 
     @Override

@@ -43,6 +43,8 @@ export class StudentProfileComponent implements OnInit {
   certificateStatuses: { [key: number]: boolean } = {};
 
   isChangePasswordModalOpen = false;
+  private certificateWindow: Window | null = null;
+
 
   constructor(
     private router: Router,
@@ -287,12 +289,17 @@ export class StudentProfileComponent implements OnInit {
   gotoCertificate(courseId: number): void {
     if (this.id && courseId) {
       console.log('Navigating to Certificate Component with:', { userId: this.id, courseId: courseId });
-      this.router.navigate(['/certificate'], { queryParams: { userId: this.id, courseId: courseId } });
+      const url = this.router.createUrlTree(['/certificate'], { queryParams: { userId: this.id, courseId: courseId } }).toString();
+      
+      if (this.certificateWindow && !this.certificateWindow.closed) {
+        this.certificateWindow.focus();
+      } else {
+        this.certificateWindow = window.open(url, '_blank');
+      }
     } else {
       console.error('User ID or Course ID is not defined');
     }
   }
-
   checkUserCertificate(courseId: number): void {
     console.log(courseId);
     
