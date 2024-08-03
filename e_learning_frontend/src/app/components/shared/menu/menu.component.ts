@@ -13,6 +13,7 @@ import { interval, Subscription } from 'rxjs';
 export class MenuComponent implements OnInit, OnDestroy {
   loggedUser: any = '';
   id: number = 0;
+  name: any='';
   roles: Role[] = [];
   unreadCount: number = 0;
   showNotifications = false;
@@ -33,6 +34,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
       if (this.loggedUser) {
         this.id = this.loggedUser.id;
+        this.name = this.loggedUser.name;
         this.roles = this.loggedUser.roles;
 
         // Access role IDs

@@ -63,6 +63,10 @@ export class UserService {
     return this.httpClient.get<Student>(`${this.baseURL}/${id}`);
   }
 
+  getUsersById(id: number): Observable<User> {
+    return this.httpClient.get<User>(`${this.baseURL}/${id}`);
+  }
+
   updateProfile(file: File, userId: number) {
     const formData: FormData = new FormData();
     formData.append('file', file);

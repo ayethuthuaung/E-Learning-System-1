@@ -2,6 +2,8 @@ import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/cor
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { WebSocketService } from '../../services/websocket.service';
+
+import { Role } from '../../models/user.model';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
@@ -14,22 +16,50 @@ export class AdminNavbarComponent implements OnInit, OnDestroy {
   dropdownOpen = false;
   unreadCount: number = 0;
   showNotifications: boolean = false;
+
+  loggedUser: any = '';
+  id: number = 0;
+  name: any = '';
+  roles: Role[] = [];
+
   private pollingInterval = 30000; // Polling interval in milliseconds (e.g., 30 seconds)
   private pollingSubscription!: Subscription;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private authService: AuthService,
     private webSocketService: WebSocketService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    const storedUser = localStorage.getItem('loggedUser');
+    if (storedUser) {
+      this.loggedUser = JSON.parse(storedUser);
+      console.log(this.loggedUser);
+
+      if (this.loggedUser) {
+        this.id = this.loggedUser.id;
+        this.name = this.loggedUser.name;
+        this.roles = this.loggedUser.roles;
+
+        // Access role IDs
+        if (this.roles.length > 0) {
+          this.roles.forEach(role => {
+            console.log(role.id); // Print each role ID
+            // this.loadUnreadCount();
+
+          });
+        }
+      }
+    }
     this.loadUnreadCount(); // Initial fetch
     // Start polling for unread count
     this.pollingSubscription = interval(this.pollingInterval).subscribe(() => {
       this.loadUnreadCount();
     });
   }
+
+
 
   ngOnDestroy(): void {
     if (this.pollingSubscription) {

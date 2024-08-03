@@ -16,15 +16,14 @@
     </div>
   </div>
  
-  <div class="flex justify-between items-center mt-2">
+  <div class="flex items-center mt-2"> <!-- Align items horizontally -->
     <p class="text-slate-500 font-semibold text-sm">
       {{ input.user?.name }}
     </p>
-    <div>
-
-    </div> <!-- This empty div will push the user name to the left -->
+    <p class="text-slate-600 text-sm ml-1"> <!-- Add a small margin to the left for spacing -->
+      ({{ role }})
+    </p>
   </div>
-  
   <app-course-footer [course]="input" class="mt-2 block"></app-course-footer>
   
 </div>

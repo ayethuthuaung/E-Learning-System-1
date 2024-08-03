@@ -44,9 +44,20 @@
                 </svg>
             </div>
             <app-menu class="hidden lg:block"></app-menu>
-            <app-nav-profile></app-nav-profile>
-            <!-- <app-auth-links class="hidden lg:block"></app-auth-links> -->
-        </div>
+            <div class="flex items-center space-x-4">
+               
+                <div class="flex flex-col items-start">
+                    <div class="custom-font-size font-semibold text-gray-600">
+                        {{ name }}
+                    </div>
+                    <div *ngIf="roles.length > 0" class="roles-list text-gray-600">
+                        <!-- Display roles as strings -->
+                        <div *ngFor="let role of roles">({{ role }})</div>
+                    </div>
+                </div>
+                <app-nav-profile></app-nav-profile>
+            </div>
+            </div>
     </div>
 </header>
 <button *ngIf="isMenuScrolled" (click)="scrollToTop()"

@@ -17,6 +17,7 @@ export class AdminProfileComponent implements OnInit {
   email : string= '';
   loggedUser: any = '';
   id: number = 0;
+  roles: string[] = [];
   isChangePasswordModalOpen = false;
   selectedFile: File | null = null;
 
@@ -35,6 +36,7 @@ export class AdminProfileComponent implements OnInit {
         this.department = this.loggedUser.department;
         this.division = this.loggedUser.division;
         this.email = this.loggedUser.email;
+        this.roles = this.loggedUser.roles.map((role: any) => role.name);
         this.id = this.loggedUser.id;
         console.log(this.id);
       }
