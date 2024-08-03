@@ -17,9 +17,6 @@ import { CourseService } from '../../services/course.service';
 import { TimerComponent } from '../../shared/timer/timer.component';
 import { FormGroup } from '@angular/forms';
 import { Base64 } from 'js-base64';
-
-
-
 @Component({
   selector: 'app-create-module',
   templateUrl: './create-module.component.html',
@@ -312,9 +309,15 @@ moduleForm: FormGroup | undefined;
   }
 
   goToCourseDetails():void {
-    this.router.navigate(['/course-detail', this.courseId]);
+    const encodedId = this.encodeId(this.courseId.toString());
+    this.router.navigate(['/course-detail', encodedId]);
   }
+  encodeId(id: string): string {
+    const base64EncodedId = Base64.encode(id);
+    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+    return `${uuid}-${base64EncodedId}`;
 
+  }
 
   getCourseId(lessonId: number): void {
     this.courseService.getCourseIdByLessonId(lessonId).subscribe(

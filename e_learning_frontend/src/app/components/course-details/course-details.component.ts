@@ -78,11 +78,7 @@ export class CourseDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const encodedId = params.get('id');
       if(encodedId){
-
-      this.courseId = this.decodeId(encodedId);
-
-      
-      console.log(this.courseId);
+      this.courseId = this.decodeId(encodedId);     
       
       if (history.state.course) {
         this.course = history.state.course;
@@ -109,6 +105,7 @@ export class CourseDetailsComponent implements OnInit {
       }
     }
     });
+    
 
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
@@ -286,7 +283,8 @@ viewQuestionFormClick(examId: number): void {
           cancelButtonText: 'Cancel'
         }).then((result) => {
           if (result.isConfirmed) {
-            this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+            const encodedId = this.encodeId(examId.toString());
+            this.router.navigate([`/question-form/${encodedId}`], { state: { exam } });
           }
         });
       }
@@ -296,7 +294,12 @@ viewQuestionFormClick(examId: number): void {
     }
   );
 }
+encodeId(id: string): string {
+  const base64EncodedId = Base64.encode(id);
+  const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+  return `${uuid}-${base64EncodedId}`;
 
+}
 formatDuration(duration: string): string {
   const parts = duration.split(':');
   const hours = parseInt(parts[0], 10);

@@ -28,6 +28,7 @@ export class CreateModuleExamComponent implements OnInit {
     const lessonIdParam = this.route.snapshot.paramMap.get('lessonId');
     if (lessonIdParam !== null) {
       this.lessonId =this.decodeId(lessonIdParam);
+
     }
     // Set the active tab from the service
     this.activeTab = localStorage.getItem('activeTab') || 'createModule';
@@ -72,6 +73,7 @@ export class CreateModuleExamComponent implements OnInit {
     return `${uuid}-${base64EncodedId}`;
   
   }
+
   getCourseId(lessonId: number): void {
     this.courseService.getCourseIdByLessonId(lessonId).subscribe(
       courseId => {
@@ -89,5 +91,6 @@ export class CreateModuleExamComponent implements OnInit {
   goBack() {
     const encodedId = this.encodeId(this.courseId.toString());
     this.router.navigate([`instructor/lesson/${encodedId}`]);
+
   }
 }

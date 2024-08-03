@@ -74,7 +74,7 @@ export class InstructorLessonComponent implements OnInit {
   ngOnInit(): void {
     const courseIdParam = this.route.snapshot.paramMap.get('courseId');
     console.log('Course ID Param:', courseIdParam);
-
+  
     if (courseIdParam !== null) {
       this.courseId = this.decodeId(courseIdParam); 
       this.getCourseById(this.courseId);
@@ -247,7 +247,6 @@ export class InstructorLessonComponent implements OnInit {
       const base64EncodedId = Base64.encode(id);
       const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
       return `${uuid}-${base64EncodedId}`;
-    
     }
     deleteLesson(id: number): void {
       this.lessonService.deleteLesson(id).subscribe(
@@ -279,6 +278,7 @@ export class InstructorLessonComponent implements OnInit {
     }
 
     goToCourseDetails():void {
-      this.router.navigate(['/course-detail', this.courseId]);
+      const encodedId = this.encodeId(this.courseId.toString());
+      this.router.navigate(['/course-detail', encodedId]);
     }
   }

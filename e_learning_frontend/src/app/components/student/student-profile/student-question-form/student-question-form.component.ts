@@ -13,6 +13,7 @@ import { Role } from '../../../models/user.model';
 import html2canvas from 'html2canvas';
 import { CertificateService } from '../../../services/certificate.service';
 import { Certificate } from '../../../models/certificate.model';
+import { Base64 } from 'js-base64';
 
 interface Option {
   id: number;
@@ -84,13 +85,15 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.examId = +params.get('examId')!;
+      const encodedExamId = params.get('examId');
+      if (encodedExamId) {
+        this.examId = this.decodeId(encodedExamId);
       if (this.examId != null) {
        this.courseId = this.getCourseId(this.examId);
         this.loadQuestions(this.examId);
       }
       this.exam = history.state.exam;
-
+    }
       if (this.exam && this.exam.duration) {
         this.startTimer(this.parseDuration(this.exam.duration));
       }
@@ -114,7 +117,27 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
       }
     }
   }
-
+  decodeId(encodedId: string): number {
+    try {
+      // Extract the Base64 encoded ID part
+      const parts = encodedId.split('-');
+      if (parts.length !== 6) {
+        throw new Error('Invalid encoded ID format');
+      }
+      const base64EncodedId = parts[5];
+      // Decode the Base64 string
+      const decodedString = Base64.decode(base64EncodedId);
+      // Convert the decoded string to a number
+      const decodedNumber = Number(decodedString);
+      if (isNaN(decodedNumber)) {
+        throw new Error('Decoded ID is not a valid number');
+      }
+      return decodedNumber;
+    } catch (error) {
+      console.error('Error decoding ID:', error);
+      throw new Error('Invalid ID');
+    }
+  }
   getCourseId(examId: number): void {
     this.courseService.getCourseIdByExamId(examId).subscribe(
       (courseId: number) => {

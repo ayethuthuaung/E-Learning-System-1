@@ -125,7 +125,6 @@ decodeId(encodedId: string): number {
     throw new Error('Invalid ID');
   }
 }
-
  showResults: boolean = false;
  //Create Exam
  addOption(questionIndex: number) {
@@ -314,14 +313,20 @@ viewQuestionFormClick(examId: number): void {
     this.examService.getExamById(examId).subscribe(
       (exam) => {
         console.log("exam:", exam);
-        
-        this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
+        const encodedId = this.encodeId(examId.toString());
+        this.router.navigate([`/view-question-form/${encodedId}`], { state: { exam } });
       },
       (error) => {
         console.error('Error fetching course video view', error);
       }
     );
   // }
+}
+encodeId(id: string): string {
+  const base64EncodedId = Base64.encode(id);
+  const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+  return `${uuid}-${base64EncodedId}`;
+
 }
 
 getCourseId(lessonId: number): void {

@@ -7,6 +7,7 @@ import { WebSocketService } from '../../services/websocket.service';
 
 import { orderBy } from 'lodash';
 import { Router } from '@angular/router';
+import { Base64 } from 'js-base64';
 
 @Component({
   selector: 'app-admin-course-list',
@@ -238,7 +239,14 @@ export class AdminCourseListComponent implements OnInit, OnDestroy {
   }
 
   goToCourseDetails(courseId: number): void {
-    this.router.navigate(['/course-detail', courseId]);
+    const encodedId = this.encodeId(courseId.toString());
+    this.router.navigate(['/course-detail', encodedId]);
+  }
+  encodeId(id: string): string {
+    const base64EncodedId = Base64.encode(id);
+    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+    return `${uuid}-${base64EncodedId}`;
+
   }
 
 }

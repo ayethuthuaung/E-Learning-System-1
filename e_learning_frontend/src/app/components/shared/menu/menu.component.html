@@ -6,10 +6,10 @@
     <a [routerLink]="['/all-courses']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">All Courses</a>
   </li>
   <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/mycourses']">My Courses</a>
+    <a [routerLink]="['/mycourses']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">My Courses</a>
   </li>
   <li *ngIf="hasRole(3)" class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/mycourses']">My Courses</a>
+    <a [routerLink]="['/mycourses']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">My Courses</a>
   </li>
   <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
     <a [routerLink]="['/admin/dashboard']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
