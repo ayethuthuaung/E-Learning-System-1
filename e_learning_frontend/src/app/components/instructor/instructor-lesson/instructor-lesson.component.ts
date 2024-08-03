@@ -76,8 +76,7 @@ export class InstructorLessonComponent implements OnInit {
     console.log('Course ID Param:', courseIdParam);
   
     if (courseIdParam !== null) {
-      this.courseId = this.decodeId(courseIdParam);
-      console.log('Decoded course ID:', this.courseId);
+      this.courseId = this.decodeId(courseIdParam); 
       this.getCourseById(this.courseId);
     }
     this.getLessonsByCourseId();
@@ -279,6 +278,7 @@ export class InstructorLessonComponent implements OnInit {
     }
 
     goToCourseDetails():void {
-      this.router.navigate(['/course-detail', this.courseId]);
+      const encodedId = this.encodeId(this.courseId.toString());
+      this.router.navigate(['/course-detail', encodedId]);
     }
   }

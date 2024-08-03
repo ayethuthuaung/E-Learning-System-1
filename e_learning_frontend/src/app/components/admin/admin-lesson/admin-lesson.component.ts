@@ -76,7 +76,7 @@ export class AdminLessonComponent implements OnInit {
     console.log('Course ID Param:', courseIdParam);
 
     if (courseIdParam !== null) {
-      this.courseId = this.decodeId(courseIdParam);
+      this.courseId = this.decodeId(courseIdParam); 
       this.getCourseById(this.courseId);
     }
     this.getLessonsByCourseId();
@@ -102,7 +102,6 @@ export class AdminLessonComponent implements OnInit {
       throw new Error('Invalid ID');
     }
   }
-
   getCourseById(courseId: number): void {
     this.courseService.getCourseById(courseId).subscribe(
       (data: Course) => {
@@ -278,7 +277,8 @@ export class AdminLessonComponent implements OnInit {
     }
 
     goToCourseDetails():void {
-      this.router.navigate(['/course-detail', this.courseId]);
+      const encodedId = this.encodeId(this.courseId.toString());
+      this.router.navigate(['/course-detail', encodedId]);
     }
   }
   

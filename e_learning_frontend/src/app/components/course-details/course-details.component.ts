@@ -77,12 +77,8 @@ export class CourseDetailsComponent implements OnInit {
     });
     this.route.paramMap.subscribe(params => {
       const encodedId = params.get('id');
-      if (encodedId) {
-        this.courseId = this.decodeId(encodedId);
-        console.log('Decoded course ID:', this.courseId);
-
-      
-      console.log(this.courseId);
+      if(encodedId){
+      this.courseId = this.decodeId(encodedId);     
       
       if (history.state.course) {
         this.course = history.state.course;
@@ -148,7 +144,6 @@ export class CourseDetailsComponent implements OnInit {
       throw new Error('Invalid ID');
     }
   }
-  
   checkIsOwner(): boolean{return this.userId===this.instructorId}
 
   @HostListener('document:click', ['$event'])
@@ -265,40 +260,34 @@ viewQuestionFormClick(examId: number): void {
   this.examService.getExamById(examId).subscribe(
     (exam) => {
       
-      const duration = exam.duration; // e.g., '01:30:00'
-      
-
-      // Format the duration (optional)
+      const duration = exam.duration; 
+    
       const formattedDuration = this.formatDuration(duration);
-
-      Swal.fire({
-        title: 'Are you sure?',
-        html: `
-        <div>
-          
-          <span>You want to go to the question form.<br><br>
-          <i class="fa-regular fa-clock" style="font-size: 24px;"></i>
-          Time Allowed: ${formattedDuration}</span>
-        </div>
-      `,
-        iconHtml: '<i class="fa fa-clipboard-list" style="font-size: 50px; color: #3085d6;"></i>',
-        showCancelButton: true,
-        confirmButtonColor: '#003366',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Go To Form',
-        cancelButtonText: 'Cancel  '
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // If confirmed, navigate to the question form
-          if(this.isOwner|| this.hasRole(2)){
+      if (this.isOwner || this.hasRole(2)) {
+        this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
+      } else {
+        Swal.fire({
+          title: 'Are you sure?',
+          html: `
+          <div>
+            <span>You want to go to the question form.<br><br>
+            <i class="fa-regular fa-clock" style="font-size: 24px;"></i>
+            Time Allowed: ${formattedDuration}</span>
+          </div>
+        `,
+          iconHtml: '<i class="fa fa-clipboard-list" style="font-size: 50px; color: #3085d6;"></i>',
+          showCancelButton: true,
+          confirmButtonColor: '#003366',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Go To Form',
+          cancelButtonText: 'Cancel'
+        }).then((result) => {
+          if (result.isConfirmed) {
             const encodedId = this.encodeId(examId.toString());
-            this.router.navigate([`/view-question-form/${encodedId}`], { state: { exam } });
-          }else{
-            const encodedId = this.encodeId(examId.toString());
-            this.router.navigate([`/question-form/${encodedId}`], { state: { exam } });     
+            this.router.navigate([`/question-form/${encodedId}`], { state: { exam } });
           }
-           }
-      });
+        });
+      }
     },
     (error) => {
       console.error('Error fetching exam:', error);
@@ -339,7 +328,6 @@ markAsDone(moduleId: number, lessonIndex: number): void {
       module.done = true;
       localStorage.setItem(`module_${moduleId}_done`, 'true');
 
-      // Check if all modules are done
       console.log(this.lessons);
       
       const allModulesDone = lesson.modules.every(m => m.done);
@@ -355,7 +343,6 @@ markAsDone(moduleId: number, lessonIndex: number): void {
           confirmButtonText: 'OK'
         }).then((result) => {
           if (result.isConfirmed) {
-            // Refresh the page when OK button is clicked
             window.location.reload();
           }
         });

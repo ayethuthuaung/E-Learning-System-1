@@ -27,8 +27,8 @@ export class CreateModuleExamComponent implements OnInit {
   ngOnInit(): void {
     const lessonIdParam = this.route.snapshot.paramMap.get('lessonId');
     if (lessonIdParam !== null) {
-      this.lessonId = this.decodeId(lessonIdParam); 
-    console.log('Decoded lesson ID:', this.lessonId);
+      this.lessonId =this.decodeId(lessonIdParam);
+
     }
     // Set the active tab from the service
     this.activeTab = localStorage.getItem('activeTab') || 'createModule';
@@ -67,7 +67,13 @@ export class CreateModuleExamComponent implements OnInit {
     const encodedId = this.encodeId(this.lessonId.toString());
     this.router.navigate([`${tab}/${encodedId}`], { relativeTo: this.route });
   }
+  encodeId(id: string): string {
+    const base64EncodedId = Base64.encode(id);
+    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+    return `${uuid}-${base64EncodedId}`;
   
+  }
+
   getCourseId(lessonId: number): void {
     this.courseService.getCourseIdByLessonId(lessonId).subscribe(
       courseId => {
@@ -85,10 +91,6 @@ export class CreateModuleExamComponent implements OnInit {
   goBack() {
     const encodedId = this.encodeId(this.courseId.toString());
     this.router.navigate([`instructor/lesson/${encodedId}`]);
-  }
-  encodeId(id: string): string {
-    const base64EncodedId = Base64.encode(id);
-    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
-    return `${uuid}-${base64EncodedId}`;
+
   }
 }
