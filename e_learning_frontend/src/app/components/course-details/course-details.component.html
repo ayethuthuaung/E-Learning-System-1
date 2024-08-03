@@ -4,7 +4,7 @@
 
   <div class="md:w-2/3 p-4 mt-40 mx-auto">
     <div
-      class="border-3 border-blue-200 p-4 rounded-lg shadow-3xl transition duration-300 ease-in-out transform hover:scale-105">
+      class="border-1 border-blue-200 p-4 rounded-lg shadow-2xl transition duration-300 ease-in-out transform  hover:scale-105">
       <div *ngIf="course" class="flex items-center">
         <img [src]="course.photo" alt="Profile Picture" class="w-1/2 h-auto object-cover">
         <div class="ml-4">
@@ -35,12 +35,13 @@
     <div class="flex justify-between items-center mb-4">
       <div class="flex items-center">
         <button type="button" (click)="goBack()"
-          class="bg-blue-100 hover:bg-blue-300 text-logo-blue font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          class="border-1 border-blue-200 text-logo-blue shadow-2xl font-semibold py-1 px-3 rounded-lg shadow-lg transition duration-300 ease-in-out transform  hover:scale-105">
+                  <!-- border-3 border-blue-200 p-4 rounded-lg shadow-3xl transition duration-300 ease-in-out transform hover:scale-105 -->
           <i class="fas fa-arrow-left fa-xl mr-2"></i>
         </button>
       </div>
       <button type="button" (click)="expandAllLessons()"
-        class="bg-blue-100 hover:bg-blue-200 text-logo-blue font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+        class="border-1 border-blue-200 text-logo-blue shadow-2xl font-semibold py-2 px-4 rounded-lg shadow-lg transition duration-300 ease-in-out transform  hover:scale-105">
         {{ expandAllText }}
       </button>
       <!-- <button (click)="expandAllLessons()" class="text-md font-bold text-logo-blue">Expand All Lessons</button> -->
@@ -58,7 +59,8 @@
       </div>
       <div *ngIf="isDropdownOpen[i]" class="mt-2 space-y-2 p-4">
         <div *ngFor="let module of lesson.modules "
-          class="p-4  bg-blue-100 hover:bg-blue-200 rounded-lg shadow flex items-center justify-between hover:scale-105">
+          class="p-3 border-1 border-blue-300 rounded-lg shadow flex items-center justify-between hover:bg-gray-200 hover:scale-105">
+         
           <!-- <p>{{ module.name }}</p> -->
           <ng-container *ngIf="module.fileType === 'video/mp4'">
             <button (click)="viewVideoDetailClick(module.id)" class="hover:text-logo-blue flex items-center">
@@ -82,8 +84,8 @@
         </div>
 
         <div *ngFor="let exam of lesson.examListDto"
-          class="p-4 bg-light-yellow hover:bg-light-yellow-hover rounded-lg shadow flex items-center justify-between hover:scale-105 ">
-          <button (click)="viewQuestionFormClick(exam.id)" class="hover:text-logo-blue">
+          class="p-3 border-1 border-blue-300 rounded-lg shadow flex items-center justify-between hover:bg-gray-200 hover:scale-105 ">
+          <button (click)="viewQuestionFormClick(exam.id)" class="text-more-dark-green hover:text-dark-green">
             <i class="fa-solid fa-book-open-reader fa-xl mr-4"></i>
             {{ exam.title }}
           </button>
@@ -97,12 +99,12 @@
     <ng-container *ngIf="showFinalExam">
 
       <div (click)="viewQuestionFormClick(exam.id)" *ngFor="let exam of filteredExamList"
-        class="border-2 border-blue-200 p-4 bg-blue-200 hover:bg-blue-300 rounded-lg shadow flex items-center justify-between hover:scale-105">
-        <button class="text-xl font-bold text-dark-blue hover:text-black">
+        class=" p-4 border-1 border-blue-300 rounded-lg shadow flex items-center justify-between hover:bg-gray-200 hover:scale-105">
+        <button class="text-xl font-bold text-more-dark-green hover:text-dark-green">
           <i class="fa-solid fa-book-open-reader fa-xl mr-4"></i>
           {{ exam.title }}
         </button>
-        <p class="text-dark-blue text-xl font-bold">Final Exam</p>
+        <p class="text-more-dark-green text-xl font-bold">Final Exam</p>
       </div>
     </ng-container>
 

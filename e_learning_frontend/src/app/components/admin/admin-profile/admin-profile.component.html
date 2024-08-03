@@ -71,8 +71,6 @@
                         aria-label="Change Password">
                   Change Password
                 </button>
-
-                <app-change-password-modal *ngIf="isChangePasswordModalOpen" (close)="isChangePasswordModalOpen = false"></app-change-password-modal>
              
               </div>
             </div>
@@ -82,5 +80,7 @@
         </div>
       </div>
     </div>
+
+    <app-change-password-modal *ngIf="isChangePasswordModalOpen" (close)="isChangePasswordModalOpen = false"></app-change-password-modal>
   </div>
 
