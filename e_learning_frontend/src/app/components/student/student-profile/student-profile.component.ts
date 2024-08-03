@@ -296,7 +296,9 @@ export class StudentProfileComponent implements OnInit {
   gotoCertificate(courseId: number): void {
     if (this.id && courseId) {
       console.log('Navigating to Certificate Component with:', { userId: this.id, courseId: courseId });
-      const url = this.router.createUrlTree(['/certificate'], { queryParams: { userId: this.id, courseId: courseId } }).toString();
+      const encodedUserId = this.encodeId(this.id.toString());
+      const encodedCourseId = this.encodeId(courseId.toString());
+      const url = this.router.createUrlTree(['/certificate'], { queryParams: { userId: encodedUserId, courseId: encodedCourseId } }).toString();
       
       if (this.certificateWindow && !this.certificateWindow.closed) {
         this.certificateWindow.focus();

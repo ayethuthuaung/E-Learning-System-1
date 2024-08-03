@@ -328,7 +328,9 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     if (this.userId && this.courseId) {
       console.log('Navigating to Certificate Component with:', { userId: this.userId, courseId: this.courseId });
       // this.router.navigate(['/certificate'], { queryParams: { userId: this.userId, courseId: this.courseId } });
-      const url = this.router.createUrlTree(['/certificate'], { queryParams: { userId: this.userId, courseId: this.courseId } }).toString();
+      const encodedUserId = this.encodeId(this.userId.toString());
+      const encodedCourseId = this.encodeId(this.courseId.toString());
+      const url = this.router.createUrlTree(['/certificate'], { queryParams: { userId: encodedUserId, courseId: encodedCourseId } }).toString();
       
       if (this.certificateWindow && !this.certificateWindow.closed) {
         this.certificateWindow.focus();
@@ -339,7 +341,12 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
       console.error('User ID or Course ID is not defined');
     }
   }
-
+  encodeId(id: string): string {
+    const base64EncodedId = Base64.encode(id);
+    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+    return `${uuid}-${base64EncodedId}`;
+  
+  }
   showModalFor3Seconds() {
     this.showModal = true;
 

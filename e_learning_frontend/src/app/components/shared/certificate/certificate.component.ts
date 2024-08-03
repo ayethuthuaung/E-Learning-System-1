@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CertificateService } from '../../services/certificate.service';
 import { Certificate } from '../../models/certificate.model';
+import { Base64 } from 'js-base64';
 
 @Component({
   selector: 'app-certificate',
@@ -21,10 +22,12 @@ export class CertificateComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.userId = params['userId'];
-      this.courseId = params['courseId'];
+      const encodedUserId = params['userId'];
+      const encodedCourseId = params['courseId'];
 
-      if (this.userId && this.courseId) {
+      if (encodedUserId && encodedCourseId) {
+        this.userId = this.decodeId(encodedUserId);
+        this.courseId = this.decodeId(encodedCourseId);
         this.getCertificateByUserIdAndCourseId();
       } else {
         console.error('User ID or Course ID is not defined for fetching certificate');
@@ -33,7 +36,27 @@ export class CertificateComponent implements OnInit {
     });
     document.addEventListener('keydown', this.handleKeyboardEvent.bind(this));
   }
-
+  decodeId(encodedId: string): number {
+    try {
+      // Extract the Base64 encoded ID part
+      const parts = encodedId.split('-');
+      if (parts.length !== 6) {
+        throw new Error('Invalid encoded ID format');
+      }
+      const base64EncodedId = parts[5];
+      // Decode the Base64 string
+      const decodedString = Base64.decode(base64EncodedId);
+      // Convert the decoded string to a number
+      const decodedNumber = Number(decodedString);
+      if (isNaN(decodedNumber)) {
+        throw new Error('Decoded ID is not a valid number');
+      }
+      return decodedNumber;
+    } catch (error) {
+      console.error('Error decoding ID:', error);
+      throw new Error('Invalid ID');
+    }
+  }
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.handleKeyboardEvent.bind(this));
   }
