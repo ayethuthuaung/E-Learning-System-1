@@ -17,13 +17,15 @@ public class CertificateController {
     @PostMapping(value = "/", produces = "application/json")
     public ResponseEntity<CertificateDto> saveCertificate(@RequestBody CertificateDto certificateDto) {
         try {
-            certificateService.saveCertificate(certificateDto);
-            // Assume saveCertificate does not return the saved entity
-            return ResponseEntity.ok(certificateDto); // Or, you could return the newly created certificateDto if modified in service
+            CertificateDto certificateDto1 = certificateService.saveCertificate(certificateDto);
+            if (certificateDto1 != null) {
+                return ResponseEntity.ok(certificateDto1);
+            }else
+                  return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            // Log exception or handle it accordingly
             return ResponseEntity.badRequest().build();
         }
+
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")

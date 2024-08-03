@@ -1,7 +1,12 @@
 <div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 relative">
   <div *ngIf="certificate; else loading" class="relative bg-white shadow-2xl p-4 w-full max-w-2xl mx-auto text-center certificate-border">
     <!-- Header with decorative line and stylish icon -->
-    <div class="watermark">
+    <!-- Left Watermark -->
+    <div class="watermark watermark-left">
+      <p class="watermark-text">GrowthHub</p>
+    </div>
+    <!-- Right Watermark -->
+    <div class="watermark watermark-right">
       <p class="watermark-text">GrowthHub</p>
     </div>
     <div class="mb-4 flex flex-col items-center">

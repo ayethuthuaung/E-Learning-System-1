@@ -348,6 +348,17 @@ markAsDone(moduleId: number, lessonIndex: number): void {
         
         this.showFinalExam = true;
         this.filteredExamList = lesson.examListDto.filter(exam => exam.finalExam);
+        Swal.fire({
+          title: 'All modules are done!',
+          text: 'You can now take the final exam.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Refresh the page when OK button is clicked
+            window.location.reload();
+          }
+        });
       }else{
 
         console.log("Hello");

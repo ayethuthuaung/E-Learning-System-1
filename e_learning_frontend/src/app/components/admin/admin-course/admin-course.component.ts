@@ -18,7 +18,7 @@ import { Base64 } from 'js-base64';
 export class AdminCourseComponent implements OnInit {
 
   isSidebarOpen = true;
-  activeTab: string = 'createCourse';
+  activeTab!: string;
   category: Category = new Category();
   errorMessage: string = '';
   categories: Category[] = [];
@@ -40,9 +40,14 @@ export class AdminCourseComponent implements OnInit {
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
+    private route: ActivatedRoute,
     private router:Router) { }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.activeTab = params['tab'] || 'createCourse';
+    });
+
     this.getCategories();
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
@@ -94,8 +99,17 @@ export class AdminCourseComponent implements OnInit {
   }
 
 
-  setActiveTab(tab: string) {
+  // setActiveTab(tab: string) {
+  //   this.activeTab = tab;
+  // }
+
+  setActiveTab(tab: string): void {
     this.activeTab = tab;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab },
+      queryParamsHandling: 'merge'
+    });
   }
 
   loadCategories(): void {

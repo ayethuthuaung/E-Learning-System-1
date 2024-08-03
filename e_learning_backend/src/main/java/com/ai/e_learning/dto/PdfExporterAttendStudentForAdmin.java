@@ -57,6 +57,10 @@ public class PdfExporterAttendStudentForAdmin {
             PdfPTable table = new PdfPTable(13);
             table.setWidthPercentage(100);
 
+
+
+
+
             // Set relative column widths to make sure headers are wide enough
             float[] columnWidths = {1f, 1.5f, 2f, 2f, 2.5f, 1.5f, 2.7f, 2f, 2.5f, 2.5f, 2.5f, 1.9f, 2.5f};
             table.setWidths(columnWidths);

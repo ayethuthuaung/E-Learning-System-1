@@ -66,6 +66,9 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   certificate: Certificate | null = null;
   certificateId: number | undefined; 
   isPassed: boolean = false;
+  showModal: boolean = false;
+  private certificateWindow: Window | null = null;
+
 
 
   constructor(
@@ -267,6 +270,7 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
       const passedResult = response.find((res: any) => 'isPassed' in res);
       if (passedResult) {
           this.isPassed = passedResult.isPassed;
+          this.showModalFor3Seconds();
       }
     }, error => {
       console.error('Error submitting answers', error);
@@ -323,10 +327,26 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
   gotoCertificate(): void {
     if (this.userId && this.courseId) {
       console.log('Navigating to Certificate Component with:', { userId: this.userId, courseId: this.courseId });
-      this.router.navigate(['/certificate'], { queryParams: { userId: this.userId, courseId: this.courseId } });
+      // this.router.navigate(['/certificate'], { queryParams: { userId: this.userId, courseId: this.courseId } });
+      const url = this.router.createUrlTree(['/certificate'], { queryParams: { userId: this.userId, courseId: this.courseId } }).toString();
+      
+      if (this.certificateWindow && !this.certificateWindow.closed) {
+        this.certificateWindow.focus();
+      } else {
+        this.certificateWindow = window.open(url, '_blank');
+      }
     } else {
       console.error('User ID or Course ID is not defined');
     }
+  }
+
+  showModalFor3Seconds() {
+    this.showModal = true;
+
+    // Hide the modal after 3 seconds
+    setTimeout(() => {
+      this.showModal = false;
+    }, 3000);
   }
   
   

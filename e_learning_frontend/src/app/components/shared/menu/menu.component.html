@@ -6,10 +6,10 @@
     <a [routerLink]="['/all-courses']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">All Courses</a>
   </li>
   <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/mycourses']">My Courses</a>
+    <a [routerLink]="['/mycourses']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">My Courses</a>
   </li>
   <li *ngIf="hasRole(3)" class="p-3 border-t lg:border-0">
-    <a [routerLink]="['/mycourses']">My Courses</a>
+    <a [routerLink]="['/mycourses']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">My Courses</a>
   </li>
   <li *ngIf="hasRole(2)" class="p-3 border-t lg:border-0">
     <a [routerLink]="['/admin/dashboard']" routerLinkActive="border-b-2 border-black" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
@@ -20,9 +20,12 @@
   <!-- <li class="p-3 border-t lg:border-0">
     <a [routerLink]="['/blog']">Blog</a>
   </li> -->
+  <li *ngIf="hasRole(1)" class="p-3 border-y lg:border-0">
+    <button (click)="scrollToFooter()" class="text-left text-lg text-slate-700 font-semibold focus:outline-none">Contact</button>
+  </li>
  
   <li *ngIf="hasRole(1)" class="p-3 border-t lg:border-0 relative" (clickOutside)="showNotifications = false">
-    <button class="text-dark-blue focus:outline-none" (click)="toggleNotifications()">
+    <button class="text-logo-blue focus:outline-none" (click)="toggleNotifications()">
       <i class="fas fa-bell text-2xl"></i>
       <span *ngIf="unreadCount > 0"
             class="absolute top-4 right-5 inline-flex items-center justify-center px-1 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
