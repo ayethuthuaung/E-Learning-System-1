@@ -16,7 +16,7 @@ import { Location } from '@angular/common';
 import { CourseService } from '../../services/course.service';
 import { TimerComponent } from '../../shared/timer/timer.component';
 import { FormGroup } from '@angular/forms';
-
+import { Base64 } from 'js-base64';
 
 
 
@@ -71,7 +71,7 @@ moduleForm: FormGroup | undefined;
     console.log('Lesson ID Param:', lessonIdParam);
 
     if (lessonIdParam !== null) {
-      this.lessonId = +lessonIdParam; // Convert courseIdParam to number if not null
+      this.lessonId = this.decodeId(lessonIdParam); // Convert courseIdParam to number if not null
       this.loadModulesByLessonId(this.lessonId);
 
        this.getCourseId(this.lessonId);
@@ -80,7 +80,27 @@ moduleForm: FormGroup | undefined;
     
 
   }
-
+  decodeId(encodedId: string): number {
+    try {
+      // Extract the Base64 encoded ID part
+      const parts = encodedId.split('-');
+      if (parts.length !== 6) {
+        throw new Error('Invalid encoded ID format');
+      }
+      const base64EncodedId = parts[5];
+      // Decode the Base64 string
+      const decodedString = Base64.decode(base64EncodedId);
+      // Convert the decoded string to a number
+      const decodedNumber = Number(decodedString);
+      if (isNaN(decodedNumber)) {
+        throw new Error('Decoded ID is not a valid number');
+      }
+      return decodedNumber;
+    } catch (error) {
+      console.error('Error decoding ID:', error);
+      throw new Error('Invalid ID');
+    }
+  }
   loadModulesByLessonId(lessonId: number) {
     this.courseModuleService.getModulesByLessonId(lessonId).subscribe(
       modules => {

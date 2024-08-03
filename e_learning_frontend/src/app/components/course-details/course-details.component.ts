@@ -17,6 +17,7 @@ import { UnreadMessageService } from '../services/unread-message.service';
 import { WebSocketService } from '../services/websocket.service';
 import { Role } from '../models/user.model';
 import Swal from 'sweetalert2';
+import { Base64 } from 'js-base64';
 
 
 @Component({
@@ -75,7 +76,10 @@ export class CourseDetailsComponent implements OnInit {
       this.unreadCount = count;
     });
     this.route.paramMap.subscribe(params => {
-      this.courseId = +params.get('id')!;
+      const encodedId = params.get('id');
+      if(encodedId){
+
+      this.courseId = this.decodeId(encodedId);
 
       
       console.log(this.courseId);
@@ -103,7 +107,7 @@ export class CourseDetailsComponent implements OnInit {
           }
         );
       }
-
+    }
     });
 
     const storedUser = localStorage.getItem('loggedUser');
@@ -122,7 +126,27 @@ export class CourseDetailsComponent implements OnInit {
       }
     }
   }
- 
+  decodeId(encodedId: string): number {
+    try {
+      // Extract the Base64 encoded ID part
+      const parts = encodedId.split('-');
+      if (parts.length !== 6) {
+        throw new Error('Invalid encoded ID format');
+      }
+      const base64EncodedId = parts[5];
+      // Decode the Base64 string
+      const decodedString = Base64.decode(base64EncodedId);
+      // Convert the decoded string to a number
+      const decodedNumber = Number(decodedString);
+      if (isNaN(decodedNumber)) {
+        throw new Error('Decoded ID is not a valid number');
+      }
+      return decodedNumber;
+    } catch (error) {
+      console.error('Error decoding ID:', error);
+      throw new Error('Invalid ID');
+    }
+  }
   checkIsOwner(): boolean{return this.userId===this.instructorId}
 
   @HostListener('document:click', ['$event'])
@@ -239,36 +263,33 @@ viewQuestionFormClick(examId: number): void {
   this.examService.getExamById(examId).subscribe(
     (exam) => {
       
-      const duration = exam.duration; // e.g., '01:30:00'
-      
-
-      // Format the duration (optional)
+      const duration = exam.duration; 
+    
       const formattedDuration = this.formatDuration(duration);
-
-      Swal.fire({
-        title: 'Are you sure?',
-        html: `
-        <div>
-          
-          <span>You want to go to the question form.<br><br>
-          <i class="fa-regular fa-clock" style="font-size: 24px;"></i>
-          Time Allowed: ${formattedDuration}</span>
-        </div>
-      `,
-        iconHtml: '<i class="fa fa-clipboard-list" style="font-size: 50px; color: #3085d6;"></i>',
-        showCancelButton: true,
-        confirmButtonColor: '#003366',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Go To Form',
-        cancelButtonText: 'Cancel  '
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // If confirmed, navigate to the question form
-          if(this.isOwner|| this.hasRole(2))
-            this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
-          else
-            this.router.navigate([`/question-form/${examId}`], { state: { exam } });        }
-      });
+      if (this.isOwner || this.hasRole(2)) {
+        this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
+      } else {
+        Swal.fire({
+          title: 'Are you sure?',
+          html: `
+          <div>
+            <span>You want to go to the question form.<br><br>
+            <i class="fa-regular fa-clock" style="font-size: 24px;"></i>
+            Time Allowed: ${formattedDuration}</span>
+          </div>
+        `,
+          iconHtml: '<i class="fa fa-clipboard-list" style="font-size: 50px; color: #3085d6;"></i>',
+          showCancelButton: true,
+          confirmButtonColor: '#003366',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Go To Form',
+          cancelButtonText: 'Cancel'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+          }
+        });
+      }
     },
     (error) => {
       console.error('Error fetching exam:', error);
@@ -304,7 +325,6 @@ markAsDone(moduleId: number, lessonIndex: number): void {
       module.done = true;
       localStorage.setItem(`module_${moduleId}_done`, 'true');
 
-      // Check if all modules are done
       console.log(this.lessons);
       
       const allModulesDone = lesson.modules.every(m => m.done);
@@ -320,7 +340,6 @@ markAsDone(moduleId: number, lessonIndex: number): void {
           confirmButtonText: 'OK'
         }).then((result) => {
           if (result.isConfirmed) {
-            // Refresh the page when OK button is clicked
             window.location.reload();
           }
         });
