@@ -7,6 +7,7 @@ import { Role, User } from '../../../models/user.model';
 import Swal from 'sweetalert2';
 import { UserCourse } from '../../../models/usercourse.model';
 import { log } from 'node:console';
+import { Base64 } from 'js-base64';
 
 @Component({
   selector: 'app-course-footer',
@@ -182,9 +183,14 @@ export class CourseFooterComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    this.router.navigate(['/course-detail', this.course.id]);
+    const encodedId = this.encodeId(this.course.id.toString());
+    this.router.navigate(['/course-detail', encodedId]);
   }
-
+  encodeId(id: string): string {
+    const base64EncodedId = Base64.encode(id);
+    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+    return `${uuid}-${base64EncodedId}`;
+  }
   changeUserCourseStatus(status: string): void {
     if (this.userCourseId) { // Ensure userCourseId is defined
       this.userCourseService.changeStatus(this.userCourseId, status).subscribe(

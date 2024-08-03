@@ -9,6 +9,7 @@ import { CourseModuleService } from '../../services/course-module.service';
 import { Lesson } from '../../models/lesson.model';
 import { CourseModule } from '../../models/coursemodule.model';
 import { UserCourseModuleService } from '../../services/usercoursemodule.service';
+import { Base64 } from 'js-base64';
 
 @Component({
   selector: 'app-student-profile',
@@ -282,10 +283,16 @@ export class StudentProfileComponent implements OnInit {
   viewCourses(course: Course): void {
     this.selectedCourse = course;
     if (this.selectedCourse) {
-      this.router.navigate(['/course-detail', this.selectedCourse.id]);
+      const encodedId = this.encodeId(this.selectedCourse.id.toString());
+      this.router.navigate(['/course-detail', encodedId]);
     }
   }
-
+  encodeId(id: string): string {
+    const base64EncodedId = Base64.encode(id);
+    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+    return `${uuid}-${base64EncodedId}`;
+  
+  }
   gotoCertificate(courseId: number): void {
     if (this.id && courseId) {
       console.log('Navigating to Certificate Component with:', { userId: this.id, courseId: courseId });

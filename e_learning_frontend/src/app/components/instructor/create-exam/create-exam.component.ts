@@ -14,6 +14,7 @@ import { TimerComponent } from '../../shared/timer/timer.component';
 import { Lesson } from '../../models/lesson.model';
 import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Base64 } from 'js-base64';
 
 
 interface Option {
@@ -94,7 +95,7 @@ export class CreateExamComponent implements OnInit {
   console.log('Lesson ID Param:', lessonIdParam);
 
   if (lessonIdParam !== null) {
-    this.lessonId = +lessonIdParam; // Convert courseIdParam to number if not null
+    this.lessonId = this.decodeId(lessonIdParam); // Convert courseIdParam to number if not null
     this.loadExamByLessonId(this.lessonId);
      this.getCourseId(this.lessonId);
      
@@ -103,8 +104,27 @@ export class CreateExamComponent implements OnInit {
   
  
 }
-  
-
+decodeId(encodedId: string): number {
+  try {
+    // Extract the Base64 encoded ID part
+    const parts = encodedId.split('-');
+    if (parts.length !== 6) {
+      throw new Error('Invalid encoded ID format');
+    }
+    const base64EncodedId = parts[5];
+    // Decode the Base64 string
+    const decodedString = Base64.decode(base64EncodedId);
+    // Convert the decoded string to a number
+    const decodedNumber = Number(decodedString);
+    if (isNaN(decodedNumber)) {
+      throw new Error('Decoded ID is not a valid number');
+    }
+    return decodedNumber;
+  } catch (error) {
+    console.error('Error decoding ID:', error);
+    throw new Error('Invalid ID');
+  }
+}
  showResults: boolean = false;
  //Create Exam
  addOption(questionIndex: number) {
@@ -293,14 +313,20 @@ viewQuestionFormClick(examId: number): void {
     this.examService.getExamById(examId).subscribe(
       (exam) => {
         console.log("exam:", exam);
-        
-        this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
+        const encodedId = this.encodeId(examId.toString());
+        this.router.navigate([`/view-question-form/${encodedId}`], { state: { exam } });
       },
       (error) => {
         console.error('Error fetching course video view', error);
       }
     );
   // }
+}
+encodeId(id: string): string {
+  const base64EncodedId = Base64.encode(id);
+  const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+  return `${uuid}-${base64EncodedId}`;
+
 }
 
 getCourseId(lessonId: number): void {
