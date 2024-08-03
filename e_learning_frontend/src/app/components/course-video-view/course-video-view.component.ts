@@ -7,6 +7,7 @@ import { Module } from '../models/module.model';
 import { Lesson } from '../models/lesson.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { Base64 } from 'js-base64';
 
 
 
@@ -33,18 +34,18 @@ export class CourseVideoViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const moduleIdParam = params.get('moduleId');
-      const courseIdParam = params.get('courseId');
+      const encodedModuleId = params.get('moduleId');
+    const encodedCourseId = params.get('courseId');
 
-      if (moduleIdParam) {
-        this.moduleId = +moduleIdParam;
+      if (encodedModuleId) {
+        this.moduleId = this.decodeId(encodedModuleId);
         console.log(`Module ID: ${this.moduleId}`);
       } else {
         console.error('Module ID is not provided');
       }
 
-      if (courseIdParam) {
-        this.courseId = +courseIdParam;
+      if (encodedCourseId) {
+        this.courseId = this.decodeId(encodedCourseId);
         console.log(`Course ID: ${this.courseId}`);
       } else {
         console.error('Course ID is not provided');
@@ -80,7 +81,27 @@ export class CourseVideoViewComponent implements OnInit {
       }
     });
   }
-
+  decodeId(encodedId: string): number {
+    try {
+      // Extract the Base64 encoded ID part
+      const parts = encodedId.split('-');
+      if (parts.length !== 6) {
+        throw new Error('Invalid encoded ID format');
+      }
+      const base64EncodedId = parts[5];
+      // Decode the Base64 string
+      const decodedString = Base64.decode(base64EncodedId);
+      // Convert the decoded string to a number
+      const decodedNumber = Number(decodedString);
+      if (isNaN(decodedNumber)) {
+        throw new Error('Decoded ID is not a valid number');
+      }
+      return decodedNumber;
+    } catch (error) {
+      console.error('Error decoding ID:', error);
+      throw new Error('Invalid ID');
+    }
+  }
   fetchLessons(): void {
     console.log('Fetching lessons for course ID:', this.courseId);
     if (this.courseId) {

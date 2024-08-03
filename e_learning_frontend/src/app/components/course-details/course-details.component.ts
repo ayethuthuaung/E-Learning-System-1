@@ -246,8 +246,8 @@ export class CourseDetailsComponent implements OnInit {
       this.courseModuleService.getModuleById(moduleId).subscribe(
         (module) => {
           console.log("Module:", module);
-          
-          this.router.navigate([`/course-video-view/${module.id}`], { state: { module } });
+          const encodedId = this.encodeId(module.id.toString());
+          this.router.navigate([`/course-video-view/${encodedId}`], { state: { module } });
         },
         (error) => {
           console.error('Error fetching course video view', error);
@@ -264,7 +264,8 @@ viewQuestionFormClick(examId: number): void {
     
       const formattedDuration = this.formatDuration(duration);
       if (this.isOwner || this.hasRole(2)) {
-        this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
+        const encodedId = this.encodeId(examId.toString());
+        this.router.navigate([`/view-question-form/${encodedId}`], { state: { exam } });
       } else {
         Swal.fire({
           title: 'Are you sure?',

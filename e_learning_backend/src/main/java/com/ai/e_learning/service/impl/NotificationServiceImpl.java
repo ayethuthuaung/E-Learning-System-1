@@ -99,8 +99,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
     @Override
     public long getUnreadCount(String roleName, Long userId) {
-        if ("Admin".equals(roleName)) {
-            return notificationRepository.countByIsDeletedFalseAndIsReadFalse();
+        if ("Admin".equals(roleName) && userId != null) {
+            return notificationRepository.countByIsDeletedFalseAndIsReadFalseAndUserId(userId);
         } else if ("Instructor".equals(roleName) && userId != null) {
             return notificationRepository.countByIsDeletedFalseAndIsReadFalseAndUserId(userId);
         }

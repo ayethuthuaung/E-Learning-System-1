@@ -22,7 +22,7 @@ export class AdminNavbarComponent implements OnInit, OnDestroy {
   name: any = '';
   roles: Role[] = [];
 
-  private pollingInterval = 30000; // Polling interval in milliseconds (e.g., 30 seconds)
+  private pollingInterval = 3000; // Polling interval in milliseconds (e.g., 30 seconds)
   private pollingSubscription!: Subscription;
 
   constructor(
@@ -52,7 +52,7 @@ export class AdminNavbarComponent implements OnInit, OnDestroy {
         }
       }
     }
-    this.loadUnreadCount(); // Initial fetch
+    // this.loadUnreadCount(); // Initial fetch
     // Start polling for unread count
     this.pollingSubscription = interval(this.pollingInterval).subscribe(() => {
       this.loadUnreadCount();

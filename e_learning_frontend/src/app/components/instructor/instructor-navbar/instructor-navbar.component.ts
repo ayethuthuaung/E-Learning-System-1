@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { WebSocketService } from '../../services/websocket.service';
 import { Role } from '../../models/user.model';
+import { interval, Subscription } from 'rxjs';
 
 
 @Component({
@@ -15,6 +16,8 @@ export class InstructorNavbarComponent implements OnInit {
   dropdownOpen = false;
   unreadNotiCount: number = 0;
   showNotifications: boolean = false;
+  private pollingInterval = 3000; // Polling interval in milliseconds (e.g., 30 seconds)
+  private pollingSubscription!: Subscription;
 
   loggedUser: any = '';
   id: number = 0;
@@ -43,6 +46,9 @@ export class InstructorNavbarComponent implements OnInit {
             this.loadUnreadCount();
           });
         }
+        this.pollingSubscription = interval(this.pollingInterval).subscribe(() => {
+          this.loadUnreadCount();
+        });
       }
     }
   }

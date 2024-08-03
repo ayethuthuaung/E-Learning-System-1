@@ -17,7 +17,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   roles: Role[] = [];
   unreadCount: number = 0;
   showNotifications = false;
-  private pollingInterval = 300; // Polling interval in milliseconds (e.g., 30 seconds)
+  private pollingInterval = 3000; // Polling interval in milliseconds (e.g., 30 seconds)
   private pollingSubscription!: Subscription;
 
   constructor(
