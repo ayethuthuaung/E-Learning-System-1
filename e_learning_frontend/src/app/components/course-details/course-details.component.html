@@ -1,62 +1,64 @@
 <div class="flex min-h-screen">
   <app-navbar></app-navbar>
 
- 
+
   <div class="md:w-2/3 p-4 mt-40 mx-auto">
-    <div class="border-3 border-blue-200 p-4 rounded-lg shadow-3xl transition duration-300 ease-in-out transform hover:scale-105">
-        <div *ngIf="course" class="flex items-center">
-            <img [src]="course.photo" alt="Profile Picture" class="w-1/2 h-auto object-cover">
-            <div class="ml-4">
-                <h1 class="text-3xl font-bold text-logo-blue text-center">{{ course.name }}</h1><br>
-                <p>{{ course.description }}</p>
-                <div class="flex justify-between mt-4">
-                <div class="flex gap-1 items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
-                      class="w-5 h-5 text-logo-blue">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p>{{course.duration}}</p>
-              </div>
-              <div class="flex gap-1 items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
-                      class="w-5 h-5 text-logo-blue">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                  </svg>
-                  <p>{{course.level}}</p>
-              </div>
+    <div
+      class="border-3 border-blue-200 p-4 rounded-lg shadow-3xl transition duration-300 ease-in-out transform hover:scale-105">
+      <div *ngIf="course" class="flex items-center">
+        <img [src]="course.photo" alt="Profile Picture" class="w-1/2 h-auto object-cover">
+        <div class="ml-4">
+          <h1 class="text-3xl font-bold text-logo-blue text-center">{{ course.name }}</h1><br>
+          <p>{{ course.description }}</p>
+          <div class="flex justify-between mt-4">
+            <div class="flex gap-1 items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="w-5 h-5 text-logo-blue">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p>{{course.duration}}</p>
             </div>
+            <div class="flex gap-1 items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="w-5 h-5 text-logo-blue">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+              </svg>
+              <p>{{course.level}}</p>
             </div>
+          </div>
         </div>
+      </div>
     </div>
     <br>
     <div class="flex justify-between items-center mb-4">
       <div class="flex items-center">
-        <button
-            type="button"
-            (click)="goBack()"
-            class="bg-blue-100 hover:bg-blue-300 text-logo-blue font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-            <i class="fas fa-arrow-left fa-xl mr-2"></i>
-          </button>
+        <button type="button" (click)="goBack()"
+          class="bg-blue-100 hover:bg-blue-300 text-logo-blue font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          <i class="fas fa-arrow-left fa-xl mr-2"></i>
+        </button>
       </div>
-      <button
-            type="button"
-            (click)="expandAllLessons()"            
-            class="bg-blue-100 hover:bg-blue-200 text-logo-blue font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-            {{ expandAllText }}
-          </button>
+      <button type="button" (click)="expandAllLessons()"
+        class="bg-blue-100 hover:bg-blue-200 text-logo-blue font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+        {{ expandAllText }}
+      </button>
       <!-- <button (click)="expandAllLessons()" class="text-md font-bold text-logo-blue">Expand All Lessons</button> -->
     </div>
     <div *ngFor="let lesson of lessons; let i = index" class="mt-4">
       <div class="flex items-center cursor-pointer" (click)="toggleDropdown(i)">
-        <svg class="w-6 h-6 ml-2 text-logo-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path *ngIf="!isDropdownOpen[i]" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          <path *ngIf="isDropdownOpen[i]" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        <svg class="w-6 h-6 ml-2 text-logo-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg">
+          <path *ngIf="!isDropdownOpen[i]" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5l7 7-7 7"></path>
+          <path *ngIf="isDropdownOpen[i]" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 9l-7 7-7-7"></path>
         </svg>
         <h1 class="text-2xl font-bold text-logo-blue">{{ lesson.title }}</h1>
       </div>
       <div *ngIf="isDropdownOpen[i]" class="mt-2 space-y-2 p-4">
-        <div *ngFor="let module of lesson.modules " class="p-4  bg-blue-100 hover:bg-blue-200 rounded-lg shadow flex items-center justify-between hover:scale-105">
+        <div *ngFor="let module of lesson.modules "
+          class="p-4  bg-blue-100 hover:bg-blue-200 rounded-lg shadow flex items-center justify-between hover:scale-105">
           <!-- <p>{{ module.name }}</p> -->
           <ng-container *ngIf="module.fileType === 'video/mp4'">
             <button (click)="viewVideoDetailClick(module.id)" class="hover:text-logo-blue flex items-center">
@@ -70,48 +72,48 @@
               {{ module.name }}
             </a>
           </ng-container>
-          
-        <div class="flex justify-end">
-            <button *ngIf="!isOwner && !hasRole(2)"
-                id="mark-as-done-{{i}}"
-                (click)="markAsDone(module.id, i)"
-                class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700"
-                [disabled]="module.done">
-          {{ module.done ? 'Done' : 'Mark as Done' }}
-          </button>
+
+          <div class="flex justify-end">
+            <button *ngIf="!isOwner && !hasRole(2)" id="mark-as-done-{{i}}" (click)="markAsDone(module.id, i)"
+              class="ml-4 px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-700" [disabled]="module.done">
+              {{ module.done ? 'Done' : 'Mark as Done' }}
+            </button>
           </div>
         </div>
-        
-        <div *ngFor="let exam of lesson.examListDto" 
-        class="p-4 bg-light-yellow hover:bg-light-yellow-hover rounded-lg shadow flex items-center justify-between hover:scale-105 ">
-        <button (click)="viewQuestionFormClick(exam.id)" class="hover:text-logo-blue">
-          <i class="fa-solid fa-book-open-reader fa-xl mr-4"></i>
-          {{ exam.title }}
-        </button>
-      </div>
-   
-          
-          
+
+        <div *ngFor="let exam of lesson.examListDto"
+          class="p-4 bg-light-yellow hover:bg-light-yellow-hover rounded-lg shadow flex items-center justify-between hover:scale-105 ">
+          <button (click)="viewQuestionFormClick(exam.id)" class="hover:text-logo-blue">
+            <i class="fa-solid fa-book-open-reader fa-xl mr-4"></i>
+            {{ exam.title }}
+          </button>
+        </div>
+
+
+
       </div>
     </div>
     <br>
     <ng-container *ngIf="showFinalExam">
-        <div *ngFor="let exam of filteredExamList"
-             class="border-2 border-blue-200 p-4 bg-blue-200 hover:bg-blue-300 rounded-lg shadow flex items-center justify-between hover:scale-105">
-          <button (click)="viewQuestionFormClick(exam.id)" 
-                  class="text-xl font-bold text-dark-blue hover:text-black">
-                  <i class="fa-solid fa-book-open-reader fa-xl mr-4"></i>
-            {{ exam.title }}
-          </button>
-        </div>
-    </ng-container>
-   
-  </div>
-</div>  
 
-<button *ngIf="!isOwner && !hasRole(2)" (click)="toggleChatRoom()" class="fixed bottom-4 right-4 bg-logo-blue text-white p-3 rounded-full shadow-lg hover:bg-dark-blue text-sm">
+      <div (click)="viewQuestionFormClick(exam.id)" *ngFor="let exam of filteredExamList"
+        class="border-2 border-blue-200 p-4 bg-blue-200 hover:bg-blue-300 rounded-lg shadow flex items-center justify-between hover:scale-105">
+        <button class="text-xl font-bold text-dark-blue hover:text-black">
+          <i class="fa-solid fa-book-open-reader fa-xl mr-4"></i>
+          {{ exam.title }}
+        </button>
+        <p class="text-dark-blue text-xl font-bold">Final Exam</p>
+      </div>
+    </ng-container>
+
+  </div>
+</div>
+
+<button *ngIf="!isOwner && !hasRole(2)" (click)="toggleChatRoom()"
+  class="fixed bottom-4 right-4 bg-logo-blue text-white p-3 rounded-full shadow-lg hover:bg-dark-blue text-sm">
   <i class="fas fa-comments"></i>
-  <span *ngIf="unreadCount > 0" class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-6 h-6 flex items-center justify-center">
+  <span *ngIf="unreadCount > 0"
+    class="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs w-6 h-6 flex items-center justify-center">
     {{ unreadCount }}
   </span>
 </button>
@@ -119,13 +121,6 @@
 
 
 <!-- Chat Room Section -->
-<app-chat *ngIf="chatRoomVisible" [chatRoomId]="chatRoomId" [userName]="instructorName" (close)="toggleChatRoom()" ></app-chat>
+<app-chat *ngIf="chatRoomVisible" [chatRoomId]="chatRoomId" [userName]="instructorName"
+  (close)="toggleChatRoom()"></app-chat>
 <app-footer></app-footer>
-
-
-
-
-
-  
- 
-

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Category } from '../../models/category.model';
 
 import { CategoryService } from '../../services/category.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
@@ -15,10 +15,10 @@ import { orderBy } from 'lodash';
   styleUrl: './instructor-course.component.css'
 })
 export class InstructorCourseComponent implements OnInit, OnDestroy {
-  @ViewChild('courseForm') courseForm!: NgForm; // Access the form template reference
+  @ViewChild('courseForm') courseForm!: NgForm;
 
   isSidebarOpen = true;
-  activeTab: string = 'createCourse';
+  activeTab!: string;
   category: Category = new Category();
   errorMessage: string = '';
   categories: Category[] = [];
@@ -44,9 +44,14 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
+    private route: ActivatedRoute,
     private router:Router) { }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.activeTab = params['tab'] || 'createCourse';
+    });
+
     this.getCategories();
     const storedUser = localStorage.getItem('loggedUser');
     if (storedUser) {
@@ -115,8 +120,17 @@ export class InstructorCourseComponent implements OnInit, OnDestroy {
   }
 
 
-  setActiveTab(tab: string) {
+  // setActiveTab(tab: string) {
+  //   this.activeTab = tab;
+  // }
+
+  setActiveTab(tab: string): void {
     this.activeTab = tab;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab },
+      queryParamsHandling: 'merge'
+    });
   }
 
   loadCategories(): void {

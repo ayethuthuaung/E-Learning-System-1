@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface CertificateService {
-    void saveCertificate(CertificateDto certificateDto);
+    CertificateDto saveCertificate(CertificateDto certificateDto);
     CertificateDto getCertificateById(Long id);
     CertificateDto getCertificateByUserId(Long userId);
 
