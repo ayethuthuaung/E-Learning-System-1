@@ -1,0 +1,9 @@
+.scrollable-section {
+  max-height: 80vh; /* Adjust as needed */
+  overflow-y: auto;
+  padding-right: 15px; /* To avoid content hidden behind scrollbar */
+}
+.custom-title {
+  font-weight: bold;
+  font-size: 1.2rem; /* equivalent to Tailwind's text-sm */
+}

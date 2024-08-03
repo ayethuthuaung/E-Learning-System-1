@@ -1,0 +1,11 @@
+/* Add this style to your Tailwind CSS or custom CSS file */
+
+.hover-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .hover-overlay:hover {
+    opacity: 1;
+  }
+  

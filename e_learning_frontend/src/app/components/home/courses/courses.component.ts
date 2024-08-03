@@ -1,13 +1,10 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CourseService } from './../../services/course.service';
 import { Course } from './../../models/course.model';
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Courses } from '../../models/courses.model';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
-import { Router } from '@angular/router';
-
-
+import { UserCourseService } from '../../services/user-course.service';
 
 @Component({
   selector: 'app-courses',
@@ -15,53 +12,78 @@ import { Router } from '@angular/router';
   styleUrls: ['./courses.component.css']
 })
 export class CoursesComponent implements OnInit {
-
-  course: Course[] = [];
+  trendingCourses: Course[] = [];
+  courses: Course[] = [];
   filteredCourses: Course[] = [];
-
-  categories: Category[]  = [];
+  latestCourses: Course[] = [];
+  categories: Category[] = [];
   selectedCategory: string = '';
 
   constructor(
     private categoryService: CategoryService,
     private courseService: CourseService,
-    private router: Router) { }
+    private userCourseService: UserCourseService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    this.getCategories();
+    this.fetchTrendingCourses();
+    this.getLatestAcceptedCourses();
     this.getAllCourses();
+    this.getCategories();
   }
 
   private getAllCourses() {
-    this.courseService.getAllCourses()
-    .subscribe({
-      next: (data) => {
-        this.course = data;
-        this.filteredCourses = data;
-      },
-      error: (e) => console.log(e)
-    })
+    this.courseService.getAllCourses('Accept')
+      .subscribe({
+        next: (data) => {
+          this.courses = data;
+          this.filteredCourses = data;
+        },
+        error: (e) => console.error('Error fetching all courses:', e)
+      });
   }
 
-  private getCategories(){
+  private getCategories() {
     this.categoryService.getCategoryList()
-    .subscribe({
-      next: (data) => {
-      this.categories = data;
-      
-    },    
-    error: (e) => console.log(e)
-  });
+      .subscribe({
+        next: (data) => {
+          this.categories = data;
+        },
+        error: (e) => console.error('Error fetching categories:', e)
+      });
   }
 
   filterCourses(category: string) {
     if (category === 'all') {
-      this.filteredCourses = this.course;
+      this.filteredCourses = this.courses;
     } else {
-      this.filteredCourses = this.course.filter(course => 
+      this.filteredCourses = this.courses.filter(course =>
         course.categories.some(cat => cat.name === category)
       );
     }
     this.selectedCategory = category;
+  }
+
+  private getLatestAcceptedCourses() {
+    this.courseService.getLatestAcceptedCourses()
+      .subscribe({
+        next: (data) => {
+          this.latestCourses = data.slice(0, 3); // Only take the latest three
+        },
+        error: (e) => console.error('Error fetching latest accepted courses:', e)
+      });
+  }
+  fetchTrendingCourses(): void {
+    this.userCourseService.getTrendingCourses()
+      .subscribe(
+        (courses: Course[]) => {
+          this.trendingCourses = courses.slice(0, 3); // Limit to top 3 trending courses
+        },
+        (error) => {
+          console.error('Error fetching trending courses:', error);
+          // Handle error as needed
+        }
+      );
   }
 }

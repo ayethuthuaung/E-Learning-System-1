@@ -1,0 +1,35 @@
+<div class="relative inline-block text-left" (clickOutside)="dropdownOpen = false">
+    <div>
+      <button 
+        (click)="toggleDropdown()" 
+        class="inline-flex justify-center w-full text-sm font-medium focus:outline-none"
+      >
+        <i class="fas fa-caret-down text-white text-lg"></i>
+      </button>
+    </div>
+    <div *ngIf="dropdownOpen" class="absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+      <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+        <a (click)="sort('asc')" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Sort A to Z</a>
+      <a (click)="sort('desc')" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Sort Z to A</a>
+      
+      <div *ngFor="let name of availableNames" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+        <input 
+          type="checkbox" 
+          [id]="name" 
+          (change)="onCheckboxChange($event, name)" 
+          [checked]="isSelected(name)"
+        />
+        <label [for]="name" class="ml-2">{{ name }}</label>
+      </div>
+      <div class="border-t border-gray-100"></div>
+        <input 
+          type="text" 
+          class="block w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" 
+          placeholder="Filter..." 
+          (input)="onFilterChange($event)"
+        />
+      </div>
+    </div>
+  </div>
+ 
+  

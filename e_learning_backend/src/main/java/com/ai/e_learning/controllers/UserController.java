@@ -1,10 +1,11 @@
 package com.ai.e_learning.controllers;
-
-import com.ai.e_learning.dto.CourseDto;
 import com.ai.e_learning.dto.ImageResponse;
+
 import com.ai.e_learning.dto.UserDto;
+import com.ai.e_learning.model.UserCourse;
 import com.ai.e_learning.service.MailSenderService;
 import com.ai.e_learning.service.OtpStoreService;
+import com.ai.e_learning.service.UserCourseService;
 import com.ai.e_learning.service.UserService;
 import com.ai.e_learning.util.Helper;
 import lombok.AllArgsConstructor;
@@ -24,12 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @AllArgsConstructor
 public class UserController {
 
   @Autowired
   private UserService userService;
+  private UserCourseService userCourseService;
   private MailSenderService mailSenderService;
   private OtpStoreService otpStoreService;
 
@@ -97,6 +99,22 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
+  @PostMapping("/changePasswordByStaffId")
+  public ResponseEntity<Map<String, String>> changePasswordByStaffId(@RequestParam("newPassword") String newPassword, @RequestParam("staffId") String staffId) {
+    Map<String, String> response = new HashMap<>();
+    int checkPassword = userService.updatePasswordByStaffId(staffId, newPassword);
+    if (checkPassword == 0) {
+      response.put("message", "User cannot be found.");
+    } else if (checkPassword == 2) {
+      response.put("message", "New password cannot be the same as the old password.");
+    } else {
+      response.put("message", "Password is updated.");
+    }
+    return ResponseEntity.ok(response);
+  }
+
+
+
 
   @GetMapping(value = "/userList", produces = "application/json")
   public List<UserDto> displayUser(ModelMap model) {
@@ -134,7 +152,6 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
-
   @PostMapping("/updateProfile")
   public ResponseEntity<ImageResponse> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("userId")String userId) throws IOException, GeneralSecurityException {
     System.out.println(file.getContentType());
@@ -154,6 +171,18 @@ public class UserController {
     return ResponseEntity.status(imageResponse.getStatus()).body(imageResponse);
   }
 
-
+  @GetMapping(value = "/checkExamOwner", produces = "application/json")
+  public ResponseEntity<Boolean> checkExamOwner(@RequestParam("examId") Long examId, @RequestParam("userId") Long userId) {
+    return ResponseEntity.ok(userService.isExamOwner(examId, userId));
+  }
+//NN
+@GetMapping("/instructor-count")
+public ResponseEntity<Map<String, Long>> getInstructorCount() {
+  long instructorCount = userService.countInstructors();
+  Map<String, Long> response = new HashMap<>();
+  response.put("instructorCount", instructorCount);
+  return ResponseEntity.ok(response);
 }
+}
+
 

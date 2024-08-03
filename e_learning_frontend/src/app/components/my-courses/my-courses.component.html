@@ -1,0 +1,84 @@
+<app-navbar></app-navbar>
+
+<div class="flex-grow container mx-auto pt-36 relative">
+  <div class="transition-transform duration-500 ease-in-out">
+   
+  </div>
+</div>
+
+<div class="mt-12 container mx-auto">
+  <!-- Search Box -->
+  <div class="mb-4 flex justify-center">
+    <div class="relative w-full max-w-lg">
+      
+      <!-- Search input -->
+      <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (ngModelChange)="filterCoursesBySearch()"
+        class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out transform hover:scale-105 text-blue-500 bg-white"
+        style="color: #073f7a; background-color: #EBF4FF;" />
+      <!-- Clear button -->
+      <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+        <button (click)="clearSearch()"
+          class="text-blue-500 hover:text-blue-700 focus:outline-none transition duration-200 ease-in-out transform hover:scale-110">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="mt-12 container mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <ng-container *ngFor="let course of paginatedCourses">
+      <div class="col">
+        <app-card class="w-full" type="C" [input]="course"></app-card>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<div *ngIf="totalPages > 1" class="flex justify-center mt-8">
+  <nav class="relative z-0 inline-flex shadow-sm rounded-md">
+    <div class="-space-x-px bg-white py-3 px-6 flex items-center">
+      <button (click)="goToPage(1)" [disabled]="currentPage === 1"
+        class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-base font-medium text-gray-600 hover:bg-gray-50 focus:z-10">
+        <span class="sr-only">First</span>
+        « First
+      </button>
+      <button (click)="prevPage()" [disabled]="currentPage === 1"
+        class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-base font-medium text-gray-600 hover:bg-gray-50 focus:z-10">
+        <span class="sr-only">Previous</span>
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+          aria-hidden="true">
+          <path fill-rule="evenodd"
+            d="M10.707 3.293a1 1 0 00-1.414 0l-7 7a1 1 0 000 1.414l7 7a1 1 0 001.414-1.414L5.414 11H17a1 1 0 100-2H5.414l5.293-5.293a1 1 0 000-1.414z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+      <ng-container *ngFor="let page of paginationRange">
+        <button (click)="goToPage(page)" [disabled]="currentPage === page"
+          class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-base font-medium text-gray-600 hover:bg-gray-50 focus:z-10">
+          {{ page }}
+        </button>
+      </ng-container>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+        class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-base font-medium text-gray-600 hover:bg-gray-50 focus:z-10">
+        <span class="sr-only">Next</span>
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+          aria-hidden="true">
+          <path fill-rule="evenodd"
+            d="M9.293 16.707a1 1 0 001.414 0l7-7a1 1 0 000-1.414l-7-7a1 1 0 00-1.414 1.414L14.586 9H3a1 1 0 100 2h11.586l-5.293 5.293a1 1 0 000 1.414z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+      <button (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"
+        class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-base font-medium text-gray-600 hover:bg-gray-50 focus:z-10">
+        <span class="sr-only">Last</span>
+        Last »
+      </button>
+    </div>
+  </nav>
+</div>
+
+<app-footer></app-footer>

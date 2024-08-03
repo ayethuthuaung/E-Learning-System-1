@@ -1,19 +1,45 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, throwError, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Course } from '../models/course.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CourseService {
-  private baseUrl = 'http://localhost:8080/courses';
+  private baseUrl = 'http://localhost:8080/api/courses';
 
   constructor(private http: HttpClient) {}
 
-  getAllCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseUrl}/courselist`);
+  //PK (Auto Refresh)
+  pollCourses(interval: number, status: string): Observable<Course[]> {
+    return timer(0, interval).pipe(
+      switchMap(() => this.getAllCourses(status))
+    );
   }
+  //-------------
+
+  getAllCourses(status: string): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/courselist?status=`+ status);
+  }
+
+  getAcceptInstructorCourses(userId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/instructorAcceptCourseList`, {
+      params: { userId: userId.toString()}
+    });
+  }
+
+  getInstructorCourses(userId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
+      params: { userId: userId.toString()}
+    });
+  }
+
+  changeStatus(id: number, status: string): Observable<Course> {
+    return this.http.post<Course>(`${this.baseUrl}/changeStatus?id=${id}&status=${status}`, {});
+  }
+  
 
   getCourseList(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/courselist`);
@@ -31,8 +57,8 @@ export class CourseService {
     return this.http.put<Course>(`${this.baseUrl}/updatecourse/${id}`, formData);
   }
 
-  softDeleteCourse(id: number): Observable<Object> {
-    return this.http.delete(`${this.baseUrl}/delete/${id}`);
+  softDeleteCourse(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
   getCoursesByCategory(categoryId: number): Observable<Course[]> {
@@ -49,12 +75,82 @@ export class CourseService {
     });
   }
 
-  private createFormData(course: Course): FormData {
-    const formData = new FormData();
-    formData.append('course', new Blob([JSON.stringify(course)], { type: 'application/json' }));
-    if (course.photoFile) {
-      formData.append('photo', course.photoFile, course.photoFile.name);
-    }
-    return formData;
+  getLatestAcceptedCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/latestAccepted`);
   }
+
+  getCourseIdByLessonId(lessonId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/lessons/${lessonId}/courseId`);
+  }
+  
+  getCoursesByUserId(userId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/instructorcourselist`, {
+      params: { userId: userId.toString() }
+    });
+  }
+
+  
+  getCourseIdByExamId(examId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/requestWithExamId/${examId}`);
+  }
+
+  exportCoursesByInstructor(instructorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/instructor/excel?instructorId=${instructorId}`, { responseType: 'blob' });
+  }
+
+  exportAllCourses(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/admin/excel`, { responseType: 'blob' });
+  }
+  exportCoursesByInstructorToPdf(instructorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/instructor/pdf?instructorId=${instructorId}`, { responseType: 'blob' });
+}
+
+
+  exportAllCoursesPDF(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/admin/pdf`, { responseType: 'blob' });
+  }
+  getMonthlyCourseCounts(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/monthly-counts`);
+  }
+
+  exportCoursesForInstructor(userId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/courses`, {
+      params: { userId: userId.toString() },
+      responseType: 'blob'
+    });
+  }
+
+  exportCoursesForInstructorPDf(userId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/export/courses/pdf`, {
+      params: { userId: userId.toString() },
+      responseType: 'blob'
+    });
+  }
+  
+ // In your Angular service
+ exportStudentListByAdmin(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/student-list/excel`, {
+    responseType: 'blob'  // Specify the response type as blob
+  });
+}
+
+exportStudentListByAdminPdf(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/student-list/pdf`, {
+    responseType: 'blob'  // Specify the response type as blob
+  });
+}
+
+exportAttendStudentList(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/attended-students/excel`, {
+    responseType: 'blob' // Specify the response type as blob
+  });
+}
+
+exportAttendStudentListPdf(): Observable<Blob> {
+  return this.http.get(`${this.baseUrl}/export/attend-students/pdf`, {
+    responseType: 'blob'
+  });
+}
+  
+ 
 }

@@ -1,0 +1,181 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
+  <div class="flex flex-1">
+    <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
+    <div class="flex-1 p-6 max-h-[80vh] overflow-y-auto pr-4">
+      <div class="datatable-container bg-white p-6 rounded-lg shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+          <input 
+            type="text" 
+            class="form-control w-1/4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500" 
+            placeholder="Search..." 
+            [(ngModel)]="searchTerm" 
+            (ngModelChange)="onSearchChange()" 
+          />
+
+         
+
+          <div class="pagination-controls flex items-center space-x-2">
+             <!-- Export Courses Button -->
+          <button 
+          class="btn bg-logo-blue hover:bg-dark-blue text-white ml-4"
+          (click)="exportCoursesByInstructor(userId)"
+        >
+          Excel <i class="fa-solid fa-download ml-2"></i>
+        </button>
+        <button 
+          class="btn bg-logo-blue hover:bg-dark-blue text-white ml-4"
+          (click)="exportCoursesByInstructorToPdf(userId)"
+        >
+         PDF <i class="fa-solid fa-download ml-2"></i>
+        </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table-auto w-full border-collapse">
+            <thead class="bg-logo-blue text-white">
+              <tr>
+                <th class="p-2 border">No</th>
+                <th class="p-2 border">
+                  StaffId
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('user.staffId', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+               
+                <th class="p-2 border">
+                  Student
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('user.name', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Course
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('course.name', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                  ></app-filter-sort-dropdown>
+                </th>
+                
+                <th class="p-2 border">
+                  Team
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('user.team', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Progress
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('progressOutput', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Certificate
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('certificateOutput', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                
+                <th class="p-2 border">
+                  Req Date
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('createdAt', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                
+                <th class="p-2 border">
+                  Status
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('status', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+                <th class="p-2 border">
+                  Acc/Rej Date
+                  <app-filter-sort-dropdown 
+                  (sortChanged)="onSortChange('statusChangeTimestamp', $event)" 
+                  (filterChanged)="onFilterChange($event)"
+                ></app-filter-sort-dropdown>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let userCourse of paginatedUserCourses; let i = index" class="hover:bg-gray-100">
+                <td class="p-2 border">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+                <td class="p-2 border">{{ userCourse.user?.staffId }}</td>
+                <td class="p-2 border">{{ userCourse.user?.name }}</td>
+                <td class="p-2 border">{{ userCourse.course?.name }}</td>
+                
+                <td class="p-2 border">{{ userCourse.user?.team }}</td>
+                <td class="p-2 border">{{ userCourse.progressOutput}}</td>
+                
+                <td class="p-2 border">{{ userCourse.certificateOutput}}</td>
+
+                <td class="p-2 border">{{ userCourse.createdAt | date:'dd-MMMM-yy' }}</td>
+                <td class="p-2 border">
+                  <div class="icon-container status-cell">
+                    <i *ngIf="userCourse.status === 'Accept'" class="fa-solid fa-circle-check" style="color: green; font-size: 24px;"></i>
+                    <i *ngIf="userCourse.status === 'Reject'" class="fa-solid fa-circle-xmark" style="color: red; font-size: 24px;"></i>
+      
+      
+                    <div *ngIf="userCourse.status === 'Pending'" class="d-flex justify-content-around status-buttons">
+                      <button class="accept-button" (click)="acceptStudent(userCourse)">
+                        <i class="fa-regular fa-circle-check icon-green"></i>
+                      </button>
+                      <button class="reject-button" (click)="rejectStudent(userCourse)">
+                        <i class="fa-regular fa-circle-xmark icon-red"></i>
+                      </button>
+                    </div>
+                    
+                  </div>
+                  </td>
+                  <td class="p-2 border">{{ userCourse.statusChangeTimestamp | date:'dd-MMMM-yy' }}</td>
+
+                  <!-- <td class="p-2 border">
+                    <span 
+                      [ngClass]="{
+                        'text-green-700': userCourse.status === 'Accept',
+                        'text-red-500': userCourse.status === 'Reject',
+                        'text-yellow-500': userCourse.status === 'Pending'
+                      }"
+                    >
+                      {{ userCourse.status }}
+                    </span>
+                  </td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <div class="pagination-controls">
+            <button (click)="firstPage()" [disabled]="currentPage === 1" class="btn btn-secondary">
+              <i class="fas fa-angle-double-left"></i>
+            </button>
+            <button (click)="previousPage()" [disabled]="currentPage === 1" class="btn btn-secondary">
+              <i class="fas fa-angle-left"></i>
+            </button>
+            <span>
+              Page
+              <input type="number" class="page-input" [(ngModel)]="currentPage" (ngModelChange)="goToPage($event)" min="1" max="{{ totalPages }}" />
+              of {{ totalPages }}
+            </span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary">
+              <i class="fas fa-angle-right"></i>
+            </button>
+            <button (click)="lastPage()" [disabled]="currentPage === totalPages" class="btn btn-secondary">
+              <i class="fas fa-angle-double-right"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

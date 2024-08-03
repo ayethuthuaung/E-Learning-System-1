@@ -1,17 +1,16 @@
-import { NgModule } from '@angular/core';
+import {  CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
-
-import { AppComponent } from './app.component';
-
-import { LoginComponent } from './components/auth/login/login.component';
-import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { HomeComponent } from './components/home/home.component';
 
+// Import all your components
+import { AppComponent } from './app.component';
+import { LoginComponent } from './components/auth/login/login.component';
+import { HomeComponent } from './components/home/home.component';
 import { ForgetPasswordComponent } from './components/auth/forget-password/forget-password.component';
-import { CourseComponent } from './components/course/course.component';
-import { CategoryComponent } from './components/category/category.component';
+
+
 
 
 import { QuestionService } from './components/services/question.service';
@@ -44,18 +43,15 @@ import { VideoPopupComponent } from './components/shared/video-popup/video-popup
 import { CourseFooterComponent } from './components/shared/card/course-footer/course-footer.component';
 import { BlogFooterComponent } from './components/shared/card/blog-footer/blog-footer.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
-
-
 import { ChatComponent } from './components/chat/chat.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { WebSocketService } from './components/services/websocket.service';
 
+import { NotificationComponent } from './components/notification/notification.component';
 
-import { UpdateCourseComponent } from './components/update-course/update-course.component';
-import { CourseListComponent } from './components/course-list/course-list.component';
-import { CategoryListComponent } from './components/category-list/category-list.component';
-import { UpdateCategoryComponent } from './components/update-category/update-category.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
+import { ConservationListComponent } from './components/instructor/instructor-conservation-list/conservation-list.component';
+
 import { InstructorComponent } from './components/instructor/instructor.component';
 import { NavProfileComponent } from './components/home/nav-profile/nav-profile.component';
 import { InstructorDashboardComponent } from './components/instructor/instructor-dashboard/instructor-dashboard.component';
@@ -63,42 +59,94 @@ import { InstructorCourseComponent } from './components/instructor/instructor-co
 import { InstructorNavbarComponent } from './components/instructor/instructor-navbar/instructor-navbar.component';
 import { InstructorSidebarComponent } from './components/instructor/instructor-sidebar/instructor-sidebar.component';
 import { InstructorCategoryComponent } from './components/instructor/instructor-category/instructor-category.component';
+import { AdminComponent } from './components/admin/admin.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { AdminNavbarComponent } from './components/admin/admin-navbar/admin-navbar.component';
+import { AdminSidebarComponent } from './components/admin/admin-sidebar/admin-sidebar.component';
+import { AdminChartComponent } from './components/admin/admin-chart/admin-chart.component';
+
+
+
+
+import { StudentProfileComponent } from './components/student/student-profile/student-profile.component';
+
+
+
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { UserUploadComponent } from './components/user-upload/user-upload.component';
 
-import { AnswerFormComponent } from './components/quiz-Ans/answer-form/answer-form.component';
-import { CreateAnswerOptionComponent } from './components/quiz-Ans/create-answer-option/create-answer-option.component';
-import { CreateExamComponent } from './components/quiz-Ans/create-exam/create-exam.component';
-import { CreateQuestionFormComponent } from './components/quiz-Ans/create-question-form/create-question-form.component';
-import { CreateQuestionTypeComponent } from './components/quiz-Ans/create-question-type/create-question-type.component';
-import { SubmitFormComponent } from './components/quiz-Ans/submit-form/submit-form.component';
+import { AuthComponent } from './components/auth/auth.component';
+
+import { AdminCourseComponent } from './components/admin/admin-course/admin-course.component';
+import { AdminCategoryComponent } from './components/admin/admin-category/admin-category.component';
+import { AdminCourseListComponent } from './components/admin/admin-course-list/admin-course-list.component';
+
+
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+
+import { FilterDataPipe} from './components/filter-data.pipe';
+
+import { InstructorLessonComponent } from './components/instructor/instructor-lesson/instructor-lesson.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { CourseVideoViewComponent } from './components/course-video-view/course-video-view.component';
+import { CourseCardComponent } from './components/shared/course-card/course-card.component';
+import { AllCoursesComponent } from './components/all-courses/all-courses.component';
+
+import { InstructorStudentComponent } from './components/instructor/instructor-student/instructor-student.component';
+import { AdminLessonComponent } from './components/admin/admin-lesson/admin-lesson.component';
+import { AdminStudentComponent } from './components/admin/admin-student/admin-student.component';
+import { AdminStudentListComponent } from './components/admin/admin-student-list/admin-student-list.component';
+import { AdminBarchartComponent } from './components/admin/admin-barchart/admin-barchart.component';
+
+import { CreateModuleExamComponent } from './components/instructor/create-module-exam/create-module-exam.component';
+import { FilterSortDropdownComponent } from './components/filter-sort-dropdown/filter-sort-dropdown.component';
+import { ClickOutsideDirective } from './components/click-outside.directive';
+import { StudentQuestionFormComponent } from './components/student/student-profile/student-question-form/student-question-form.component';
+import { UserCourseModuleService } from './components/services/usercoursemodule.service';
+import { AdminProfileComponent } from './components/admin/admin-profile/admin-profile.component';
+import { TimerComponent } from './components/shared/timer/timer.component';
+import { ChangePasswordModalComponent } from './components/change-password-modal/change-password-modal.component';
+
+import { AdminCourseCompletionComponent } from './components/admin/admin-course-completion/admin-course-completion.component';
+import { InstructorCourseCompletionComponent } from './components/instructor/instructor-course-completion/instructor-course-completion.component';
+import { AdminMonthlyCoursesChartComponent } from './components/admin/admin-monthly-courses-chart/admin-monthly-courses-chart.component';
+import { AdminPieChartComponent } from './components/admin/admin-pie-chart/admin-pie-chart.component';
+import { CertificateComponent } from './components/shared/certificate/certificate.component';
+import { LoadingComponent } from './components/loading/loading.component';
+import { CreateExamComponent } from './components/instructor/create-exam/create-exam.component';
+import { CreateModuleComponent } from './components/instructor/create-module/create-module.component';
+import { AdminModuleExamComponent } from './components/admin/admin-module-exam/admin-module-exam.component';
+import { ViewQuestionFormComponent } from './components/view-question-form/view-question-form.component';
+import { MyCoursesComponent } from './components/my-courses/my-courses.component';
+
 
 const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', options: {} };
-
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     LoginComponent,
-
+    HomeComponent,
+    AppStoreComponent,
+  
+    ForgetPasswordComponent,
         HomeComponent,
 
-        CreateExamComponent,
-        CreateQuestionTypeComponent,
-        CreateAnswerOptionComponent,
-        CreateQuestionFormComponent,
-        CreateQuestionFormComponent,
-        AnswerFormComponent,
-
-
-
+       
     ForgetPasswordComponent,
-    CourseComponent,
-    CategoryComponent,
-
-        ChatComponent,
-        HeroComponent,
+    
+ 
+    HeroComponent,
+  
+    HeroComponent,
     CoursesComponent,
     JointUsComponent,
     HowItWorkComponent,
@@ -127,31 +175,73 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     HomeComponent,
 
 
-
-    UpdateCourseComponent,
-    CourseListComponent,
-    CategoryListComponent,
-    UpdateCategoryComponent,
     HomeComponent,
+    StudentProfileComponent,
+
     CourseDetailsComponent,
+    UserUploadComponent,
     InstructorComponent,
     NavProfileComponent,
-    // instructor
-   
     InstructorDashboardComponent,
     InstructorCourseComponent,
     InstructorNavbarComponent,
     InstructorSidebarComponent,
     InstructorCategoryComponent,
+ 
+    CourseDetailsComponent,
   
     // instructor
+    AdminComponent,
+    AdminDashboardComponent,
+    AdminNavbarComponent,
+    AdminSidebarComponent,
+    AdminChartComponent,
+    HomeComponent,
+    CourseDetailsComponent,
+    UserUploadComponent,
+    SubscribeFormComponent,
+    AdminCourseComponent,
+    AdminCategoryComponent,
+    AdminCourseListComponent,
+    FilterDataPipe,
 
-        HomeComponent,
-        CourseDetailsComponent,
-        UserUploadComponent,
+    HomeComponent,
+    ChatComponent,
+    NotificationComponent,
+    CourseDetailsComponent,
+    UserUploadComponent,
+    ConservationListComponent,
+    UserUploadComponent,   
+    InstructorLessonComponent,
+    CourseVideoViewComponent,
+    CourseCardComponent,
+    AllCoursesComponent,
+    InstructorStudentComponent,
+    AdminLessonComponent,
+    AdminStudentComponent,
+    AdminStudentListComponent,
 
-         SubmitFormComponent,
+    AdminBarchartComponent,
 
+    CreateModuleExamComponent,
+    FilterSortDropdownComponent,
+    ClickOutsideDirective,
+    StudentQuestionFormComponent,
+    AdminProfileComponent,
+    TimerComponent,
+    ChangePasswordModalComponent,
+    TimerComponent,
+    AdminCourseCompletionComponent,
+    InstructorCourseCompletionComponent,
+    AdminMonthlyCoursesChartComponent,
+    AdminPieChartComponent,
+    CertificateComponent,
+    LoadingComponent,
+    CreateExamComponent,
+    CreateModuleComponent,
+    AdminModuleExamComponent,
+    ViewQuestionFormComponent,
+    MyCoursesComponent
   ],
   imports: [
     BrowserModule,
@@ -160,21 +250,30 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/chat-socket', optio
     ReactiveFormsModule,
     HttpClientModule,
     
+    BrowserAnimationsModule,
+    FormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatCardModule,
+    
     SocketIoModule.forRoot(config)
+    
   ],
-
-
-
   providers: [
     provideClientHydration(),
 
     QuestionService,
     AnswerOptionService,
-
-    WebSocketService
+    UserCourseModuleService,
+    WebSocketService,
+      provideAnimationsAsync()
 
   ],
 
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })
 export class AppModule { }

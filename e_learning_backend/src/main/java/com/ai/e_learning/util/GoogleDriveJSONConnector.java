@@ -1,9 +1,6 @@
 package com.ai.e_learning.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
@@ -13,6 +10,7 @@ import java.util.List;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.FileContent;
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.ai.e_learning.dto.ImageResponse;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.FileList;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -123,7 +122,7 @@ public class GoogleDriveJSONConnector {
                     .setFields("id")
                     .execute();
 
-            String fileUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+            String fileUrl ="https://drive.google.com/file/d/"+ uploadedFile.getId()+"/preview";
             System.out.println("FILE URL : " + fileUrl);
 
             imageResponse.setStatus(200);
@@ -135,6 +134,48 @@ public class GoogleDriveJSONConnector {
             imageResponse.setMessage(e.getMessage());
         }
         return imageResponse;
+    }
+
+    public String uploadImageToDrive2(MultipartFile photoInput,String folderName) throws GeneralSecurityException, IOException {
+        InputStream inputStream = photoInput.getInputStream();
+        String fileName = photoInput.getOriginalFilename();
+        String contentType = photoInput.getContentType();
+        Drive drive = createDriveService();
+
+        com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+        fileMetaData.setName(fileName);
+        if("Course".equals(folderName)){
+            fileMetaData.setParents(Collections.singletonList("1dvIGCGwgdeWUKKiC9H5qq5ZT_ZP77n7I"));
+        } else if ("Module".equals(folderName)) {
+            fileMetaData.setParents(Collections.singletonList("1SnpP8IX_YJea7dN6fGv-gf51XVbABNG7"));
+        }
+
+        FileContent mediaContent = new FileContent(contentType, new File(fileName));
+        com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, new InputStreamContent(contentType, inputStream))
+                .setFields("id")
+                .execute();
+        return uploadedFile.getId();
+    }
+    public String uploadVoiceMessageToDrive(InputStream inputStream, String fileName, String contentType) throws GeneralSecurityException, IOException {
+        Drive drive = createDriveService();
+
+        com.google.api.services.drive.model.File fileMetaData = new com.google.api.services.drive.model.File();
+        fileMetaData.setName(fileName);
+        fileMetaData.setParents(Collections.singletonList("1PHnnlrCQb2U-pNZM6Se4bUWVJWegE_mC")); // Use your folder ID
+
+        InputStreamContent mediaContent = new InputStreamContent(contentType, inputStream);
+        com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
+                .setFields("id")
+                .execute();
+
+        return uploadedFile.getId();
+    }
+
+
+    public String getFileType(String fileId) throws GeneralSecurityException, IOException {
+        Drive drive = createDriveService();
+        com.google.api.services.drive.model.File file = drive.files().get(fileId).setFields("id, name, mimeType").execute();
+        return file.getMimeType();
     }
 
 }

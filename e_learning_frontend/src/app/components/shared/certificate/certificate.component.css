@@ -1,0 +1,107 @@
+.certificate-border {
+  border: 2px solid #000; /* Outer black border */
+  padding: 20px;
+  background: #fff;
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.certificate-border::before,
+.certificate-border::after {
+  content: '';
+  position: absolute;
+  border: 1px solid #000; /* Inner black border */
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  top: 10px;
+  left: 10px;
+}
+
+.certificate-border::after {
+  border: 1px solid #000; /* Middle black border */
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  top: 20px;
+  left: 20px;
+}
+
+.certificate-container {
+  position: relative;
+}
+
+.certificate-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1); /* semi-transparent overlay */
+  pointer-events: none; /* Allow clicks to pass through */
+}
+
+.certificate-overlay::before {
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transform: rotate(-30deg); /* Diagonal text */
+  opacity: 0.3; /* Make text less distracting */
+  content: 'No Screenshots Allowed';
+}
+
+.education-badge-icon {
+  color: #4F46E5; /* Adjust color to match your theme */
+  font-size: 3rem; /* Adjust size as needed */
+  transition: color 0.3s ease;
+}
+
+.education-badge-icon:hover {
+  color: #3B82F6; /* Change color on hover */
+}
+
+.watermark {
+  position: absolute;
+  opacity: 0.1; /* Light watermark effect */
+  width: 40%; /* Adjust size as needed */
+  z-index: 0; /* Behind content */
+}
+
+.watermark-left {
+  top: 40%;
+  left: 30%;
+  transform: translate(-50%, -50%) rotate(-43deg); /* Center and rotate the watermark */
+}
+
+.watermark-right {
+  top: 60%;
+  right: -10%;
+  transform: translate(-50%, -50%) rotate(-43deg); /* Center and rotate the watermark */
+}
+
+.watermark-text {
+  font-size: 3rem; /* Adjust size as needed */
+  color: #1D4ED8; /* Adjust color to match your theme */
+  text-transform: uppercase; /* Uppercase text */
+  font-weight: bold; /* Make text bold */
+  text-align: center; /* Center the text */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+:host {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera, and Edge */
+  cursor: not-allowed;
+}
+
+.hidden-screenshot {
+  visibility: hidden;
+}
+
+@media print {
+  .certificate-container {
+    display: none;
+  }
+}

@@ -33,8 +33,8 @@
         class="px-3 {{isMenuScrolled?'fixed top-0 w-full bg-white shadow-xl animate-slideInDown animate-faster':'pt-10'}}">
         <div
             class="py-3 flex items-center justify-between container {{isMenuScrolled?'':'border'}}  border-dark-blue rounded-xl">
-            <a href="">
-                <img src="../assets/DAT.png" alt="" class="w-28 h-auto">
+            <a [routerLink]="['/home']">
+                <img src="../../../assets/growhub3.png" alt="" class="w-56 h-auto">
             </a>
             <div class="lg:hidden">
                 <svg (click)="this.openSideBar()" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -44,9 +44,20 @@
                 </svg>
             </div>
             <app-menu class="hidden lg:block"></app-menu>
-            <app-nav-profile></app-nav-profile>
-            <!-- <app-auth-links class="hidden lg:block"></app-auth-links> -->
-        </div>
+            <div class="flex items-center space-x-4">
+               
+                <div class="flex flex-col items-start">
+                    <div class="custom-font-size font-bold text-logo-blue">
+                        {{ name }}
+                    </div>
+                    <div *ngIf="roles.length > 0" class="roles-list font-semibold text-logo-blue">
+                        <!-- Display roles as strings -->
+                        <div *ngFor="let role of roles">{{ role }}</div>
+                    </div>
+                </div>
+                <app-nav-profile></app-nav-profile>
+            </div>
+            </div>
     </div>
 </header>
 <button *ngIf="isMenuScrolled" (click)="scrollToTop()"

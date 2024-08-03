@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ForgetPasswordService } from '../../services/forget-password.service';
 
+declare var Swal: any;
 
 @Component({
   selector: 'app-forget-password',
@@ -23,6 +24,11 @@ export class ForgetPasswordComponent {
 
   constructor(private forgetPasswordService: ForgetPasswordService, private router: Router) { }
 
+  onInputChange(): void {
+    this.errorMessage = ''; // Clear error message on input change
+    this.successMessage = ''; // Clear success message on input change
+  }
+
   sendOTP() {
     this.forgetPasswordService.sendOTP(this.resetEmail).subscribe(
       response => {
@@ -30,14 +36,12 @@ export class ForgetPasswordComponent {
           this.errorMessage = response.message;
           this.successMessage = '';
         } else {
-          console.log('OTP sent successfully', response);
           this.otpSent = true;
           this.errorMessage = '';
           this.successMessage = 'OTP sent successfully. Please check your email.';
         }
       },
       error => {
-        console.error('Error sending OTP', error);
         this.errorMessage = 'Error sending OTP. Please try again.';
         this.successMessage = '';
       }
@@ -52,14 +56,12 @@ export class ForgetPasswordComponent {
           this.errorMessage = 'Incorrect OTP. Please try again.';
           this.successMessage = '';
         } else {
-          console.log('OTP matched successfully', response);
           this.otpMatched = true;
           this.errorMessage = '';
           this.successMessage = '';
         }
       },
       error => {
-        console.error('Error matching OTP', error);
         this.errorMessage = 'Error matching OTP. Please try again.';
         this.successMessage = '';
       }
@@ -85,16 +87,13 @@ export class ForgetPasswordComponent {
         } else if (response.message === "Password is updated.") {
           this.errorMessage = '';
           this.successMessage = "Password is changed successfully.";
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 2000);
+          this.showSuccessAlert();
         } else {
           this.errorMessage = response.message;
           this.successMessage = '';
         }
       },
       error => {
-        console.error('Error changing password', error);
         this.errorMessage = 'Error changing password. Please try again.';
         this.successMessage = '';
       }
@@ -117,5 +116,18 @@ export class ForgetPasswordComponent {
     } else if (field === 'confirmPassword') {
       this.showConfirmPassword = !this.showConfirmPassword;
     }
+  }
+
+  showSuccessAlert(): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: 'Password is changed successfully.',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

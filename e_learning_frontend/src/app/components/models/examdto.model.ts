@@ -1,8 +1,12 @@
-import { QuestionDTO } from './question.model';
+import { QuestionDto } from './question.model';
 
 export interface ExamDTO {
   id: number;
   title: string;
   description: string;
-  questions: QuestionDTO[];
+  duration: string;
+  finalExam: boolean | null;
+  passScore: number;
+  questions: QuestionDto[];
+
 }

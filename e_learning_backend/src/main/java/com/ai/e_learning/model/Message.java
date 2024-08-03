@@ -16,7 +16,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String content;
 
     @Column(nullable = false)
@@ -29,4 +29,16 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
+
+    @Column(nullable = false)
+    private boolean softDeleted = false;
+
+    @Column
+    private String fileUrl;
+
+    @Column(nullable = false)
+    private String messageType; // text, image, voice
+
+    @Column(nullable = true)
+    private boolean isRead;
 }

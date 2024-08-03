@@ -1,0 +1,37 @@
+
+  
+  .roles-list .text-sm {
+    font-size: 1.125rem; /* Increase font size as needed */
+  }
+  .roles-list {
+    font-size: 1.125rem; /* Adjust font size as needed */
+    white-space: nowrap; /* Prevent text from wrapping */
+  }
+  
+  .relative {
+    position: relative;
+  }
+  
+  .inline-flex {
+    display: inline-flex;
+  }
+  
+  .items-center {
+    align-items: center;
+  }
+  
+  .ml-14 {
+    margin-left: 3.5rem; /* Adjust as needed */
+  }
+  
+  .absolute {
+    position: absolute;
+  }
+  
+  .top-1 {
+    top: 0.25rem; /* Adjust as needed */
+  }
+  
+  .-left-20 {
+    left: -5rem; /* Adjust as needed */
+  }

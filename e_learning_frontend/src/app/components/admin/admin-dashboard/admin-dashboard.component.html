@@ -1,0 +1,100 @@
+
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <app-admin-navbar (toggleSidebarEvent)="toggleSidebar()"></app-admin-navbar> 
+
+  <div class="flex flex-1">
+    <app-admin-sidebar [isSidebarOpen]="isSidebarOpen"></app-admin-sidebar>
+  
+    <main class="flex-1 p-2 scrollable-section">
+      <div *ngIf="showNotificationsPage">
+        <app-notification></app-notification>
+      </div> 
+
+      <div class="flex-1 p-3">
+        <!-- Flex container for course and student count cards -->
+
+        <div class="flex flex-wrap p-3">
+
+          <div class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> 
+            <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+              <i class="fas fa-chalkboard-teacher text-4xl text-white"></i>
+            </div>            
+            <div class="flex flex-col items-center ml-4">
+              <h3 class="text-xl text-purple-900 font-semibold mb-2">Instructors</h3>
+              <p class="text-xl text-purple-900 font-bold">{{ instructorCount }}</p>
+            </div>
+          </div>
+
+          <div class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> 
+            <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+              <i class="fas fa-book text-4xl text-white"></i>
+            </div>            
+            <div class="flex flex-col items-center ml-4">
+              <h3 class="text-xl text-purple-900 font-semibold mb-2">Courses</h3>
+              <p class="text-xl text-purple-900 font-bold">{{ acceptedCourseCount }}</p>
+            </div>
+          </div>
+
+          <div class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> 
+            <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+              <i class="fas fa-user-graduate text-4xl text-white"></i>
+            </div>            
+            <div class="flex flex-col items-center ml-4">
+              <h3 class="text-xl text-purple-900 font-semibold mb-2">Students</h3>
+              <p class="text-xl text-purple-900 font-bold">{{ totalStudentCount }}</p>
+            </div>
+          </div>
+
+          
+
+          <div class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8"> 
+            <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+              <i class="fas fa-users text-4xl text-white"></i>
+            </div>            
+            <div class="flex flex-col items-center ml-4">
+              <h3 class="text-xl text-purple-900 font-semibold mb-2">Active Users</h3>
+              <p class="text-xl text-purple-900 font-bold">{{ activeUserCount }}</p>
+            </div>
+          </div>
+
+        </div>
+
+
+       <!-- Flex container for course bar chart and pie chart -->
+       <div class="flex flex-wrap">
+
+        <!--Course Bar Chart -->
+        <div class="flex-1 min-w-[300px] h-80 mt-4 mx-2">
+          <mat-card class="w-full h-full flex flex-col">
+            <mat-card-header class="mb-2 flex justify-center">
+              <mat-card-title class="custom-title">Students Count in Each Course</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="flex items-center justify-center w-full h-full p-4">
+              <app-admin-chart [chartType]="'bar'" class="w-full h-full max-w-4xl max-h-[500px]"></app-admin-chart>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      
+        <!-- Pie Chart -->
+        <div class="flex-1 min-w-[300px] h-80 mt-4 mx-2">
+          <p class="font-bold text-xl mb-2 flex flex-col items-center justify-center">Category </p>
+          <app-admin-pie-chart class="w-full h-full"></app-admin-pie-chart>
+        </div>
+      </div>
+
+        <!-- Monthly Students Bar Chart -->
+        <div class="w-full h-80 mt-12">
+          <mat-card class="w-full max-w-[1000px] mx-auto">
+            <mat-card-header>
+              <mat-card-title class="custom-title">Monthly Students</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="flex justify-center items-center w-full pt-1 pb-0">
+              <app-admin-monthly-courses-chart [chartType]="'bar'"></app-admin-monthly-courses-chart>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      
+      </div>
+    </main>
+  </div>
+</div>

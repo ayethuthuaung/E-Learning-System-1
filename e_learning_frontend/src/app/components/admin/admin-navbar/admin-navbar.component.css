@@ -1,0 +1,12 @@
+aside {
+    transition: width 0.3s;
+  }
+  
+  aside ul li a {
+    transition: padding 0.3s;
+  }
+  
+  aside ul li a.justify-center {
+    justify-content: center;
+  }
+ 

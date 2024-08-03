@@ -1,16 +1,17 @@
 package com.ai.e_learning.service.impl;
 
-import com.ai.e_learning.model.AnswerOption;
-import com.ai.e_learning.model.Question;
-import com.ai.e_learning.model.StudentAnswer;
-import com.ai.e_learning.repository.AnswerOptionRepository;
-import com.ai.e_learning.repository.QuestionRepository;
-import com.ai.e_learning.repository.StudentAnswerRepository;
+import com.ai.e_learning.dto.CertificateDto;
+import com.ai.e_learning.dto.StudentAnswerDto;
+import com.ai.e_learning.model.*;
+import com.ai.e_learning.repository.*;
+import com.ai.e_learning.service.CertificateService;
 import com.ai.e_learning.service.StudentAnswerService;
+import com.ai.e_learning.util.EntityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentAnswerServiceImpl implements StudentAnswerService {
@@ -24,34 +25,117 @@ public class StudentAnswerServiceImpl implements StudentAnswerService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @Override
-    public StudentAnswer saveStudentAnswer(Long questionId, Long studentOptionId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+    @Autowired
+    private UserRepository userRepository;
 
-        AnswerOption answerOption = answerOptionRepository.findById(studentOptionId)
-                .orElseThrow(() -> new RuntimeException("AnswerOption not found"));
+    @Autowired
+    private ExamRepository examRepository;
 
-        StudentAnswer studentAnswer = new StudentAnswer();
-        studentAnswer.setQuestion(question);
-        studentAnswer.setAnswerOption(answerOption);
+    @Autowired
+    private CourseRepository courseRepository;
 
-        return studentAnswerRepository.save(studentAnswer);
-    }
+    @Autowired
+    private CertificateRepository certificateRepository;
 
-    @Override
-    public List<StudentAnswer> getAllStudentAnswers() {
-        return studentAnswerRepository.findAll();
-    }
+    @Autowired
+    private CertificateService certificateService;
 
     @Override
-    public StudentAnswer getStudentAnswerById(Long id) {
-        return studentAnswerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("StudentAnswer not found"));
-    }
+    public List<Map<String, Object>> saveStudentAnswers(List<StudentAnswerDto> studentAnswerDTOList) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        double totalMarks = 0.0;
+        boolean finalExam = false;
+        User student = null;
+        Long examId = 0L;
+        for (StudentAnswerDto requestDTO : studentAnswerDTOList) {
 
-    @Override
-    public void deleteStudentAnswer(Long id) {
-        studentAnswerRepository.deleteById(id);
+            Map<String, Object> answerResult = new HashMap<>();
+            answerResult.put("questionId", requestDTO.getQuestionId());
+
+            // Retrieve question entity
+            Question question = EntityUtil.getEntityById(questionRepository, requestDTO.getQuestionId(), "Question");
+            examId = question.getExam().getId();
+
+            // Handle the case where answer option ID might be null or zero
+            AnswerOption selectedAnswerOption = null;
+            if (requestDTO.getAnswerOptionId() != null && requestDTO.getAnswerOptionId() != 0) {
+                selectedAnswerOption = EntityUtil.getEntityById(answerOptionRepository, requestDTO.getAnswerOptionId(), "AnswerOption");
+            }
+
+            // Retrieve the correct answer options for the given question
+            List<AnswerOption> correctAnswerOptions = answerOptionRepository.findByQuestionIdAndIsAnsweredTrue(question.getId());
+
+            // Simplify the question object to include only necessary attributes
+            Map<String, Object> questionMap = new HashMap<>();
+            questionMap.put("id", question.getId());
+            questionMap.put("content", question.getContent());
+            List<Map<String, Object>> optionsList = new ArrayList<>();
+            for (AnswerOption option : question.getAnswerOptions()) {
+                Map<String, Object> optionMap = new HashMap<>();
+                optionMap.put("id", option.getId());
+                optionMap.put("answer", option.getAnswer());
+                optionMap.put("isAnswered", option.getIsAnswered());
+                optionsList.add(optionMap);
+            }
+            questionMap.put("options", optionsList);
+
+            // Add to the result list
+            answerResult.put("selectedOptionId", selectedAnswerOption != null ? selectedAnswerOption.getId() : null);
+            List<Long> correctAnswerIds = new ArrayList<>();
+            for (AnswerOption correctAnswerOption : correctAnswerOptions) {
+                correctAnswerIds.add(correctAnswerOption.getId());
+            }
+            answerResult.put("correctAnswerIds", correctAnswerIds);
+
+            // Check if the selected answer is correct
+            if (selectedAnswerOption != null && question.getQuestionType().getId() == 1) { // Multiple-choice
+                if (correctAnswerIds.contains(selectedAnswerOption.getId())) {
+                    totalMarks += question.getMarks();
+                }
+            } else if (question.getQuestionType().getId() == 2) { // Checkbox
+                List<Long> selectedAnswerIds = studentAnswerDTOList.stream()
+                        .filter(dto -> dto.getQuestionId().equals(question.getId()))
+                        .map(StudentAnswerDto::getAnswerOptionId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+
+                if (new HashSet<>(selectedAnswerIds).containsAll(correctAnswerIds) && new HashSet<>(correctAnswerIds).containsAll(selectedAnswerIds)) {
+                    totalMarks += question.getMarks();
+                }
+            }
+
+            // Save the student answer with the selected option ID
+            User user = EntityUtil.getEntityById(userRepository, requestDTO.getUserId(), "User");
+            student = user;
+            StudentAnswer studentAnswer = new StudentAnswer();
+            studentAnswer.setAnswerOption(selectedAnswerOption);
+            studentAnswer.setQuestion(question);
+            studentAnswer.setUser(user);
+            studentAnswer.setTotalMarks(totalMarks);
+            studentAnswerRepository.save(studentAnswer);
+            result.add(answerResult);
+        }
+        Map<String, Object> passed = new HashMap<>();
+        Exam exam = EntityUtil.getEntityById(examRepository, examId,"Exam");
+        Course course = courseRepository.findCourseByExamId(exam.getId());
+        finalExam = exam.isFinalExam();
+
+        if(finalExam && totalMarks >= exam.getPassScore() && student != null){
+            Certificate certificate = certificateRepository.findCertificateByUserIdAndCourseId(student.getId(), course.getId());
+            if(certificate == null){
+                CertificateDto certificateDto = new CertificateDto();
+                certificateDto.setUser(student);
+                certificateDto.setCourse(course);
+
+                certificateService.saveCertificate(certificateDto);
+                passed.put("isPassed", false);
+            }else
+                passed.put("isPassed", true);
+
+        }
+        result.add(passed);
+
+        return result;
     }
 }
+

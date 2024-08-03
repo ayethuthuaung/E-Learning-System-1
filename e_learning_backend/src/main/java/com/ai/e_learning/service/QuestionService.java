@@ -1,30 +1,30 @@
 package com.ai.e_learning.service;
 
-import com.ai.e_learning.dto.AnswerFeedback;
-import com.ai.e_learning.dto.QuestionCreationDTO;
-import com.ai.e_learning.dto.QuestionDTO;
-import com.ai.e_learning.model.StudentAnswer;
+import com.ai.e_learning.dto.QuestionCreationDto;
+import com.ai.e_learning.dto.QuestionDto;
+import com.ai.e_learning.dto.StudentAnswerDto;
+
+
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface QuestionService {
-    public QuestionDTO addQuestion(QuestionDTO questionDTO);
+    public QuestionDto addQuestion(QuestionDto questionDTO);
 
-    public QuestionDTO updateQuestion(QuestionDTO questionDTO);
+    public QuestionDto updateQuestion(QuestionDto questionDTO);
 
-    public Set<QuestionDTO> getQuestions();
+    public Set<QuestionDto> getQuestions();
 
-    public QuestionDTO getQuestion(Long questionId);
+    public QuestionDto getQuestion(Long questionId);
 
     public void deleteQuestion(Long questionId);
 
-    public boolean createQuestion(List<QuestionCreationDTO> questionCreationDTOList);
+    public boolean createQuestion(List<QuestionCreationDto> questionCreationDtoList);
 
-    public List<AnswerFeedback> submitStudentAnswers(List<StudentAnswer> studentAnswers);
+    public List<QuestionDto> getQuestionsByQuestionType(Long questionTypeId);
 
-    public AnswerFeedback generateFeedback(StudentAnswer studentAnswer);
-
-    List<QuestionDTO> getQuestionsByQuestionType(Long questionTypeId);
+    void addQuestionType();
 
 
 //    List<QuestionDTO> getQuestionsWithAnswers(Long examId);

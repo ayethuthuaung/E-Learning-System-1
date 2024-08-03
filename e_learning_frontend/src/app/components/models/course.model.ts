@@ -1,4 +1,7 @@
+import { Role, User } from './user.model';
 import { Category } from "./category.model";
+import { Lesson } from './lesson.model';
+import Module from 'module';
 
 export class Course {
   id: number;
@@ -12,9 +15,26 @@ export class Course {
   badge?: string;
   deleted?: boolean;
   photoFile?: File;
-  photoUrl?: string;
+  photo?: string;
+  photoName?: string;
   userId: number;
-  
+  status: string;
+  user: User | undefined;
+  instructorName: string;
+  instructorId: number; // Added property
+  chatRoomId: number; // Added property
+  modules: Module[];
+  lessons: Lesson[];
+  acceptedAt?: number;
+  requestedAt?: number;
+  createdAt: number;
+  studentCount?: number;
+
+  createdDate: string;
+  completion: any;
+  showDetails: any;
+ 
+  userRole?: string;
 
   constructor() {
     this.id = 1;
@@ -29,5 +49,16 @@ export class Course {
     this.categorylist = [];
     this.photoFile = undefined;
     this.userId = 1;
+    this.status ='';
+    this.instructorId = 1; // Initialized property
+    this.chatRoomId = 1; // Initialized property
+
+    this.instructorName='';
+    this.modules=[];
+    this.lessons=[];
+    this.createdDate = '';
+    this.createdAt = 0;
+
+    this.userRole = ''; 
   }
 }

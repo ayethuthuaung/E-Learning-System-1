@@ -2,6 +2,8 @@ package com.ai.e_learning.dto;
 
 
 import com.ai.e_learning.model.Category;
+import com.ai.e_learning.model.User;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,13 +22,19 @@ public class CourseDto {
   private  String level;
   private String duration;
   private String description;
-  private String createdAt;
+  private Long createdAt;
+  private Long requestedAt;
+  private Long acceptedAt;
+//  private Long statusChangeTimestamp;
   private String certificate;
   private String badge;
   private Set<Category> categories = new HashSet<>();
   private List<Long> categorylist;
   private boolean isDeleted;
   private String photo;
+  private String photoName;
   private MultipartFile photoInput;
-
+  private User user;
+  private String status;
+  private int studentCount;
 }

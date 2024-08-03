@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { UserService } from '../services/user.service';
+import { Router } from '@angular/router';
+
+declare var Swal: any; 
 
 @Component({
   selector: 'app-user-upload',
@@ -7,11 +10,13 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./user-upload.component.css']
 })
 export class UserUploadComponent {
+  isSidebarOpen = true;
   selectedFile: File | null = null;
   successmessage: string = '';
   errormessage: string = '';
+  loading: boolean = false;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private router: Router) { }
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -31,12 +36,13 @@ export class UserUploadComponent {
     this.errormessage = '';
 
     if (this.selectedFile) {
+      this.loading = true;
       this.userService.uploadUserData(this.selectedFile).subscribe(
         response => {
-          this.successmessage = 'File uploaded successfully';
-          this.errormessage = ''; // Clear error message
+          this.showSuccessAlert(); // Call the success alert and navigate to login
         },
         error => {
+          this.loading = false;
           this.errormessage = 'File upload failed';
           this.successmessage = ''; // Clear success message
         }
@@ -45,5 +51,22 @@ export class UserUploadComponent {
       this.errormessage = 'Please select a file first';
       this.successmessage = ''; // Clear success message
     }
+  }
+
+  showSuccessAlert(): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: 'File uploaded successfully.',
+      confirmButtonText: 'OK'
+    }).then((result: { isConfirmed: boolean }) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['admin/dashboard']); // Navigate to the login page
+      }
+    });
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 }

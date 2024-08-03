@@ -1,41 +1,44 @@
+<div class="parent">
+    <div class="container" [ngClass]="isSignDivVisiable ? '' : 'active'" id="container">
+      <div class="form-container sign-in">
+        <form (ngSubmit)="onLogin()">
+          <h1 class="sign-in-header mb-3">Sign In</h1>
+        <!-- Message Display -->
+        <div class="error-message mb-3" *ngIf="messageType === 'error'">{{ errormessage }}</div>
+        <div class="success-message mb-3" *ngIf="messageType === 'success'">{{ successmessage }}</div>
 
-<div class="parent"> 
-    <div class="container" [ngClass]="isSignDivVisiable ? '' : 'active'  " id="container">
-       
-        <div class="form-container sign-in" >
-            <form>
-                <h1 class="sign-in-header">Sign In</h1>
-                <div class="social-icons">
-               
-                </div>
-             
-                <input type="text" name="staffId" [(ngModel)]="loginObj.staffId" placeholder="Staff ID">
-                <div class="password-container">
-                    <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="loginObj.password" placeholder="Password">
-                    <div class="show">
-                        <button type="button" class="toggle-button" (click)="togglePasswordVisibility()">
-                            {{ showPassword ? 'Hide' : 'Show' }}
-                        </button>
-                    </div>
-                </div>  
-                            <a [routerLink]="['/forget-password']">→ Forget Your Password? ←</a>
-                <button (click)="onLogin()">Sign In</button>
-            </form>
-        </div>
-        <div class="toggle-container">
-            <div class="toggle">
-                <div class="toggle-panel toggle-left">
-                    <h1 class="login-header">DIR-ACE TECHNOLOGY</h1>
-                    <p class="login-header">Welcome to E-Learning Website</p>
-                    
-                </div>
-                <div class="toggle-panel toggle-right">
-                    <h1 class="login-header">DIR-ACE TECHNOLOGY</h1>
-                    <p class="login-header">Welcome to E-Learning Website</p>
-                    
-                </div>
+        <div class="error-message " *ngIf="staffIdError">{{ staffIdError }}</div>
+        <input type="text" name="staffId" [(ngModel)]="loginObj.staffId" (input)="onInputChange()" placeholder="Staff ID">
+          
+
+          <div class="error-message " *ngIf="passwordError">{{ passwordError }}</div>
+          <div class="password-container">
+            <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="loginObj.password" (input)="onInputChange()" placeholder="Password">
+            <div class="show">
+              <button type="button" class="toggle-button" (click)="togglePasswordVisibility()">
+                {{ showPassword ? 'Hide' : 'Show' }}
+              </button>
             </div>
-        </div>
-    </div>
-</div>
+          </div>
+          
 
+
+          <a [routerLink]="['/forget-password']">→ Forget Your Password? ←</a>
+          <button type="submit">Sign In</button>
+        </form>
+      </div>
+      <div class="toggle-container">
+        <div class="toggle">
+          <div class="toggle-panel toggle-left">
+            <h1 class="login-header">DIR-ACE TECHNOLOGY</h1>
+            <p class="login-header">Welcome to E-Learning Website</p>
+          </div>
+          <div class="toggle-panel toggle-right">
+            <h1 class="login-header">DIR-ACE TECHNOLOGY</h1>
+            <p class="login-header">Welcome to E-Learning Website</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

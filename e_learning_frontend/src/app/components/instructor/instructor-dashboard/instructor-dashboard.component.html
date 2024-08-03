@@ -1,68 +1,70 @@
 <div class="min-h-screen bg-gray-100 flex flex-col">
+  <!-- Navbar and Sidebar -->
   <app-instructor-navbar (toggleSidebarEvent)="toggleSidebar()"></app-instructor-navbar>
   <div class="flex flex-1">
     <app-instructor-sidebar [isSidebarOpen]="isSidebarOpen"></app-instructor-sidebar>
+    <div class="flex-1 p-3 scrollable-section">
+      <div class="flex flex-wrap p-6">
 
-    <main class="flex-1 p-6">
-      <section>
-        <h2 class="text-2xl font-semibold mb-4">My task</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-purple-200 p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Landing page product</h3>
-            <p>7 members</p>
-            <p>88 tasks</p>
-            <p>+9.5%</p>
-          </div>
-          <div class="bg-red-200 p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Apartment app</h3>
-            <p>7 members</p>
-            <p>38 tasks</p>
-            <p>+4.5%</p>
-          </div>
-          <div class="bg-green-200 p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Learning app</h3>
-            <p>7 members</p>
-            <p>56 tasks</p>
-            <p>+1.5%</p>
+        <div class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> 
+          <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-chalkboard-teacher text-4xl text-white"></i>
+          </div>            
+          <div class="flex flex-col items-center ml-4">
+            <h3 class="text-xl text-purple-900 font-semibold mb-2">Instructors</h3>
+            <p class="text-xl text-purple-900 font-bold">{{ instructorCount }}</p>
           </div>
         </div>
-      </section>
-      <section class="mt-6">
-        <h2 class="text-2xl font-semibold mb-4">My progress</h2>
-        <div class="bg-white p-6 rounded-lg shadow">
-          <div class="flex justify-between items-center">
-            <h3 class="text-lg font-semibold">Statistic</h3>
-            <div>
-              <button class="bg-purple-600 text-white px-4 py-2 rounded-lg">Day</button>
-              <button class="ml-2 bg-gray-200 px-4 py-2 rounded-lg">Week</button>
-              <button class="ml-2 bg-gray-200 px-4 py-2 rounded-lg">Month</button>
-            </div>
+
+        <!-- Courses Count Card -->
+        <div class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> 
+          <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-book text-4xl text-white"></i>
+          </div>            
+          <div class="flex flex-col items-center ml-4">
+            <h3 class="text-xl text-purple-900 font-semibold mb-2">Courses</h3>
+            <p class="text-xl text-purple-900 font-bold">{{ courseCount }}</p>
           </div>
-          <div>
-            <!-- Add Chart.js or any other chart library for the graph -->
-          </div>
-        </div>
-      </section>
-      <section class="mt-6">
-        <h2 class="text-2xl font-semibold mb-4">Best teacher</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-white p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Mrs. Roses</h3>
-            <p>Prototyping</p>
-            <p>Rating: 4.9</p>
-          </div>
-          <div class="bg-white p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Mrs. Angel</h3>
-            <p>UI Interaction</p>
-            <p>Rating: 4.7</p>
-          </div>
-          <div class="bg-white p-4 rounded-lg shadow">
-            <h3 class="text-lg font-semibold">Mr. Richard</h3>
-            <p>Website design</p>
-            <p>Rating: 4.5</p>
+        </div>    
+
+        <!-- Students Count Cards -->
+        <div *ngFor="let count of studentCounts" class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> 
+          <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-user-graduate text-4xl text-white"></i>
+          </div>            
+          <div class="flex flex-col items-center ml-4">
+            <h3 class="text-xl text-purple-900 font-semibold mb-2">Students</h3>
+            <p class="text-xl text-purple-900 font-bold">{{ count.acceptedCount }}</p>
           </div>
         </div>
-      </section>
-    </main>
+
+        <div class="bg-purple-180 rounded-lg shadow-lg p-4 max-w-sm flex items-center mb-8 mr-8"> 
+          <div class="bg-purple-500 rounded-full h-16 w-16 flex items-center justify-center">
+            <i class="fas fa-users text-4xl text-white"></i>
+          </div>            
+          <div class="flex flex-col items-center ml-4">
+            <h3 class="text-xl text-purple-900 font-semibold mb-2">Active Users</h3>
+            <p class="text-xl text-purple-900 font-bold">{{ activeUserCount }}</p>
+          </div>
+        </div>
+       
+      </div>
+
+ 
+      <!-- Chart Section -->
+      <div class="flex flex-wrap space-x-4">
+        <!-- Line Chart -->
+        <div class="flex-1 min-w-[300px] h-80 mt-4 ml-6">
+          <canvas id="myChart" class="rounded-lg shadow-lg"></canvas>
+        </div>
+        
+        <!-- Pie Chart -->
+        <div class="flex-1 min-w-[400px] h-80 mt-4 relative">
+          <p class="font-bold text-purple-800 text-xl mb-2 text-center absolute top-[-20px] left-0 right-0">Category</p>
+          <app-admin-pie-chart class="w-full h-full"></app-admin-pie-chart>
+
+        </div>
+      </div>
+    </div>
   </div>
 </div>

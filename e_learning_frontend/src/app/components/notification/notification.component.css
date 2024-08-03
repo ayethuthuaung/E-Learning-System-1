@@ -1,0 +1,73 @@
+.notification-panel {
+  max-width: 400px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.notification-header {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cancel-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.notification-body {
+  overflow-y: auto;
+  max-height: 400px; /* Adjust the height as needed */
+}
+
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.notification-item.unread {
+  background: #f3f4f6;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-message {
+  font-weight: bold;
+}
+
+.notification-time {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.notification-accepted .notification-message {
+  color: green;
+}
+
+.notification-rejected .notification-message {
+  color: red;
+}
+

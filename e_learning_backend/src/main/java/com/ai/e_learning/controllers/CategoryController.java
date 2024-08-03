@@ -10,11 +10,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
 
-@RequestMapping("/categories")
+@RequestMapping("/api/categories")
 public class CategoryController {
   @Autowired
   private CategoryService categoryService;
@@ -62,7 +63,14 @@ public class CategoryController {
   public boolean isCategoryNameAlreadyExists(@RequestParam String name) {
     return categoryService.isCategoryNameAlreadyExists(name);
   }
+  @GetMapping("/course-counts")
+  public Map<String, Long> getCourseCountsPerCategory() {
+    return categoryService.getCourseCountsPerCategory();
   }
+
+
+
+}
 
 
 

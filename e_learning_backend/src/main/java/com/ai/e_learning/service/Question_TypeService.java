@@ -1,8 +1,8 @@
 package com.ai.e_learning.service;
 
-import com.ai.e_learning.dto.QuestionTypeDTO;
+import com.ai.e_learning.dto.QuestionTypeDto;
 import com.ai.e_learning.model.QuestionType;
-import com.ai.e_learning.repository.Question_TypeRepository;
+import com.ai.e_learning.repository.QuestionTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,30 +15,30 @@ import java.util.stream.Collectors;
 public class Question_TypeService {
 
     @Autowired
-    private Question_TypeRepository questionTypeRepository;
+    private QuestionTypeRepository questionTypeRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    public QuestionTypeDTO addQuestionType(QuestionTypeDTO questionTypeDTO) {
+    public QuestionTypeDto addQuestionType(QuestionTypeDto questionTypeDTO) {
         QuestionType questionType = convertToEntity(questionTypeDTO);
         QuestionType savedQuestionType = questionTypeRepository.save(questionType);
         return convertToDto(savedQuestionType);
     }
 
-    public QuestionTypeDTO updateQuestionType(QuestionTypeDTO questionTypeDTO) {
+    public QuestionTypeDto updateQuestionType(QuestionTypeDto questionTypeDTO) {
         QuestionType questionType = convertToEntity(questionTypeDTO);
         QuestionType updatedQuestionType = questionTypeRepository.save(questionType);
         return convertToDto(updatedQuestionType);
     }
 
-    public List<QuestionTypeDTO> getQuestionTypes() {
+    public List<QuestionTypeDto> getQuestionTypes() {
         return questionTypeRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    public QuestionTypeDTO getQuestionType(Long questionTypeId) {
+    public QuestionTypeDto getQuestionType(Long questionTypeId) {
         return questionTypeRepository.findById(questionTypeId)
                 .map(this::convertToDto)
                 .orElseThrow(() -> new EntityNotFoundException("QuestionType not found"));
@@ -52,11 +52,11 @@ public class Question_TypeService {
                 });
     }
 
-    private QuestionType convertToEntity(QuestionTypeDTO questionTypeDTO) {
+    private QuestionType convertToEntity(QuestionTypeDto questionTypeDTO) {
         return modelMapper.map(questionTypeDTO, QuestionType.class);
     }
 
-    private QuestionTypeDTO convertToDto(QuestionType questionType) {
-        return modelMapper.map(questionType, QuestionTypeDTO.class);
+    private QuestionTypeDto convertToDto(QuestionType questionType) {
+        return modelMapper.map(questionType, QuestionTypeDto.class);
     }
 }
