@@ -8,6 +8,7 @@ import { Course } from '../../models/course.model';
 import { CourseService } from '../../services/course.service';
 import Swal from 'sweetalert2';
 import { orderBy } from 'lodash';
+import { Base64 } from 'js-base64';
 
 @Component({
   selector: 'app-admin-course',
@@ -340,9 +341,14 @@ export class AdminCourseComponent implements OnInit {
   }
 
   navigateToCourse(courseId: number) {
-    this.router.navigate([`admin/lesson/${courseId}`]);
+    const encodedId = this.encodeId(courseId.toString());
+    this.router.navigate([`admin/lesson/${encodedId}`]);
   }
-
+  encodeId(id: string): string {
+    const base64EncodedId = Base64.encode(id);
+    const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+    return `${uuid}-${base64EncodedId}`;
+  }
   getAcceptedCourses(): Course[] {
     return this.courses.filter(course => course.status === 'Accept');
   }

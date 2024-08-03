@@ -290,8 +290,14 @@ viewQuestionFormClick(examId: number): void {
       }).then((result) => {
         if (result.isConfirmed) {
           // If confirmed, navigate to the question form
-          this.router.navigate([`/question-form/${examId}`], { state: { exam } });
-        }
+          if(this.isOwner|| this.hasRole(2)){
+            const encodedId = this.encodeId(examId.toString());
+            this.router.navigate([`/view-question-form/${encodedId}`], { state: { exam } });
+          }else{
+            const encodedId = this.encodeId(examId.toString());
+            this.router.navigate([`/question-form/${encodedId}`], { state: { exam } });     
+          }
+           }
       });
     },
     (error) => {
@@ -299,7 +305,12 @@ viewQuestionFormClick(examId: number): void {
     }
   );
 }
+encodeId(id: string): string {
+  const base64EncodedId = Base64.encode(id);
+  const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
+  return `${uuid}-${base64EncodedId}`;
 
+}
 formatDuration(duration: string): string {
   const parts = duration.split(':');
   const hours = parseInt(parts[0], 10);

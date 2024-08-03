@@ -168,23 +168,13 @@ export class CourseFooterComponent implements OnInit, OnDestroy {
   }
 
   goToCourseDetails(): void {
-    console.log("Hi");
     
     if (!this.course) {
-      console.log("Hi");
-
       console.error('Course is undefined');
       return;
     }
-    console.log('isAccepted:', this.isAccepted);
-    console.log('isOwner:', this.isOwner);
-    console.log('Roles:', this.roles);
-
-
-
     if (!this.isAccepted && !this.isOwner && !this.hasRole(2)) {
 
-      console.log("Hi");
       Swal.fire({
         title: 'Enrollment Not Accepted',
         text: 'Your enrollment for this course is pending. Please wait for the instructor to approve.',
@@ -200,6 +190,7 @@ export class CourseFooterComponent implements OnInit, OnDestroy {
     const base64EncodedId = Base64.encode(id);
     const uuid = 'af782e56-8887-4130-9c0e-114ab93d7ebe'; // Static UUID-like string for format
     return `${uuid}-${base64EncodedId}`;
+
   }
 
   changeUserCourseStatus(status: string): void {

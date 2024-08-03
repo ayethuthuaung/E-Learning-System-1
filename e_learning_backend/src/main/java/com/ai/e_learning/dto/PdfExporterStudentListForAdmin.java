@@ -44,26 +44,32 @@ public class PdfExporterStudentListForAdmin {
         }
 
         // Create a new document
-        Document document = new Document();
+        Document document = new Document(PageSize.TABLOID);
         try {
             PdfWriter.getInstance(document, response.getOutputStream());
             document.open();
 
             // Set document title
-            Paragraph title = new Paragraph("Student List Report");
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+            Paragraph title = new Paragraph("Student List Report", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
 
-            // Create a table with 12 columns
+            // Create a table with 13 columns
             PdfPTable table = new PdfPTable(13);
             table.setWidthPercentage(100);
 
+            // Set column widths
+            float[] columnWidths = {1f, 1.5f, 2f, 2f, 2.5f, 1.5f, 2.7f, 2f, 2.5f, 2.5f, 2.5f, 1.9f, 2.5f};
+            table.setWidths(columnWidths);
+
             // Add table header
-            String[] headers = {"No", "Staff ID","Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Request Date", "Status", "Accept/Reject Date"};
-            Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            String[] headers = {"No", "Staff ID", "Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Req Date", "Status", "Acc/Rej Date"};
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
             for (String header : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(header, font));
+                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(cell);
             }
 
@@ -71,34 +77,35 @@ public class PdfExporterStudentListForAdmin {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             // Add table rows
+            Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
             int rowIndex = 1;
             for (UserCourseDto userCourse : userCourses) {
-                table.addCell(String.valueOf(rowIndex++)); // No
-                table.addCell(userCourse.getUser().getStaffId()); // Staff ID
-                table.addCell(userCourse.getUser().getName());
-                table.addCell(userCourse.getCourse().getName()); // Course
-                table.addCell(userCourse.getUser().getEmail()); // Email
-                table.addCell(userCourse.getUser().getTeam()); // Team
-                table.addCell(userCourse.getUser().getDepartment()); // Department
-                table.addCell(userCourse.getUser().getDivision()); // Division
+                table.addCell(new PdfPCell(new Phrase(String.valueOf(rowIndex++), cellFont))); // No
+                table.addCell(new PdfPCell(new Phrase(userCourse.getUser().getStaffId(), cellFont))); // Staff ID
+                table.addCell(new PdfPCell(new Phrase(userCourse.getUser().getName(), cellFont))); // Student
+                table.addCell(new PdfPCell(new Phrase(userCourse.getCourse().getName(), cellFont))); // Course
+                table.addCell(new PdfPCell(new Phrase(userCourse.getUser().getEmail(), cellFont))); // Email
+                table.addCell(new PdfPCell(new Phrase(userCourse.getUser().getTeam(), cellFont))); // Team
+                table.addCell(new PdfPCell(new Phrase(userCourse.getUser().getDepartment(), cellFont))); // Department
+                table.addCell(new PdfPCell(new Phrase(userCourse.getUser().getDivision(), cellFont))); // Division
 
                 // Progress as percentage
                 Double completionPercentage = courseModuleService.calculateCompletionPercentage(userCourse.getUser().getId(), userCourse.getCourse().getId());
-                table.addCell(completionPercentage != null ? String.format("%.2f%%", completionPercentage) : "N/A");
+                table.addCell(new PdfPCell(new Phrase(completionPercentage != null ? String.format("%.2f%%", completionPercentage) : "N/A", cellFont))); // Progress
 
                 // Certificate
-                table.addCell(userCourse.isCompleted() ? "Available" : "Unavailable");
+                table.addCell(new PdfPCell(new Phrase(userCourse.isCompleted() ? "Available" : "Unavailable", cellFont))); // Certificate
 
                 // Request Date
-                table.addCell(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getCreatedAt()), ZoneId.systemDefault())));
+                table.addCell(new PdfPCell(new Phrase(formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getCreatedAt()), ZoneId.systemDefault())), cellFont))); // Request Date
 
                 // Status
-                table.addCell(userCourse.getStatus());
+                table.addCell(new PdfPCell(new Phrase(userCourse.getStatus(), cellFont))); // Status
 
                 // Accept/Reject Date
-                table.addCell(userCourse.getStatusChangeTimestamp() != null ?
+                table.addCell(new PdfPCell(new Phrase(userCourse.getStatusChangeTimestamp() != null ?
                         formatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(userCourse.getStatusChangeTimestamp()), ZoneId.systemDefault())) :
-                        "N/A");
+                        "N/A", cellFont))); // Accept/Reject Date
             }
 
             // Add the table to the document

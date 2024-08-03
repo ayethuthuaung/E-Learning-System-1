@@ -55,6 +55,7 @@ export class CreateExamComponent implements OnInit {
  formDescription: string = 'Please fill out this form';
  examList: ExamList[]=[];
  examForm: any;
+ finalExamExists: boolean =false;
 
 
  questions: Question[] = [
@@ -99,8 +100,9 @@ export class CreateExamComponent implements OnInit {
      this.getCourseId(this.lessonId);
      
   }
+  console.log(this.courseId);
   
-
+ 
 }
 decodeId(encodedId: string): number {
   try {
@@ -123,9 +125,13 @@ decodeId(encodedId: string): number {
     throw new Error('Invalid ID');
   }
 }
+
+  
+
  showResults: boolean = false;
  //Create Exam
  addOption(questionIndex: number) {
+  event?.preventDefault()
   this.questions[questionIndex].options.push({
     label: `Option ${this.questions[questionIndex].options.length + 1}`,
     value: `option${this.questions[questionIndex].options.length + 1}`,
@@ -168,12 +174,19 @@ deleteNewQuestion(questionIndex: number) {
   }
 }
 
+
 selectOption(questionIndex: number, optionIndex: number) {
   const question = this.questions[questionIndex];
-  question.options.forEach((option, idx) => {
-    option.isAnswered = (idx === optionIndex);
-  });
+  
+  if (question.type === 'multiple-choice') {
+    question.options.forEach((option, idx) => {
+      option.isAnswered = (idx === optionIndex);
+    });
+  } else if (question.type === 'checkbox') {
+    question.options[optionIndex].isAnswered = !question.options[optionIndex].isAnswered;
+  }
 }
+
 
 loadExamByLessonId(lessonId: number) {
   this.examService.getExamByLessonId(lessonId).subscribe(
@@ -225,11 +238,13 @@ onSubmitExam(examForm: any) {
           marks: question.marks
         } as QuestionDto))
       };
+console.log(examCreationDto);
 
       this.examService.createExam(examCreationDto).subscribe(
         (response) => {
           console.log('Exam submitted successfully', response);
           Swal.fire('Success!', 'The exam has been submitted successfully.', 'success');
+          examForm.resetForm();
               this.examTitle= '';  
               this.examDescription='';
               this.examDuration = '';
@@ -302,7 +317,7 @@ viewQuestionFormClick(examId: number): void {
       (exam) => {
         console.log("exam:", exam);
         
-        this.router.navigate([`/question-form/${examId}`], { state: { exam } });
+        this.router.navigate([`/view-question-form/${examId}`], { state: { exam } });
       },
       (error) => {
         console.error('Error fetching course video view', error);
@@ -317,6 +332,17 @@ getCourseId(lessonId: number): void {
       console.log('Course ID:', courseId);
       this.courseId= courseId;
       this.getCourseById(this.courseId);
+      this.examService.hasFinalExam(this.courseId).subscribe(
+        (result: boolean) => {
+          console.log(result);
+          
+            this.finalExamExists = result;
+        },
+        error => {
+            console.error('Error checking if course has final exam', error);
+        }
+    );
+      
     },
     error => {
       console.error('Error fetching course ID:', error);
@@ -336,4 +362,17 @@ getCourseById(courseId: number): void {
     }
   );
 }
+
+// checkForFinalExam(courseId: number): void {
+//   this.examService.getExamsByCourseId(courseId).subscribe(
+//     (exams: ExamList[]) => {
+//       this.finalExamExists = exams.some(exam => exam.finalExam);
+//       console.log('Final exam exists:', this.finalExamExists);
+//     },
+//     error => {
+//       console.error('Error checking for final exam:', error);
+//     }
+//   );
+// }
+// }}
 }

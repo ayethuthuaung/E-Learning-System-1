@@ -26,4 +26,7 @@ public interface ExamRepository extends JpaRepository<Exam,Long> {
     List<Exam> findByLessonAndFinalExamFalseAndIsDeletedFalse(Lesson lesson);
 
     Exam findByQuestions(Set<Question> questions);
+
+    @Query("SELECT COUNT(e) > 0 FROM Exam e WHERE e.finalExam = true AND e.lesson.course.id = :courseId")
+    boolean hasFinalExam(@Param("courseId") Long courseId);
 }

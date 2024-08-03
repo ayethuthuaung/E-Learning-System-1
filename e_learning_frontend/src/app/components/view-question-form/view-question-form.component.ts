@@ -1,18 +1,18 @@
-import { CourseService } from './../../../services/course.service';
-import { AnswerOptionDto } from './../../../models/question.model';
+import { CourseService } from '../services/course.service';
+import { AnswerOptionDto } from '../models/question.model';
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { ExamService } from '../../../services/exam.service';
-import { QuestionService } from '../../../services/question.service';
-import { StudentAnswerService } from '../../../services/student-answer.service';
-import { UserService } from '../../../services/user.service';
-import { ExamDTO } from '../../../models/examdto.model';
-import { StudentAnswer } from '../../../models/student-answer.model';
-import { Role } from '../../../models/user.model';
+import { ExamService } from '../services/exam.service';
+import { QuestionService } from '../services/question.service';
+import { StudentAnswerService } from '../services/student-answer.service';
+import { UserService } from '../services/user.service';
+import { ExamDTO } from '../models/examdto.model';
+import { StudentAnswer } from '../models/student-answer.model';
+import { Role } from '../models/user.model';
 import html2canvas from 'html2canvas';
-import { CertificateService } from '../../../services/certificate.service';
-import { Certificate } from '../../../models/certificate.model';
+import { CertificateService } from '../services/certificate.service';
+import { Certificate } from '../models/certificate.model';
 import { Base64 } from 'js-base64';
 
 interface Option {
@@ -34,11 +34,11 @@ interface Question {
 }
 
 @Component({
-  selector: 'app-student-question-form',
-  templateUrl: './student-question-form.component.html',
-  styleUrls: ['./student-question-form.component.css']
+  selector: 'app-view-question-form',
+  templateUrl: './view-question-form.component.html',
+  styleUrl: './view-question-form.component.css'
 })
-export class StudentQuestionFormComponent implements OnInit, OnDestroy {
+export class ViewQuestionFormComponent implements OnInit, OnDestroy {
   @ViewChild('questionFormContainer') questionFormContainer!: ElementRef;
 
   exam!: ExamDTO;
@@ -90,10 +90,11 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
         this.loadQuestions(this.examId);
       }
       this.exam = history.state.exam;
+
+      // if (this.exam && this.exam.duration) {
+      //   this.startTimer(this.parseDuration(this.exam.duration));
+      // }
     }
-      if (this.exam && this.exam.duration) {
-        this.startTimer(this.parseDuration(this.exam.duration));
-      }
     });
 
     const storedUser = localStorage.getItem('loggedUser');
@@ -213,13 +214,13 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
         text: question.content,
         type: question.questionTypeId === 1 ? 'multiple-choice' : 'checkbox',
         marks: question.marks,
-        options: this.shuffleArray(question.answerList.map(option => ({
+        options: question.answerList.map(option => ({
           id: option.id,
           label: option.answer,
           value: option.answer,
           isAnswered: false,
           isCorrect: option.isAnswered
-        }))),
+        })),
         correctAnswers: question.answerList.filter(option => option.isAnswered).map(option => option.id)
         // adminOwnerCorrectAnswers: []
         // adminOwnerCorrectAnswers: 
@@ -233,12 +234,6 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
 
 
 
-  shuffleArray(array: any[]): any[] {
-    return array
-      .map(value => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
-  }
 
   selectOption(questionIndex: number, optionIndex: number) {
     const question = this.questions[questionIndex];
@@ -263,10 +258,13 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     this.studentAnswerService.submitStudentAnswers(answers).subscribe(response => {      
       this.checkAnswers(response);
       this.showResults = true;
+      console.log(response);   
+      console.log(response.isPassed);
       
       const passedResult = response.find((res: any) => 'isPassed' in res);
       if (passedResult) {
           this.isPassed = passedResult.isPassed;
+          console.log(passedResult.isPassed);
       }
     }, error => {
       console.error('Error submitting answers', error);
@@ -335,3 +333,4 @@ export class StudentQuestionFormComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 }
+
