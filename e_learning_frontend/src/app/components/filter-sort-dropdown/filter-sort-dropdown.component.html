@@ -12,7 +12,7 @@
         <a (click)="sort('asc')" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Sort A to Z</a>
       <a (click)="sort('desc')" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Sort Z to A</a>
       
-      <div *ngFor="let name of availableNames" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+      <!-- <div *ngFor="let name of availableNames" class="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
         <input 
           type="checkbox" 
           [id]="name" 
@@ -28,7 +28,7 @@
           placeholder="Filter..." 
           (input)="onFilterChange($event)"
         />
-      </div>
+      </div> -->
     </div>
   </div>
  

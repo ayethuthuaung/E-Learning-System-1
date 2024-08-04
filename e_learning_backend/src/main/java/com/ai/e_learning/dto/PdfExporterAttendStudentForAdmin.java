@@ -53,6 +53,9 @@ public class PdfExporterAttendStudentForAdmin {
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
 
+            document.add(new Paragraph(""));
+
+
             // Create a table with 13 columns
             PdfPTable table = new PdfPTable(13);
             table.setWidthPercentage(100);
@@ -62,12 +65,12 @@ public class PdfExporterAttendStudentForAdmin {
 
 
             // Set relative column widths to make sure headers are wide enough
-            float[] columnWidths = {1f, 1.5f, 2f, 2f, 2.5f, 1.5f, 2.7f, 2f, 2.5f, 2.5f, 2.5f, 1.9f, 2.5f};
+            float[] columnWidths = {1f, 1.5f, 2f, 2f, 2.5f, 1.5f, 2.7f, 2f, 2.2f, 2.5f, 2.5f, 1.9f, 2.5f};
             table.setWidths(columnWidths);
 
             // Add table header
             String[] headers = {"No", "Staff ID", "Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Req Date", "Status", "Acc/Rej Date"};
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
 
             for (String header : headers) {
                 PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
@@ -79,7 +82,7 @@ public class PdfExporterAttendStudentForAdmin {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             // Add table rows
-            Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+            Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 8);
             int rowIndex = 1;
             for (UserCourseDto userCourse : userCourses) {
                 table.addCell(new PdfPCell(new Phrase(String.valueOf(rowIndex++), cellFont))); // No

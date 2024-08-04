@@ -49,13 +49,15 @@ public class PDFExporter {
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
 
+        document.add(new Paragraph(""));
+
         // Create a table with 13 columns
         PdfPTable table = new PdfPTable(13);
         table.setWidthPercentage(100);
         table.setSpacingBefore(10);
 
         // Set column widths
-        float[] columnWidths = {1f, 1.5f, 2f, 2f, 2.5f, 1.5f, 2.7f, 2f, 2.5f, 2.5f, 2.5f, 1.9f, 2.5f};
+        float[] columnWidths = {1f, 1.5f, 2f, 2f, 2.5f, 1.5f, 2.7f, 2f, 2.2f, 2.5f, 2.5f, 1.9f, 2.5f};
         table.setWidths(columnWidths);
 
         // Create header cells
@@ -90,7 +92,7 @@ public class PDFExporter {
 
     private void createHeaderCells(PdfPTable table) {
         String[] headers = {"No", "Staff ID", "Student", "Course", "Email", "Team", "Department", "Division", "Progress", "Certificate", "Req Date", "Status", "Acc/Rej Date"};
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
 
         for (String header : headers) {
             PdfPCell cell = new PdfPCell(new Phrase(header, font));
@@ -102,7 +104,7 @@ public class PDFExporter {
     private void createStudentCells(PdfPTable table, UserCourseDto userCourse, CourseDto course, DateTimeFormatter formatter, int rowIndex) {
         Long userId = userCourse.getUser().getId(); // Ensure you fetch the correct user ID
 
-        Font font = FontFactory.getFont(FontFactory.HELVETICA, 10);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA, 8);
 
         PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(rowIndex), font));
         table.addCell(cell);

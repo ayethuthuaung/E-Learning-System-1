@@ -31,10 +31,13 @@
         <div class="custom-font-size font-bold text-logo-blue">
           {{ name }}
         </div>
-        <div *ngIf="roles.length > 0" class="roles-list font-semibold text-logo-blue">
-          {{ roles[0].name }}
+        <div class="w-full flex justify-end">
+          <div *ngIf="roles.length > 0" class="roles-list font-semibold text-logo-blue">
+            {{ roles[0].name }}
+          </div>
         </div>
       </div>
+      
       <!-- Profile Component -->
       <app-nav-profile></app-nav-profile>
     </div>

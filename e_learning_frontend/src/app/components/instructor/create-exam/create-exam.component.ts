@@ -208,6 +208,19 @@ onSubmitExam(examForm: any) {
    
     return;
   }
+  
+
+  const totalMarks = this.questions.reduce((sum, question) => sum + question.marks, 0);
+
+  if (this.examFinal && this.examPassScore > totalMarks) {
+    Swal.fire({
+      title: 'Error',
+      text: 'Pass score cannot be greater than the total marks of all questions.',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
 
   Swal.fire({
     title: 'Are you sure?',
@@ -232,10 +245,9 @@ onSubmitExam(examForm: any) {
             answer: option.label,
             isAnswered: option.isAnswered
           } as AnswerOptionDTO)),
-          marks: question.marks
+          marks: question.marks          
         } as QuestionDto))
       };
-console.log(examCreationDto);
 
       this.examService.createExam(examCreationDto).subscribe(
         (response) => {

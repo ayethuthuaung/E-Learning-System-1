@@ -6,7 +6,7 @@
   height: 40px;
   position: relative;
   /* --c: no-repeat linear-gradient(rgb(98, 187, 222) 0%, rgb(92, 179, 194) 100%); */
-  --c: no-repeat linear-gradient(#66beee 0 0);
+  --c: no-repeat linear-gradient(#2573e7 0 0);
   background:
     var(--c) center/100% 10px,
     var(--c) center/10px 100%;
